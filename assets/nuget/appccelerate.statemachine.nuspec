@@ -15,11 +15,11 @@
       Features:
       states and events can be defined with enums, strings or ints - resulting in single class state machines,
       actions on transitions, entry and exit actions, transition guards, 
-      hierarchical with different history behaviors to initialize state always to same state or last active state
-      fluent definition interface
+      hierarchical with different history behaviors to initialize state always to same state or last active state,
+      fluent definition interface,
       synchronous/asynchronous state machine (passive state machine handles state transitions synchronously, active state machine handles state transitions asynchronously on the worker thread of the state machine),
-      extensible thorough logging
-      state machine report for description of state machine (csv, yEd)/description>
+      extensible thorough logging,
+      state machine report for description of state machine (csv, yEd)</description>
 	<releaseNotes>
     </releaseNotes>
     <copyright>Copyright 2012-2014</copyright>
