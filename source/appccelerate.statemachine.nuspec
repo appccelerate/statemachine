@@ -25,15 +25,15 @@
     <copyright>Copyright 2012-2014</copyright>
     <tags>Appccelerate state-machine</tags>
 	<frameworkAssemblies>
-      <frameworkAssembly assemblyName="System" targetFramework="net45" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework="net45" />
+      <frameworkAssembly assemblyName="System" targetFramework="portable-windows8+net45" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="portable-windows8+net45" />
     </frameworkAssemblies>
     <dependencies/>	
   </metadata>
   <files>
-    <file src="..\..\source\Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.dll" target="lib\net45" />
-    <file src="..\..\source\Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.pdb" target="lib\net45" />
-    <file src="..\..\source\Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.xml" target="lib\net45" />
-    <file src="..\..\source\Appccelerate.StateMachine\**\*.cs" target="src" />
+    <file src="Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.dll" target="lib\portable-windows8+net45" />
+    <file src="Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.pdb" target="lib\portable-windows8+net45" />
+    <file src="Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.xml" target="lib\portable-windows8+net45" />
+    <file src="Appccelerate.StateMachine\**\*.cs" target="src" />
   </files>  
 </package>

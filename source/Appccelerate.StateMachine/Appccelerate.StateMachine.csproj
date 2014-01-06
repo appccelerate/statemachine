@@ -117,14 +117,11 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Appccelerate.Fundamentals">
-      <HintPath>..\packages\Appccelerate.Fundamentals\lib\net45\Appccelerate.Fundamentals.dll</HintPath>
+      <HintPath>..\packages\Appccelerate.Fundamentals.2.1.0-Unstable31\lib\portable-windows8+net45\Appccelerate.Fundamentals.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\GitFlowVersionTask.0.14.0\Build\GitFlowVersionTask.targets" Condition="Exists('..\packages\GitFlowVersionTask.0.14.0\Build\GitFlowVersionTask.targets')" />
-  <Import Project="..\packages\RippleRestoreTask.0.1.4\build\RippleRestoreTask.targets" Condition="Exists('..\packages\RippleRestoreTask.0.1.4\build\RippleRestoreTask.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.0.7\build\Appccelerate.development.targets" Condition="Exists('..\packages\Appccelerate.Development.0.7\build\Appccelerate.development.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.ProductionCode.0.7\build\Appccelerate.development.ProductionCode.targets" Condition="Exists('..\packages\Appccelerate.Development.ProductionCode.0.7\build\Appccelerate.development.ProductionCode.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -155,4 +152,6 @@
   <PropertyGroup>
     <PrepareForBuildDependsOn Condition="!Exists('$(StyleCopMSBuildTargetsFile)')">StyleCopMSBuildTargetsNotFound;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
   </PropertyGroup>
+  <Import Project="..\packages\Appccelerate.Development.ProductionCode.0.14\build\Appccelerate.development.ProductionCode.targets" Condition="Exists('..\packages\Appccelerate.Development.ProductionCode.0.14\build\Appccelerate.development.ProductionCode.targets')" />
+  <Import Project="..\packages\Appccelerate.Development.0.14\build\Appccelerate.development.targets" Condition="Exists('..\packages\Appccelerate.Development.0.14\build\Appccelerate.development.targets')" />
 </Project>
