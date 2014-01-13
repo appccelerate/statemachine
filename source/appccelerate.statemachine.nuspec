@@ -28,7 +28,9 @@
       <frameworkAssembly assemblyName="System" targetFramework="portable-windows8+net45" />
       <frameworkAssembly assemblyName="System.Core" targetFramework="portable-windows8+net45" />
     </frameworkAssemblies>
-    <dependencies/>	
+    <dependencies>
+      <dependency id="Appccelerate.Fundamentals" version="[2.0,3.0)" />
+    </dependencies>	
   </metadata>
   <files>
     <file src="Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.dll" target="lib\portable-windows8+net45" />
