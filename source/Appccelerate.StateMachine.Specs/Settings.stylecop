@@ -1,0 +1,83 @@
+<StyleCopSettings Version="105">
+  <GlobalSettings>
+    <BooleanProperty Name="ViolationsAsErrors">True</BooleanProperty>
+    <StringProperty Name="MergeSettingsFiles">NoMerge</StringProperty>
+  </GlobalSettings>
+  <Analyzers>
+    <Analyzer AnalyzerId="StyleCop.CSharp.DocumentationRules">
+      <Rules>
+        <Rule Name="FileHeaderFileNameDocumentationMustMatchTypeName">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="ElementsMustBeDocumented">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="PartialElementsMustBeDocumented">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="EnumerationItemsMustBeDocumented">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+      </Rules>
+      <AnalyzerSettings />
+    </Analyzer>
+    <Analyzer AnalyzerId="StyleCop.CSharp.MaintainabilityRules">
+      <Rules>
+        <Rule Name="AccessModifierMustBeDeclared">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="FileMayOnlyContainASingleClass">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="FieldsMustBePrivate">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+      </Rules>
+      <AnalyzerSettings />
+    </Analyzer>
+    <Analyzer AnalyzerId="StyleCop.CSharp.NamingRules">
+      <Rules>
+        <Rule Name="FieldNamesMustNotContainUnderscore">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="FieldNamesMustNotUseHungarianNotation">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="FieldNamesMustBeginWithLowerCaseLetter">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+      </Rules>
+      <AnalyzerSettings />
+    </Analyzer>
+    <Analyzer AnalyzerId="StyleCop.CSharp.OrderingRules">
+      <Rules>
+        <Rule Name="StaticElementsMustAppearBeforeInstanceElements">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+      </Rules>
+      <AnalyzerSettings />
+    </Analyzer>
+  </Analyzers>
+</StyleCopSettings>
