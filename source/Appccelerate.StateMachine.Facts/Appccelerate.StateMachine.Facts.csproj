@@ -11,6 +11,7 @@
     <AssemblyName>Appccelerate.StateMachine.Facts</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>53f1b510</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -119,17 +120,17 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StyleCop.MSBuild.4.7.48.2\build\StyleCop.MSBuild.Targets'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.CheckHintPathTask.1.4.0\build\Appccelerate.CheckHintPathTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.CheckHintPathTask.1.4.0\build\Appccelerate.CheckHintPathTask.targets'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.Development.0.34\build\Appccelerate.development.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.0.34\build\Appccelerate.development.targets'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.Development.Facts.0.34\build\Appccelerate.Development.Facts.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.Facts.0.34\build\Appccelerate.Development.Facts.targets'))" />
+    <Error Condition="!Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets'))" />
   </Target>
   <Import Project="..\packages\Appccelerate.CheckHintPathTask.1.4.0\build\Appccelerate.CheckHintPathTask.targets" Condition="Exists('..\packages\Appccelerate.CheckHintPathTask.1.4.0\build\Appccelerate.CheckHintPathTask.targets')" />
   <Import Project="..\packages\Appccelerate.Development.0.34\build\Appccelerate.development.targets" Condition="Exists('..\packages\Appccelerate.Development.0.34\build\Appccelerate.development.targets')" />
   <Import Project="..\packages\Appccelerate.Development.Facts.0.34\build\Appccelerate.Development.Facts.targets" Condition="Exists('..\packages\Appccelerate.Development.Facts.0.34\build\Appccelerate.Development.Facts.targets')" />
+  <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
 </Project>
