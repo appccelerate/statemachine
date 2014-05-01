@@ -74,6 +74,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             context.OnTransitionBegin();
 
+            this.extensionHost.ForEach(extension => extension.ExecutingTransition(
+                this.stateMachineInformation,
+                this,
+                context));
+
             IState<TState, TEvent> newState = context.State;
 
             if (!this.IsInternalTransition)

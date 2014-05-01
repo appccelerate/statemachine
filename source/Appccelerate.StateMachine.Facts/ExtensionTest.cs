@@ -154,6 +154,38 @@ namespace Appccelerate.StateMachine
                 .MustHaveHappened();
         }
 
+        [Fact]
+        public void NotifiesAboutTransitions()
+        {
+            const States Source = States.A;
+            const States Target = States.B;
+            const Events Event = Events.B;
+
+            this.testee.In(Source)
+                .On(Event).Goto(Target);
+
+            this.testee.Initialize(Source);
+            this.testee.EnterInitialState();
+
+            this.testee.Fire(Event);
+
+            A.CallTo(() => this.extension.ExecutingTransition(
+                this.testee,
+                A<ITransition<States, Events>>.That.Matches(
+                    t => t.Source.Id == Source && t.Target.Id == Target),
+                A<ITransitionContext<States, Events>>.That.Matches(
+                    c => c.EventId.Value == Event && c.State.Id == Source)))
+                .MustHaveHappened();
+
+            A.CallTo(() => this.extension.ExecutedTransition(
+                this.testee,
+                A<ITransition<States, Events>>.That.Matches(
+                    t => t.Source.Id == Source && t.Target.Id == Target),
+                A<ITransitionContext<States, Events>>.That.Matches(
+                    c => c.EventId.Value == Event && c.State.Id == Source)))
+                .MustHaveHappened();
+        }
+
         /// <summary>
         /// Exceptions thrown by guards are passed to extensions.
         /// </summary>

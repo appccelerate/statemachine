@@ -232,6 +232,19 @@ namespace Appccelerate.StateMachine.Extensions
         }
 
         /// <summary>
+        /// Called when a transition is going to be executed. After the guard of the transition evaluated to true.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="transition">The transition.</param>
+        /// <param name="transitionContext">The transition context.</param>
+        public virtual void ExecutingTransition(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            ITransition<TState, TEvent> transition,
+            ITransitionContext<TState, TEvent> transitionContext)
+        {
+        }
+        
+        /// <summary>
         /// Called when a transition was executed.
         /// </summary>
         public virtual void ExecutedTransition(
