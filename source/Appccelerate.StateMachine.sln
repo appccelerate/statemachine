@@ -1,18 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine", "Appccelerate.StateMachine\Appccelerate.StateMachine.csproj", "{2A577AA9-6C1C-4614-9B8B-94B4CAD9CF81}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine.Facts", "Appccelerate.StateMachine.Facts\Appccelerate.StateMachine.Facts.csproj", "{F206C6F3-01CD-4D81-8C2A-C1AB4AC8100E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine.Specs", "Appccelerate.StateMachine.Specs\Appccelerate.StateMachine.Specs.csproj", "{B6DC7BA9-3729-45A4-AAD6-8E38F0C033F0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC3570CF-4195-4F88-941E-A897812B5A4B}"
-	ProjectSection(SolutionItems) = preProject
-		appccelerate.statemachine.nuspec = appccelerate.statemachine.nuspec
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

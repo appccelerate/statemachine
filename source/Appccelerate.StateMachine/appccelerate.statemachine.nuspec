@@ -20,11 +20,11 @@
       synchronous/asynchronous state machine (passive state machine handles state transitions synchronously, active state machine handles state transitions asynchronously on the worker thread of the state machine),
       extensible thorough logging,
       state machine report for description of state machine (csv, yEd)</description>
-	<releaseNotes>
+    <releaseNotes>
     </releaseNotes>
     <copyright>Copyright 2012-2014</copyright>
     <tags>Appccelerate state-machine</tags>
-	<frameworkAssemblies>
+    <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="portable-windows8+net45" />
       <frameworkAssembly assemblyName="System.Core" targetFramework="portable-windows8+net45" />
     </frameworkAssemblies>
@@ -33,9 +33,9 @@
     </dependencies>	
   </metadata>
   <files>
-    <file src="Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.dll" target="lib\portable-windows8+net45" />
-    <file src="Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.pdb" target="lib\portable-windows8+net45" />
-    <file src="Appccelerate.StateMachine\bin\Release\Appccelerate.StateMachine.xml" target="lib\portable-windows8+net45" />
-    <file src="Appccelerate.StateMachine\**\*.cs" target="src" />
+    <file src="bin\Release\Appccelerate.StateMachine.dll" target="lib\portable-windows8+net45" />
+    <file src="bin\Release\Appccelerate.StateMachine.pdb" target="lib\portable-windows8+net45" />
+    <file src="bin\Release\Appccelerate.StateMachine.xml" target="lib\portable-windows8+net45" />
+    <file src="**\*.cs" target="src" />
   </files>  
 </package>
