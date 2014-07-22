@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ExtensionTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2013
+//   Copyright (c) 2008-2014
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -151,6 +151,38 @@ namespace Appccelerate.StateMachine
                 this.testee, 
                 A<ITransitionContext<States, Events>>.That.Matches(
                     c => c.EventId.Value == NewEvent && c.EventArgument == newEventArgument)))
+                .MustHaveHappened();
+        }
+
+        [Fact]
+        public void NotifiesAboutTransitions()
+        {
+            const States Source = States.A;
+            const States Target = States.B;
+            const Events Event = Events.B;
+
+            this.testee.In(Source)
+                .On(Event).Goto(Target);
+
+            this.testee.Initialize(Source);
+            this.testee.EnterInitialState();
+
+            this.testee.Fire(Event);
+
+            A.CallTo(() => this.extension.ExecutingTransition(
+                this.testee,
+                A<ITransition<States, Events>>.That.Matches(
+                    t => t.Source.Id == Source && t.Target.Id == Target),
+                A<ITransitionContext<States, Events>>.That.Matches(
+                    c => c.EventId.Value == Event && c.State.Id == Source)))
+                .MustHaveHappened();
+
+            A.CallTo(() => this.extension.ExecutedTransition(
+                this.testee,
+                A<ITransition<States, Events>>.That.Matches(
+                    t => t.Source.Id == Source && t.Target.Id == Target),
+                A<ITransitionContext<States, Events>>.That.Matches(
+                    c => c.EventId.Value == Event && c.State.Id == Source)))
                 .MustHaveHappened();
         }
 

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="Transition.cs" company="Appccelerate">
-//   Copyright (c) 2008-2013
+//   Copyright (c) 2008-2014
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -73,6 +73,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             }
 
             context.OnTransitionBegin();
+
+            this.extensionHost.ForEach(extension => extension.ExecutingTransition(
+                this.stateMachineInformation,
+                this,
+                context));
 
             IState<TState, TEvent> newState = context.State;
 
