@@ -11,7 +11,7 @@
     <AssemblyName>Appccelerate.StateMachine.Specs</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>65258af2</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>08c37489</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,24 +33,28 @@
     <NoWarn>169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Appccelerate.Fundamentals, Version=2.5.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
+    <Reference Include="Appccelerate.Fundamentals, Version=2.6.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Appccelerate.Fundamentals.2.5.0\lib\portable-windows8+net45\Appccelerate.Fundamentals.dll</HintPath>
+      <HintPath>..\packages\Appccelerate.Fundamentals.2.6.0\lib\portable-windows8+net45\Appccelerate.Fundamentals.dll</HintPath>
     </Reference>
-    <Reference Include="FakeItEasy">
-      <HintPath>..\packages\FakeItEasy.1.19.0\lib\net40\FakeItEasy.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentAssertions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+    <Reference Include="FakeItEasy, Version=1.24.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FluentAssertions.2.2.0.0\lib\net45\FluentAssertions.dll</HintPath>
+      <HintPath>..\packages\FakeItEasy.1.24.0\lib\net40\FakeItEasy.dll</HintPath>
     </Reference>
-    <Reference Include="Machine.Specifications, Version=0.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FluentAssertions, Version=3.2.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Machine.Specifications.0.8.1\lib\net45\Machine.Specifications.dll</HintPath>
+      <HintPath>..\packages\FluentAssertions.3.2.1\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>
-    <Reference Include="Machine.Specifications.Clr4, Version=0.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FluentAssertions.Core">
+      <HintPath>..\packages\FluentAssertions.3.2.1\lib\net45\FluentAssertions.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications, Version=0.8.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Machine.Specifications.0.8.1\lib\net45\Machine.Specifications.Clr4.dll</HintPath>
+      <HintPath>..\packages\Machine.Specifications.0.8.3\lib\net45\Machine.Specifications.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications.Clr4, Version=0.8.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Machine.Specifications.0.8.3\lib\net45\Machine.Specifications.Clr4.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -85,7 +89,6 @@
   <ItemGroup>
     <None Include="NuGet.config" />
     <None Include="packages.config" />
-    <None Include="ripple.dependencies.config" />
     <None Include="Settings.stylecop" />
   </ItemGroup>
   <ItemGroup>
@@ -107,14 +110,14 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.CheckHintPathTask.1.7.0\build\Appccelerate.CheckHintPathTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.CheckHintPathTask.1.7.0\build\Appccelerate.CheckHintPathTask.targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.VersionTask.1.2.0\build\Appccelerate.VersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.VersionTask.1.2.0\build\Appccelerate.VersionTask.targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.Development.1.4.0\build\Appccelerate.development.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.1.4.0\build\Appccelerate.development.targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.Development.Specs.1.4.0\build\Appccelerate.Development.Specs.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.Specs.1.4.0\build\Appccelerate.Development.Specs.targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.Development.1.5.0\build\Appccelerate.development.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.1.5.0\build\Appccelerate.development.targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.VersionTask.1.9.0\build\Appccelerate.VersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.VersionTask.1.9.0\build\Appccelerate.VersionTask.targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.CheckHintPathTask.1.8.0\build\Appccelerate.CheckHintPathTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.CheckHintPathTask.1.8.0\build\Appccelerate.CheckHintPathTask.targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.Development.Specs.1.5.0\build\Appccelerate.Development.Specs.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.Specs.1.5.0\build\Appccelerate.Development.Specs.targets'))" />
   </Target>
   <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
-  <Import Project="..\packages\Appccelerate.CheckHintPathTask.1.7.0\build\Appccelerate.CheckHintPathTask.targets" Condition="Exists('..\packages\Appccelerate.CheckHintPathTask.1.7.0\build\Appccelerate.CheckHintPathTask.targets')" />
-  <Import Project="..\packages\Appccelerate.VersionTask.1.2.0\build\Appccelerate.VersionTask.targets" Condition="Exists('..\packages\Appccelerate.VersionTask.1.2.0\build\Appccelerate.VersionTask.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.1.4.0\build\Appccelerate.development.targets" Condition="Exists('..\packages\Appccelerate.Development.1.4.0\build\Appccelerate.development.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.Specs.1.4.0\build\Appccelerate.Development.Specs.targets" Condition="Exists('..\packages\Appccelerate.Development.Specs.1.4.0\build\Appccelerate.Development.Specs.targets')" />
+  <Import Project="..\packages\Appccelerate.Development.1.5.0\build\Appccelerate.development.targets" Condition="Exists('..\packages\Appccelerate.Development.1.5.0\build\Appccelerate.development.targets')" />
+  <Import Project="..\packages\Appccelerate.VersionTask.1.9.0\build\Appccelerate.VersionTask.targets" Condition="Exists('..\packages\Appccelerate.VersionTask.1.9.0\build\Appccelerate.VersionTask.targets')" />
+  <Import Project="..\packages\Appccelerate.CheckHintPathTask.1.8.0\build\Appccelerate.CheckHintPathTask.targets" Condition="Exists('..\packages\Appccelerate.CheckHintPathTask.1.8.0\build\Appccelerate.CheckHintPathTask.targets')" />
+  <Import Project="..\packages\Appccelerate.Development.Specs.1.5.0\build\Appccelerate.Development.Specs.targets" Condition="Exists('..\packages\Appccelerate.Development.Specs.1.5.0\build\Appccelerate.Development.Specs.targets')" />
 </Project>
