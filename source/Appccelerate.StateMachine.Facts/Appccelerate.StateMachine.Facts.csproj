@@ -31,9 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Appccelerate.Fundamentals, Version=2.6.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Appccelerate.Fundamentals.2.6.0\lib\portable-windows8+net45\Appccelerate.Fundamentals.dll</HintPath>
+    <Reference Include="Appccelerate.Fundamentals">
+      <HintPath>..\packages\Appccelerate.Fundamentals.2.7.0\lib\portable-windows8+net45\Appccelerate.Fundamentals.dll</HintPath>
     </Reference>
     <Reference Include="FakeItEasy, Version=1.24.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
