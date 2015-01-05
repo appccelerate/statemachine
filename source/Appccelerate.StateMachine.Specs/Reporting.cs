@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="ReportSpecifications.cs" company="Appccelerate">
+// <copyright file="Reporting.cs" company="Appccelerate">
 //   Copyright (c) 2008-2014
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,29 +19,28 @@
 namespace Appccelerate.StateMachine
 {
     using System.Collections.Generic;
-
     using Appccelerate.StateMachine.Machine;
-
     using FakeItEasy;
+    using Xbehave;
 
-    using global::Machine.Specifications;
-
-    [Subject("Reports")]
-    public class When_requesting_a_report
+    public class Reporting
     {
-        static IStateMachine<string, int> machine;
-        static IStateMachineReport<string, int> report;
-        
-        Establish context = () =>
-            {
-                machine = new PassiveStateMachine<string, int>();
+        [Scenario]
+        public void Report(
+            IStateMachine<string, int> machine,
+            IStateMachineReport<string, int> report)
+        {
+            "establish a state machine"._(() =>
+                machine = new PassiveStateMachine<string, int>());
 
-                report = A.Fake<IStateMachineReport<string, int>>();
-            };
+            "establish a state machine reporter"._(() =>
+                report = A.Fake<IStateMachineReport<string, int>>());
 
-        Because of = () => machine.Report(report);
+            "when creating a report"._(() => 
+                machine.Report(report));
 
-        It should_call_the_passed_reporter = () =>
-            A.CallTo(() => report.Report(A<string>._, A<IEnumerable<IState<string, int>>>._, A<Initializable<string>>._));
+            "it should call the passed reporter"._(() =>
+                A.CallTo(() => report.Report(A<string>._, A<IEnumerable<IState<string, int>>>._, A<Initializable<string>>._)));
+        }
     }
 }
