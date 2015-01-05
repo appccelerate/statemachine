@@ -19,10 +19,10 @@
 namespace Appccelerate.StateMachine
 {
     using FluentAssertions;
-    using global::Machine.Specifications;
 
-    [Subject(Concern.Transition)]
-    public class When_firing_an_event_onto_a_started_state_machine
+    using Xbehave;
+
+    public class Transitions
     {
         const int SourceState = 1;
         const int DestinationState = 2;
@@ -30,60 +30,49 @@ namespace Appccelerate.StateMachine
 
         const string Parameter = "parameter";
 
-        static string actualParameter;
-        static bool exitActionExecuted;
-        static bool entryActionExecuted;
+        static readonly CurrentStateExtension CurrentStateExtension = new CurrentStateExtension();
 
-        static PassiveStateMachine<int, int> machine;
-
-        static CurrentStateExtension currentStateExtension;
-
-        Establish context = () =>
-            {
-                machine = new PassiveStateMachine<int, int>();
-
-                currentStateExtension = new CurrentStateExtension();
-                machine.AddExtension(currentStateExtension);
-
-                machine.In(SourceState)
-                    .ExecuteOnExit(() => exitActionExecuted = true)
-                    .On(Event).Goto(DestinationState).Execute<string>(p => actualParameter = p);
-
-                machine.In(DestinationState)
-                    .ExecuteOnEntry(() => entryActionExecuted = true);
-
-                machine.Initialize(SourceState);
-                machine.Start();
-            };
-
-        Because of = () =>
-            {
-                machine.Fire(Event, Parameter);
-            };
-
-        It should_execute_transition_by_switching_state = () =>
-            {
-                currentStateExtension.CurrentState.Should().Be(DestinationState);
-            };
-
-        It should_execute_transition_actions = () =>
-            {
-                actualParameter.Should().NotBeNull();
-            };
-
-        It should_pass_parameters_to_transition_action = () =>
-            {
-                actualParameter.Should().Be(Parameter);
-            };
-
-        It should_execute_exit_action_of_source_state = () =>
-            {
-                exitActionExecuted.Should().BeTrue();
-            };
-
-        It should_execute_entry_action_of_destination_state = () =>
+        [Scenario]
+        public void ExecutingTransition(
+            PassiveStateMachine<int, int> machine,
+            string actualParameter,
+            bool exitActionExecuted,
+            bool entryActionExecuted)
         {
-            entryActionExecuted.Should().BeTrue();
-        };
+            "establish a state machine with transitions"._(() =>
+                {
+                    machine = new PassiveStateMachine<int, int>();
+
+                    machine.AddExtension(CurrentStateExtension);
+
+                    machine.In(SourceState)
+                        .ExecuteOnExit(() => exitActionExecuted = true)
+                        .On(Event).Goto(DestinationState).Execute<string>(p => actualParameter = p);
+
+                    machine.In(DestinationState)
+                        .ExecuteOnEntry(() => entryActionExecuted = true);
+
+                    machine.Initialize(SourceState);
+                    machine.Start();
+                });
+
+            "when firing an event onto the state machine"._(() =>
+                machine.Fire(Event, Parameter));
+
+            "it should_execute_transition_by_switching_state"._(() =>
+                 CurrentStateExtension.CurrentState.Should().Be(DestinationState));
+
+            "it should_execute_transition_actions"._(() =>
+                 actualParameter.Should().NotBeNull());
+
+            "it should_pass_parameters_to_transition_action"._(() =>
+                 actualParameter.Should().Be(Parameter));
+
+            "it should_execute_exit_action_of_source_state"._(() =>
+                 exitActionExecuted.Should().BeTrue());
+
+            "it should_execute_entry_action_of_destination_state"._(() =>
+                entryActionExecuted.Should().BeTrue());
+        }
     }
 }
