@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="GlobalAssemblyInfo.cs" company="Appccelerate">
-//   Copyright (c) 2008-2014
+//   Copyright (c) 2008-2015
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyCompany("Appccelerate")]
 [assembly: AssemblyProduct("Appccelerate")]
-[assembly: AssemblyCopyright("Copyright ©  2008-2014")]
+[assembly: AssemblyCopyright("Copyright ©  2008-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
