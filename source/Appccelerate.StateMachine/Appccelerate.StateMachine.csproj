@@ -11,7 +11,7 @@
     <RootNamespace>Appccelerate.StateMachine</RootNamespace>
     <AssemblyName>Appccelerate.StateMachine</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <NuGetPackageImportStamp>fc9b318a</NuGetPackageImportStamp>
@@ -86,6 +86,7 @@
     <Compile Include="Machine\ITransitionDictionary.cs" />
     <Compile Include="Machine\ITransitionResult.cs" />
     <Compile Include="Machine\Missable.cs" />
+    <Compile Include="Machine\Missing.cs" />
     <Compile Include="Machine\RecordType.cs" />
     <Compile Include="Machine\StandardFactory.cs" />
     <Compile Include="Machine\StateBuilder.g.cs" />
@@ -123,7 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Appccelerate.Fundamentals">
-      <HintPath>..\packages\Appccelerate.Fundamentals.2.8.0\lib\portable-windows8+net45\Appccelerate.Fundamentals.dll</HintPath>
+      <HintPath>..\packages\Appccelerate.Fundamentals.2.13.0\lib\portable-windows8+net45+wp80\Appccelerate.Fundamentals.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
