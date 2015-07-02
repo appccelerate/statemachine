@@ -20,6 +20,8 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
 
+    using FluentAssertions;
+
     using Xunit;
 
     /// <summary>
@@ -46,12 +48,13 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void AddHierarchicalStatesInitialStateIsSuperStateItself()
         {
-            Assert.Throws<ArgumentException>(
-                () => this.testee.DefineHierarchyOn(StateMachine.States.B)
-                    .WithHistoryType(HistoryType.None)
-                    .WithInitialSubState(StateMachine.States.B)
-                    .WithSubState(StateMachine.States.B1)
-                    .WithSubState(StateMachine.States.B2));
+            Action action = () => this.testee.DefineHierarchyOn(StateMachine.States.B)
+                                  .WithHistoryType(HistoryType.None)
+                                  .WithInitialSubState(StateMachine.States.B)
+                                  .WithSubState(StateMachine.States.B1)
+                                  .WithSubState(StateMachine.States.B2);
+
+            action.ShouldThrow<ArgumentException>();
         }
     }
 }

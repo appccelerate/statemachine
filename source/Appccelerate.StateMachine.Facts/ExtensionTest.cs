@@ -24,6 +24,8 @@ namespace Appccelerate.StateMachine
     
     using FakeItEasy;
 
+    using FluentAssertions;
+
     using Xunit;
 
     /// <summary>
@@ -96,7 +98,7 @@ namespace Appccelerate.StateMachine
 
             States? actualState = this.testee.CurrentStateId;
 
-            Assert.Equal(States.B, actualState);
+            actualState.Should().Be(States.B);
         }
 
         /// <summary>

@@ -21,8 +21,7 @@ namespace Appccelerate.StateMachine.Machine
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
-
+    
     using Appccelerate.StateMachine.Machine.Events;
     using Appccelerate.StateMachine.Persistence;
     using Appccelerate.StateMachine.Syntax;
@@ -286,14 +285,14 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="reportGenerator">The report generator.</param>
         public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
         {
-            Ensure.ArgumentNotNull(reportGenerator, "reportGenerator");
+            Guard.AgainstNullArgument("reportGenerator", reportGenerator);
 
             reportGenerator.Report(this.ToString(), this.states.GetStates(), this.initialStateId);
         }
 
         public void Save(IStateMachineSaver<TState> stateMachineSaver)
         {
-            Ensure.ArgumentNotNull(stateMachineSaver, "stateMachineSaver");
+            Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
 
             stateMachineSaver.SaveCurrentState(this.currentState != null ? 
                 new Initializable<TState> { Value = this.currentState.Id } : 
@@ -313,7 +312,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public void Load(IStateMachineLoader<TState> stateMachineLoader)
         {
-            Ensure.ArgumentNotNull(stateMachineLoader, "stateMachineLoader");
+            Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
             this.CheckThatStateMachineIsNotAlreadyInitialized();
 
             this.LoadCurrentState(stateMachineLoader);

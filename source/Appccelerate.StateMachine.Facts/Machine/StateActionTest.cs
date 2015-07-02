@@ -46,7 +46,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.EnterInitialState();
 
-            Assert.True(entered, "entry action was not executed.");
+            entered.Should().BeTrue("entry action was not executed.");
         }
 
         [Fact]
@@ -70,16 +70,18 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ParameterizedEntryAction()
         {
-            int i = 0;
+            const int Parameter = 3;
 
+            int receivedValue = 0;
+            
             this.testee.In(StateMachine.States.A)
-                .ExecuteOnEntryParametrized(parameter => i = parameter, 3);
+                .ExecuteOnEntryParametrized(parameter => receivedValue = parameter, Parameter);
 
             this.testee.Initialize(StateMachine.States.A);
 
             this.testee.EnterInitialState();
 
-            Assert.Equal(3, i);
+            receivedValue.Should().Be(Parameter);
         }
 
         [Fact]
@@ -96,7 +98,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B);
 
-            Assert.True(exit, "exit action was not executed.");
+            exit.Should().BeTrue("exit action was not executed.");
         }
 
         [Fact]
@@ -122,10 +124,12 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ParametrizedExitAction()
         {
-            int i = 0;
+            const int Parameter = 3;
+
+            int receivedValue = 0;
 
             this.testee.In(StateMachine.States.A)
-                .ExecuteOnExitParametrized(value => i = value, 3)
+                .ExecuteOnExitParametrized(value => receivedValue = value, Parameter)
                 .On(StateMachine.Events.B).Goto(StateMachine.States.B);
 
             this.testee.Initialize(StateMachine.States.A);
@@ -133,7 +137,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B);
 
-            Assert.Equal(i, 3);
+            receivedValue.Should().Be(Parameter);
         }
     }
 }

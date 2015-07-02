@@ -70,7 +70,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <returns>Exit action syntax.</returns>
         IEntryActionSyntax<TState, TEvent> IEntryActionSyntax<TState, TEvent>.ExecuteOnEntry(Action action)
         {
-            Ensure.ArgumentNotNull(action, "action");
+            Guard.AgainstNullArgument("action", action);
 
             this.state.EntryActions.Add(this.factory.CreateActionHolder(action));    
             
@@ -79,7 +79,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public IEntryActionSyntax<TState, TEvent> ExecuteOnEntry<T>(Action<T> action)
         {
-            Ensure.ArgumentNotNull(action, "action");
+            Guard.AgainstNullArgument("action", action);
 
             this.state.EntryActions.Add(this.factory.CreateActionHolder(action));
 
@@ -107,7 +107,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <returns>Event syntax.</returns>
         IExitActionSyntax<TState, TEvent> IExitActionSyntax<TState, TEvent>.ExecuteOnExit(Action action)
         {
-            Ensure.ArgumentNotNull(action, "action");
+            Guard.AgainstNullArgument("action", action);
 
             this.state.ExitActions.Add(this.factory.CreateActionHolder(action));
             
@@ -116,7 +116,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public IExitActionSyntax<TState, TEvent> ExecuteOnExit<T>(Action<T> action)
         {
-            Ensure.ArgumentNotNull(action, "action");
+            Guard.AgainstNullArgument("action", action);
 
             this.state.ExitActions.Add(this.factory.CreateActionHolder(action));
 

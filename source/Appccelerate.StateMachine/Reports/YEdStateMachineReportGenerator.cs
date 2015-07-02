@@ -72,7 +72,7 @@ namespace Appccelerate.StateMachine.Reports
             this.edgeId = 0;
 
             this.initialStateId = initialState;
-            Ensure.ArgumentNotNull(statesList, "states");
+            Guard.AgainstNullArgument("states", statesList);
 
             XElement graph = CreateGraph();
 

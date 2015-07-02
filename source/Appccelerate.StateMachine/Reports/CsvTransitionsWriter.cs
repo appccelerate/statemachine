@@ -55,7 +55,7 @@ namespace Appccelerate.StateMachine.Reports
         {
             states = states.ToList();
 
-            Ensure.ArgumentNotNull(states, "states");
+            Guard.AgainstNullArgument("states", states);
 
             this.WriteTransitionsHeader();
 

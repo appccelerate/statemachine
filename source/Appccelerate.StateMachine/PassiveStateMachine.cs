@@ -271,7 +271,7 @@ namespace Appccelerate.StateMachine
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
         public void Save(IStateMachineSaver<TState> stateMachineSaver)
         {
-            Ensure.ArgumentNotNull(stateMachineSaver, "stateMachineSaver");
+            Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
 
             this.stateMachine.Save(stateMachineSaver);
         }
@@ -283,7 +283,7 @@ namespace Appccelerate.StateMachine
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
         public void Load(IStateMachineLoader<TState> stateMachineLoader)
         {
-            Ensure.ArgumentNotNull(stateMachineLoader, "stateMachineLoader");
+            Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
             
             this.CheckThatNotAlreadyInitialized();
 

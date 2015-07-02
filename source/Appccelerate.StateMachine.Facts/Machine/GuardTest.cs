@@ -68,7 +68,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B);
 
-            Assert.Equal(StateMachine.States.B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B, 3);
 
-            Assert.Equal(StateMachine.States.B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
         }
 
         private static bool SingleIntArgumentGuardReturningTrue(int i)

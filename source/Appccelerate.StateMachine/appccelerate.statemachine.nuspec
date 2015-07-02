@@ -29,7 +29,7 @@
       <frameworkAssembly assemblyName="System.Core" targetFramework="portable-windows8+net45+wp80" />
     </frameworkAssemblies>
     <dependencies>
-      <dependency id="Appccelerate.Fundamentals" version="[2.13,3.0)" />
+      <dependency id="Appccelerate.Fundamentals" version="[3.0,4.0)" />
     </dependencies>	
   </metadata>
   <files>

@@ -173,7 +173,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.Initialize(StateMachine.States.A);
             this.testee.EnterInitialState();
 
-            Assert.Equal(StateMachine.States.A, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
             
             this.CheckRecord<EntryRecord>(StateMachine.States.A);
             this.CheckNoRemainingRecords();
@@ -189,7 +189,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.Initialize(StateMachine.States.D1B);
             this.testee.EnterInitialState();
 
-            Assert.Equal(StateMachine.States.D1B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.D1B);
 
             this.CheckRecord<EntryRecord>(StateMachine.States.D);
             this.CheckRecord<EntryRecord>(StateMachine.States.D1);
@@ -207,7 +207,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.Initialize(StateMachine.States.D);
             this.testee.EnterInitialState();
 
-            Assert.Equal(StateMachine.States.D1A, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.D1A);
 
             this.CheckRecord<EntryRecord>(StateMachine.States.D);
             this.CheckRecord<EntryRecord>(StateMachine.States.D1);
@@ -266,7 +266,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.A);
 
-            Assert.Equal(StateMachine.States.A, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.E);
             this.CheckRecord<EntryRecord>(StateMachine.States.A);
@@ -288,7 +288,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B2);
 
-            Assert.Equal(StateMachine.States.B2, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.B2);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.B1);
             this.CheckRecord<EntryRecord>(StateMachine.States.B2);
@@ -310,7 +310,7 @@ namespace Appccelerate.StateMachine.Machine
             
             this.testee.Fire(StateMachine.Events.C1B);
 
-            Assert.Equal(StateMachine.States.C1B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.C1B);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.B2);
             this.CheckRecord<ExitRecord>(StateMachine.States.B);
@@ -335,7 +335,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B1);
 
-            Assert.Equal(StateMachine.States.B1, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.B1);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.D1B);
             this.CheckRecord<ExitRecord>(StateMachine.States.D1);
@@ -359,7 +359,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B);
 
-            Assert.Equal(StateMachine.States.B1, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.B1);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.A);
             this.CheckRecord<EntryRecord>(StateMachine.States.B);
@@ -403,7 +403,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.C);
 
-            Assert.Equal(StateMachine.States.C1A, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.C1A);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.A);
             this.CheckRecord<EntryRecord>(StateMachine.States.C);
@@ -427,7 +427,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.D);
 
-            Assert.Equal(StateMachine.States.D1B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.D1B);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.A);
             this.CheckRecord<EntryRecord>(StateMachine.States.D);
@@ -449,7 +449,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.A);
 
-            Assert.Equal(StateMachine.States.A, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.C1B);
             this.CheckRecord<ExitRecord>(StateMachine.States.C1);
@@ -470,7 +470,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.A);
 
-            Assert.Equal(StateMachine.States.A, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
         }
 
         [Fact]
@@ -482,7 +482,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.E);
 
-            Assert.Equal(StateMachine.States.E, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.E);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.E);
             this.CheckRecord<EntryRecord>(StateMachine.States.E);
@@ -498,7 +498,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.C1B);
 
-            Assert.Equal(StateMachine.States.C1B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.C1B);
 
             this.CheckRecord<ExitRecord>(StateMachine.States.C1A);
             this.CheckRecord<EntryRecord>(StateMachine.States.C1B);
@@ -556,8 +556,6 @@ namespace Appccelerate.StateMachine.Machine
         {
             Record record = this.records.FirstOrDefault();
 
-            var x = record.As<T>();
-
             record.Should().NotBeNull();
             record.Should().BeAssignableTo<T>();
             // ReSharper disable once PossibleNullReferenceException
@@ -583,7 +581,7 @@ namespace Appccelerate.StateMachine.Machine
                 sb.Append(s);
             }
 
-            Assert.True(this.records.Count == 0, sb.ToString());
+            this.records.Should().BeEmpty(sb.ToString());
         }
 
         /// <summary>

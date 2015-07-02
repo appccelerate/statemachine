@@ -53,8 +53,8 @@ namespace Appccelerate.StateMachine.Reports
         {
             states = states.ToList();
 
-            Ensure.ArgumentNotNull(states, "states");
-            Ensure.ArgumentNotNull(initialStateId, "initialStateId");
+            Guard.AgainstNullArgument("states", states);
+            Guard.AgainstNullArgument("initialStateId", initialStateId);
 
             var report = new StringBuilder();
 

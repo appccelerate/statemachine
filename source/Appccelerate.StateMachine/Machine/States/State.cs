@@ -212,7 +212,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <returns>The result of the transition.</returns>
         public ITransitionResult<TState, TEvent> Fire(ITransitionContext<TState, TEvent> context)
         {
-            Ensure.ArgumentNotNull(context, "context");
+            Guard.AgainstNullArgument("context", context);
 
             ITransitionResult<TState, TEvent> result = TransitionResult<TState, TEvent>.NotFired;
 
@@ -239,7 +239,7 @@ namespace Appccelerate.StateMachine.Machine.States
 
         public void Entry(ITransitionContext<TState, TEvent> context)
         {
-            Ensure.ArgumentNotNull(context, "context");
+            Guard.AgainstNullArgument("context", context);
 
             context.AddRecord(this.Id, RecordType.Enter);
 
@@ -248,7 +248,7 @@ namespace Appccelerate.StateMachine.Machine.States
 
         public void Exit(ITransitionContext<TState, TEvent> context)
         {
-            Ensure.ArgumentNotNull(context, "context");
+            Guard.AgainstNullArgument("context", context);
 
             context.AddRecord(this.Id, RecordType.Exit);
 

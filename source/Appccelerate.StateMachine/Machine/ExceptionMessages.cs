@@ -77,7 +77,7 @@ namespace Appccelerate.StateMachine.Machine
             where TState : IComparable
             where TEvent : IComparable
         {
-            Ensure.ArgumentNotNull(stateAlreadyHavingASuperState, "stateAlreadyHavingASuperState");
+            Guard.AgainstNullArgument("stateAlreadyHavingASuperState", stateAlreadyHavingASuperState);
 
             return string.Format(
                 CultureInfo.InvariantCulture,
@@ -99,7 +99,7 @@ namespace Appccelerate.StateMachine.Machine
             where TState : IComparable
             where TEvent : IComparable
         {
-            Ensure.ArgumentNotNull(transition, "transition");
+            Guard.AgainstNullArgument("transition", transition);
 
             return string.Format(
                         CultureInfo.InvariantCulture,

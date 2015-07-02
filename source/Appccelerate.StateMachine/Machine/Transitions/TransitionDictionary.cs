@@ -75,7 +75,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <param name="transition">The transition.</param>
         public void Add(TEvent eventId, ITransition<TState, TEvent> transition)
         {
-            Ensure.ArgumentNotNull(transition, "transition");
+            Guard.AgainstNullArgument("transition", transition);
 
             this.CheckTransitionDoesNotYetExist(transition);
 

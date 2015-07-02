@@ -135,9 +135,9 @@ namespace Appccelerate.StateMachine
             this.testee.Stop();
             bool runningAfterStop = this.testee.IsRunning;
 
-            Assert.False(runningInitially, "initially");
-            Assert.True(runningAfterStart, "after start");
-            Assert.False(runningAfterStop, "after stop");
+            runningInitially.Should().BeFalse("initially");
+            runningAfterStart.Should().BeTrue("after start");
+            runningAfterStop.Should().BeFalse("after stop");
         }
 
         /// <summary>
@@ -207,9 +207,6 @@ namespace Appccelerate.StateMachine
                     this.testee.FirePriority(Events.C);
                 });
 
-            this.testee.TransitionCompleted += (s, e) => Console.WriteLine("completed " + e.StateId + " to " + e.NewStateId);
-            this.testee.TransitionExceptionThrown += (s, e) => Console.WriteLine("Exception: " + e.Exception);
-
             this.testee.In(States.B)
                 .On(Events.C).Goto(States.C);
 
@@ -223,7 +220,7 @@ namespace Appccelerate.StateMachine
 
             this.WaitForAllTransitions(allTransitionsCompleted);
 
-            Assert.Equal(Transitions, this.TransitionCompletedMessages.Count);
+            this.TransitionCompletedMessages.Count.Should().Be(Transitions);
             this.CheckNoDeclinedTransitionMessage();
             this.CheckNoExceptionMessage();
         }
@@ -249,18 +246,18 @@ namespace Appccelerate.StateMachine
 
             this.testee.Stop();
 
-            Assert.False(this.testee.IsRunning, "after stop, state machine should not be running.");
+            this.testee.IsRunning.Should().BeFalse("after stop, state machine should not be running.");
 
             this.testee.Fire(Events.B);
             this.testee.Fire(Events.C);
 
-            Assert.Equal(0, this.TransitionBeginMessages.Count);
+            this.TransitionBeginMessages.Count.Should().Be(0);
 
             this.testee.Start();
 
             this.WaitForAllTransitions(allTransitionsCompleted);
 
-            Assert.Equal(Transitions, this.TransitionCompletedMessages.Count);
+            this.TransitionCompletedMessages.Count.Should().Be(Transitions);
         }
 
         /// <summary>
@@ -274,7 +271,7 @@ namespace Appccelerate.StateMachine
             this.testee.Start();
             this.testee.Start();
 
-            Assert.True(this.testee.IsRunning);
+            this.testee.IsRunning.Should().BeTrue();
         }
 
         /// <summary>
@@ -282,7 +279,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         private void CheckNoDeclinedTransitionMessage()
         {
-            Assert.Empty(this.TransitionDeclinedMessages);
+            this.TransitionDeclinedMessages.Should().BeEmpty();
         }
 
         /// <summary>
@@ -290,7 +287,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         private void CheckNoExceptionMessage()
         {
-            Assert.Empty(this.Exceptions);
+            this.Exceptions.Should().BeEmpty();
         }
 
         /// <summary>
@@ -355,7 +352,7 @@ namespace Appccelerate.StateMachine
         /// <param name="allTransitionsCompleted">All transitions completed.</param>
         private void WaitForAllTransitions(AutoResetEvent allTransitionsCompleted)
         {
-            Assert.True(allTransitionsCompleted.WaitOne(1000), "not enough transition completed events received within time-out.");
+            allTransitionsCompleted.WaitOne(1000).Should().BeTrue("not enough transition completed events received within time-out.");
         }
     }
 }

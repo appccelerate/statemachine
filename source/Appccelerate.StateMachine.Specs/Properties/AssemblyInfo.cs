@@ -17,9 +17,6 @@
 //-------------------------------------------------------------------------------
 
 using System.Reflection;
-using Xbehave;
 
 [assembly: AssemblyTitle("Appccelerate.StateMachine.Specification")]
 [assembly: AssemblyDescription("")]
-
-[assembly: ContinueOnFailureAfter(StepType.Any)]

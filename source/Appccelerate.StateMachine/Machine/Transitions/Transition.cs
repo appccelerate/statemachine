@@ -24,6 +24,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
     using Appccelerate.StateMachine.Machine.ActionHolders;
     using Appccelerate.StateMachine.Machine.GuardHolders;
+    using LiteGuard = Guard;
     
     public class Transition<TState, TEvent>
         : ITransition<TState, TEvent>
@@ -60,7 +61,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
         public ITransitionResult<TState, TEvent> Fire(ITransitionContext<TState, TEvent> context)
         {
-            Ensure.ArgumentNotNull(context, "context");
+            LiteGuard.AgainstNullArgument("context", context);
 
             if (!this.ShouldFire(context))
             {

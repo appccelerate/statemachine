@@ -14,7 +14,7 @@
     <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <NuGetPackageImportStamp>fc9b318a</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>8bb99215</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,6 +53,9 @@
     <Compile Include="ActiveStateMachine.cs" />
     <Compile Include="EventInformation.cs" />
     <Compile Include="Extensions\ExtensionBase.cs" />
+    <Compile Include="Guard.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="HistoryType.cs" />
     <Compile Include="IStateMachine.cs" />
     <Compile Include="IStateMachineInformation.cs" />
@@ -124,7 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Appccelerate.Fundamentals">
-      <HintPath>..\packages\Appccelerate.Fundamentals.2.13.0\lib\portable-windows8+net45+wp80\Appccelerate.Fundamentals.dll</HintPath>
+      <HintPath>..\packages\Appccelerate.Fundamentals.3.0.0\lib\portable-windows8+net45+wp80\Appccelerate.Fundamentals.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
@@ -139,19 +142,19 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.VersionTask.1.17.0\build\Appccelerate.VersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.VersionTask.1.17.0\build\Appccelerate.VersionTask.targets'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.CheckNugetDependenciesTask.1.13.0\build\Appccelerate.CheckNugetDependenciesTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.CheckNugetDependenciesTask.1.13.0\build\Appccelerate.CheckNugetDependenciesTask.targets'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.Development.ProductionCode.Signed.1.14.0\build\Appccelerate.development.ProductionCode.Signed.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.ProductionCode.Signed.1.14.0\build\Appccelerate.development.ProductionCode.Signed.targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.Development.ProductionCode.1.14.0\build\Appccelerate.development.ProductionCode.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.ProductionCode.1.14.0\build\Appccelerate.development.ProductionCode.targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.Development.1.14.0\build\Appccelerate.development.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.1.14.0\build\Appccelerate.development.targets'))" />
+    <Error Condition="!Exists('..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.Development.1.21.0\build\Appccelerate.development.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.1.21.0\build\Appccelerate.development.targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.Development.ProductionCode.1.21.0\build\Appccelerate.development.ProductionCode.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.ProductionCode.1.21.0\build\Appccelerate.development.ProductionCode.targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.Development.ProductionCode.Signed.1.21.0\build\Appccelerate.development.ProductionCode.Signed.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.ProductionCode.Signed.1.21.0\build\Appccelerate.development.ProductionCode.Signed.targets'))" />
   </Target>
-  <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
   <Import Project="..\packages\Appccelerate.VersionTask.1.17.0\build\Appccelerate.VersionTask.targets" Condition="Exists('..\packages\Appccelerate.VersionTask.1.17.0\build\Appccelerate.VersionTask.targets')" />
   <Import Project="..\packages\Appccelerate.CheckNugetDependenciesTask.1.13.0\build\Appccelerate.CheckNugetDependenciesTask.targets" Condition="Exists('..\packages\Appccelerate.CheckNugetDependenciesTask.1.13.0\build\Appccelerate.CheckNugetDependenciesTask.targets')" />
   <Import Project="..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets" Condition="Exists('..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.ProductionCode.Signed.1.14.0\build\Appccelerate.development.ProductionCode.Signed.targets" Condition="Exists('..\packages\Appccelerate.Development.ProductionCode.Signed.1.14.0\build\Appccelerate.development.ProductionCode.Signed.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.ProductionCode.1.14.0\build\Appccelerate.development.ProductionCode.targets" Condition="Exists('..\packages\Appccelerate.Development.ProductionCode.1.14.0\build\Appccelerate.development.ProductionCode.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.1.14.0\build\Appccelerate.development.targets" Condition="Exists('..\packages\Appccelerate.Development.1.14.0\build\Appccelerate.development.targets')" />
+  <Import Project="..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets')" />
+  <Import Project="..\packages\Appccelerate.Development.1.21.0\build\Appccelerate.development.targets" Condition="Exists('..\packages\Appccelerate.Development.1.21.0\build\Appccelerate.development.targets')" />
+  <Import Project="..\packages\Appccelerate.Development.ProductionCode.1.21.0\build\Appccelerate.development.ProductionCode.targets" Condition="Exists('..\packages\Appccelerate.Development.ProductionCode.1.21.0\build\Appccelerate.development.ProductionCode.targets')" />
+  <Import Project="..\packages\Appccelerate.Development.ProductionCode.Signed.1.21.0\build\Appccelerate.development.ProductionCode.Signed.targets" Condition="Exists('..\packages\Appccelerate.Development.ProductionCode.Signed.1.21.0\build\Appccelerate.development.ProductionCode.Signed.targets')" />
 </Project>

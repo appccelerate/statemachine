@@ -35,7 +35,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public HierarchyBuilder(IStateDictionary<TState, TEvent> states, TState superStateId)
         {
-            Ensure.ArgumentNotNull(states, "states");
+            Guard.AgainstNullArgument("states", states);
 
             this.states = states;
             this.superState = this.states[superStateId];
@@ -71,7 +71,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private void CheckThatStateHasNotAlreadyASuperState(IState<TState, TEvent> subState)
         {
-            Ensure.ArgumentNotNull(subState, "subState");
+            Guard.AgainstNullArgument("subState", subState);
 
             if (subState.SuperState != null)
             {

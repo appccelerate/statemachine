@@ -38,7 +38,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             where TState : IComparable
             where TEvent : IComparable
         {
-            Ensure.ArgumentNotNull(transition, "transition");
+            Guard.AgainstNullArgument("transition", transition);
 
             return string.Format(
                         CultureInfo.InvariantCulture,

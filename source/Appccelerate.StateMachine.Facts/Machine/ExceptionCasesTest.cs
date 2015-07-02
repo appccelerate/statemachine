@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.Machine
     using System.Collections.Generic;
 
     using Appccelerate.StateMachine.Persistence;
+    using Appccelerate.StateMachine.Syntax;
 
     using FakeItEasy;
 
@@ -63,8 +64,16 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExceptionIfNotInitialized()
         {
-            Assert.Throws<InvalidOperationException>(() => this.testee.CurrentStateId);
-            Assert.Throws<InvalidOperationException>(() => this.testee.Fire(StateMachine.Events.A));
+            Action action = () => this.testee.Fire(StateMachine.Events.A);
+            action.ShouldThrow<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void ExceptionIfNotInitialized_WhenAccessingCurrentState()
+        {
+            Action action = () => { var state = this.testee.CurrentStateId; };
+
+            action.ShouldThrow<InvalidOperationException>();
         }
 
         /// <summary>
@@ -75,8 +84,9 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.testee.Initialize(StateMachine.States.A);
 
-            Assert.Throws<InvalidOperationException>(
-                () => this.testee.Initialize(StateMachine.States.B));
+            Action action = () => this.testee.Initialize(StateMachine.States.B);
+
+            action.ShouldThrow<InvalidOperationException>();
         }
 
         /// <summary>
@@ -102,8 +112,8 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.Fire(StateMachine.Events.B, eventArguments);
 
             this.AssertException(StateMachine.States.A, StateMachine.Events.B, eventArguments, exception);
-            Assert.Equal(StateMachine.States.A, this.testee.CurrentStateId);
-            Assert.True(transitionDeclined, "transition was not declined.");
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
+            transitionDeclined.Should().BeTrue("transition was not declined.");
         }
 
         /// <summary>
@@ -128,7 +138,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.Fire(StateMachine.Events.B, eventArguments);
 
             this.AssertException(StateMachine.States.A, StateMachine.Events.B, eventArguments, exception);
-            Assert.Equal(StateMachine.States.B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
         }
 
         [Fact]
@@ -152,7 +162,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.Fire(StateMachine.Events.B, eventArguments);
 
             this.AssertException(StateMachine.States.A, StateMachine.Events.B, eventArguments, exception);
-            Assert.Equal(StateMachine.States.B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
         }
 
         [Fact]
@@ -174,7 +184,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.Fire(StateMachine.Events.B, eventArguments);
 
             this.AssertException(StateMachine.States.A, StateMachine.Events.B, eventArguments, exception);
-            Assert.Equal(StateMachine.States.B, this.testee.CurrentStateId);
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
         }
 
         /// <summary>
@@ -183,8 +193,8 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void NotInitialized()
         {
-            Assert.Throws<InvalidOperationException>(
-                () => this.testee.Fire(StateMachine.Events.B));
+            Action action = () => this.testee.Fire(StateMachine.Events.B);
+            action.ShouldThrow<InvalidOperationException>();
         }
 
         /// <summary>
@@ -196,11 +206,15 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.DefineHierarchyOn(StateMachine.States.A)
                 .WithHistoryType(HistoryType.None)
                 .WithInitialSubState(StateMachine.States.B);
-            
-            Assert.Throws<InvalidOperationException>(
-                () => this.testee.DefineHierarchyOn(StateMachine.States.C)
+
+            Action action = () =>
+            {
+                var x = this.testee.DefineHierarchyOn(StateMachine.States.C)
                     .WithHistoryType(HistoryType.None)
-                    .WithInitialSubState(StateMachine.States.B));
+                    .WithInitialSubState(StateMachine.States.B);
+            };
+
+            action.ShouldThrow<InvalidOperationException>();
         }
 
         [Fact]

@@ -63,8 +63,8 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.C);
 
-            Assert.True(declined, "Declined event was not fired");
-            Assert.Equal(StateMachine.States.A, this.testee.CurrentStateId);
+            declined.Should().BeTrue("Declined event was not fired");
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
         }
 
         /// <summary>
@@ -131,8 +131,8 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.A);
 
-            Assert.True(executed, "internal transition was not executed.");
-            Assert.Equal(StateMachine.States.A, this.testee.CurrentStateId);
+            executed.Should().BeTrue("internal transition was not executed.");
+            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
         }
 
         [Fact]
@@ -148,7 +148,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B);
 
-            Assert.True(executed);
+            executed.Should().BeTrue();
         }
 
         [Fact]
@@ -165,7 +165,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.testee.Fire(StateMachine.Events.B, ExpectedValue);
 
-            Assert.Equal(value, ExpectedValue);
+            value.Should().Be(ExpectedValue);
         }
     }
 }
