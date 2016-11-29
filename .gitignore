@@ -108,3 +108,6 @@ Backup*/
 UpgradeLog*.XML
 
 Specs
+source/.vs/*
+**/project.lock.json
+source/*/*.nuget.targets
