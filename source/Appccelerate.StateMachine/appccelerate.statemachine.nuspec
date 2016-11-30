@@ -21,21 +21,16 @@
       extensible thorough logging,
       state machine report for description of state machine (csv, yEd)</description>
     <releaseNotes>
+      Replace PCL with Portable .NET Standard Library
     </releaseNotes>
     <copyright>Copyright 2012-2014</copyright>
     <tags>Appccelerate state-machine</tags>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System" targetFramework="portable-windows8+net45+wp80" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework="portable-windows8+net45+wp80" />
-    </frameworkAssemblies>
     <dependencies>
       <dependency id="Appccelerate.Fundamentals" version="[3.0,4.0)" />
     </dependencies>	
   </metadata>
   <files>
-    <file src="bin\Release\Appccelerate.StateMachine.dll" target="lib\portable-windows8+net45+wp80" />
-    <file src="bin\Release\Appccelerate.StateMachine.pdb" target="lib\portable-windows8+net45+wp80" />
-    <file src="bin\Release\Appccelerate.StateMachine.xml" target="lib\portable-windows8+net45+wp80" />
-    <file src="**\*.cs" target="src" />
+    <file src="bin\Release\Appccelerate.StateMachine.dll" target="lib\netstandard1.0" />
+    <file src="bin\Release\Appccelerate.StateMachine.xml" target="lib\netstandard1.0" />
   </files>  
 </package>

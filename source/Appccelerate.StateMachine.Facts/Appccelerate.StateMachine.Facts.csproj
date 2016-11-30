@@ -33,9 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Appccelerate.Fundamentals, Version=3.0.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Appccelerate.Fundamentals.3.0.0\lib\portable-windows8+net45+wp80\Appccelerate.Fundamentals.dll</HintPath>
+    <Reference Include="Appccelerate.Fundamentals, Version=3.3.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Appccelerate.Fundamentals.3.3.0-commitea8ae2ca\lib\netstandard1.0\Appccelerate.Fundamentals.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FakeItEasy, Version=1.25.2.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -110,7 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Appccelerate.StateMachine\Appccelerate.StateMachine.csproj">
-      <Project>{2a577aa9-6c1c-4614-9b8b-94b4cad9cf81}</Project>
+      <Project>{b54161e1-04ff-44dc-b40d-a60cedb0c56b}</Project>
       <Name>Appccelerate.StateMachine</Name>
     </ProjectReference>
   </ItemGroup>
