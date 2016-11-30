@@ -133,8 +133,8 @@ namespace Appccelerate.StateMachine.Reports
         exit action: ExitA
         A -> internal actions:  guard: 
         B -> B actions:  guard: 
-        C -> C1 actions:  guard: anonymous
-        C -> C2 actions:  guard: anonymous
+        C -> C1 actions:  guard: <Report>b__2_0
+        C -> C2 actions:  guard: <Report>b__2_1
 ";
             report.Replace("\n", string.Empty).Replace("\r", string.Empty)
                 .Should().Be(ExpectedReport.Replace("\n", string.Empty).Replace("\r", string.Empty));
