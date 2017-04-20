@@ -68,6 +68,7 @@
     <Compile Include="Builder.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="ExtensionTest.cs" />
+    <Compile Include="Machine\ActionHolders\ArgumentActionHolderTest.cs" />
     <Compile Include="Machine\ActionHolders\SingleArgumentTransitionActionHolderTest.cs" />
     <Compile Include="Machine\ExceptionCasesTest.cs" />
     <Compile Include="Machine\GuardHolders\SingleArgumentGuardHolderTest.cs" />

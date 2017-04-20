@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
         {
             T castArgument = default(T);
 
-            if (argument != Missing.Value && !(argument is T))
+            if (argument != Missing.Value && argument != null && !(argument is T))
             {
                 throw new ArgumentException(ActionHoldersExceptionMessages.CannotCastArgumentToActionArgument(argument, this.Describe()));
             }
