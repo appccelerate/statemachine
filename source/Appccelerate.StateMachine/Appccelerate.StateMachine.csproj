@@ -4,4 +4,12 @@
     <TargetFramework>netstandard1.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Appccelerate.VersionTask" Version="1.22.0" />
+  </ItemGroup>
+
 </Project>
