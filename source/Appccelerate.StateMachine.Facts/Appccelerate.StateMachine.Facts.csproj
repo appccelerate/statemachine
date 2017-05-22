@@ -110,8 +110,8 @@
     <None Include="Settings.stylecop" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Appccelerate.StateMachine.Portable\Appccelerate.StateMachine.Portable.csproj">
-      <Project>{2a577aa9-6c1c-4614-9b8b-94b4cad9cf81}</Project>
+    <ProjectReference Include="..\Appccelerate.StateMachine\Appccelerate.StateMachine.csproj">
+      <Project>{3b998204-8d0e-413d-b2c1-6f0e5c5e0e1c}</Project>
       <Name>Appccelerate.StateMachine</Name>
     </ProjectReference>
   </ItemGroup>
