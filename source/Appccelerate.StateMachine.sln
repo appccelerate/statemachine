@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine", "Appccelerate.StateMachine\Appccelerate.StateMachine.csproj", "{2A577AA9-6C1C-4614-9B8B-94B4CAD9CF81}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine.Portable", "Appccelerate.StateMachine.Portable\Appccelerate.StateMachine.Portable.csproj", "{2A577AA9-6C1C-4614-9B8B-94B4CAD9CF81}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine.Facts", "Appccelerate.StateMachine.Facts\Appccelerate.StateMachine.Facts.csproj", "{F206C6F3-01CD-4D81-8C2A-C1AB4AC8100E}"
 EndProject
