@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="Transition.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using Appccelerate.StateMachine.Machine.ActionHolders;
     using Appccelerate.StateMachine.Machine.GuardHolders;
     using LiteGuard = Guard;
-    
+
     public class Transition<TState, TEvent>
         : ITransition<TState, TEvent>
         where TState : IComparable
@@ -96,7 +96,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             }
 
             this.extensionHost.ForEach(extension => extension.ExecutedTransition(
-                this.stateMachineInformation, 
+                this.stateMachineInformation,
                 this,
                 context));
 
@@ -125,18 +125,18 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         ///    --> perform the transition directly:
         ///        Exit source state, perform transition actions and enter target state
         /// 2. The target state is a direct or indirect sub-state of the source state
-        ///    --> perform the transition actions, then traverse the hierarchy 
+        ///    --> perform the transition actions, then traverse the hierarchy
         ///        from the source state down to the target state,
         ///        entering each state along the way.
         ///        No state is exited.
         /// 3. The source state is a sub-state of the target state
-        ///    --> traverse the hierarchy from the source up to the target, 
-        ///        exiting each state along the way. 
+        ///    --> traverse the hierarchy from the source up to the target,
+        ///        exiting each state along the way.
         ///        Then perform transition actions.
         ///        Finally enter the target state.
         /// 4. The source and target state share the same super-state
         /// 5. All other scenarios:
-        ///    a. The source and target states reside at the same level in the hierarchy 
+        ///    a. The source and target states reside at the same level in the hierarchy
         ///       but do not share the same direct super-state
         ///    --> exit the source state, move up the hierarchy on both sides and enter the target state
         ///    b. The source state is lower in the hierarchy than the target state
@@ -207,7 +207,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             catch (Exception exception)
             {
                 this.extensionHost.ForEach(extention => extention.HandlingGuardException(this.stateMachineInformation, this, context, ref exception));
-                
+
                 HandleException(exception, context);
 
                 this.extensionHost.ForEach(extention => extention.HandledGuardException(this.stateMachineInformation, this, context, exception));
@@ -227,7 +227,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 catch (Exception exception)
                 {
                     this.extensionHost.ForEach(extension => extension.HandlingTransitionException(this.stateMachineInformation, this, context, ref exception));
-                    
+
                     HandleException(exception, context);
 
                     this.extensionHost.ForEach(extension => extension.HandledTransitionException(this.stateMachineInformation, this, context, exception));

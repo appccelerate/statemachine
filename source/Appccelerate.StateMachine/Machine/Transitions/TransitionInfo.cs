@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionInfo.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -27,7 +27,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     /// <summary>
     /// Describes a transition.
     /// </summary>
-    public class TransitionInfo<TState, TEvent> where TState : IComparable where TEvent : IComparable
+    /// <typeparam name="TState">Type fo the states</typeparam>
+    /// <typeparam name="TEvent">Type of the events</typeparam>
+    public class TransitionInfo<TState, TEvent>
+        where TState : IComparable
+        where TEvent : IComparable
     {
         public TransitionInfo(TEvent eventId, IState<TState, TEvent> source, IState<TState, TEvent> target, IGuardHolder guard, IEnumerable<IActionHolder> actions)
         {
@@ -80,7 +84,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <value>The actions.</value>
         public IEnumerable<IActionHolder> Actions
         {
-            get; private set;
+            get;  private set;
         }
     }
 }

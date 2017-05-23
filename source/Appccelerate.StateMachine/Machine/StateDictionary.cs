@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateDictionary.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ namespace Appccelerate.StateMachine.Machine
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public class StateDictionary<TState, TEvent> : IStateDictionary<TState, TEvent> where TState : IComparable
+    public class StateDictionary<TState, TEvent> : IStateDictionary<TState, TEvent>
+        where TState : IComparable
                                                                                       where TEvent : IComparable
     {
         /// <summary>

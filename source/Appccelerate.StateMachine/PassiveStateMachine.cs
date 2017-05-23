@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="PassiveStateMachine.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine
         /// Whether the state machine is initialized.
         /// </summary>
         private bool initialized;
-        
+
         /// <summary>
         /// Whether this state machine is executing an event. Allows that events can be added while executing.
         /// </summary>
@@ -83,7 +83,7 @@ namespace Appccelerate.StateMachine
         public PassiveStateMachine(string name, IFactory<TState, TEvent> factory)
         {
             this.stateMachine = new StateMachine<TState, TEvent>(
-                name ?? this.GetType().FullNameToString(), 
+                name ?? this.GetType().FullNameToString(),
                 factory);
             this.events = new LinkedList<EventInformation<TEvent>>();
         }
@@ -147,6 +147,7 @@ namespace Appccelerate.StateMachine
         /// Defines the hierarchy on.
         /// </summary>
         /// <param name="superStateId">The super state id.</param>
+        /// /// <returns>Syntax to build a state hierarchy.</returns>
         public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
         {
             return this.stateMachine.DefineHierarchyOn(superStateId);
@@ -194,7 +195,7 @@ namespace Appccelerate.StateMachine
             this.events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
 
             this.stateMachine.ForEach(extension => extension.EventQueuedWithPriority(this.stateMachine, eventId, eventArgument));
-            
+
             this.Execute();
         }
 
@@ -222,7 +223,7 @@ namespace Appccelerate.StateMachine
             this.CheckThatStateMachineIsInitialized();
 
             this.IsRunning = true;
-            
+
             this.stateMachine.ForEach(extension => extension.StartedStateMachine(this.stateMachine));
 
             this.Execute();
@@ -283,7 +284,7 @@ namespace Appccelerate.StateMachine
         public void Load(IStateMachineLoader<TState> stateMachineLoader)
         {
             Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
-            
+
             this.CheckThatNotAlreadyInitialized();
 
             this.stateMachine.Load(stateMachineLoader);

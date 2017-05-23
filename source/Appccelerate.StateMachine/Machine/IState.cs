@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="IState.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.Machine
     using System.Collections.Generic;
 
     using Appccelerate.StateMachine.Machine.ActionHolders;
-    
+
     /// <summary>
     /// Represents a state of the state machine.
     /// </summary>
@@ -110,10 +110,10 @@ namespace Appccelerate.StateMachine.Machine
         IState<TState, TEvent> EnterDeep(ITransitionContext<TState, TEvent> context);
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a <see cref="string"/> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A <see cref="string"/> that represents this instance.
         /// </returns>
         string ToString();
     }

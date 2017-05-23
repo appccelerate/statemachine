@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="YEdStateMachineReportGenerator.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -37,13 +37,13 @@ namespace Appccelerate.StateMachine.Reports
         where TState : IComparable
         where TEvent : IComparable
     {
-        // ReSharper disable StaticFieldInGenericType
+        //// ReSharper disable StaticFieldInGenericType
         private static readonly XNamespace N = "http://graphml.graphdrawing.org/xmlns";
         private static readonly XNamespace Xsi = "http://www.w3.org/2001/XMLSchema-instance";
         private static readonly XNamespace Y = "http://www.yworks.com/xml/graphml";
         private static readonly XNamespace YEd = "http://www.yworks.com/xml/yed/3";
         private static readonly XNamespace SchemaLocation = "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd";
-        // ReSharper restore StaticFieldInGenericType
+        //// ReSharper restore StaticFieldInGenericType
         private readonly TextWriter textWriter;
 
         private int edgeId;
@@ -78,7 +78,7 @@ namespace Appccelerate.StateMachine.Reports
 
             this.AddNodes(graph, statesList);
             this.AddEdges(graph, statesList);
-            
+
             XDocument doc = CreateXmlDocument(graph);
 
             doc.Save(this.textWriter);
@@ -106,7 +106,7 @@ namespace Appccelerate.StateMachine.Reports
                     new XElement(N + "key", new XAttribute("attr.name", "url"), new XAttribute("attr.type", "string"), new XAttribute("for", "edge"), new XAttribute("id", "d8")),
                     new XElement(N + "key", new XAttribute("attr.name", "description"), new XAttribute("attr.type", "string"), new XAttribute("for", "edge"), new XAttribute("id", "d9")),
                     new XElement(N + "key", new XAttribute("for", "edge"), new XAttribute("id", "d10"), new XAttribute("yfiles.type", "edgegraphics")),
-                    graph,    
+                    graph,
                     new XElement(N + "data", new XAttribute("key", "d0"), new XElement(Y + "Resources"))));
 
             doc.Root.SetAttributeValue(XNamespace.Xmlns + "y", Y);
@@ -126,8 +126,8 @@ namespace Appccelerate.StateMachine.Reports
 
         private static string CreateEntryActionDescription(IState<TState, TEvent> state)
         {
-            return state.EntryActions.Any() 
-                       ? (state.EntryActions.Aggregate("(", (aggregate, action) => (aggregate.Length > 1 ? aggregate + ", " : aggregate) + action.Describe()) + ")" + Environment.NewLine) 
+            return state.EntryActions.Any()
+                       ? (state.EntryActions.Aggregate("(", (aggregate, action) => (aggregate.Length > 1 ? aggregate + ", " : aggregate) + action.Describe()) + ")" + Environment.NewLine)
                        : string.Empty;
         }
 
@@ -174,16 +174,16 @@ namespace Appccelerate.StateMachine.Reports
             }
 
             var edge = new XElement(
-                N + "edge", 
-                new XAttribute("id", transition.EventId + (this.edgeId++).ToString(CultureInfo.InvariantCulture)), 
-                new XAttribute("source", transition.Source.Id), 
+                N + "edge",
+                new XAttribute("id", transition.EventId + (this.edgeId++).ToString(CultureInfo.InvariantCulture)),
+                new XAttribute("source", transition.Source.Id),
                 new XAttribute("target", targetId));
- 
+
             edge.Add(new XElement(
-                N + "data", 
-                new XAttribute("key", "d10"), 
+                N + "data",
+                new XAttribute("key", "d10"),
                 new XElement(Y + "PolyLineEdge", new XElement(Y + "LineStyle", new XAttribute("type", lineStyle)), new XElement(Y + "Arrows", new XAttribute("source", "none"), new XAttribute("target", arrow)), new XElement(Y + "EdgeLabel", guard + transition.EventId + actions))));
-            
+
             graph.Add(edge);
         }
 
@@ -203,7 +203,7 @@ namespace Appccelerate.StateMachine.Reports
 
             string entryActions = CreateEntryActionDescription(state);
             string exitActions = CreateExitActionsDescription(state);
-            
+
             if (state.SubStates.Any())
             {
                 var label = new XElement(Y + "NodeLabel", entryActions + state.Id + exitActions, new XAttribute("alignment", "right"), new XAttribute("autoSizePolicy", "node_width"), new XAttribute("backgroundColor", "#EBEBEB"), new XAttribute("modelName", "internal"), new XAttribute("modelPosition", "t"));
@@ -226,7 +226,7 @@ namespace Appccelerate.StateMachine.Reports
             else
             {
                 var shape = new XElement(
-                    Y + "ShapeNode", 
+                    Y + "ShapeNode",
                     new XElement(Y + "NodeLabel", entryActions + state.Id + exitActions),
                     new XElement(Y + "Shape", new XAttribute("type", "ellipse")));
 

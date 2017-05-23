@@ -1,12 +1,11 @@
-// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActiveStateMachine.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
-//       http://www.apache.org/licenses/LICENSE-2.0
+//        http://www.apache.org/licenses/LICENSE-2.0
 //
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +13,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 // </copyright>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace Appccelerate.StateMachine
 {
@@ -73,7 +71,7 @@ namespace Appccelerate.StateMachine
         public ActiveStateMachine(string name, IFactory<TState, TEvent> factory)
         {
             this.stateMachine = new StateMachine<TState, TEvent>(
-                name ?? this.GetType().FullNameToString(), 
+                name ?? this.GetType().FullNameToString(),
                 factory);
 
             this.queue = new LinkedList<EventInformation<TEvent>>();
@@ -138,6 +136,7 @@ namespace Appccelerate.StateMachine
         /// Defines the hierarchy on.
         /// </summary>
         /// <param name="superStateId">The super state id.</param>
+        /// <returns>Syntax to build a state hierarchy.</returns>
         public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
         {
             return this.stateMachine.DefineHierarchyOn(superStateId);
@@ -166,7 +165,7 @@ namespace Appccelerate.StateMachine
                 this.queue.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
                 Monitor.Pulse(this.queue);
             }
-            
+
             this.stateMachine.ForEach(extension => extension.EventQueued(this.stateMachine, eventId, eventArgument));
         }
 
@@ -231,7 +230,7 @@ namespace Appccelerate.StateMachine
         public void Load(IStateMachineLoader<TState> stateMachineLoader)
         {
             Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
-            
+
             this.CheckThatNotAlreadyInitialized();
 
             this.stateMachine.Load(stateMachineLoader);
@@ -272,13 +271,13 @@ namespace Appccelerate.StateMachine
             {
                 return;
             }
-            
+
             lock (this.queue)
             {
                 this.stopToken.Cancel();
                 Monitor.Pulse(this.queue); // wake up task to get a chance to stop
             }
-            
+
             try
             {
                 this.worker.Wait();
@@ -293,7 +292,7 @@ namespace Appccelerate.StateMachine
             }
 
             this.worker = null;
-            
+
             this.stateMachine.ForEach(extension => extension.StoppedStateMachine(this.stateMachine));
         }
 
@@ -355,7 +354,7 @@ namespace Appccelerate.StateMachine
                         {
                             Monitor.Wait(this.queue);
                         }
-                        
+
                         continue;
                     }
                 }

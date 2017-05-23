@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="HierarchyBuilder.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    
+
     using Appccelerate.StateMachine.Syntax;
 
-    public class HierarchyBuilder<TState, TEvent> : 
-        IHierarchySyntax<TState>, 
+    public class HierarchyBuilder<TState, TEvent> :
+        IHierarchySyntax<TState>,
         IInitialSubStateSyntax<TState>,
         ISubStateSyntax<TState>
         where TState : IComparable
@@ -62,7 +62,7 @@ namespace Appccelerate.StateMachine.Machine
             var subState = this.states[stateId];
 
             this.CheckThatStateHasNotAlreadyASuperState(subState);
-            
+
             subState.SuperState = this.superState;
             this.superState.SubStates.Add(subState);
 
@@ -77,7 +77,7 @@ namespace Appccelerate.StateMachine.Machine
             {
                 throw new InvalidOperationException(
                     ExceptionMessages.CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet(
-                        this.superState.Id, 
+                        this.superState.Id,
                         subState));
             }
         }

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineReportGenerator.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -90,15 +90,15 @@ namespace Appccelerate.StateMachine.Reports
             indentation += "    ";
 
             report.AppendFormat(
-                "{0}entry action: {1}{2}", 
+                "{0}entry action: {1}{2}",
                 indentation,
-                string.Join(", ", state.EntryActions.Select(action => action.Describe())), 
+                string.Join(", ", state.EntryActions.Select(action => action.Describe())),
                 Environment.NewLine);
-            
+
             report.AppendFormat(
-                "{0}exit action: {1}{2}", 
+                "{0}exit action: {1}{2}",
                 indentation,
-                string.Join(", ", state.ExitActions.Select(action => action.Describe())), 
+                string.Join(", ", state.ExitActions.Select(action => action.Describe())),
                 Environment.NewLine);
         }
 

@@ -13,17 +13,22 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>
+    <NoWarn>1701;1702;1705;1600;1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard1.0\.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1600;1591</NoWarn>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatSpecificWarningsAsErrors />
   </PropertyGroup>
 
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>Analyzers.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  
   <ItemGroup>
-    <None Remove="stylecop.json" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <AdditionalFiles Include="Analyzers.ruleset" />
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 

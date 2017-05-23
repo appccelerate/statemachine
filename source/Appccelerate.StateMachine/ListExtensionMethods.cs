@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="ListExtensionMethods.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine
     using System;
     using System.Collections.Generic;
 
-    public static class ListExtensionMethods
+    internal static class ListExtensionMethods
     {
          public static void ForEach<T>(this IList<T> list, Action<T> action)
          {

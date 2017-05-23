@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineInitializer.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.Machine
     using System.Collections.Generic;
 
     /// <summary>
-    /// Responsible for entering the initial state of the state machine. 
+    /// Responsible for entering the initial state of the state machine.
     /// All states up in the hierarchy are entered, too.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
