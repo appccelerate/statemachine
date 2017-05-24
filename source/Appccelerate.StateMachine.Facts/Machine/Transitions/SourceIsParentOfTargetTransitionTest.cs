@@ -39,16 +39,10 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         [Fact]
         public void EntersAllStatesBelowSourceDownToTarget()
         {
-            using (var scope = Fake.CreateScope())
-            {
-                this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionContext);
 
-                using (scope.OrderedAssertions())
-                {
-                    A.CallTo(() => this.intermediate.Entry(this.TransitionContext)).MustHaveHappened();
-                    A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened();
-                }
-            }
+            A.CallTo(() => this.intermediate.Entry(this.TransitionContext)).MustHaveHappened()
+                .Then(A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened());
         }
     }
 }

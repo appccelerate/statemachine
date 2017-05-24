@@ -41,17 +41,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         [Fact]
         public void ExitsAllStatesFromCurrentUpToSource()
         {
-            using (var scope = Fake.CreateScope())
-            {
-                this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionContext);
 
-                using (scope.OrderedAssertions())
-                {
-                    A.CallTo(() => this.current.Exit(this.TransitionContext)).MustHaveHappened();
-                    A.CallTo(() => this.intermediate.Exit(this.TransitionContext)).MustHaveHappened();
-                    A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappened();
-                }
-            }
+            A.CallTo(() => this.current.Exit(this.TransitionContext)).MustHaveHappened()
+                .Then(A.CallTo(() => this.intermediate.Exit(this.TransitionContext)).MustHaveHappened())
+                .Then(A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappened());
         }
     }
 }
