@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="HierarchicalTransitions.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -138,9 +138,9 @@ namespace Appccelerate.StateMachine
             const int ParentOfDestinationState = 5;
             const int SiblingOfDestinationState = 6;
             const int Event = 0;
-            
+
             bool commonAncestorStateLeft = false;
-            
+
             "establish a hierarchical state machine"._(() =>
             {
                 machine = new PassiveStateMachine<int, int>();

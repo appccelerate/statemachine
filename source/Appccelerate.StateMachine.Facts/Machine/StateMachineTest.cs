@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -59,22 +59,22 @@ namespace Appccelerate.StateMachine.Machine
                 .WithHistoryType(HistoryType.None)
                 .WithInitialSubState(StateMachine.States.B1)
                 .WithSubState(StateMachine.States.B2);
-            
+
             this.testee.DefineHierarchyOn(StateMachine.States.C)
                 .WithHistoryType(HistoryType.Shallow)
                 .WithInitialSubState(StateMachine.States.C2)
                 .WithSubState(StateMachine.States.C1);
-            
+
             this.testee.DefineHierarchyOn(StateMachine.States.C1)
                 .WithHistoryType(HistoryType.Shallow)
                 .WithInitialSubState(StateMachine.States.C1A)
                 .WithSubState(StateMachine.States.C1B);
-            
+
             this.testee.DefineHierarchyOn(StateMachine.States.D)
                 .WithHistoryType(HistoryType.Deep)
                 .WithInitialSubState(StateMachine.States.D1)
                 .WithSubState(StateMachine.States.D2);
-            
+
             this.testee.DefineHierarchyOn(StateMachine.States.D1)
                 .WithHistoryType(HistoryType.Deep)
                 .WithInitialSubState(StateMachine.States.D1A)
@@ -133,7 +133,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.In(StateMachine.States.D1)
                 .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.D1))
                 .ExecuteOnExit(() => this.RecordExit(StateMachine.States.D1));
-            
+
             this.testee.In(StateMachine.States.D1A)
                 .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.D1A))
                 .ExecuteOnExit(() => this.RecordExit(StateMachine.States.D1A));
@@ -174,7 +174,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.EnterInitialState();
 
             this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
-            
+
             this.CheckRecord<EntryRecord>(StateMachine.States.A);
             this.CheckNoRemainingRecords();
         }
@@ -275,7 +275,7 @@ namespace Appccelerate.StateMachine.Machine
 
         /// <summary>
         /// When a transition between two states with the same super state is executed then
-        /// the exit action of source state, the transition action and the entry action of 
+        /// the exit action of source state, the transition action and the entry action of
         /// the target state are executed.
         /// </summary>
         [Fact]
@@ -305,9 +305,9 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.testee.Initialize(StateMachine.States.B2);
             this.testee.EnterInitialState();
-            
+
             this.ClearRecords();
-            
+
             this.testee.Fire(StateMachine.Events.C1B);
 
             this.testee.CurrentStateId.Should().Be(StateMachine.States.C1B);
@@ -444,7 +444,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.testee.Initialize(StateMachine.States.C1B);
             this.testee.EnterInitialState();
-            
+
             this.ClearRecords();
 
             this.testee.Fire(StateMachine.Events.A);
@@ -543,7 +543,7 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         private void ClearRecords()
         {
-            this.records.Clear();    
+            this.records.Clear();
         }
 
         /// <summary>
@@ -552,15 +552,16 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <typeparam name="T">Type of the record.</typeparam>
         /// <param name="state">The state.</param>
-        private void CheckRecord<T>(StateMachine.States state) where T : Record
+        private void CheckRecord<T>(StateMachine.States state)
+            where T : Record
         {
             Record record = this.records.FirstOrDefault();
 
             record.Should().NotBeNull();
             record.Should().BeAssignableTo<T>();
-            // ReSharper disable once PossibleNullReferenceException
+            //// ReSharper disable once PossibleNullReferenceException
             record.State.Should().Be(state, record.Message);
-            
+
             this.records.RemoveAt(0);
         }
 

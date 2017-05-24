@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="TransitionTestBase.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -31,16 +31,16 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         {
         }
 
-        protected readonly Transition<States, Events> Testee;
+        protected Transition<States, Events> Testee { get; }
 
         protected TestableExtensionHost ExtensionHost { get; private set; }
 
         protected IStateMachineInformation<States, Events> StateMachineInformation { get; private set; }
 
         protected IState<States, Events> Source { get; set; }
-        
+
         protected IState<States, Events> Target { get; set; }
-        
+
         protected ITransitionContext<States, Events> TransitionContext { get; set; }
 
         public TransitionTestBase()
@@ -49,11 +49,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             this.ExtensionHost = new TestableExtensionHost();
 
             this.Testee = new Transition<States, Events>(this.StateMachineInformation, this.ExtensionHost);
-        } 
+        }
 
         public class TestableExtensionHost : IExtensionHost<States, Events>
         {
-            public IExtension<States, Events> Extension { private get; set; } 
+            public IExtension<States, Events> Extension { private get; set; }
 
             public void ForEach(Action<IExtension<States, Events>> action)
             {

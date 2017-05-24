@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="CsvStatesWriter.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ namespace Appccelerate.StateMachine.Reports
     using System.IO;
     using System.Linq;
 
-    using Appccelerate.Formatters;
     using Appccelerate.StateMachine.Machine;
 
     /// <summary>
@@ -71,9 +70,9 @@ namespace Appccelerate.StateMachine.Reports
 
         private void ReportState(IState<TState, TEvent> state)
         {
-            string entry = FormatHelper.ConvertToString(state.EntryActions.Select(action => action.Describe()), ", ");
-            string exit = FormatHelper.ConvertToString(state.ExitActions.Select(action => action.Describe()), ", ");
-            string children = FormatHelper.ConvertToString(state.SubStates.Select(s => s.Id.ToString()), ", ");
+            string entry = string.Join(", ", state.EntryActions.Select(action => action.Describe()));
+            string exit = string.Join(", ", state.ExitActions.Select(action => action.Describe()));
+            string children = string.Join(", ", state.SubStates.Select(s => s.Id.ToString()));
 
             this.writer.WriteLine(
                 "{0};{1};{2};{3}",

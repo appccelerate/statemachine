@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="CsvTransitionsWriter.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ namespace Appccelerate.StateMachine.Reports
     using System.IO;
     using System.Linq;
 
-    using Appccelerate.Formatters;
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Machine.Transitions;
 
@@ -85,7 +84,7 @@ namespace Appccelerate.StateMachine.Reports
             string eventId = transition.EventId.ToString();
 
             string guard = transition.Guard != null ? transition.Guard.Describe() : string.Empty;
-            string actions = FormatHelper.ConvertToString(transition.Actions.Select(action => action.Describe()), ", ");
+            string actions = string.Join(", ", transition.Actions.Select(action => action.Describe()));
 
             this.writer.WriteLine(
                 "{0};{1};{2};{3};{4}",

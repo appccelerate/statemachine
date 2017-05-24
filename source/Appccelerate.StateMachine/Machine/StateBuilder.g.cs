@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
-// <copyright file="StateBuilder.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+// <copyright file="StateBuilder.g.cs" company="Appccelerate">
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ namespace Appccelerate.StateMachine.Machine
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public sealed class StateBuilder<TState, TEvent> : 
+    public sealed class StateBuilder<TState, TEvent> :
         IEntryActionSyntax<TState, TEvent>,
         IGotoInIfSyntax<TState, TEvent>,
         IOtherwiseSyntax<TState, TEvent>,
@@ -72,8 +72,8 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.state.EntryActions.Add(this.factory.CreateActionHolder(action));    
-            
+            this.state.EntryActions.Add(this.factory.CreateActionHolder(action));
+
             return this;
         }
 
@@ -110,7 +110,7 @@ namespace Appccelerate.StateMachine.Machine
             Guard.AgainstNullArgument("action", action);
 
             this.state.ExitActions.Add(this.factory.CreateActionHolder(action));
-            
+
             return this;
         }
 
@@ -271,7 +271,7 @@ namespace Appccelerate.StateMachine.Machine
         private StateBuilder<TState, TEvent> ExecuteInternal(Action action)
         {
             this.currentTransition.Actions.Add(this.factory.CreateTransitionActionHolder(action));
-            
+
             this.CheckGuards();
 
             return this;
@@ -280,7 +280,7 @@ namespace Appccelerate.StateMachine.Machine
         private StateBuilder<TState, TEvent> ExecuteInternal<T>(Action<T> action)
         {
             this.currentTransition.Actions.Add(this.factory.CreateTransitionActionHolder(action));
-            
+
             this.CheckGuards();
 
             return this;
@@ -352,9 +352,9 @@ namespace Appccelerate.StateMachine.Machine
                 throw new InvalidOperationException(ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
             }
 
-            if ((from grouping in transitionsByEvent 
-                 let transition = grouping.SingleOrDefault(t => t.Guard == null) 
-                 where transition != null && grouping.LastOrDefault() != transition 
+            if ((from grouping in transitionsByEvent
+                 let transition = grouping.SingleOrDefault(t => t.Guard == null)
+                 where transition != null && grouping.LastOrDefault() != transition
                  select grouping).Any())
             {
                 throw new InvalidOperationException(ExceptionMessages.TransitionWithoutGuardHasToBeLast);

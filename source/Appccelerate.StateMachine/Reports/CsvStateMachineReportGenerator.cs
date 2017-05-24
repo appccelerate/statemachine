@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="CsvStateMachineReportGenerator.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ namespace Appccelerate.StateMachine.Reports
         private void ReportTransitions(IEnumerable<IState<TState, TEvent>> states)
         {
             var writer = new StreamWriter(this.transitionsStream);
-            
+
             var transitionsWriter = new CsvTransitionsWriter<TState, TEvent>(writer);
 
             transitionsWriter.Write(states);

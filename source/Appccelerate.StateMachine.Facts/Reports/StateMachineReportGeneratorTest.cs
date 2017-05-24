@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineReportGeneratorTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -44,17 +44,17 @@ namespace Appccelerate.StateMachine.Reports
                 .WithHistoryType(HistoryType.Shallow)
                 .WithInitialSubState(States.C1)
                 .WithSubState(States.C2);
-            
+
             this.machine.DefineHierarchyOn(States.C1)
                 .WithHistoryType(HistoryType.Shallow)
                 .WithInitialSubState(States.C1A)
                 .WithSubState(States.C1B);
-            
+
             this.machine.DefineHierarchyOn(States.D)
                 .WithHistoryType(HistoryType.Deep)
                 .WithInitialSubState(States.D1)
                 .WithSubState(States.D2);
-            
+
             this.machine.DefineHierarchyOn(States.D1)
                 .WithHistoryType(HistoryType.Deep)
                 .WithInitialSubState(States.D1A)

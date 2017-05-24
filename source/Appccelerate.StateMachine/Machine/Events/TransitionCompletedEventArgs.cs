@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionCompletedEventArgs.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ namespace Appccelerate.StateMachine.Machine.Events
         /// </summary>
         /// <param name="newStateId">The new state id.</param>
         /// <param name="context">The context.</param>
-        public TransitionCompletedEventArgs(TState newStateId, ITransitionContext<TState, TEvent> context) : base(context)
+        public TransitionCompletedEventArgs(TState newStateId, ITransitionContext<TState, TEvent> context)
+            : base(context)
         {
             this.newStateId = newStateId;
         }

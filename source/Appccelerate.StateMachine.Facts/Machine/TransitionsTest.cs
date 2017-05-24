@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionsTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine.Machine
 
         /// <summary>
         /// When no transition for the fired event can be found in the entire
-        /// hierarchy up from the current state then the transition declined event is fired and 
+        /// hierarchy up from the current state then the transition declined event is fired and
         /// the state machine remains in its current state.
         /// </summary>
         [Fact]
@@ -99,7 +99,7 @@ namespace Appccelerate.StateMachine.Machine
 
             bool action1Executed = false;
             bool action2Executed = false;
-            
+
             this.testee.In(StateMachine.States.A)
                 .On(StateMachine.Events.B).Goto(StateMachine.States.B)
                     .Execute<int>(argument => { action1Executed = true; })
@@ -115,7 +115,7 @@ namespace Appccelerate.StateMachine.Machine
         }
 
         /// <summary>
-        /// Internal transitions can be executed 
+        /// Internal transitions can be executed
         /// (internal transition = transition that remains in the same state and does not execute exit
         /// and entry actions.
         /// </summary>

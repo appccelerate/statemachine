@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="IFactory.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Machine.Events
         IGuardHolder CreateGuardHolder(Func<bool> guard);
 
         IGuardHolder CreateGuardHolder<T>(Func<T, bool> guard);
-        
+
         ITransitionContext<TState, TEvent> CreateTransitionContext(IState<TState, TEvent> state, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier);
 
         StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context);

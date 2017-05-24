@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="TransitionDefinedInSuperStateTransitionTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -41,17 +41,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         [Fact]
         public void ExitsAllStatesFromCurrentUpToSource()
         {
-            using (var scope = Fake.CreateScope())
-            {
-                this.Testee.Fire(this.TransitionContext);
-                
-                using (scope.OrderedAssertions())
-                {
-                    A.CallTo(() => this.current.Exit(this.TransitionContext)).MustHaveHappened();
-                    A.CallTo(() => this.intermediate.Exit(this.TransitionContext)).MustHaveHappened();
-                    A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappened();
-                }
-            }
+            this.Testee.Fire(this.TransitionContext);
+
+            A.CallTo(() => this.current.Exit(this.TransitionContext)).MustHaveHappened()
+                .Then(A.CallTo(() => this.intermediate.Exit(this.TransitionContext)).MustHaveHappened())
+                .Then(A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappened());
         }
     }
 }

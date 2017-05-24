@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="IOnSyntax.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.Syntax
         /// <param name="target">The target.</param>
         /// <returns>Go to syntax</returns>
         IGotoSyntax<TState, TEvent> Goto(TState target);
-        
+
         /// <summary>
         /// Defines a transition guard. The transition is only taken if the guard is fulfilled.
         /// </summary>

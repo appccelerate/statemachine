@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineReportGenerator.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ namespace Appccelerate.StateMachine.Reports
     using System.Linq;
     using System.Text;
 
-    using Appccelerate.Formatters;
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Machine.Transitions;
 
@@ -58,7 +57,7 @@ namespace Appccelerate.StateMachine.Reports
 
             var report = new StringBuilder();
 
-            const string Indentation = "    ";
+            const string indentation = "    ";
 
             report.AppendFormat("{0}: initial state = {1}{2}", name, initialStateId.IsInitialized ? initialStateId.Value.ToString() : "none", Environment.NewLine);
 
@@ -66,7 +65,7 @@ namespace Appccelerate.StateMachine.Reports
             var rootStates = states.Where(state => state.SuperState == null);
             foreach (var state in rootStates)
             {
-                this.ReportState(state, report, Indentation);
+                this.ReportState(state, report, indentation);
             }
 
             this.Result = report.ToString();
@@ -91,15 +90,15 @@ namespace Appccelerate.StateMachine.Reports
             indentation += "    ";
 
             report.AppendFormat(
-                "{0}entry action: {1}{2}", 
+                "{0}entry action: {1}{2}",
                 indentation,
-                FormatHelper.ConvertToString(state.EntryActions.Select(action => action.Describe()), ", "), 
+                string.Join(", ", state.EntryActions.Select(action => action.Describe())),
                 Environment.NewLine);
-            
+
             report.AppendFormat(
-                "{0}exit action: {1}{2}", 
+                "{0}exit action: {1}{2}",
                 indentation,
-                FormatHelper.ConvertToString(state.ExitActions.Select(action => action.Describe()), ", "), 
+                string.Join(", ", state.ExitActions.Select(action => action.Describe())),
                 Environment.NewLine);
         }
 
@@ -117,7 +116,7 @@ namespace Appccelerate.StateMachine.Reports
                 indentation,
                 transition.EventId,
                 transition.Target != null ? transition.Target.ToString() : "internal",
-                FormatHelper.ConvertToString(transition.Actions.Select(action => action.Describe()), ", "),
+                string.Join(", ", transition.Actions.Select(action => action.Describe())),
                 transition.Guard != null ? transition.Guard.Describe() : string.Empty,
                 Environment.NewLine);
         }

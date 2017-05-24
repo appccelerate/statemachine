@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StandardFactory.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ namespace Appccelerate.StateMachine.Machine
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    // ReSharper disable ClassWithVirtualMembersNeverInherited.Global
+    //// ReSharper disable ClassWithVirtualMembersNeverInherited.Global
     public class StandardFactory<TState, TEvent> : IFactory<TState, TEvent>
-    // ReSharper restore ClassWithVirtualMembersNeverInherited.Global
+        //// ReSharper restore ClassWithVirtualMembersNeverInherited.Global
         where TState : IComparable
         where TEvent : IComparable
     {
@@ -69,7 +69,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public virtual IActionHolder CreateActionHolder<T>(Action<T> action, T parameter)
         {
-            return new ParametrizedActionHolder<T>(action, parameter);    
+            return new ParametrizedActionHolder<T>(action, parameter);
         }
 
         public virtual IActionHolder CreateTransitionActionHolder(Action action)
@@ -81,7 +81,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             return new ArgumentActionHolder<T>(action);
         }
-        
+
         public virtual IGuardHolder CreateGuardHolder(Func<bool> guard)
         {
             return new ArgumentLessGuardHolder(guard);

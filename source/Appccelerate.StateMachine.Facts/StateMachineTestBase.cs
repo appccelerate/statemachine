@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineTestBase.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ namespace Appccelerate.StateMachine
         protected StateMachineTestBase(TStateMachine testee)
         {
             this.testee = testee;
-            
+
             this.Exceptions = new List<EventArgs>();
             this.TransitionBeginMessages = new List<TransitionEventArgs<States, Events>>();
             this.TransitionCompletedMessages = new List<TransitionCompletedEventArgs<States, Events>>();
@@ -302,7 +302,7 @@ namespace Appccelerate.StateMachine
             this.TransitionCompletedMessages.Should().HaveCount(1);
             this.TransitionCompletedMessages[0].StateId.Should().Be(origin);
             this.TransitionCompletedMessages[0].EventId.Should().Be(eventId);
-            
+
             if (eventArgument != null)
             {
                 this.TransitionCompletedMessages[0].EventArgument.Should().Be(eventArgument);

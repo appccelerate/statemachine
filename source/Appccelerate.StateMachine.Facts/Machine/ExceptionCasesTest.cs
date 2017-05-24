@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ExceptionCasesTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2015
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             var eventArguments = new object[] { 1, 2, "test" };
             Exception exception = new Exception();
-            
+
             this.testee.In(StateMachine.States.A)
                 .On(StateMachine.Events.B)
                     .If(() => { throw exception; }).Goto(StateMachine.States.B);
