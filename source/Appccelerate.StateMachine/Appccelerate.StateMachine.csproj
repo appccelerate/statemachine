@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.0\.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard1.0\Appccelerate.StateMachine.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1600;1591</NoWarn>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />

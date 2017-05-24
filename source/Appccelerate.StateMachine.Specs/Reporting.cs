@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="Reporting.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine
             "establish a state machine reporter"._(() =>
                 report = A.Fake<IStateMachineReport<string, int>>());
 
-            "when creating a report"._(() => 
+            "when creating a report"._(() =>
                 machine.Report(report));
 
             "it should call the passed reporter"._(() =>

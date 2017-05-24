@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="Guards.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ namespace Appccelerate.StateMachine
 
     public class Guards
     {
-        const int SourceState = 1;
-        const int DestinationState = 2;
-        const int ErrorState = 3;
+        private const int SourceState = 1;
+        private const int DestinationState = 2;
+        private const int ErrorState = 3;
 
-        const int Event = 2;
+        private const int Event = 2;
 
         [Scenario]
         public void MatchingGuard(

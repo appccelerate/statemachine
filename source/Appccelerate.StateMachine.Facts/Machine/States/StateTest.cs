@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ namespace Appccelerate.StateMachine.Machine.States
         public StateTest()
         {
             this.testee = new State<States, Events>(
-                States.A, 
-                A.Fake<IStateMachineInformation<States, Events>>(), 
+                States.A,
+                A.Fake<IStateMachineInformation<States, Events>>(),
                 A.Fake<IExtensionHost<States, Events>>());
         }
 

@@ -13,7 +13,8 @@
     <AssemblyName>Appccelerate.StateMachine.Facts</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>a8e392c7</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,9 +36,8 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Appccelerate.Fundamentals, Version=3.0.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Appccelerate.Fundamentals.3.0.0\lib\portable-windows8+net45+wp80\Appccelerate.Fundamentals.dll</HintPath>
+    <Reference Include="Appccelerate.Fundamentals, Version=3.3.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Appccelerate.Fundamentals.3.3.0-commitea8ae2ca\lib\netstandard1.0\Appccelerate.Fundamentals.dll</HintPath>
     </Reference>
     <Reference Include="FakeItEasy, Version=1.25.2.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -107,15 +107,22 @@
     <Compile Include="States.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Analyzers.ruleset" />
     <None Include="NuGet.config" />
     <None Include="packages.config" />
     <None Include="Settings.stylecop" />
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Appccelerate.StateMachine\Appccelerate.StateMachine.csproj">
       <Project>{3b998204-8d0e-413d-b2c1-6f0e5c5e0e1c}</Project>
       <Name>Appccelerate.StateMachine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -129,17 +136,13 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Appccelerate.VersionTask.1.17.0\build\Appccelerate.VersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.VersionTask.1.17.0\build\Appccelerate.VersionTask.targets'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets'))" />
     <Error Condition="!Exists('..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props'))" />
-    <Error Condition="!Exists('..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.Development.1.21.0\build\Appccelerate.development.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.1.21.0\build\Appccelerate.development.targets'))" />
     <Error Condition="!Exists('..\packages\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.props'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.Development.Facts.1.21.0\build\Appccelerate.Development.Facts.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.Facts.1.21.0\build\Appccelerate.Development.Facts.targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets'))" />
+    <Error Condition="!Exists('..\packages\Appccelerate.Development.Analyzers.2.0.0\build\Appccelerate.Development.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.Analyzers.2.0.0\build\Appccelerate.Development.Analyzers.targets'))" />
   </Target>
-  <Import Project="..\packages\Appccelerate.VersionTask.1.17.0\build\Appccelerate.VersionTask.targets" Condition="Exists('..\packages\Appccelerate.VersionTask.1.17.0\build\Appccelerate.VersionTask.targets')" />
   <Import Project="..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets" Condition="Exists('..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets')" />
-  <Import Project="..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets')" />
-  <Import Project="..\packages\Appccelerate.Development.1.21.0\build\Appccelerate.development.targets" Condition="Exists('..\packages\Appccelerate.Development.1.21.0\build\Appccelerate.development.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.Facts.1.21.0\build\Appccelerate.Development.Facts.targets" Condition="Exists('..\packages\Appccelerate.Development.Facts.1.21.0\build\Appccelerate.Development.Facts.targets')" />
+  <Import Project="..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets" Condition="Exists('..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets')" />
+  <Import Project="..\packages\Appccelerate.Development.Analyzers.2.0.0\build\Appccelerate.Development.Analyzers.targets" Condition="Exists('..\packages\Appccelerate.Development.Analyzers.2.0.0\build\Appccelerate.Development.Analyzers.targets')" />
 </Project>

@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="StateMachineNameReporter.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace Appccelerate.StateMachine
 
         public void Report(string name, IEnumerable<IState<string, int>> states, Initializable<string> initialStateId)
         {
-            this.StateMachineName = name;    
+            this.StateMachineName = name;
         }
     }
 }

@@ -22,7 +22,7 @@
       state machine report for description of state machine (csv, yEd)</description>
     <releaseNotes>
     </releaseNotes>
-    <copyright>Copyright 2012-2014</copyright>
+    <copyright>Copyright 2012-2017</copyright>
     <tags>Appccelerate state-machine</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="portable-windows8+net45+wp80" />
@@ -33,9 +33,9 @@
     </dependencies>	
   </metadata>
   <files>
-    <file src="bin\Release\Appccelerate.StateMachine.dll" target="lib\portable-windows8+net45+wp80" />
-    <file src="bin\Release\Appccelerate.StateMachine.pdb" target="lib\portable-windows8+net45+wp80" />
-    <file src="bin\Release\Appccelerate.StateMachine.xml" target="lib\portable-windows8+net45+wp80" />
+    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.dll" target="lib\portable-windows8+net45+wp80" />
+    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.pdb" target="lib\portable-windows8+net45+wp80" />
+    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.xml" target="lib\portable-windows8+net45+wp80" />
     <file src="**\*.cs" target="src" />
   </files>  
 </package>

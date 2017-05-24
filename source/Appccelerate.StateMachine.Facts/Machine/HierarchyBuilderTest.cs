@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="HierarchyBuilderTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017
+//   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             const string SubState = "SubState";
             var subState = A.Fake<IState<string, int>>();
-            subState.SuperState = A.Fake<IState<string, int>>(); 
+            subState.SuperState = A.Fake<IState<string, int>>();
             A.CallTo(() => this.states[SubState]).Returns(subState);
 
             this.testee.Invoking(t => t.WithInitialSubState(SubState))
