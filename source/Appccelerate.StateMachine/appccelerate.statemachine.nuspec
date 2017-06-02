@@ -30,9 +30,9 @@
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.dll" target="lib\portable-windows8+net45+wp80" />
-    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.pdb" target="lib\portable-windows8+net45+wp80" />
-    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.xml" target="lib\portable-windows8+net45+wp80" />
+    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.dll" target="lib\netstandard1.0" />
+    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.pdb" target="lib\netstandard1.0" />
+    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.xml" target="lib\netstandard1.0" />
     <file src="**\*.cs" target="src" />
   </files>  
 </package>
