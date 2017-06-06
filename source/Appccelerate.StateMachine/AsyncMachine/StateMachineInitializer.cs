@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Responsible for entering the initial state of the state machine.
@@ -41,12 +42,12 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.context = context;
         }
 
-        public IState<TState, TEvent> EnterInitialState()
+        public async Task<IState<TState, TEvent>> EnterInitialState()
         {
             var stack = this.TraverseUpTheStateHierarchy();
-            this.TraverseDownTheStateHierarchyAndEnterStates(stack);
+            await this.TraverseDownTheStateHierarchyAndEnterStates(stack);
 
-            return this.initialState.EnterByHistory(this.context);
+            return await this.initialState.EnterByHistory(this.context);
         }
 
         /// <summary>
@@ -67,12 +68,12 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return stack;
         }
 
-        private void TraverseDownTheStateHierarchyAndEnterStates(Stack<IState<TState, TEvent>> stack)
+        private async Task TraverseDownTheStateHierarchyAndEnterStates(Stack<IState<TState, TEvent>> stack)
         {
             while (stack.Count > 0)
             {
                 IState<TState, TEvent> state = stack.Pop();
-                state.Entry(this.context);
+                await state.Entry(this.context);
             }
         }
     }

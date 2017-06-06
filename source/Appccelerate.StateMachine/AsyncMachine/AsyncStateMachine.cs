@@ -194,14 +194,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <summary>
         /// Enters the initial state that was previously set with <see cref="Initialize(TState)"/>.
         /// </summary>
-        public void EnterInitialState()
+        public async Task EnterInitialState()
         {
             this.CheckThatStateMachineIsInitialized();
 
             this.extensions.ForEach(extension => extension.EnteringInitialState(this, this.initialStateId.Value));
 
             var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
-            this.EnterInitialState(this.states[this.initialStateId.Value], context);
+            await this.EnterInitialState(this.states[this.initialStateId.Value], context);
 
             this.extensions.ForEach(extension => extension.EnteredInitialState(this, this.initialStateId.Value, context));
         }
@@ -386,10 +386,10 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.initialStateId.Value = initialState.Id;
         }
 
-        private void EnterInitialState(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
+        private async Task EnterInitialState(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
         {
             var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
-            this.CurrentState = initializer.EnterInitialState();
+            this.CurrentState = await initializer.EnterInitialState();
         }
 
         private void RaiseEvent<T>(EventHandler<T> eventHandler, T arguments, ITransitionContext<TState, TEvent> context, bool raiseEventOnException)

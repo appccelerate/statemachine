@@ -237,13 +237,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             return result;
         }
 
-        public void Entry(ITransitionContext<TState, TEvent> context)
+        public async Task Entry(ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
 
             context.AddRecord(this.Id, RecordType.Enter);
 
-            this.ExecuteEntryActions(context);
+            await this.ExecuteEntryActions(context);
         }
 
         public void Exit(ITransitionContext<TState, TEvent> context)
@@ -256,44 +256,44 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             this.SetThisStateAsLastStateOfSuperState();
         }
 
-        public IState<TState, TEvent> EnterByHistory(ITransitionContext<TState, TEvent> context)
+        public async Task<IState<TState, TEvent>> EnterByHistory(ITransitionContext<TState, TEvent> context)
         {
             IState<TState, TEvent> result = this;
 
             switch (this.HistoryType)
             {
                 case HistoryType.None:
-                    result = this.EnterHistoryNone(context);
+                    result = await this.EnterHistoryNone(context);
                     break;
 
                 case HistoryType.Shallow:
-                    result = this.EnterHistoryShallow(context);
+                    result = await this.EnterHistoryShallow(context);
                     break;
 
                 case HistoryType.Deep:
-                    result = this.EnterHistoryDeep(context);
+                    result = await this.EnterHistoryDeep(context);
                     break;
             }
 
             return result;
         }
 
-        public IState<TState, TEvent> EnterShallow(ITransitionContext<TState, TEvent> context)
+        public async Task<IState<TState, TEvent>> EnterShallow(ITransitionContext<TState, TEvent> context)
         {
-            this.Entry(context);
+            await this.Entry(context);
 
             return this.initialState == null ?
                         this :
-                        this.initialState.EnterShallow(context);
+                        await this.initialState.EnterShallow(context);
         }
 
-        public IState<TState, TEvent> EnterDeep(ITransitionContext<TState, TEvent> context)
+        public async Task<IState<TState, TEvent>> EnterDeep(ITransitionContext<TState, TEvent> context)
         {
-            this.Entry(context);
+            await this.Entry(context);
 
             return this.LastActiveState == null ?
                         this :
-                        this.LastActiveState.EnterDeep(context);
+                        await this.LastActiveState.EnterDeep(context);
         }
 
         public override string ToString()
@@ -325,19 +325,19 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             }
         }
 
-        private void ExecuteEntryActions(ITransitionContext<TState, TEvent> context)
+        private async Task ExecuteEntryActions(ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in this.EntryActions)
             {
-                this.ExecuteEntryAction(actionHolder, context);
+                await this.ExecuteEntryAction(actionHolder, context);
             }
         }
 
-        private void ExecuteEntryAction(IActionHolder actionHolder, ITransitionContext<TState, TEvent> context)
+        private async Task ExecuteEntryAction(IActionHolder actionHolder, ITransitionContext<TState, TEvent> context)
         {
             try
             {
-                actionHolder.Execute(context.EventArgument);
+                await actionHolder.Execute(context.EventArgument);
             }
             catch (Exception exception)
             {
@@ -406,29 +406,29 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             }
         }
 
-        private IState<TState, TEvent> EnterHistoryDeep(ITransitionContext<TState, TEvent> context)
+        private async Task<IState<TState, TEvent>> EnterHistoryDeep(ITransitionContext<TState, TEvent> context)
         {
             return this.LastActiveState != null
                        ?
-                           this.LastActiveState.EnterDeep(context)
+                           await this.LastActiveState.EnterDeep(context)
                        :
                            this;
         }
 
-        private IState<TState, TEvent> EnterHistoryShallow(ITransitionContext<TState, TEvent> context)
+        private async Task<IState<TState, TEvent>> EnterHistoryShallow(ITransitionContext<TState, TEvent> context)
         {
             return this.LastActiveState != null
                        ?
-                           this.LastActiveState.EnterShallow(context)
+                           await this.LastActiveState.EnterShallow(context)
                        :
                            this;
         }
 
-        private IState<TState, TEvent> EnterHistoryNone(ITransitionContext<TState, TEvent> context)
+        private async Task<IState<TState, TEvent>> EnterHistoryNone(ITransitionContext<TState, TEvent> context)
         {
             return this.initialState != null
                        ?
-                           this.initialState.EnterShallow(context)
+                           await this.initialState.EnterShallow(context)
                        :
                            this;
         }

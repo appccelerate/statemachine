@@ -310,7 +310,7 @@
         /// </summary>
         private async Task ProcessQueuedEvents()
         {
-            this.InitializeStateMachineIfInitializationIsPending();
+            await this.InitializeStateMachineIfInitializationIsPending();
 
             while (this.events.Count > 0)
             {
@@ -319,14 +319,14 @@
             }
         }
 
-        private void InitializeStateMachineIfInitializationIsPending()
+        private async Task InitializeStateMachineIfInitializationIsPending()
         {
             if (!this.pendingInitialization)
             {
                 return;
             }
 
-            this.stateMachine.EnterInitialState();
+            await this.stateMachine.EnterInitialState();
 
             this.pendingInitialization = false;
         }

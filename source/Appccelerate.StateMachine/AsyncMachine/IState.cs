@@ -99,15 +99,15 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <returns>The result of the transition.</returns>
         Task<ITransitionResult<TState, TEvent>> Fire(ITransitionContext<TState, TEvent> context);
 
-        void Entry(ITransitionContext<TState, TEvent> context);
+        Task Entry(ITransitionContext<TState, TEvent> context);
 
         void Exit(ITransitionContext<TState, TEvent> context);
 
-        IState<TState, TEvent> EnterByHistory(ITransitionContext<TState, TEvent> context);
+        Task<IState<TState, TEvent>> EnterByHistory(ITransitionContext<TState, TEvent> context);
 
-        IState<TState, TEvent> EnterShallow(ITransitionContext<TState, TEvent> context);
+        Task<IState<TState, TEvent>> EnterShallow(ITransitionContext<TState, TEvent> context);
 
-        IState<TState, TEvent> EnterDeep(ITransitionContext<TState, TEvent> context);
+        Task<IState<TState, TEvent>> EnterDeep(ITransitionContext<TState, TEvent> context);
 
         /// <summary>
         /// Returns a <see cref="string"/> that represents this instance.

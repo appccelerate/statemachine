@@ -84,13 +84,13 @@ namespace Appccelerate.StateMachine.Async
                 => exitActionExecuted.Should().BeTrue());
 
             "it should execute asynchronous exit action of source state"._(()
-                => exitActionExecuted.Should().BeTrue());
+                => asyncExitActionExecuted.Should().BeTrue());
 
             "it should execute entry action of destination state"._(()
                 => entryActionExecuted.Should().BeTrue());
 
             "it should execute asynchronous entry action of destination state"._(()
-                => entryActionExecuted.Should().BeTrue());
+                => asyncEntryActionExecuted.Should().BeTrue());
         }
     }
 }

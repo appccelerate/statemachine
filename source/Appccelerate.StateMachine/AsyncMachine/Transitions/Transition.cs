@@ -88,7 +88,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 
                 await this.Fire(this.Source, this.Target, context);
 
-                newState = this.Target.EnterByHistory(context);
+                newState = await this.Target.EnterByHistory(context);
             }
             else
             {
@@ -155,7 +155,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 // Handles 3. after traversing from the source to the target.
                 source.Exit(context);
                 await this.PerformActions(context);
-                this.Target.Entry(context);
+                await this.Target.Entry(context);
             }
             else if (source == target)
             {
@@ -168,7 +168,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 //// Handles 5a. after traversing the hierarchy until a common ancestor if found.
                 source.Exit(context);
                 await this.PerformActions(context);
-                target.Entry(context);
+                await target.Entry(context);
             }
             else
             {
@@ -186,14 +186,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                     // Handles 2.
                     // Handles 5c.
                     await this.Fire(source, target.SuperState, context);
-                    target.Entry(context);
+                    await target.Entry(context);
                 }
                 else
                 {
                     // Handles 5a.
                     source.Exit(context);
                     await this.Fire(source.SuperState, target.SuperState, context);
-                    target.Entry(context);
+                    await target.Entry(context);
                 }
             }
         }
