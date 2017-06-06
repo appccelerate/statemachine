@@ -102,19 +102,13 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// Gets the name of this instance.
         /// </summary>
         /// <value>The name of this instance.</value>
-        public string Name
-        {
-            get { return this.name; }
-        }
+        public string Name => this.name;
 
         /// <summary>
         /// Gets the id of the current state.
         /// </summary>
         /// <value>The id of the current state.</value>
-        public TState CurrentStateId
-        {
-            get { return this.CurrentState.Id; }
-        }
+        public TState CurrentStateId => this.CurrentState.Id;
 
         /// <summary>
         /// Gets or sets the state of the current.

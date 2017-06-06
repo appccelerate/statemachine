@@ -31,11 +31,6 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         where TEvent : IComparable
     {
         /// <summary>
-        /// The exception.
-        /// </summary>
-        private readonly Exception exception;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="TransitionExceptionEventArgs&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         /// <param name="context">The event context.</param>
@@ -43,16 +38,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         public TransitionExceptionEventArgs(ITransitionContext<TState, TEvent> context, Exception exception)
             : base(context)
         {
-            this.exception = exception;
+            this.Exception = exception;
         }
 
         /// <summary>
         /// Gets the exception.
         /// </summary>
         /// <value>The exception.</value>
-        public Exception Exception
-        {
-            get { return this.exception; }
-        }
+        public Exception Exception { get; }
     }
 }

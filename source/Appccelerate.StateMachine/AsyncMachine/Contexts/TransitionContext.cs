@@ -28,7 +28,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Contexts
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    [DebuggerDisplay("State = {state} Event = {eventId} EventArguments = {eventArguments}")]
+    [DebuggerDisplay("State = {state} Event = {eventId} EventArgument = {eventArgument}")]
     public class TransitionContext<TState, TEvent> : ITransitionContext<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
@@ -48,20 +48,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.Contexts
             this.records = new List<Record>();
         }
 
-        public IState<TState, TEvent> State
-        {
-            get { return this.state; }
-        }
+        public IState<TState, TEvent> State => this.state;
 
-        public Missable<TEvent> EventId
-        {
-            get { return this.eventId; }
-        }
+        public Missable<TEvent> EventId => this.eventId;
 
-        public object EventArgument
-        {
-            get { return this.eventArgument; }
-        }
+        public object EventArgument => this.eventArgument;
 
         private INotifier<TState, TEvent> Notifier
         {
@@ -100,9 +91,9 @@ namespace Appccelerate.StateMachine.AsyncMachine.Contexts
                 this.RecordType = recordType;
             }
 
-            private TState StateId { get; set; }
+            private TState StateId { get; }
 
-            private RecordType RecordType { get; set; }
+            private RecordType RecordType { get; }
 
             public override string ToString()
             {

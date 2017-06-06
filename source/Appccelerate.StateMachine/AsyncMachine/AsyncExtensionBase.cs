@@ -16,11 +16,9 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Extensions
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-
-    using Appccelerate.StateMachine.AsyncMachine;
 
     /// <summary>
     /// Base class for state machine extensions with empty implementation.

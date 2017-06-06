@@ -65,11 +65,6 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         private IState<TState, TEvent> initialState;
 
         /// <summary>
-        /// The <see cref="HistoryType"/> of this state.
-        /// </summary>
-        private HistoryType historyType = HistoryType.None;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="State&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         /// <param name="id">The unique id of this state.</param>
@@ -99,19 +94,19 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// Gets the unique id of this state.
         /// </summary>
         /// <value>The id of this state.</value>
-        public TState Id { get; private set; }
+        public TState Id { get; }
 
         /// <summary>
         /// Gets the entry actions.
         /// </summary>
         /// <value>The entry actions.</value>
-        public IList<IActionHolder> EntryActions { get; private set; }
+        public IList<IActionHolder> EntryActions { get; }
 
         /// <summary>
         /// Gets the exit actions.
         /// </summary>
         /// <value>The exit action.</value>
-        public IList<IActionHolder> ExitActions { get; private set; }
+        public IList<IActionHolder> ExitActions { get; }
 
         /// <summary>
         /// Gets or sets the initial sub state of this state.
@@ -119,10 +114,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// <value>The initial sub state of this state.</value>
         public IState<TState, TEvent> InitialState
         {
-            get
-            {
-                return this.initialState;
-            }
+            get => this.initialState;
 
             set
             {
@@ -142,10 +134,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// <value>The super-state of this super.</value>
         public IState<TState, TEvent> SuperState
         {
-            get
-            {
-                return this.superState;
-            }
+            get => this.superState;
 
             set
             {
@@ -164,10 +153,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// <value>The level.</value>
         public int Level
         {
-            get
-            {
-                return this.level;
-            }
+            get => this.level;
 
             set
             {
@@ -181,29 +167,19 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// Gets or sets the history type of this state.
         /// </summary>
         /// <value>The type of the history.</value>
-        public HistoryType HistoryType
-        {
-            get { return this.historyType; }
-            set { this.historyType = value; }
-        }
+        public HistoryType HistoryType { get; set; } = HistoryType.None;
 
         /// <summary>
         /// Gets the sub-states of this state.
         /// </summary>
         /// <value>The sub-states of this state.</value>
-        public ICollection<IState<TState, TEvent>> SubStates
-        {
-            get { return this.subStates; }
-        }
+        public ICollection<IState<TState, TEvent>> SubStates => this.subStates;
 
         /// <summary>
         /// Gets the transitions that start in this state.
         /// </summary>
         /// <value>The transitions.</value>
-        public ITransitionDictionary<TState, TEvent> Transitions
-        {
-            get { return this.transitions; }
-        }
+        public ITransitionDictionary<TState, TEvent> Transitions => this.transitions;
 
         /// <summary>
         /// Goes recursively up the state hierarchy until a state is found that can handle the event.
@@ -311,7 +287,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// </summary>
         private void SetInitialLevel()
         {
-            this.Level = this.superState != null ? this.superState.Level + 1 : 1;
+            this.Level = this.superState?.Level + 1 ?? 1;
         }
 
         /// <summary>

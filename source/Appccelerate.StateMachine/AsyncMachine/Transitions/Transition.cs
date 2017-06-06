@@ -49,15 +49,9 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 
         public IGuardHolder Guard { get; set; }
 
-        public ICollection<IActionHolder> Actions
-        {
-            get { return this.actions; }
-        }
+        public ICollection<IActionHolder> Actions => this.actions;
 
-        private bool IsInternalTransition
-        {
-            get { return this.Target == null; }
-        }
+        private bool IsInternalTransition => this.Target == null;
 
         public async Task<ITransitionResult<TState, TEvent>> Fire(ITransitionContext<TState, TEvent> context)
         {

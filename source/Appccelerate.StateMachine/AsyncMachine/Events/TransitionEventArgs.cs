@@ -44,28 +44,19 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         /// Gets the id of the source state of the transition.
         /// </summary>
         /// <value>The id of the source state of the transition.</value>
-        public TState StateId
-        {
-            get { return this.Context.State.Id; }
-        }
+        public TState StateId => this.Context.State.Id;
 
         /// <summary>
         /// Gets the event id.
         /// </summary>
         /// <value>The event id.</value>
-        public TEvent EventId
-        {
-            get { return this.Context.EventId.Value; }
-        }
+        public TEvent EventId => this.Context.EventId.Value;
 
         /// <summary>
         /// Gets the event argument.
         /// </summary>
         /// <value>The event argument.</value>
-        public object EventArgument
-        {
-            get { return this.Context.EventArgument; }
-        }
+        public object EventArgument => this.Context.EventArgument;
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.

@@ -31,11 +31,6 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         where TEvent : IComparable
     {
         /// <summary>
-        /// The new state the state machine is in after the transition.
-        /// </summary>
-        private readonly TState newStateId;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="TransitionCompletedEventArgs&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         /// <param name="newStateId">The new state id.</param>
@@ -43,16 +38,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         public TransitionCompletedEventArgs(TState newStateId, ITransitionContext<TState, TEvent> context)
             : base(context)
         {
-            this.newStateId = newStateId;
+            this.NewStateId = newStateId;
         }
 
         /// <summary>
         /// Gets the new state id the state machine is in after the transition.
         /// </summary>
         /// <value>The new state id the state machine is in after the transition.</value>
-        public TState NewStateId
-        {
-            get { return this.newStateId; }
-        }
+        public TState NewStateId { get; }
     }
 }
