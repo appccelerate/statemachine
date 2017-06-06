@@ -101,7 +101,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         Task Entry(ITransitionContext<TState, TEvent> context);
 
-        void Exit(ITransitionContext<TState, TEvent> context);
+        Task Exit(ITransitionContext<TState, TEvent> context);
 
         Task<IState<TState, TEvent>> EnterByHistory(ITransitionContext<TState, TEvent> context);
 

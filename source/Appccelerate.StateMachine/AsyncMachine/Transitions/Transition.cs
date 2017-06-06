@@ -84,7 +84,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 
             if (!this.IsInternalTransition)
             {
-                this.UnwindSubStates(context);
+                await this.UnwindSubStates(context);
 
                 await this.Fire(this.Source, this.Target, context);
 
@@ -153,7 +153,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             {
                 // Handles 1.
                 // Handles 3. after traversing from the source to the target.
-                source.Exit(context);
+                await source.Exit(context);
                 await this.PerformActions(context);
                 await this.Target.Entry(context);
             }
@@ -166,7 +166,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             {
                 //// Handles 4.
                 //// Handles 5a. after traversing the hierarchy until a common ancestor if found.
-                source.Exit(context);
+                await source.Exit(context);
                 await this.PerformActions(context);
                 await target.Entry(context);
             }
@@ -178,7 +178,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 // Handles 5b.
                 if (source.Level > target.Level)
                 {
-                    source.Exit(context);
+                    await source.Exit(context);
                     await this.Fire(source.SuperState, target, context);
                 }
                 else if (source.Level < target.Level)
@@ -191,7 +191,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 else
                 {
                     // Handles 5a.
-                    source.Exit(context);
+                    await source.Exit(context);
                     await this.Fire(source.SuperState, target.SuperState, context);
                     await target.Entry(context);
                 }
@@ -235,11 +235,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             }
         }
 
-        private void UnwindSubStates(ITransitionContext<TState, TEvent> context)
+        private async Task UnwindSubStates(ITransitionContext<TState, TEvent> context)
         {
             for (IState<TState, TEvent> o = context.State; o != this.Source; o = o.SuperState)
             {
-                o.Exit(context);
+                await o.Exit(context);
             }
         }
     }

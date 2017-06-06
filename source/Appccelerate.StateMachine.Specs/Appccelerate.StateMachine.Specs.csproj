@@ -75,6 +75,7 @@
     <Compile Include="ActiveStateMachines.cs" />
     <Compile Include="Async\CurrentStateExtension.cs" />
     <Compile Include="Async\EntryActions.cs" />
+    <Compile Include="Async\ExitActions.cs" />
     <Compile Include="Async\Transitions.cs" />
     <Compile Include="Catch.cs" />
     <Compile Include="CurrentStateExtension.cs" />

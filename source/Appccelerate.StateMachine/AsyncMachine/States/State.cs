@@ -246,13 +246,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.ExecuteEntryActions(context);
         }
 
-        public void Exit(ITransitionContext<TState, TEvent> context)
+        public async Task Exit(ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
 
             context.AddRecord(this.Id, RecordType.Exit);
 
-            this.ExecuteExitActions(context);
+            await this.ExecuteExitActions(context);
             this.SetThisStateAsLastStateOfSuperState();
         }
 
@@ -360,19 +360,19 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
                     this.stateMachineInformation, this, context, exception));
         }
 
-        private void ExecuteExitActions(ITransitionContext<TState, TEvent> context)
+        private async Task ExecuteExitActions(ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in this.ExitActions)
             {
-                this.ExecuteExitAction(actionHolder, context);
+                await this.ExecuteExitAction(actionHolder, context);
             }
         }
 
-        private void ExecuteExitAction(IActionHolder actionHolder, ITransitionContext<TState, TEvent> context)
+        private async Task ExecuteExitAction(IActionHolder actionHolder, ITransitionContext<TState, TEvent> context)
         {
             try
             {
-                actionHolder.Execute(context.EventArgument);
+                await actionHolder.Execute(context.EventArgument);
             }
             catch (Exception exception)
             {
