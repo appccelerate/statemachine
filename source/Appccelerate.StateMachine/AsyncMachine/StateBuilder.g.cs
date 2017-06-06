@@ -361,7 +361,25 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return this;
         }
 
+        IIfSyntax<TState, TEvent> IGotoInIfSyntax<TState, TEvent>.If<T>(Func<T, Task<bool>> guard)
+        {
+            this.CreateTransition();
+
+            this.SetGuard(guard);
+
+            return this;
+        }
+
         IIfSyntax<TState, TEvent> IGotoInIfSyntax<TState, TEvent>.If(Func<bool> guard)
+        {
+            this.CreateTransition();
+
+            this.SetGuard(guard);
+
+            return this;
+        }
+
+        IIfSyntax<TState, TEvent> IGotoInIfSyntax<TState, TEvent>.If(Func<Task<bool>> guard)
         {
             this.CreateTransition();
 
@@ -440,7 +458,21 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return this;
         }
 
+        IIfSyntax<TState, TEvent> IOnSyntax<TState, TEvent>.If<T>(Func<T, Task<bool>> guard)
+        {
+            this.SetGuard(guard);
+
+            return this;
+        }
+
         IIfSyntax<TState, TEvent> IOnSyntax<TState, TEvent>.If(Func<bool> guard)
+        {
+            this.SetGuard(guard);
+
+            return this;
+        }
+
+        IIfSyntax<TState, TEvent> IOnSyntax<TState, TEvent>.If(Func<Task<bool>> guard)
         {
             this.SetGuard(guard);
 
@@ -456,7 +488,25 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return this;
         }
 
+        IIfSyntax<TState, TEvent> IIfOrOtherwiseSyntax<TState, TEvent>.If<T>(Func<T, Task<bool>> guard)
+        {
+            this.CreateTransition();
+
+            this.SetGuard(guard);
+
+            return this;
+        }
+
         IIfSyntax<TState, TEvent> IIfOrOtherwiseSyntax<TState, TEvent>.If(Func<bool> guard)
+        {
+            this.CreateTransition();
+
+            this.SetGuard(guard);
+
+            return this;
+        }
+
+        IIfSyntax<TState, TEvent> IIfOrOtherwiseSyntax<TState, TEvent>.If(Func<Task<bool>> guard)
         {
             this.CreateTransition();
 
@@ -477,7 +527,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.currentTransition.Guard = this.factory.CreateGuardHolder(guard);
         }
 
+        private void SetGuard<T>(Func<T, Task<bool>> guard)
+        {
+            this.currentTransition.Guard = this.factory.CreateGuardHolder(guard);
+        }
+
         private void SetGuard(Func<bool> guard)
+        {
+            this.currentTransition.Guard = this.factory.CreateGuardHolder(guard);
+        }
+
+        private void SetGuard(Func<Task<bool>> guard)
         {
             this.currentTransition.Guard = this.factory.CreateGuardHolder(guard);
         }

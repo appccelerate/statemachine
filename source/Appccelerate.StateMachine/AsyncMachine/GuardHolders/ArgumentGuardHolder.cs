@@ -19,6 +19,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
 {
     using System;
     using System.Reflection;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Holds a single argument guard.
@@ -26,13 +27,22 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
     /// <typeparam name="T">Type of the argument of the guard.</typeparam>
     public class ArgumentGuardHolder<T> : IGuardHolder
     {
-        private readonly Func<T, bool> guard;
+        private readonly Func<T, Task<bool>> guard;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ArgumentGuardHolder{T}"/> class.
         /// </summary>
         /// <param name="guard">The guard.</param>
         public ArgumentGuardHolder(Func<T, bool> guard)
+        {
+            this.guard = argument => Task.FromResult(guard(argument));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentGuardHolder{T}"/> class.
+        /// </summary>
+        /// <param name="guard">The guard.</param>
+        public ArgumentGuardHolder(Func<T, Task<bool>> guard)
         {
             this.guard = guard;
         }
@@ -42,14 +52,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        public bool Execute(object argument)
+        public async Task<bool> Execute(object argument)
         {
             if (argument != null && !(argument is T))
             {
                 throw new ArgumentException(GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.Describe()));
             }
 
-            return this.guard((T)argument);
+            return await this.guard((T)argument);
         }
 
         /// <summary>

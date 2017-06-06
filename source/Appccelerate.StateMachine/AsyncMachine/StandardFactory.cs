@@ -112,7 +112,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return new ArgumentLessGuardHolder(guard);
         }
 
+        public virtual IGuardHolder CreateGuardHolder(Func<Task<bool>> guard)
+        {
+            return new ArgumentLessGuardHolder(guard);
+        }
+
         public virtual IGuardHolder CreateGuardHolder<T>(Func<T, bool> guard)
+        {
+            return new ArgumentGuardHolder<T>(guard);
+        }
+
+        public virtual IGuardHolder CreateGuardHolder<T>(Func<T, Task<bool>> guard)
         {
             return new ArgumentGuardHolder<T>(guard);
         }

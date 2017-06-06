@@ -39,9 +39,24 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// <summary>
         /// Defines a transition guard. The transition is only taken if the guard is fulfilled.
         /// </summary>
+        /// <typeparam name="T">The type of the guard argument.</typeparam>
+        /// <param name="guard">The guard.</param>
+        /// <returns>If syntax.</returns>
+        IIfSyntax<TState, TEvent> If<T>(Func<T, Task<bool>> guard);
+
+        /// <summary>
+        /// Defines a transition guard. The transition is only taken if the guard is fulfilled.
+        /// </summary>
         /// <param name="guard">The guard.</param>
         /// <returns>If syntax.</returns>
         IIfSyntax<TState, TEvent> If(Func<bool> guard);
+
+        /// <summary>
+        /// Defines a transition guard. The transition is only taken if the guard is fulfilled.
+        /// </summary>
+        /// <param name="guard">The guard.</param>
+        /// <returns>If syntax.</returns>
+        IIfSyntax<TState, TEvent> If(Func<Task<bool>> guard);
 
         /// <summary>
         /// Defines the transition that is taken when the guards of all other transitions did not match.

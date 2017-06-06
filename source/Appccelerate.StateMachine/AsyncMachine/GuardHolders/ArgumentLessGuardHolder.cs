@@ -20,19 +20,29 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
 {
     using System;
     using System.Reflection;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Holds an argument less guard.
     /// </summary>
     public class ArgumentLessGuardHolder : IGuardHolder
     {
-        private readonly Func<bool> guard;
+        private readonly Func<Task<bool>> guard;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ArgumentLessGuardHolder"/> class.
         /// </summary>
         /// <param name="guard">The guard.</param>
         public ArgumentLessGuardHolder(Func<bool> guard)
+        {
+            this.guard = () => Task.FromResult(guard());
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentLessGuardHolder"/> class.
+        /// </summary>
+        /// <param name="guard">The guard.</param>
+        public ArgumentLessGuardHolder(Func<Task<bool>> guard)
         {
             this.guard = guard;
         }
@@ -42,9 +52,9 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        public bool Execute(object argument)
+        public async Task<bool> Execute(object argument)
         {
-            return this.guard();
+            return await this.guard();
         }
 
         /// <summary>

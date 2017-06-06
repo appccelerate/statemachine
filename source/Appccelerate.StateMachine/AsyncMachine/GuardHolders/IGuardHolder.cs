@@ -18,6 +18,8 @@
 
 namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
 {
+    using System.Threading.Tasks;
+
     /// <summary>
     /// Holds a guard.
     /// </summary>
@@ -28,7 +30,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        bool Execute(object argument);
+        Task<bool> Execute(object argument);
 
         /// <summary>
         /// Describes the guard.

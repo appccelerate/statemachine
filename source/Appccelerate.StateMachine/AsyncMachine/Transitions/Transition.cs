@@ -63,7 +63,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         {
             LiteGuard.AgainstNullArgument("context", context);
 
-            if (!this.ShouldFire(context))
+            var shouldFire = await this.ShouldFire(context);
+            if (!shouldFire)
             {
                 this.extensionHost.ForEach(extension => extension.SkippedTransition(
                     this.stateMachineInformation,
@@ -198,11 +199,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             }
         }
 
-        private bool ShouldFire(ITransitionContext<TState, TEvent> context)
+        private async Task<bool> ShouldFire(ITransitionContext<TState, TEvent> context)
         {
             try
             {
-                return this.Guard == null || this.Guard.Execute(context.EventArgument);
+                return this.Guard == null || await this.Guard.Execute(context.EventArgument);
             }
             catch (Exception exception)
             {
