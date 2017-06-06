@@ -16,10 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
+    using Appccelerate.StateMachine.Extensions;
     using Appccelerate.StateMachine.Machine;
-    using Extensions;
 
     public class CurrentStateExtension : ExtensionBase<int, int>
     {

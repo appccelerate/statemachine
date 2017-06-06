@@ -16,14 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
     using System;
     using System.Globalization;
     using System.Linq;
-
     using FluentAssertions;
-
     using Xbehave;
 
     public class HierarchicalTransitions

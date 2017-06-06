@@ -1,4 +1,4 @@
-﻿//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 // <copyright file="CustomTypes.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
     using System;
     using FluentAssertions;

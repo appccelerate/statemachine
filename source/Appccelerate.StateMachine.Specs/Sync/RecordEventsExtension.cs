@@ -16,11 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.Extensions;
     using Appccelerate.StateMachine.Machine;
-    using Extensions;
 
     public class RecordEventsExtension : ExtensionBase<int, int>
         {

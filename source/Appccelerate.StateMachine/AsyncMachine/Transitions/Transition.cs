@@ -148,6 +148,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         /// <param name="source">The source state.</param>
         /// <param name="target">The target state.</param>
         /// <param name="context">The event context.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task Fire(IState<TState, TEvent> source, IState<TState, TEvent> target, ITransitionContext<TState, TEvent> context)
         {
             if (source == this.Target)

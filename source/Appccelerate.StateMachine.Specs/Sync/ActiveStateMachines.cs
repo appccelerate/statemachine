@@ -1,5 +1,5 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="PassiveStateMachines.cs" company="Appccelerate">
+//-------------------------------------------------------------------------------
+// <copyright file="ActiveStateMachines.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,24 +16,24 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
+    using System.Threading;
     using Appccelerate.StateMachine.Machine;
     using FakeItEasy;
     using FluentAssertions;
-
     using Xbehave;
 
-    public class PassiveStateMachines
+    public class ActiveStateMachines
     {
         [Scenario]
         public void DefaultStateMachineName(
-            PassiveStateMachine<string, int> machine,
+            ActiveStateMachine<string, int> machine,
             StateMachineNameReporter reporter)
         {
-            "establish an instantiated passive state machine"._(() =>
+            "establish an instantiated active state machine"._(() =>
             {
-                machine = new PassiveStateMachine<string, int>();
+                machine = new ActiveStateMachine<string, int>();
             });
 
             "establish a state machine reporter"._(() =>
@@ -46,19 +46,19 @@ namespace Appccelerate.StateMachine
 
             "it should use the type of the state machine as name for state machine"._(() =>
                 reporter.StateMachineName
-                    .Should().Be("Appccelerate.StateMachine.PassiveStateMachine<System.String,System.Int32>"));
+                    .Should().Be("Appccelerate.StateMachine.ActiveStateMachine<System.String,System.Int32>"));
         }
 
         [Scenario]
         public void CustomStateMachineName(
-            PassiveStateMachine<string, int> machine,
+            ActiveStateMachine<string, int> machine,
             StateMachineNameReporter reporter)
         {
             const string Name = "custom name";
 
-            "establish an instantiated passive state machine with custom name"._(() =>
+            "establish an instantiated active state machine with custom name"._(() =>
             {
-                machine = new PassiveStateMachine<string, int>(Name);
+                machine = new ActiveStateMachine<string, int>(Name);
             });
 
             "establish a state machine reporter"._(() =>
@@ -76,7 +76,7 @@ namespace Appccelerate.StateMachine
 
         [Scenario]
         public void CustomFactory(
-            PassiveStateMachine<string, int> machine,
+            ActiveStateMachine<string, int> machine,
             StandardFactory<string, int> factory)
         {
             "establish a custom factory"._(() =>
@@ -84,9 +84,9 @@ namespace Appccelerate.StateMachine
                 factory = A.Fake<StandardFactory<string, int>>();
             });
 
-            "when creating a passive state machine"._(() =>
+            "when creating an active state machine"._(() =>
             {
-                machine = new PassiveStateMachine<string, int>("_", factory);
+                machine = new ActiveStateMachine<string, int>("_", factory);
 
                 machine.In("initial").On(42).Goto("answer");
             });
@@ -97,20 +97,21 @@ namespace Appccelerate.StateMachine
 
         [Scenario]
         public void EventsQueueing(
-            IStateMachine<string, int> machine)
+            IStateMachine<string, int> machine,
+            AutoResetEvent signal)
         {
             const int FirstEvent = 0;
             const int SecondEvent = 1;
 
-            bool arrived = false;
-
-            "establish a passive state machine with transitions"._(() =>
+            "establish an active state machine with transitions"._(() =>
             {
-                machine = new PassiveStateMachine<string, int>();
+                signal = new AutoResetEvent(false);
+
+                machine = new ActiveStateMachine<string, int>();
 
                 machine.In("A").On(FirstEvent).Goto("B");
                 machine.In("B").On(SecondEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => arrived = true);
+                machine.In("C").ExecuteOnEntry(() => signal.Set());
 
                 machine.Initialize("A");
             });
@@ -123,25 +124,26 @@ namespace Appccelerate.StateMachine
             });
 
             "it should queue event at the end"._(() =>
-                arrived.Should().BeTrue("state machine should arrive at destination state"));
+                signal.WaitOne(1000).Should().BeTrue("state machine should arrive at destination state"));
         }
 
         [Scenario]
         public void PriorityEventsQueueing(
-            IStateMachine<string, int> machine)
+            IStateMachine<string, int> machine,
+            AutoResetEvent signal)
         {
             const int FirstEvent = 0;
             const int SecondEvent = 1;
 
-            bool arrived = false;
-
-            "establish a passive state machine with transitions"._(() =>
+            "establish an active state machine with transitions"._(() =>
             {
-                machine = new PassiveStateMachine<string, int>();
+                signal = new AutoResetEvent(false);
+
+                machine = new ActiveStateMachine<string, int>();
 
                 machine.In("A").On(SecondEvent).Goto("B");
                 machine.In("B").On(FirstEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => arrived = true);
+                machine.In("C").ExecuteOnEntry(() => signal.Set());
 
                 machine.Initialize("A");
             });
@@ -154,7 +156,7 @@ namespace Appccelerate.StateMachine
             });
 
             "it should queue event at the front"._(() =>
-                arrived.Should().BeTrue("state machine should arrive at destination state"));
+                signal.WaitOne(1000).Should().BeTrue("state machine should arrive at destination state"));
         }
     }
 }

@@ -16,12 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
     using Appccelerate.StateMachine.Machine;
-
     using FakeItEasy;
-
     using Xbehave;
 
     public class StateMachineExtensions

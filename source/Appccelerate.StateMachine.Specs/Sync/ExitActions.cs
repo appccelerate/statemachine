@@ -16,13 +16,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
     using System;
     using System.Collections.Generic;
-
     using FluentAssertions;
-
     using Xbehave;
 
     public class ExitActions

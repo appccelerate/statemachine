@@ -1,4 +1,20 @@
-﻿namespace Appccelerate.StateMachine
+﻿// <copyright file="AsyncPassiveStateMachine.cs" company="Appccelerate">
+//   Copyright (c) 2008-2017 Appccelerate
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+// </copyright>
+
+namespace Appccelerate.StateMachine
 {
     using System;
     using System.Collections.Generic;
@@ -133,6 +149,7 @@
         /// Fires the specified event.
         /// </summary>
         /// <param name="eventId">The event.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId)
         {
             await this.Fire(eventId, null);
@@ -143,6 +160,7 @@
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId, object eventArgument)
         {
             this.events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
@@ -156,6 +174,7 @@
         /// Fires the specified priority event. The event will be handled before any already queued event.
         /// </summary>
         /// <param name="eventId">The event.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task FirePriority(TEvent eventId)
         {
             await this.FirePriority(eventId, null);
@@ -166,6 +185,7 @@
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task FirePriority(TEvent eventId, object eventArgument)
         {
             this.events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
@@ -194,6 +214,7 @@
         /// If the state machine is not started then the events will be queued until the state machine is started.
         /// Already queued events are processed.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Start()
         {
             this.CheckThatStateMachineIsInitialized();
@@ -284,9 +305,6 @@
             }
         }
 
-        /// <summary>
-        /// Executes all queued events.
-        /// </summary>
         private async Task Execute()
         {
             if (this.executing || !this.IsRunning)
@@ -305,9 +323,6 @@
             }
         }
 
-        /// <summary>
-        /// Processes the queued events.
-        /// </summary>
         private async Task ProcessQueuedEvents()
         {
             await this.InitializeStateMachineIfInitializationIsPending();
@@ -331,10 +346,6 @@
             this.pendingInitialization = false;
         }
 
-        /// <summary>
-        /// Gets the next event to process for the queue.
-        /// </summary>
-        /// <returns>The next queued event.</returns>
         private EventInformation<TEvent> GetNextEventToProcess()
         {
             EventInformation<TEvent> e = this.events.First.Value;
@@ -342,10 +353,6 @@
             return e;
         }
 
-        /// <summary>
-        /// Fires the event on state machine.
-        /// </summary>
-        /// <param name="e">The event to fire.</param>
         private async Task FireEventOnStateMachine(EventInformation<TEvent> e)
         {
             await this.stateMachine.Fire(e.EventId, e.EventArgument);

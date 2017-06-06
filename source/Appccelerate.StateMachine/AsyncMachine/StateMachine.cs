@@ -194,6 +194,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <summary>
         /// Enters the initial state that was previously set with <see cref="Initialize(TState)"/>.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task EnterInitialState()
         {
             this.CheckThatStateMachineIsInitialized();
@@ -210,6 +211,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// Fires the specified event.
         /// </summary>
         /// <param name="eventId">The event.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId)
         {
             await this.Fire(eventId, Missing.Value);
@@ -220,6 +222,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId, object eventArgument)
         {
             this.CheckThatStateMachineIsInitialized();

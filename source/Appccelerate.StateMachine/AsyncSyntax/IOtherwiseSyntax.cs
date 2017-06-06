@@ -52,6 +52,7 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// <param name="action">The action to execute when the transition is taken.</param>
         /// <returns>Event syntax</returns>
         IOtherwiseExecuteSyntax<TState, TEvent> Execute<T>(Action<T> action);
+
         /// <summary>
         /// Defines the transition actions.
         /// </summary>

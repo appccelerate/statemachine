@@ -1,4 +1,4 @@
-﻿//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 // <copyright file="Persisting.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
@@ -16,14 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
     using System;
     using System.Collections.Generic;
     using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Persistence;
-
     using FakeItEasy;
     using FluentAssertions;
     using Xbehave;

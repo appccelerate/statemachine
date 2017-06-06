@@ -16,10 +16,9 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Sync
 {
     using System;
-
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Persistence;
     using FakeItEasy;

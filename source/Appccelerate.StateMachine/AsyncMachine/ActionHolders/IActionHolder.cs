@@ -29,6 +29,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
         /// Executes the transition action.
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task Execute(object argument);
 
         /// <summary>
