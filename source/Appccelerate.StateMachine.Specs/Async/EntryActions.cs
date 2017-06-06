@@ -54,7 +54,7 @@ namespace Appccelerate.StateMachine.Async
                     await machine.Start();
                 });
 
-            "it should execute the entry action"._(()
+            "it should execute the synchronous entry action"._(()
                 => entryActionExecuted.Should().BeTrue());
 
             "it should execute the asynchronous entry action"._(()
@@ -90,10 +90,10 @@ namespace Appccelerate.StateMachine.Async
                 await machine.Start();
             });
 
-            "it should execute the entry action"._(()
+            "it should execute the entry synchronous action"._(()
                 => receivedParameter.Should().NotBeNull());
 
-            "it should pass parameter to the entry action"._(()
+            "it should pass parameter to the synchronous entry action"._(()
                 => receivedParameter.Should().Be(parameter));
 
             "it should execute the asynchronous entry action"._(()
@@ -238,7 +238,7 @@ namespace Appccelerate.StateMachine.Async
                 machine.Fire(Event, argument);
             });
 
-            "it should pass event argument to entry action"._(()
+            "it should pass event argument to synchronousentry action"._(()
                 => passedArgument.Should().Be(argument));
 
             "it should pass event argument to asynchronous entry action"._(()
