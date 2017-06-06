@@ -36,6 +36,7 @@ namespace Appccelerate.StateMachine.Async
         public void ExecutingTransition(
             AsyncPassiveStateMachine<int, int> machine,
             string actualParameter,
+            string asyncActualParameter,
             bool exitActionExecuted,
             bool entryActionExecuted,
             bool asyncExitActionExecuted,
@@ -54,7 +55,13 @@ namespace Appccelerate.StateMachine.Async
                                 asyncExitActionExecuted = true;
                                 await Task.Yield();
                             })
-                        .On(Event).Goto(DestinationState).Execute<string>(p => actualParameter = p);
+                        .On(Event).Goto(DestinationState)
+                            .Execute((string p) => actualParameter = p)
+                            .Execute(async (string p) =>
+                                {
+                                    asyncActualParameter = p;
+                                    await Task.Yield();
+                                });
 
                     machine.In(DestinationState)
                         .ExecuteOnEntry(() => entryActionExecuted = true)
@@ -74,19 +81,22 @@ namespace Appccelerate.StateMachine.Async
             "it should execute transition by switching state"._(()
                 => CurrentStateExtension.CurrentState.Should().Be(DestinationState));
 
-            "it should execute transition actions"._(()
+            "it should execute synchronous transition actions"._(()
                 => actualParameter.Should().NotBeNull());
+
+            "it should execute asynchronous transition actions"._(()
+                => asyncActualParameter.Should().NotBeNull());
 
             "it should pass parameters to transition action"._(()
                 => actualParameter.Should().Be(Parameter));
 
-            "it should execute exit action of source state"._(()
+            "it should execute synchronous exit action of source state"._(()
                 => exitActionExecuted.Should().BeTrue());
 
             "it should execute asynchronous exit action of source state"._(()
                 => asyncExitActionExecuted.Should().BeTrue());
 
-            "it should execute entry action of destination state"._(()
+            "it should execute synchronous entry action of destination state"._(()
                 => entryActionExecuted.Should().BeTrue());
 
             "it should execute asynchronous entry action of destination state"._(()
