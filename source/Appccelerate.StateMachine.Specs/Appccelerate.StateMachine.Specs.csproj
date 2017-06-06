@@ -72,6 +72,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Async\AsyncPassiveStateMachines.cs" />
+    <Compile Include="Async\StateMachineNameReporter.cs" />
     <Compile Include="Sync\ActiveStateMachines.cs" />
     <Compile Include="Async\CurrentStateExtension.cs" />
     <Compile Include="Async\EntryActions.cs" />
