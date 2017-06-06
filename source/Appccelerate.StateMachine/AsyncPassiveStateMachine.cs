@@ -152,7 +152,7 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId)
         {
-            await this.Fire(eventId, null);
+            await this.Fire(eventId, Missing.Value);
         }
 
         /// <summary>
