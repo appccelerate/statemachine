@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="Concern.cs" company="Appccelerate">
+// <copyright file="IEventSyntax.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,20 +16,20 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.AsyncSyntax
 {
-    public static class Concern
+    /// <summary>
+    /// Defines the event syntax.
+    /// </summary>
+    /// <typeparam name="TState">The type of the state.</typeparam>
+    /// <typeparam name="TEvent">The type of the event.</typeparam>
+    public interface IEventSyntax<TState, TEvent>
     {
-        public const string Initialization = "Initialize state machine";
-
-        public const string StartStop = "Start and stop state machine";
-
-        public const string Transition = "Execute transition";
-
-        public const string EntryAndExitActions = "Entry and exit actions";
-
-        public const string ExceptionHandling = "Exception Handling";
-
-        public const string Persistence = "Persistence";
+        /// <summary>
+        /// Defines an event that is accepted.
+        /// </summary>
+        /// <param name="eventId">The event id.</param>
+        /// <returns>On syntax.</returns>
+        IOnSyntax<TState, TEvent> On(TEvent eventId);
     }
 }

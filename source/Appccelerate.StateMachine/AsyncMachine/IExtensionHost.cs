@@ -1,5 +1,5 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="IStateMachineLoader.cs" company="Appccelerate">
+//-------------------------------------------------------------------------------
+// <copyright file="IExtensionHost.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,25 +16,23 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Persistence
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
 
-    public interface IStateMachineLoader<TState>
+    /// <summary>
+    /// Interface to execute actions on all extensions of the event broker.
+    /// </summary>
+    /// <typeparam name="TState">The type of the state.</typeparam>
+    /// <typeparam name="TEvent">The type of the event.</typeparam>
+    public interface IExtensionHost<TState, TEvent>
         where TState : IComparable
+        where TEvent : IComparable
     {
         /// <summary>
-        /// Returns the state to be set as the current state of the state machine.
+        /// Executes the specified action for all extensions.
         /// </summary>
-        /// <returns>State id.</returns>
-        Initializable<TState> LoadCurrentState();
-
-        /// <summary>
-        /// Returns the last active state of all super states that have a last active state (i.e. they count as visited).
-        /// </summary>
-        /// <returns>Key = id of super state, Value = id of last active state.</returns>
-        IDictionary<TState, TState> LoadHistoryStates();
+        /// <param name="action">The action to execute.</param>
+        void ForEach(Action<IExtension<TState, TEvent>> action);
     }
 }

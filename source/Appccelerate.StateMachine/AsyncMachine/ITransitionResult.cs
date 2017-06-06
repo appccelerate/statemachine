@@ -1,5 +1,5 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="IStateMachineSaver.cs" company="Appccelerate">
+//-------------------------------------------------------------------------------
+// <copyright file="ITransitionResult.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,25 +16,29 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Persistence
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
 
-    public interface IStateMachineSaver<TState>
+    /// <summary>
+    /// Represents the result of a transition.
+    /// </summary>
+    /// <typeparam name="TState">The type of the state.</typeparam>
+    /// <typeparam name="TEvent">The type of the event.</typeparam>
+    public interface ITransitionResult<TState, TEvent>
         where TState : IComparable
+        where TEvent : IComparable
     {
         /// <summary>
-        /// Saves the current state of the state machine.
+        /// Gets a value indicating whether this <see cref="ITransitionResult{TState, TEvent}"/> is fired.
         /// </summary>
-        /// <param name="currentStateId">Id of the current state.</param>
-        void SaveCurrentState(Initializable<TState> currentStateId);
+        /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
+        bool Fired { get; }
 
         /// <summary>
-        /// Saves the last active states of all super states.
+        /// Gets the new state.
         /// </summary>
-        /// <param name="historyStates">Key = id of the super state; Value = if of last active state of super state.</param>
-        void SaveHistoryStates(IDictionary<TState, TState> historyStates);
+        /// <value>The new state.</value>
+        IState<TState, TEvent> NewState { get; }
     }
 }

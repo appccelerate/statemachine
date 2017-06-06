@@ -16,15 +16,16 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine.Events;
+    using Appccelerate.StateMachine.AsyncSyntax;
     using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine.Events;
     using Appccelerate.StateMachine.Persistence;
-    using Appccelerate.StateMachine.Syntax;
 
     /// <summary>
     /// Base implementation of a state machine.
@@ -209,9 +210,9 @@ namespace Appccelerate.StateMachine.Machine
         /// Fires the specified event.
         /// </summary>
         /// <param name="eventId">The event.</param>
-        public void Fire(TEvent eventId)
+        public async Task Fire(TEvent eventId)
         {
-            this.Fire(eventId, Missing.Value);
+            await this.Fire(eventId, Missing.Value);
         }
 
         /// <summary>
@@ -219,7 +220,7 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public void Fire(TEvent eventId, object eventArgument)
+        public async Task Fire(TEvent eventId, object eventArgument)
         {
             this.CheckThatStateMachineIsInitialized();
             this.CheckThatStateMachineHasEnteredInitialState();
@@ -227,7 +228,7 @@ namespace Appccelerate.StateMachine.Machine
             this.extensions.ForEach(extension => extension.FiringEvent(this, ref eventId, ref eventArgument));
 
             ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(this.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
-            ITransitionResult<TState, TEvent> result = this.CurrentState.Fire(context);
+            ITransitionResult<TState, TEvent> result = await this.CurrentState.Fire(context);
 
             if (!result.Fired)
             {

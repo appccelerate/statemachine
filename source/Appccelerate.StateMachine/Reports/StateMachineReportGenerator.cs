@@ -23,7 +23,7 @@ namespace Appccelerate.StateMachine.Reports
     using System.Globalization;
     using System.Linq;
     using System.Text;
-
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Machine.Transitions;
 

@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="IStateMachineReport.cs" company="Appccelerate">
+// <copyright file="ActionHoldersExceptionMessages.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,28 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
 {
-    using System;
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
+    using System.Globalization;
 
     /// <summary>
-    /// Generates a report of the state machine.
+    /// Holds all exception messages
     /// </summary>
-    /// <typeparam name="TState">The type of the state.</typeparam>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public interface IStateMachineReport<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+    public static class ActionHoldersExceptionMessages
     {
         /// <summary>
-        /// Generates a report of the state machine.
+        /// Cannot cast argument to action argument.
         /// </summary>
-        /// <param name="name">The name of the state machine.</param>
-        /// <param name="states">The states.</param>
-        /// <param name="initialStateId">The initial state id.</param>
-        void Report(string name, IEnumerable<IState<TState, TEvent>> states, Initializable<TState> initialStateId);
+        /// <param name="argument">The argument.</param>
+        /// <param name="action">The action.</param>
+        /// <returns>error message</returns>
+        public static string CannotCastArgumentToActionArgument(object argument, string action)
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Cannot cast argument to match action method. Argument = {0}, Action = {1}",
+                argument,
+                action);
+        }
     }
 }

@@ -16,9 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Infrastructure
 {
     using System;
+    using Appccelerate.StateMachine.Machine;
 
     /// <summary>
     /// A value which can be initialized.

@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="IStateMachineReport.cs" company="Appccelerate">
+// <copyright file="ContextEventArgs.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,30 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.AsyncMachine.Events
 {
     using System;
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
 
     /// <summary>
-    /// Generates a report of the state machine.
+    /// Event arguments holding context information.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public interface IStateMachineReport<TState, TEvent>
+    public class ContextEventArgs<TState, TEvent>
+        : EventArgs
         where TState : IComparable
         where TEvent : IComparable
     {
-        /// <summary>
-        /// Generates a report of the state machine.
-        /// </summary>
-        /// <param name="name">The name of the state machine.</param>
-        /// <param name="states">The states.</param>
-        /// <param name="initialStateId">The initial state id.</param>
-        void Report(string name, IEnumerable<IState<TState, TEvent>> states, Initializable<TState> initialStateId);
+        private readonly ITransitionContext<TState, TEvent> context;
+
+        protected ContextEventArgs(ITransitionContext<TState, TEvent> context)
+        {
+            this.context = context;
+        }
+
+        protected ITransitionContext<TState, TEvent> Context
+        {
+            get { return this.context; }
+        }
     }
 }

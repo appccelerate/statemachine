@@ -16,22 +16,23 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine.Events;
     using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine.Events;
     using Appccelerate.StateMachine.Persistence;
-    using Appccelerate.StateMachine.Syntax;
+    using Appccelerate.StateMachine.AsyncSyntax;
 
     /// <summary>
     /// Base implementation of a state machine.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public class StateMachine<TState, TEvent> :
+    public class AsyncStateMachine<TState, TEvent> :
         INotifier<TState, TEvent>,
         IStateMachineInformation<TState, TEvent>,
         IExtensionHost<TState, TEvent>
@@ -48,7 +49,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <summary>
         /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
         /// </summary>
-        public StateMachine()
+        public AsyncStateMachine()
             : this(null)
         {
         }
@@ -57,7 +58,7 @@ namespace Appccelerate.StateMachine.Machine
         /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
         /// </summary>
         /// <param name="name">The name of this state machine used in log messages.</param>
-        public StateMachine(string name)
+        public AsyncStateMachine(string name)
             : this(name, null)
         {
         }
@@ -67,7 +68,7 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="name">The name of this state machine used in log messages.</param>
         /// <param name="factory">The factory used to create internal instances.</param>
-        public StateMachine(string name, IFactory<TState, TEvent> factory)
+        public AsyncStateMachine(string name, IFactory<TState, TEvent> factory)
         {
             this.name = name;
             this.factory = factory ?? new StandardFactory<TState, TEvent>(this, this);
@@ -209,9 +210,9 @@ namespace Appccelerate.StateMachine.Machine
         /// Fires the specified event.
         /// </summary>
         /// <param name="eventId">The event.</param>
-        public void Fire(TEvent eventId)
+        public async Task Fire(TEvent eventId)
         {
-            this.Fire(eventId, Missing.Value);
+            await this.Fire(eventId, Missing.Value);
         }
 
         /// <summary>
@@ -219,7 +220,7 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public void Fire(TEvent eventId, object eventArgument)
+        public async Task Fire(TEvent eventId, object eventArgument)
         {
             this.CheckThatStateMachineIsInitialized();
             this.CheckThatStateMachineHasEnteredInitialState();
@@ -227,7 +228,7 @@ namespace Appccelerate.StateMachine.Machine
             this.extensions.ForEach(extension => extension.FiringEvent(this, ref eventId, ref eventArgument));
 
             ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(this.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
-            ITransitionResult<TState, TEvent> result = this.CurrentState.Fire(context);
+            ITransitionResult<TState, TEvent> result = await this.CurrentState.Fire(context);
 
             if (!result.Fired)
             {

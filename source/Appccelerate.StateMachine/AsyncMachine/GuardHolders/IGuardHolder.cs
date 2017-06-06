@@ -1,5 +1,5 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="StateMachineNameReporter.cs" company="Appccelerate">
+//-------------------------------------------------------------------------------
+// <copyright file="IGuardHolder.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,19 +16,24 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
 {
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
-
-    public class StateMachineNameReporter : IStateMachineReport<string, int>
+    /// <summary>
+    /// Holds a guard.
+    /// </summary>
+    public interface IGuardHolder
     {
-        public string StateMachineName { get; private set; }
+        /// <summary>
+        /// Executes the guard.
+        /// </summary>
+        /// <param name="argument">The state machine event argument.</param>
+        /// <returns>Result of the guard execution.</returns>
+        bool Execute(object argument);
 
-        public void Report(string name, IEnumerable<IState<string, int>> states, Initializable<string> initialStateId)
-        {
-            this.StateMachineName = name;
-        }
+        /// <summary>
+        /// Describes the guard.
+        /// </summary>
+        /// <returns>Description of the guard.</returns>
+        string Describe();
     }
 }

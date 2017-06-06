@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="IStateMachineReport.cs" company="Appccelerate">
+// <copyright file="INotifier.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,30 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
 
     /// <summary>
-    /// Generates a report of the state machine.
+    /// Provides functionalities to notify events.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public interface IStateMachineReport<TState, TEvent>
+    public interface INotifier<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
         /// <summary>
-        /// Generates a report of the state machine.
+        /// Called when an exception was thrown.
         /// </summary>
-        /// <param name="name">The name of the state machine.</param>
-        /// <param name="states">The states.</param>
-        /// <param name="initialStateId">The initial state id.</param>
-        void Report(string name, IEnumerable<IState<TState, TEvent>> states, Initializable<TState> initialStateId);
+        /// <param name="context">The context.</param>
+        /// <param name="exception">The exception.</param>
+        void OnExceptionThrown(ITransitionContext<TState, TEvent> context, Exception exception);
+
+        /// <summary>
+        /// Called before a transition is executed.
+        /// </summary>
+        /// <param name="transitionContext">The context.</param>
+        void OnTransitionBegin(ITransitionContext<TState, TEvent> transitionContext);
     }
 }

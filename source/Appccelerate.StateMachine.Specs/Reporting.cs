@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine
 {
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
     using FakeItEasy;
     using Xbehave;

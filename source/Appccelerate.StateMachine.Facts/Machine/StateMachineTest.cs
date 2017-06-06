@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.Machine
     using System.Diagnostics;
     using System.Linq;
     using System.Text;
-
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Persistence;
 
     using FakeItEasy;

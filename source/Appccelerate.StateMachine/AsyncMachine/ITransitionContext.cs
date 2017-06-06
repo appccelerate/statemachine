@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="IStateMachineReport.cs" company="Appccelerate">
+// <copyright file="ITransitionContext.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,31 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
 
     /// <summary>
-    /// Generates a report of the state machine.
+    /// Provides information about the current transition.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public interface IStateMachineReport<TState, TEvent>
+    public interface ITransitionContext<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        /// <summary>
-        /// Generates a report of the state machine.
-        /// </summary>
-        /// <param name="name">The name of the state machine.</param>
-        /// <param name="states">The states.</param>
-        /// <param name="initialStateId">The initial state id.</param>
-        void Report(string name, IEnumerable<IState<TState, TEvent>> states, Initializable<TState> initialStateId);
+        IState<TState, TEvent> State { get; }
+
+        Missable<TEvent> EventId { get; }
+
+        object EventArgument { get; }
+
+        void AddRecord(TState stateId, RecordType recordType);
+
+        string GetRecords();
+
+        void OnExceptionThrown(Exception exception);
+
+        void OnTransitionBegin();
     }
 }

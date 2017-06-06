@@ -1,5 +1,5 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="StateMachineNameReporter.cs" company="Appccelerate">
+//-------------------------------------------------------------------------------
+// <copyright file="CurrentStateExtension.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,19 +16,18 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Async
 {
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
+    using Appccelerate.StateMachine.AsyncMachine;
+    using Appccelerate.StateMachine.Extensions;
 
-    public class StateMachineNameReporter : IStateMachineReport<string, int>
+    public class CurrentStateExtension : AsyncExtensionBase<int, int>
     {
-        public string StateMachineName { get; private set; }
+        public int CurrentState { get; private set; }
 
-        public void Report(string name, IEnumerable<IState<string, int>> states, Initializable<string> initialStateId)
+        public override void SwitchedState(IStateMachineInformation<int, int> stateMachine, IState<int, int> oldState, IState<int, int> newState)
         {
-            this.StateMachineName = name;
+            this.CurrentState = newState.Id;
         }
     }
 }

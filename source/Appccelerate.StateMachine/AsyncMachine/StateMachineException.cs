@@ -1,5 +1,5 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="StateMachineNameReporter.cs" company="Appccelerate">
+//-------------------------------------------------------------------------------
+// <copyright file="StateMachineException.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,19 +16,15 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.AsyncMachine
 {
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
+    using System;
 
-    public class StateMachineNameReporter : IStateMachineReport<string, int>
+    public class StateMachineException : Exception
     {
-        public string StateMachineName { get; private set; }
-
-        public void Report(string name, IEnumerable<IState<string, int>> states, Initializable<string> initialStateId)
+        public StateMachineException(string message, Exception innerException)
+            : base(message, innerException)
         {
-            this.StateMachineName = name;
         }
     }
 }

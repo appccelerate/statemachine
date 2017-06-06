@@ -24,7 +24,7 @@ namespace Appccelerate.StateMachine.Reports
     using System.IO;
     using System.Linq;
     using System.Xml.Linq;
-
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Machine.Transitions;
 

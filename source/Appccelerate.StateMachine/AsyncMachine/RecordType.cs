@@ -1,5 +1,5 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="StateMachineNameReporter.cs" company="Appccelerate">
+//-------------------------------------------------------------------------------
+// <copyright file="RecordType.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,19 +16,21 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.AsyncMachine
 {
-    using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
-
-    public class StateMachineNameReporter : IStateMachineReport<string, int>
+    /// <summary>
+    /// Specifies the type of the record.
+    /// </summary>
+    public enum RecordType
     {
-        public string StateMachineName { get; private set; }
+        /// <summary>
+        /// A state was entered.
+        /// </summary>
+        Enter,
 
-        public void Report(string name, IEnumerable<IState<string, int>> states, Initializable<string> initialStateId)
-        {
-            this.StateMachineName = name;
-        }
+        /// <summary>
+        /// A state was exited.
+        /// </summary>
+        Exit
     }
 }
