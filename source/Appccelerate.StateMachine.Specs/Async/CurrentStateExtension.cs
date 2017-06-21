@@ -19,7 +19,6 @@
 namespace Appccelerate.StateMachine.Async
 {
     using Appccelerate.StateMachine.AsyncMachine;
-    using Appccelerate.StateMachine.Extensions;
 
     public class CurrentStateExtension : AsyncExtensionBase<int, int>
     {

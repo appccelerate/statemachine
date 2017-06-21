@@ -38,8 +38,7 @@ namespace Appccelerate.StateMachine.Async
         {
             "establish a state machine with guarded transitions"._(async () =>
             {
-                machine = 
-                    new AsyncPassiveStateMachine<int, int>();
+                machine = new AsyncPassiveStateMachine<int, int>();
 
                 currentStateExtension = new CurrentStateExtension();
                 machine.AddExtension(currentStateExtension);
