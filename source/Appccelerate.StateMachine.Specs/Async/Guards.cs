@@ -38,7 +38,8 @@ namespace Appccelerate.StateMachine.Async
         {
             "establish a state machine with guarded transitions"._(async () =>
             {
-                machine = new AsyncPassiveStateMachine<int, int>();
+                machine = 
+                    new AsyncPassiveStateMachine<int, int>();
 
                 currentStateExtension = new CurrentStateExtension();
                 machine.AddExtension(currentStateExtension);
@@ -60,6 +61,36 @@ namespace Appccelerate.StateMachine.Async
 
             "it should take transition guarded with first matching guard"._(()
                 => currentStateExtension.CurrentState.Should().Be(DestinationState));
+        }
+
+        [Scenario]
+        public void NoMatchingGuard(
+            AsyncPassiveStateMachine<int, int> machine)
+        {
+            bool declined = false;
+
+            "establish state machine with no matching guard"._(async () =>
+            {
+                machine = new AsyncPassiveStateMachine<int, int>();
+
+                var currentStateExtension = new CurrentStateExtension();
+                machine.AddExtension(currentStateExtension);
+
+                machine.In(SourceState)
+                    .On(Event)
+                    .If(() => Task.FromResult(false)).Goto(ErrorState);
+
+                machine.TransitionDeclined += (sender, e) => declined = true;
+
+                machine.Initialize(SourceState);
+                await machine.Start();
+            });
+
+            "when an event is fired"._(()
+                => machine.Fire(Event));
+
+            "it should notify about declined transition"._(()
+                => declined.Should().BeTrue("TransitionDeclined event should be fired"));
         }
 
         [Scenario]
@@ -88,36 +119,6 @@ namespace Appccelerate.StateMachine.Async
 
             "it should_take_transition_guarded_with_otherwise"._(()
                 => currentStateExtension.CurrentState.Should().Be(DestinationState));
-        }
-
-        [Scenario]
-        public void NoMatchingGuard(
-            AsyncPassiveStateMachine<int, int> machine)
-        {
-            bool declined = false;
-
-            "establish state machine with no matching guard"._(async () =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    var currentStateExtension = new CurrentStateExtension();
-                    machine.AddExtension(currentStateExtension);
-
-                    machine.In(SourceState)
-                        .On(Event)
-                            .If(() => Task.FromResult(false)).Goto(ErrorState);
-
-                    machine.TransitionDeclined += (sender, e) => declined = true;
-
-                    machine.Initialize(SourceState);
-                    await machine.Start();
-                });
-
-            "when an event is fired"._(()
-                => machine.Fire(Event));
-
-            "it should notify about declined transition"._(()
-                => declined.Should().BeTrue("TransitionDeclined event should be fired"));
         }
     }
 }
