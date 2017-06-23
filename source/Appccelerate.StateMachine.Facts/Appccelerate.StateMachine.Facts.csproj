@@ -64,9 +64,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveStateMachineTest.cs" />
+    <Compile Include="AsyncMachine\Builder.cs" />
+    <Compile Include="AsyncMachine\StateMachineAssertionsExtensionMethods.cs" />
     <Compile Include="Builder.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="ExtensionTest.cs" />
+    <Compile Include="AsyncMachine\ActionHolders\ArgumentActionHolderFacts.cs" />
+    <Compile Include="AsyncMachine\ExceptionCasesFacts.cs" />
+    <Compile Include="AsyncMachine\GuardHolders\ArgumentGuardHolderFacts.cs" />
+    <Compile Include="AsyncMachine\GuardFacts.cs" />
+    <Compile Include="AsyncMachine\HierarchyBuilderFacts.cs" />
+    <Compile Include="AsyncMachine\MissableFacts.cs" />
+    <Compile Include="AsyncMachine\StateActionFacts.cs" />
+    <Compile Include="AsyncMachine\States\StateFacts.cs" />
+    <Compile Include="AsyncMachine\Syntax\SyntaxFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\ExceptionThrowingActionTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\ExceptionThrowingGuardTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\GuardsTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\HierarchicalTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\InternalTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\SelfTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\SourceIsDescendantOfTargetTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\SourceIsParentOfTargetTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\SuccessfulTransitionWithExecutedActionsFactsBase.cs" />
+    <Compile Include="AsyncMachine\Transitions\TransitionDefinedInSuperStateTransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\TransitionDictionaryFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\TransitionFacts.cs" />
+    <Compile Include="AsyncMachine\Transitions\TransitionFactsBase.cs" />
     <Compile Include="Machine\ActionHolders\ArgumentActionHolderTest.cs" />
     <Compile Include="Machine\ActionHolders\SingleArgumentTransitionActionHolderTest.cs" />
     <Compile Include="Machine\ExceptionCasesTest.cs" />

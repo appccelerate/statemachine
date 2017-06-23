@@ -16,10 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine
 {
     using System;
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine;
     using Appccelerate.StateMachine.AsyncMachine.Events;
     using Appccelerate.StateMachine.AsyncSyntax;
     using Appccelerate.StateMachine.Persistence;
@@ -140,16 +141,18 @@ namespace Appccelerate.StateMachine.AsyncMachine
         void Report(IStateMachineReport<TState, TEvent> reportGenerator);
 
         /// <summary>
-        /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load"/>.
+        /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load(Appccelerate.StateMachine.Persistence.IAsyncStateMachineLoader{TState})"/>.
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
-        void Save(IStateMachineSaver<TState> stateMachineSaver);
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task Save(IAsyncStateMachineSaver<TState> stateMachineSaver);
 
         /// <summary>
-        /// Loads the current state and history states from a persisted state (<see cref="Save"/>).
+        /// Loads the current state and history states from a persisted state (<see cref="Save(Appccelerate.StateMachine.Persistence.IAsyncStateMachineSaver{TState})"/>).
         /// The loader should return exactly the data that was passed to the saver.
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
-        void Load(IStateMachineLoader<TState> stateMachineLoader);
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader);
     }
 }

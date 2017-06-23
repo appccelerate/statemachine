@@ -266,11 +266,12 @@ namespace Appccelerate.StateMachine
         /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load"/>.
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
-        public void Save(IStateMachineSaver<TState> stateMachineSaver)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task Save(IAsyncStateMachineSaver<TState> stateMachineSaver)
         {
             Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
 
-            this.stateMachine.Save(stateMachineSaver);
+            await this.stateMachine.Save(stateMachineSaver);
         }
 
         /// <summary>
@@ -278,13 +279,14 @@ namespace Appccelerate.StateMachine
         /// The loader should return exactly the data that was passed to the saver.
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
-        public void Load(IStateMachineLoader<TState> stateMachineLoader)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
         {
             Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
 
             this.CheckThatNotAlreadyInitialized();
 
-            this.stateMachine.Load(stateMachineLoader);
+            await this.stateMachine.Load(stateMachineLoader);
 
             this.initialized = true;
         }

@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="SuccessfulTransitionWithExecutedActionsTestBase.cs" company="Appccelerate">
+// <copyright file="SuccessfulTransitionWithExecutedActionsFactsBase.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,43 +16,44 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Extensions;
-    using Appccelerate.StateMachine.Machine.ActionHolders;
+    using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine;
+    using Appccelerate.StateMachine.AsyncMachine.ActionHolders;
     using FluentAssertions;
     using Xunit;
 
-    public abstract class SuccessfulTransitionWithExecutedActionsTestBase : TransitionTestBase
+    public abstract class SuccessfulTransitionWithExecutedActionsFactsBase : TransitionFactsBase
     {
         [Fact]
-        public void ReturnsSuccessfulTransitionResult()
+        public async Task ReturnsSuccessfulTransitionResult()
         {
-            ITransitionResult<States, Events> result = this.Testee.Fire(this.TransitionContext);
+            ITransitionResult<States, Events> result = await this.Testee.Fire(this.TransitionContext);
 
             result.Should().BeSuccessfulTransitionResultWithNewState(this.Target);
         }
 
         [Fact]
-        public void ExecutesActions()
+        public async Task ExecutesActions()
         {
             bool executed = false;
 
             this.Testee.Actions.Add(new ArgumentLessActionHolder(() => executed = true));
 
-            this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionContext);
 
             executed.Should().BeTrue("actions should be executed");
         }
 
         [Fact]
-        public void TellsExtensionsAboutExecutedTransition()
+        public async Task TellsExtensionsAboutExecutedTransition()
         {
             var extension = new FakeExtension();
             this.ExtensionHost.Extension = extension;
 
-            this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionContext);
 
             extension.Items.Should().Contain(new FakeExtension.Item(
                 this.StateMachineInformation,
@@ -61,7 +62,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 this.TransitionContext));
         }
 
-        public class FakeExtension : ExtensionBase<States, Events>
+        public class FakeExtension : AsyncExtensionBase<States, Events>
         {
             private readonly List<Item> items = new List<Item>();
 

@@ -278,11 +278,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
             reportGenerator.Report(this.ToString(), this.states.GetStates(), this.initialStateId);
         }
 
-        public void Save(IStateMachineSaver<TState> stateMachineSaver)
+        public async Task Save(IAsyncStateMachineSaver<TState> stateMachineSaver)
         {
             Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
 
-            stateMachineSaver.SaveCurrentState(this.currentState != null ?
+            await stateMachineSaver.SaveCurrentState(this.currentState != null ?
                 new Initializable<TState> { Value = this.currentState.Id } :
                 new Initializable<TState>());
 
@@ -295,16 +295,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 s => s.Id,
                 s => s.LastActiveState.Id);
 
-            stateMachineSaver.SaveHistoryStates(historyStates);
+            await stateMachineSaver.SaveHistoryStates(historyStates);
         }
 
-        public void Load(IStateMachineLoader<TState> stateMachineLoader)
+        public async Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
         {
             Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
             this.CheckThatStateMachineIsNotAlreadyInitialized();
 
-            this.LoadCurrentState(stateMachineLoader);
-            this.LoadHistoryStates(stateMachineLoader);
+            await this.LoadCurrentState(stateMachineLoader);
+            await this.LoadHistoryStates(stateMachineLoader);
         }
 
         // ReSharper disable once UnusedParameter.Local
@@ -335,16 +335,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.RaiseEvent(this.TransitionCompleted, new TransitionCompletedEventArgs<TState, TEvent>(this.CurrentStateId, transitionContext), transitionContext, true);
         }
 
-        private void LoadCurrentState(IStateMachineLoader<TState> stateMachineLoader)
+        private async Task LoadCurrentState(IAsyncStateMachineLoader<TState> stateMachineLoader)
         {
-            Initializable<TState> loadedCurrentState = stateMachineLoader.LoadCurrentState();
+            Initializable<TState> loadedCurrentState = await stateMachineLoader.LoadCurrentState();
 
             this.currentState = loadedCurrentState.IsInitialized ? this.states[loadedCurrentState.Value] : null;
         }
 
-        private void LoadHistoryStates(IStateMachineLoader<TState> stateMachineLoader)
+        private async Task LoadHistoryStates(IAsyncStateMachineLoader<TState> stateMachineLoader)
         {
-            IDictionary<TState, TState> historyStates = stateMachineLoader.LoadHistoryStates();
+            IDictionary<TState, TState> historyStates = await stateMachineLoader.LoadHistoryStates();
             foreach (KeyValuePair<TState, TState> historyState in historyStates)
             {
                 IState<TState, TEvent> superState = this.states[historyState.Key];
