@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Machine
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine.Events;
     using Appccelerate.StateMachine.Persistence;
     using Appccelerate.StateMachine.Syntax;

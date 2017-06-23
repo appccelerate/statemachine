@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Appccelerate.StateMachine</RootNamespace>
     <AssemblyName>Appccelerate.StateMachine.Specs</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,28 +72,43 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActiveStateMachines.cs" />
+    <Compile Include="Async\AsyncPassiveStateMachines.cs" />
+    <Compile Include="Async\CustomTypes.cs" />
+    <Compile Include="Async\ExceptionHandling.cs" />
+    <Compile Include="Async\HierarchicalStateMachineInitialization.cs" />
+    <Compile Include="Async\HierarchicalTransitions.cs" />
+    <Compile Include="Async\Initialization.cs" />
+    <Compile Include="Async\Persisting.cs" />
+    <Compile Include="Async\RecordEventsExtension.cs" />
+    <Compile Include="Async\Reporting.cs" />
+    <Compile Include="Async\StartStop.cs" />
+    <Compile Include="Async\StateMachineNameReporter.cs" />
+    <Compile Include="Sync\ActiveStateMachines.cs" />
+    <Compile Include="Async\CurrentStateExtension.cs" />
+    <Compile Include="Async\EntryActions.cs" />
+    <Compile Include="Async\ExitActions.cs" />
+    <Compile Include="Async\Guards.cs" />
+    <Compile Include="Async\Transitions.cs" />
     <Compile Include="Catch.cs" />
-    <Compile Include="Concern.cs" />
-    <Compile Include="CurrentStateExtension.cs" />
-    <Compile Include="CustomTypes.cs" />
-    <Compile Include="EntryActions.cs" />
-    <Compile Include="ExceptionHandling.cs" />
-    <Compile Include="ExitActions.cs" />
+    <Compile Include="Sync\CurrentStateExtension.cs" />
+    <Compile Include="Sync\CustomTypes.cs" />
+    <Compile Include="Sync\EntryActions.cs" />
+    <Compile Include="Sync\ExceptionHandling.cs" />
+    <Compile Include="Sync\ExitActions.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
-    <Compile Include="StateMachineExtensions.cs" />
-    <Compile Include="Guards.cs" />
-    <Compile Include="HierarchicalStateMachineInitialization.cs" />
-    <Compile Include="HierarchicalTransitions.cs" />
-    <Compile Include="Initialization.cs" />
-    <Compile Include="PassiveStateMachines.cs" />
-    <Compile Include="Persisting.cs" />
+    <Compile Include="Sync\StateMachineExtensions.cs" />
+    <Compile Include="Sync\Guards.cs" />
+    <Compile Include="Sync\HierarchicalStateMachineInitialization.cs" />
+    <Compile Include="Sync\HierarchicalTransitions.cs" />
+    <Compile Include="Sync\Initialization.cs" />
+    <Compile Include="Sync\PassiveStateMachines.cs" />
+    <Compile Include="Sync\Persisting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecordEventsExtension.cs" />
-    <Compile Include="Reporting.cs" />
-    <Compile Include="StartStop.cs" />
-    <Compile Include="StateMachineNameReporter.cs" />
-    <Compile Include="Transitions.cs" />
+    <Compile Include="Sync\RecordEventsExtension.cs" />
+    <Compile Include="Sync\Reporting.cs" />
+    <Compile Include="Sync\StartStop.cs" />
+    <Compile Include="Sync\StateMachineNameReporter.cs" />
+    <Compile Include="Sync\Transitions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Analyzers.ruleset" />
@@ -100,7 +116,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Settings.stylecop" />
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>

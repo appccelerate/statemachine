@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.Reports
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
 
     /// <summary>

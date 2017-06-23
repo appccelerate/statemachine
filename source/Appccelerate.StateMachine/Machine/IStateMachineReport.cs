@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.Infrastructure;
 
     /// <summary>
     /// Generates a report of the state machine.
