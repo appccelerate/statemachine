@@ -19,14 +19,29 @@
 namespace Appccelerate.StateMachine
 {
     using System;
+    using System.Threading.Tasks;
 
-    public class Catch
+    public static class Catch
     {
         public static Exception Exception(Action action)
         {
             try
             {
                 action();
+
+                return null;
+            }
+            catch (Exception exception)
+            {
+                return exception;
+            }
+        }
+
+        public static async Task<Exception> Exception(Func<Task> action)
+        {
+            try
+            {
+                await action();
 
                 return null;
             }

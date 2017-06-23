@@ -20,8 +20,7 @@ namespace Appccelerate.StateMachine.Persistence
 {
     using System;
     using System.Collections.Generic;
-
-    using Appccelerate.StateMachine.Machine;
+    using Appccelerate.StateMachine.Infrastructure;
 
     public interface IStateMachineSaver<TState>
         where TState : IComparable
