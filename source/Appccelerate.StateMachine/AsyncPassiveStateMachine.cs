@@ -152,7 +152,7 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId)
         {
-            await this.Fire(eventId, Missing.Value);
+            await this.Fire(eventId, Missing.Value).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Appccelerate.StateMachine
 
             this.stateMachine.ForEach(extension => extension.EventQueued(this.stateMachine, eventId, eventArgument));
 
-            await this.Execute();
+            await this.Execute().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task FirePriority(TEvent eventId)
         {
-            await this.FirePriority(eventId, null);
+            await this.FirePriority(eventId, null).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Appccelerate.StateMachine
 
             this.stateMachine.ForEach(extension => extension.EventQueuedWithPriority(this.stateMachine, eventId, eventArgument));
 
-            await this.Execute();
+            await this.Execute().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace Appccelerate.StateMachine
 
             this.stateMachine.ForEach(extension => extension.StartedStateMachine(this.stateMachine));
 
-            await this.Execute();
+            await this.Execute().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace Appccelerate.StateMachine
         {
             Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
 
-            await this.stateMachine.Save(stateMachineSaver);
+            await this.stateMachine.Save(stateMachineSaver).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace Appccelerate.StateMachine
 
             this.CheckThatNotAlreadyInitialized();
 
-            await this.stateMachine.Load(stateMachineLoader);
+            await this.stateMachine.Load(stateMachineLoader).ConfigureAwait(false);
 
             this.initialized = true;
         }
@@ -317,7 +317,7 @@ namespace Appccelerate.StateMachine
             this.executing = true;
             try
             {
-                await this.ProcessQueuedEvents();
+                await this.ProcessQueuedEvents().ConfigureAwait(false);
             }
             finally
             {
@@ -327,12 +327,12 @@ namespace Appccelerate.StateMachine
 
         private async Task ProcessQueuedEvents()
         {
-            await this.InitializeStateMachineIfInitializationIsPending();
+            await this.InitializeStateMachineIfInitializationIsPending().ConfigureAwait(false);
 
             while (this.events.Count > 0)
             {
                 var eventToProcess = this.GetNextEventToProcess();
-                await this.FireEventOnStateMachine(eventToProcess);
+                await this.FireEventOnStateMachine(eventToProcess).ConfigureAwait(false);
             }
         }
 
@@ -343,7 +343,7 @@ namespace Appccelerate.StateMachine
                 return;
             }
 
-            await this.stateMachine.EnterInitialState();
+            await this.stateMachine.EnterInitialState().ConfigureAwait(false);
 
             this.pendingInitialization = false;
         }
@@ -357,7 +357,7 @@ namespace Appccelerate.StateMachine
 
         private async Task FireEventOnStateMachine(EventInformation<TEvent> e)
         {
-            await this.stateMachine.Fire(e.EventId, e.EventArgument);
+            await this.stateMachine.Fire(e.EventId, e.EventArgument).ConfigureAwait(false);
         }
     }
 }

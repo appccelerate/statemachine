@@ -196,7 +196,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.extensions.ForEach(extension => extension.EnteringInitialState(this, this.initialStateId.Value));
 
             var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
-            await this.EnterInitialState(this.states[this.initialStateId.Value], context);
+            await this.EnterInitialState(this.states[this.initialStateId.Value], context).ConfigureAwait(false);
 
             this.extensions.ForEach(extension => extension.EnteredInitialState(this, this.initialStateId.Value, context));
         }
@@ -215,7 +215,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.extensions.ForEach(extension => extension.FiringEvent(this, ref eventId, ref eventArgument));
 
             ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(this.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
-            ITransitionResult<TState, TEvent> result = await this.CurrentState.Fire(context);
+            ITransitionResult<TState, TEvent> result = await this.CurrentState.Fire(context).ConfigureAwait(false);
 
             if (!result.Fired)
             {
@@ -284,7 +284,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             await stateMachineSaver.SaveCurrentState(this.currentState != null ?
                 new Initializable<TState> { Value = this.currentState.Id } :
-                new Initializable<TState>());
+                new Initializable<TState>()).ConfigureAwait(false);
 
             IEnumerable<IState<TState, TEvent>> superStatesWithLastActiveState = this.states.GetStates()
                 .Where(s => s.SubStates.Any())
@@ -295,7 +295,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 s => s.Id,
                 s => s.LastActiveState.Id);
 
-            await stateMachineSaver.SaveHistoryStates(historyStates);
+            await stateMachineSaver.SaveHistoryStates(historyStates).ConfigureAwait(false);
         }
 
         public async Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
@@ -303,8 +303,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
             Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
             this.CheckThatStateMachineIsNotAlreadyInitialized();
 
-            await this.LoadCurrentState(stateMachineLoader);
-            await this.LoadHistoryStates(stateMachineLoader);
+            await this.LoadCurrentState(stateMachineLoader).ConfigureAwait(false);
+            await this.LoadHistoryStates(stateMachineLoader).ConfigureAwait(false);
         }
 
         // ReSharper disable once UnusedParameter.Local
@@ -337,14 +337,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         private async Task LoadCurrentState(IAsyncStateMachineLoader<TState> stateMachineLoader)
         {
-            Initializable<TState> loadedCurrentState = await stateMachineLoader.LoadCurrentState();
+            Initializable<TState> loadedCurrentState = await stateMachineLoader.LoadCurrentState().ConfigureAwait(false);
 
             this.currentState = loadedCurrentState.IsInitialized ? this.states[loadedCurrentState.Value] : null;
         }
 
         private async Task LoadHistoryStates(IAsyncStateMachineLoader<TState> stateMachineLoader)
         {
-            IDictionary<TState, TState> historyStates = await stateMachineLoader.LoadHistoryStates();
+            IDictionary<TState, TState> historyStates = await stateMachineLoader.LoadHistoryStates().ConfigureAwait(false);
             foreach (KeyValuePair<TState, TState> historyState in historyStates)
             {
                 IState<TState, TEvent> superState = this.states[historyState.Key];
@@ -376,7 +376,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         private async Task EnterInitialState(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
         {
             var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
-            this.CurrentState = await initializer.EnterInitialState();
+            this.CurrentState = await initializer.EnterInitialState().ConfigureAwait(false);
         }
 
         private void RaiseEvent<T>(EventHandler<T> eventHandler, T arguments, ITransitionContext<TState, TEvent> context, bool raiseEventOnException)

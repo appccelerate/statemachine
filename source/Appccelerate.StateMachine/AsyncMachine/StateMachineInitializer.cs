@@ -45,9 +45,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public async Task<IState<TState, TEvent>> EnterInitialState()
         {
             var stack = this.TraverseUpTheStateHierarchy();
-            await this.TraverseDownTheStateHierarchyAndEnterStates(stack);
+            await this.TraverseDownTheStateHierarchyAndEnterStates(stack).ConfigureAwait(false);
 
-            return await this.initialState.EnterByHistory(this.context);
+            return await this.initialState.EnterByHistory(this.context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             while (stack.Count > 0)
             {
                 IState<TState, TEvent> state = stack.Pop();
-                await state.Entry(this.context);
+                await state.Entry(this.context).ConfigureAwait(false);
             }
         }
     }

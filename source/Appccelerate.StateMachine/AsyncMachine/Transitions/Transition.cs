@@ -57,7 +57,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         {
             LiteGuard.AgainstNullArgument("context", context);
 
-            var shouldFire = await this.ShouldFire(context);
+            var shouldFire = await this.ShouldFire(context).ConfigureAwait(false);
             if (!shouldFire)
             {
                 this.extensionHost.ForEach(extension => extension.SkippedTransition(
@@ -79,15 +79,15 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 
             if (!this.IsInternalTransition)
             {
-                await this.UnwindSubStates(context);
+                await this.UnwindSubStates(context).ConfigureAwait(false);
 
-                await this.Fire(this.Source, this.Target, context);
+                await this.Fire(this.Source, this.Target, context).ConfigureAwait(false);
 
-                newState = await this.Target.EnterByHistory(context);
+                newState = await this.Target.EnterByHistory(context).ConfigureAwait(false);
             }
             else
             {
-                await this.PerformActions(context);
+                await this.PerformActions(context).ConfigureAwait(false);
             }
 
             this.extensionHost.ForEach(extension => extension.ExecutedTransition(
@@ -149,22 +149,22 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             {
                 // Handles 1.
                 // Handles 3. after traversing from the source to the target.
-                await source.Exit(context);
-                await this.PerformActions(context);
-                await this.Target.Entry(context);
+                await source.Exit(context).ConfigureAwait(false);
+                await this.PerformActions(context).ConfigureAwait(false);
+                await this.Target.Entry(context).ConfigureAwait(false);
             }
             else if (source == target)
             {
                 // Handles 2. after traversing from the target to the source.
-                await this.PerformActions(context);
+                await this.PerformActions(context).ConfigureAwait(false);
             }
             else if (source.SuperState == target.SuperState)
             {
                 //// Handles 4.
                 //// Handles 5a. after traversing the hierarchy until a common ancestor if found.
-                await source.Exit(context);
-                await this.PerformActions(context);
-                await target.Entry(context);
+                await source.Exit(context).ConfigureAwait(false);
+                await this.PerformActions(context).ConfigureAwait(false);
+                await target.Entry(context).ConfigureAwait(false);
             }
             else
             {
@@ -174,22 +174,22 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 // Handles 5b.
                 if (source.Level > target.Level)
                 {
-                    await source.Exit(context);
-                    await this.Fire(source.SuperState, target, context);
+                    await source.Exit(context).ConfigureAwait(false);
+                    await this.Fire(source.SuperState, target, context).ConfigureAwait(false);
                 }
                 else if (source.Level < target.Level)
                 {
                     // Handles 2.
                     // Handles 5c.
-                    await this.Fire(source, target.SuperState, context);
-                    await target.Entry(context);
+                    await this.Fire(source, target.SuperState, context).ConfigureAwait(false);
+                    await target.Entry(context).ConfigureAwait(false);
                 }
                 else
                 {
                     // Handles 5a.
-                    await source.Exit(context);
-                    await this.Fire(source.SuperState, target.SuperState, context);
-                    await target.Entry(context);
+                    await source.Exit(context).ConfigureAwait(false);
+                    await this.Fire(source.SuperState, target.SuperState, context).ConfigureAwait(false);
+                    await target.Entry(context).ConfigureAwait(false);
                 }
             }
         }
@@ -198,7 +198,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         {
             try
             {
-                return this.Guard == null || await this.Guard.Execute(context.EventArgument);
+                return this.Guard == null || await this.Guard.Execute(context.EventArgument).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -218,7 +218,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             {
                 try
                 {
-                    await action.Execute(context.EventArgument);
+                    await action.Execute(context.EventArgument).ConfigureAwait(false);
                 }
                 catch (Exception exception)
                 {
@@ -235,7 +235,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         {
             for (IState<TState, TEvent> o = context.State; o != this.Source; o = o.SuperState)
             {
-                await o.Exit(context);
+                await o.Exit(context).ConfigureAwait(false);
             }
         }
     }

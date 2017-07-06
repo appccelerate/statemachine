@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
                 castArgument = (T)argument;
             }
 
-            await this.action(castArgument);
+            await this.action(castArgument).ConfigureAwait(false);
         }
 
         public string Describe()

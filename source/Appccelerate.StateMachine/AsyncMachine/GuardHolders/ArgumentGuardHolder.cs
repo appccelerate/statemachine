@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
                 throw new ArgumentException(GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.Describe()));
             }
 
-            return await this.guard((T)argument);
+            return await this.guard((T)argument).ConfigureAwait(false);
         }
 
         /// <summary>

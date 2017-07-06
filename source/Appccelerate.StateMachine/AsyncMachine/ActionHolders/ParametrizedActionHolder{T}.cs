@@ -49,7 +49,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
 
         public async Task Execute(object argument)
         {
-            await this.action(this.parameter);
+            await this.action(this.parameter).ConfigureAwait(false);
         }
 
         public string Describe()

@@ -197,7 +197,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             {
                 foreach (ITransition<TState, TEvent> transition in transitionsForEvent)
                 {
-                    result = await transition.Fire(context);
+                    result = await transition.Fire(context).ConfigureAwait(false);
                     if (result.Fired)
                     {
                         return result;
@@ -207,7 +207,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             if (this.SuperState != null)
             {
-                result = await this.SuperState.Fire(context);
+                result = await this.SuperState.Fire(context).ConfigureAwait(false);
             }
 
             return result;
@@ -219,7 +219,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             context.AddRecord(this.Id, RecordType.Enter);
 
-            await this.ExecuteEntryActions(context);
+            await this.ExecuteEntryActions(context).ConfigureAwait(false);
         }
 
         public async Task Exit(ITransitionContext<TState, TEvent> context)
@@ -228,7 +228,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             context.AddRecord(this.Id, RecordType.Exit);
 
-            await this.ExecuteExitActions(context);
+            await this.ExecuteExitActions(context).ConfigureAwait(false);
             this.SetThisStateAsLastStateOfSuperState();
         }
 
@@ -239,15 +239,15 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             switch (this.HistoryType)
             {
                 case HistoryType.None:
-                    result = await this.EnterHistoryNone(context);
+                    result = await this.EnterHistoryNone(context).ConfigureAwait(false);
                     break;
 
                 case HistoryType.Shallow:
-                    result = await this.EnterHistoryShallow(context);
+                    result = await this.EnterHistoryShallow(context).ConfigureAwait(false);
                     break;
 
                 case HistoryType.Deep:
-                    result = await this.EnterHistoryDeep(context);
+                    result = await this.EnterHistoryDeep(context).ConfigureAwait(false);
                     break;
             }
 
@@ -256,20 +256,20 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         public async Task<IState<TState, TEvent>> EnterShallow(ITransitionContext<TState, TEvent> context)
         {
-            await this.Entry(context);
+            await this.Entry(context).ConfigureAwait(false);
 
             return this.initialState == null ?
                         this :
-                        await this.initialState.EnterShallow(context);
+                        await this.initialState.EnterShallow(context).ConfigureAwait(false);
         }
 
         public async Task<IState<TState, TEvent>> EnterDeep(ITransitionContext<TState, TEvent> context)
         {
-            await this.Entry(context);
+            await this.Entry(context).ConfigureAwait(false);
 
             return this.LastActiveState == null ?
                         this :
-                        await this.LastActiveState.EnterDeep(context);
+                        await this.LastActiveState.EnterDeep(context).ConfigureAwait(false);
         }
 
         public override string ToString()
@@ -305,7 +305,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             foreach (var actionHolder in this.EntryActions)
             {
-                await this.ExecuteEntryAction(actionHolder, context);
+                await this.ExecuteEntryAction(actionHolder, context).ConfigureAwait(false);
             }
         }
 
@@ -313,7 +313,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             try
             {
-                await actionHolder.Execute(context.EventArgument);
+                await actionHolder.Execute(context.EventArgument).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -340,7 +340,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             foreach (var actionHolder in this.ExitActions)
             {
-                await this.ExecuteExitAction(actionHolder, context);
+                await this.ExecuteExitAction(actionHolder, context).ConfigureAwait(false);
             }
         }
 
@@ -348,7 +348,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             try
             {
-                await actionHolder.Execute(context.EventArgument);
+                await actionHolder.Execute(context.EventArgument).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -386,7 +386,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.LastActiveState != null
                        ?
-                           await this.LastActiveState.EnterDeep(context)
+                           await this.LastActiveState.EnterDeep(context).ConfigureAwait(false)
                        :
                            this;
         }
@@ -395,7 +395,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.LastActiveState != null
                        ?
-                           await this.LastActiveState.EnterShallow(context)
+                           await this.LastActiveState.EnterShallow(context).ConfigureAwait(false)
                        :
                            this;
         }
@@ -404,7 +404,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.initialState != null
                        ?
-                           await this.initialState.EnterShallow(context)
+                           await this.initialState.EnterShallow(context).ConfigureAwait(false)
                        :
                            this;
         }

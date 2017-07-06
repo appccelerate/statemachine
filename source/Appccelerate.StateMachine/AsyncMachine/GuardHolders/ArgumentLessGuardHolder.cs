@@ -54,7 +54,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <returns>Result of the guard execution.</returns>
         public async Task<bool> Execute(object argument)
         {
-            return await this.guard();
+            return await this.guard().ConfigureAwait(false);
         }
 
         /// <summary>
