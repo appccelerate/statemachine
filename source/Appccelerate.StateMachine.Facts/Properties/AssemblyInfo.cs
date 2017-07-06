@@ -17,7 +17,7 @@
 //-------------------------------------------------------------------------------
 
 using System.Reflection;
-
+using Fody;
 using Xunit;
 
 // General Information about an assembly is controlled through the following
@@ -27,3 +27,4 @@ using Xunit;
 [assembly: AssemblyDescription("")]
 
 [assembly: CollectionBehavior(MaxParallelThreads = 1)]
+[assembly: ConfigureAwait(false)]

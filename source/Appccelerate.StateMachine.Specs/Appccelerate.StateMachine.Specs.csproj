@@ -38,6 +38,10 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ConfigureAwait, Version=1.1.0.0, Culture=neutral, PublicKeyToken=233850a516558a98, processorArchitecture=MSIL">
+      <HintPath>..\packages\ConfigureAwait.Fody.1.1.0\lib\portable-net45+wp8+win+wpa81\ConfigureAwait.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="FakeItEasy, Version=3.3.2.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
       <HintPath>..\packages\FakeItEasy.3.3.2\lib\net40\FakeItEasy.dll</HintPath>
     </Reference>
@@ -129,6 +133,9 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="FodyWeavers.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -146,9 +153,11 @@
     <Error Condition="!Exists('..\packages\xunit.runner.msbuild.2.1.0\build\portable-net45+win8+wp8+wpa81\xunit.runner.msbuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.msbuild.2.1.0\build\portable-net45+win8+wp8+wpa81\xunit.runner.msbuild.props'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.Development.Analyzers.2.1.0\build\Appccelerate.Development.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.Analyzers.2.1.0\build\Appccelerate.Development.Analyzers.targets'))" />
     <Error Condition="!Exists('..\packages\Appccelerate.Development.xBehave.2.1.0\build\Appccelerate.Development.xBehave.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.xBehave.2.1.0\build\Appccelerate.Development.xBehave.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets'))" />
   </Target>
   <Import Project="..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets" Condition="Exists('..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets')" />
   <Import Project="..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets" Condition="Exists('..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets')" />
   <Import Project="..\packages\Appccelerate.Development.Analyzers.2.1.0\build\Appccelerate.Development.Analyzers.targets" Condition="Exists('..\packages\Appccelerate.Development.Analyzers.2.1.0\build\Appccelerate.Development.Analyzers.targets')" />
   <Import Project="..\packages\Appccelerate.Development.xBehave.2.1.0\build\Appccelerate.Development.xBehave.targets" Condition="Exists('..\packages\Appccelerate.Development.xBehave.2.1.0\build\Appccelerate.Development.xBehave.targets')" />
+  <Import Project="..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets" Condition="Exists('..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" />
 </Project>
