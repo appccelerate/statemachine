@@ -38,7 +38,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
             this.action = () =>
             {
                 action();
-                return Task.CompletedTask;
+                return Task.WhenAll();
             };
         }
 
