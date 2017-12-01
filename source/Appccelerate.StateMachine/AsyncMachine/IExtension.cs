@@ -19,6 +19,8 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
+    using System.Collections.Generic;
+    using Appccelerate.StateMachine.Infrastructure;
 
     /// <summary>
     /// Extensions for a state machine have to implement this interface.
@@ -257,5 +259,10 @@ namespace Appccelerate.StateMachine.AsyncMachine
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             ITransition<TState, TEvent> transition,
             ITransitionContext<TState, TEvent> context);
+
+        void Loaded(
+            IStateMachineInformation<TState, TEvent> stateMachineInformation,
+            Initializable<TState> loadedCurrentState,
+            IDictionary<TState, TState> loadedHistoryStates);
     }
 }

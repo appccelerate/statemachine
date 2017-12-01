@@ -287,9 +287,7 @@ namespace Appccelerate.StateMachine
 
             this.CheckThatNotAlreadyInitialized();
 
-            this.stateMachine.Load(stateMachineLoader);
-
-            this.initialized = true;
+            this.initialized = this.stateMachine.Load(stateMachineLoader);
         }
 
         private void CheckThatNotAlreadyInitialized()

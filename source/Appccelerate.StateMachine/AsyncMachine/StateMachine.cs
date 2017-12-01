@@ -298,13 +298,56 @@ namespace Appccelerate.StateMachine.AsyncMachine
             await stateMachineSaver.SaveHistoryStates(historyStates).ConfigureAwait(false);
         }
 
-        public async Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
+        public async Task<bool> Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
         {
-            Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
+            Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
             this.CheckThatStateMachineIsNotAlreadyInitialized();
 
-            await this.LoadCurrentState(stateMachineLoader).ConfigureAwait(false);
-            await this.LoadHistoryStates(stateMachineLoader).ConfigureAwait(false);
+            Initializable<TState> loadedCurrentState = await stateMachineLoader.LoadCurrentState().ConfigureAwait(false);
+            IDictionary<TState, TState> historyStates = await stateMachineLoader.LoadHistoryStates().ConfigureAwait(false);
+
+            var initialized = SetCurrentState();
+            LoadHistoryStates();
+            NotifyExtensions();
+
+            return initialized;
+
+            bool SetCurrentState()
+            {
+                if (loadedCurrentState.IsInitialized)
+                {
+                    this.currentState = this.states[loadedCurrentState.Value];
+                    return true;
+                }
+
+                this.currentState = null;
+                return false;
+            }
+
+            void LoadHistoryStates()
+            {
+                foreach (KeyValuePair<TState, TState> historyState in historyStates)
+                {
+                    IState<TState, TEvent> superState = this.states[historyState.Key];
+                    IState<TState, TEvent> lastActiveState = this.states[historyState.Value];
+
+                    if (!superState.SubStates.Contains(lastActiveState))
+                    {
+                        throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
+                    }
+
+                    superState.LastActiveState = lastActiveState;
+                }
+            }
+
+            void NotifyExtensions()
+            {
+                this.extensions.ForEach(
+                    extension => extension.Loaded(
+                        this,
+                        loadedCurrentState,
+                        historyStates));
+            }
         }
 
         // ReSharper disable once UnusedParameter.Local
