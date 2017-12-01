@@ -17,10 +17,9 @@
 namespace Appccelerate.StateMachine
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Threading.Tasks;
     using Appccelerate.StateMachine.AsyncMachine;
-    using Appccelerate.StateMachine.AsyncMachine.ActionHolders;
     using Appccelerate.StateMachine.AsyncMachine.Events;
     using Appccelerate.StateMachine.AsyncSyntax;
     using Appccelerate.StateMachine.Persistence;
@@ -29,26 +28,13 @@ namespace Appccelerate.StateMachine
         where TState : IComparable
         where TEvent : IComparable
     {
-        /// <summary>
-        /// The internal state machine.
-        /// </summary>
         private readonly StateMachine<TState, TEvent> stateMachine;
 
-        /// <summary>
-        /// List of all queued events.
-        /// </summary>
-        private readonly LinkedList<EventInformation<TEvent>> events;
+        private readonly ConcurrentQueue<EventInformation<TEvent>> events;
+        private readonly ConcurrentStack<EventInformation<TEvent>> priorityEvents;
 
-        /// <summary>
-        /// Whether the state machine is initialized.
-        /// </summary>
         private bool initialized;
-
-        /// <summary>
-        /// Whether this state machine is executing an event. Allows that events can be added while executing.
-        /// </summary>
         private bool executing;
-
         private bool pendingInitialization;
 
         /// <summary>
@@ -78,7 +64,8 @@ namespace Appccelerate.StateMachine
             this.stateMachine = new StateMachine<TState, TEvent>(
                 name ?? this.GetType().FullNameToString(),
                 factory);
-            this.events = new LinkedList<EventInformation<TEvent>>();
+            this.events = new ConcurrentQueue<EventInformation<TEvent>>();
+            this.priorityEvents = new ConcurrentStack<EventInformation<TEvent>>();
         }
 
         /// <summary>
@@ -164,7 +151,7 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId, object eventArgument)
         {
-            this.events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
+            this.events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
 
             this.stateMachine.ForEach(extension => extension.EventQueued(this.stateMachine, eventId, eventArgument));
 
@@ -189,7 +176,7 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task FirePriority(TEvent eventId, object eventArgument)
         {
-            this.events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
+            this.priorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
 
             this.stateMachine.ForEach(extension => extension.EventQueuedWithPriority(this.stateMachine, eventId, eventArgument));
 
@@ -247,6 +234,7 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Stops the state machine. Events will be queued until the state machine is started.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public Task Stop()
         {
             this.IsRunning = false;
@@ -332,10 +320,20 @@ namespace Appccelerate.StateMachine
         {
             await this.InitializeStateMachineIfInitializationIsPending().ConfigureAwait(false);
 
-            while (this.events.Count > 0)
+            while (this.priorityEvents.TryPop(out var eventInformation))
             {
-                var eventToProcess = this.GetNextEventToProcess();
-                await this.FireEventOnStateMachine(eventToProcess).ConfigureAwait(false);
+                await this.stateMachine.Fire(
+                        eventInformation.EventId,
+                        eventInformation.EventArgument)
+                    .ConfigureAwait(false);
+            }
+
+            while (this.events.TryDequeue(out var eventInformation))
+            {
+                await this.stateMachine.Fire(
+                        eventInformation.EventId,
+                        eventInformation.EventArgument)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -349,18 +347,6 @@ namespace Appccelerate.StateMachine
             await this.stateMachine.EnterInitialState().ConfigureAwait(false);
 
             this.pendingInitialization = false;
-        }
-
-        private EventInformation<TEvent> GetNextEventToProcess()
-        {
-            EventInformation<TEvent> e = this.events.First.Value;
-            this.events.RemoveFirst();
-            return e;
-        }
-
-        private async Task FireEventOnStateMachine(EventInformation<TEvent> e)
-        {
-            await this.stateMachine.Fire(e.EventId, e.EventArgument).ConfigureAwait(false);
         }
     }
 }

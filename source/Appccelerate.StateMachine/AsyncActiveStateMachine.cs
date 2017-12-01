@@ -1,4 +1,20 @@
-﻿namespace Appccelerate.StateMachine
+﻿// <copyright file="AsyncActiveStateMachine.cs" company="Appccelerate">
+//   Copyright (c) 2008-2017 Appccelerate
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+// </copyright>
+
+namespace Appccelerate.StateMachine
 {
     using System;
     using System.Collections.Concurrent;
@@ -9,13 +25,13 @@
     using Appccelerate.StateMachine.AsyncSyntax;
     using Appccelerate.StateMachine.Persistence;
 
-    //bump version
     public class AsyncActiveStateMachine<TState, TEvent> : IAsyncStateMachine<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
         private readonly StateMachine<TState, TEvent> stateMachine;
-        private readonly ConcurrentQueue<EventInformation<TEvent>> queue;
+        private readonly ConcurrentQueue<EventInformation<TEvent>> events;
+        private readonly ConcurrentStack<EventInformation<TEvent>> priorityEvents;
         private bool initialized;
         private bool pendingInitialization;
         private CancellationTokenSource stopToken;
@@ -23,7 +39,7 @@
         private TaskCompletionSource<bool> workerCompletionSource = new TaskCompletionSource<bool>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncPassiveStateMachine&lt;TState, TEvent&gt;"/> class.
+        /// Initializes a new instance of the <see cref="AsyncActiveStateMachine&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         public AsyncActiveStateMachine()
             : this(default(string))
@@ -31,7 +47,7 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncPassiveStateMachine{TState, TEvent}"/> class.
+        /// Initializes a new instance of the <see cref="AsyncActiveStateMachine{TState, TEvent}"/> class.
         /// </summary>
         /// <param name="name">The name of the state machine. Used in log messages.</param>
         public AsyncActiveStateMachine(string name)
@@ -40,7 +56,7 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncPassiveStateMachine{TState, TEvent}"/> class.
+        /// Initializes a new instance of the <see cref="AsyncActiveStateMachine{TState, TEvent}"/> class.
         /// </summary>
         /// <param name="name">The name of the state machine. Used in log messages.</param>
         /// <param name="factory">The factory.</param>
@@ -49,7 +65,8 @@
             this.stateMachine = new StateMachine<TState, TEvent>(
                 name ?? this.GetType().FullNameToString(),
                 factory);
-            this.queue = new ConcurrentQueue<EventInformation<TEvent>>();
+            this.events = new ConcurrentQueue<EventInformation<TEvent>>();
+            this.priorityEvents = new ConcurrentStack<EventInformation<TEvent>>();
         }
 
         /// <summary>
@@ -132,7 +149,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public Task Fire(TEvent eventId, object eventArgument)
         {
-            this.queue.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
+            this.events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
 
             this.stateMachine.ForEach(extension => extension.EventQueued(this.stateMachine, eventId, eventArgument));
 
@@ -159,7 +176,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public Task FirePriority(TEvent eventId, object eventArgument)
         {
-            this.queue.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));//priority queue
+            this.priorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
 
             this.stateMachine.ForEach(extension => extension.EventQueuedWithPriority(this.stateMachine, eventId, eventArgument));
 
@@ -211,11 +228,15 @@
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                await this.InitializeStateMachineIfInitializationIsPending();
+                await this.InitializeStateMachineIfInitializationIsPending()
+                    .ConfigureAwait(false);
 
-                while (this.queue.TryDequeue(out var eventInformation))
+                while (this.priorityEvents.TryPop(out var eventInformation))
                 {
-                    await this.stateMachine.Fire(eventInformation.EventId, eventInformation.EventArgument);
+                    await this.stateMachine.Fire(
+                            eventInformation.EventId,
+                            eventInformation.EventArgument)
+                        .ConfigureAwait(false);
 
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -223,7 +244,20 @@
                     }
                 }
 
-                await this.workerCompletionSource.Task;
+                while (this.events.TryDequeue(out var eventInformation))
+                {
+                    await this.stateMachine.Fire(
+                            eventInformation.EventId,
+                            eventInformation.EventArgument)
+                        .ConfigureAwait(false);
+
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                }
+
+                await this.workerCompletionSource.Task.ConfigureAwait(false);
                 this.workerCompletionSource = new TaskCompletionSource<bool>();
             }
         }
@@ -256,7 +290,8 @@
 
             try
             {
-                await this.worker;
+                await this.worker
+                    .ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -327,7 +362,9 @@
                 return;
             }
 
-            await this.stateMachine.EnterInitialState().ConfigureAwait(false);
+            await this.stateMachine
+                .EnterInitialState()
+                .ConfigureAwait(false);
 
             this.pendingInitialization = false;
         }

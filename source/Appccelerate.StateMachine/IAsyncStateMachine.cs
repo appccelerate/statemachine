@@ -121,6 +121,7 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Stops the state machine. Events will be queued until the state machine is started.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task Stop();
 
         /// <summary>
