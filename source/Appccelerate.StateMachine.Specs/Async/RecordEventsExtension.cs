@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Async
 {
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Appccelerate.StateMachine.AsyncMachine;
 
     public class RecordEventsExtension : AsyncExtensionBase<int, int>
@@ -33,14 +34,18 @@ namespace Appccelerate.StateMachine.Async
 
             public IList<int> RecordedQueuedEvents { get; }
 
-            public override void FiredEvent(IStateMachineInformation<int, int> stateMachine, ITransitionContext<int, int> context)
+            public override Task FiredEvent(IStateMachineInformation<int, int> stateMachine, ITransitionContext<int, int> context)
             {
                 this.RecordedFiredEvents.Add(context.EventId.Value);
+
+                return Task.CompletedTask;
             }
 
-            public override void EventQueued(IStateMachineInformation<int, int> stateMachine, int eventId, object eventArgument)
+            public override Task EventQueued(IStateMachineInformation<int, int> stateMachine, int eventId, object eventArgument)
             {
                 this.RecordedQueuedEvents.Add(eventId);
+
+                return Task.CompletedTask;
             }
         }
 }

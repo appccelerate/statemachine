@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when entering the state"._(async () =>
                 {
-                    machine.Initialize(State);
+                    await machine.Initialize(State);
                     await machine.Start();
                 });
 
@@ -86,7 +86,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when entering the state"._(async () =>
             {
-                machine.Initialize(State);
+                await machine.Initialize(State);
                 await machine.Start();
             });
 
@@ -132,7 +132,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when entering the state"._(async () =>
             {
-                machine.Initialize(State);
+                await machine.Initialize(State);
                 await machine.Start();
             });
 
@@ -187,7 +187,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when entering the state"._(async () =>
             {
-                machine.Initialize(State);
+                await machine.Initialize(State);
                 await machine.Start();
             });
 

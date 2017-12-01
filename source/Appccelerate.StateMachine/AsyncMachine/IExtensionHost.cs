@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Interface to execute actions on all extensions of the event broker.
@@ -33,6 +34,6 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// Executes the specified action for all extensions.
         /// </summary>
         /// <param name="action">The action to execute.</param>
-        void ForEach(Action<IExtension<TState, TEvent>> action);
+        Task ForEach(Func<IExtension<TState, TEvent>, Task> action);
     }
 }

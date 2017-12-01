@@ -41,7 +41,7 @@ namespace Appccelerate.StateMachine.Async
                     machine.In(new MyState("B"))
                         .ExecuteOnEntry(() => arrivedInStateB = true);
 
-                    machine.Initialize(new MyState("A"));
+                    await machine.Initialize(new MyState("A"));
 
                     await machine.Start();
                 });

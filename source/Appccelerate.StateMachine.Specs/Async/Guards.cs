@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Async
                         .If(() => true).Goto(ErrorState)
                         .Otherwise().Goto(ErrorState);
 
-                machine.Initialize(SourceState);
+                await machine.Initialize(SourceState);
                 await machine.Start();
             });
 
@@ -81,7 +81,7 @@ namespace Appccelerate.StateMachine.Async
 
                 machine.TransitionDeclined += (sender, e) => declined = true;
 
-                machine.Initialize(SourceState);
+                await machine.Initialize(SourceState);
                 await machine.Start();
             });
 
@@ -109,7 +109,7 @@ namespace Appccelerate.StateMachine.Async
                             .If(() => Task.FromResult(false)).Goto(ErrorState)
                             .Otherwise().Goto(DestinationState);
 
-                    machine.Initialize(SourceState);
+                    await machine.Initialize(SourceState);
                     await machine.Start();
                 });
 

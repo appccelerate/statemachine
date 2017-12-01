@@ -71,7 +71,7 @@ namespace Appccelerate.StateMachine.Async
                             await Task.Yield();
                         });
 
-                    machine.Initialize(SourceState);
+                    await machine.Initialize(SourceState);
                     await machine.Start();
                 });
 

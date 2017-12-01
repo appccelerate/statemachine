@@ -18,15 +18,18 @@
 
 namespace Appccelerate.StateMachine.Async
 {
+    using System.Threading.Tasks;
     using Appccelerate.StateMachine.AsyncMachine;
 
     public class CurrentStateExtension : AsyncExtensionBase<int, int>
     {
         public int CurrentState { get; private set; }
 
-        public override void SwitchedState(IStateMachineInformation<int, int> stateMachine, IState<int, int> oldState, IState<int, int> newState)
+        public override Task SwitchedState(IStateMachineInformation<int, int> stateMachine, IState<int, int> oldState, IState<int, int> newState)
         {
             this.CurrentState = newState.Id;
+
+            return Task.CompletedTask;
         }
     }
 }

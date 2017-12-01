@@ -84,7 +84,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 .On(StateMachine.Events.B)
                 .If((Func<bool>)ThrowingGuard).Goto(StateMachine.States.B);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -107,7 +107,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             bool transitionDeclined = false;
             this.testee.TransitionDeclined += (sender, e) => transitionDeclined = true;
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -127,7 +127,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 .On(StateMachine.Events.B)
                 .If((Func<bool>)ThrowingGuard).Goto(StateMachine.States.B);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -148,7 +148,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 .If((Func<bool>)ThrowingGuard).Goto(StateMachine.States.B)
                 .If(() => true).Goto(StateMachine.States.C);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -165,7 +165,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.testee.In(StateMachine.States.A)
                 .On(StateMachine.Events.B).Goto(StateMachine.States.B).Execute(() => throw exception);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -182,7 +182,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.testee.In(StateMachine.States.A)
                 .On(StateMachine.Events.B).Goto(StateMachine.States.B).Execute(() => throw exception);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -202,7 +202,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.testee.In(StateMachine.States.B)
                 .ExecuteOnEntry(() => throw exception);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -222,7 +222,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.testee.In(StateMachine.States.B)
                 .ExecuteOnEntry(() => throw exception);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -240,7 +240,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 .ExecuteOnExit(() => throw exception)
                 .On(StateMachine.Events.B).Goto(StateMachine.States.B);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);
@@ -258,7 +258,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 .ExecuteOnExit(() => throw exception)
                 .On(StateMachine.Events.B).Goto(StateMachine.States.B);
 
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
             await this.testee.EnterInitialState();
 
             await this.testee.Fire(StateMachine.Events.B, eventArguments);

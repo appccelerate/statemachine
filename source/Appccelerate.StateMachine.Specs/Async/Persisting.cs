@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Async
                 {
                     var machine = new AsyncPassiveStateMachine<State, Event>();
                     DefineMachine(machine);
-                    machine.Initialize(State.A);
+                    await machine.Initialize(State.A);
                     await machine.Start();
                     await machine.Fire(Event.S2); // set history of super state S
                     await machine.Fire(Event.B);  // set current state to B

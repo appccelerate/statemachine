@@ -60,20 +60,24 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             var shouldFire = await this.ShouldFire(context).ConfigureAwait(false);
             if (!shouldFire)
             {
-                this.extensionHost.ForEach(extension => extension.SkippedTransition(
-                    this.stateMachineInformation,
-                    this,
-                    context));
+                await this.extensionHost
+                    .ForEach(extension => extension.SkippedTransition(
+                        this.stateMachineInformation,
+                        this,
+                        context))
+                    .ConfigureAwait(false);
 
                 return TransitionResult<TState, TEvent>.NotFired;
             }
 
             context.OnTransitionBegin();
 
-            this.extensionHost.ForEach(extension => extension.ExecutingTransition(
-                this.stateMachineInformation,
-                this,
-                context));
+            await this.extensionHost
+                .ForEach(extension => extension.ExecutingTransition(
+                    this.stateMachineInformation,
+                    this,
+                    context))
+                .ConfigureAwait(false);
 
             IState<TState, TEvent> newState = context.State;
 
@@ -90,10 +94,12 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 await this.PerformActions(context).ConfigureAwait(false);
             }
 
-            this.extensionHost.ForEach(extension => extension.ExecutedTransition(
-                this.stateMachineInformation,
-                this,
-                context));
+            await this.extensionHost
+                .ForEach(extension => extension.ExecutedTransition(
+                    this.stateMachineInformation,
+                    this,
+                    context))
+                .ConfigureAwait(false);
 
             return new TransitionResult<TState, TEvent>(true, newState);
         }
@@ -202,11 +208,15 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             }
             catch (Exception exception)
             {
-                this.extensionHost.ForEach(extention => extention.HandlingGuardException(this.stateMachineInformation, this, context, ref exception));
+                await this.extensionHost
+                    .ForEach(extention => extention.HandlingGuardException(this.stateMachineInformation, this, context, ref exception))
+                    .ConfigureAwait(false);
 
                 HandleException(exception, context);
 
-                this.extensionHost.ForEach(extention => extention.HandledGuardException(this.stateMachineInformation, this, context, exception));
+                await this.extensionHost
+                    .ForEach(extention => extention.HandledGuardException(this.stateMachineInformation, this, context, exception))
+                    .ConfigureAwait(false);
 
                 return false;
             }
@@ -222,11 +232,15 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 }
                 catch (Exception exception)
                 {
-                    this.extensionHost.ForEach(extension => extension.HandlingTransitionException(this.stateMachineInformation, this, context, ref exception));
+                    await this.extensionHost
+                        .ForEach(extension => extension.HandlingTransitionException(this.stateMachineInformation, this, context, ref exception))
+                        .ConfigureAwait(false);
 
                     HandleException(exception, context);
 
-                    this.extensionHost.ForEach(extension => extension.HandledTransitionException(this.stateMachineInformation, this, context, exception));
+                    await this.extensionHost
+                        .ForEach(extension => extension.HandledTransitionException(this.stateMachineInformation, this, context, exception))
+                        .ConfigureAwait(false);
                 }
             }
         }

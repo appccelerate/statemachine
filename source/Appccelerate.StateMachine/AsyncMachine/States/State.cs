@@ -313,27 +313,34 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             try
             {
-                await actionHolder.Execute(context.EventArgument).ConfigureAwait(false);
+                await actionHolder
+                    .Execute(context.EventArgument)
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                this.HandleEntryActionException(context, exception);
+                await this.HandleEntryActionException(context, exception)
+                    .ConfigureAwait(false);
             }
         }
 
-        private void HandleEntryActionException(ITransitionContext<TState, TEvent> context, Exception exception)
+        private async Task HandleEntryActionException(ITransitionContext<TState, TEvent> context, Exception exception)
         {
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandlingEntryActionException(
-                    this.stateMachineInformation, this, context, ref exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandlingEntryActionException(
+                        this.stateMachineInformation, this, context, ref exception))
+                .ConfigureAwait(false);
 
             HandleException(exception, context);
 
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandledEntryActionException(
-                    this.stateMachineInformation, this, context, exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandledEntryActionException(
+                        this.stateMachineInformation, this, context, exception))
+                .ConfigureAwait(false);
         }
 
         private async Task ExecuteExitActions(ITransitionContext<TState, TEvent> context)
@@ -348,27 +355,34 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             try
             {
-                await actionHolder.Execute(context.EventArgument).ConfigureAwait(false);
+                await actionHolder
+                    .Execute(context.EventArgument)
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                this.HandleExitActionException(context, exception);
+                await this.HandleExitActionException(context, exception)
+                    .ConfigureAwait(false);
             }
         }
 
-        private void HandleExitActionException(ITransitionContext<TState, TEvent> context, Exception exception)
+        private async Task HandleExitActionException(ITransitionContext<TState, TEvent> context, Exception exception)
         {
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandlingExitActionException(
-                    this.stateMachineInformation, this, context, ref exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandlingExitActionException(
+                        this.stateMachineInformation, this, context, ref exception))
+                .ConfigureAwait(false);
 
             HandleException(exception, context);
 
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandledExitActionException(
-                    this.stateMachineInformation, this, context, exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandledExitActionException(
+                        this.stateMachineInformation, this, context, exception))
+                .ConfigureAwait(false);
         }
 
         /// <summary>

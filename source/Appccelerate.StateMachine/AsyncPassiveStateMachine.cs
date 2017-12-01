@@ -153,7 +153,9 @@ namespace Appccelerate.StateMachine
         {
             this.events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
 
-            this.stateMachine.ForEach(extension => extension.EventQueued(this.stateMachine, eventId, eventArgument));
+            await this.stateMachine
+                .ForEach(extension => extension.EventQueued(this.stateMachine, eventId, eventArgument))
+                .ConfigureAwait(false);
 
             await this.Execute().ConfigureAwait(false);
         }
@@ -178,7 +180,9 @@ namespace Appccelerate.StateMachine
         {
             this.priorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
 
-            this.stateMachine.ForEach(extension => extension.EventQueuedWithPriority(this.stateMachine, eventId, eventArgument));
+            await this.stateMachine
+                .ForEach(extension => extension.EventQueuedWithPriority(this.stateMachine, eventId, eventArgument))
+                .ConfigureAwait(false);
 
             await this.Execute().ConfigureAwait(false);
         }
@@ -187,14 +191,16 @@ namespace Appccelerate.StateMachine
         /// Initializes the state machine to the specified initial state.
         /// </summary>
         /// <param name="initialState">The state to which the state machine is initialized.</param>
-        public void Initialize(TState initialState)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task Initialize(TState initialState)
         {
             this.CheckThatNotAlreadyInitialized();
 
             this.initialized = true;
             this.pendingInitialization = true;
 
-            this.stateMachine.Initialize(initialState);
+            await this.stateMachine.Initialize(initialState)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -209,7 +215,8 @@ namespace Appccelerate.StateMachine
 
             this.IsRunning = true;
 
-            this.stateMachine.ForEach(extension => extension.StartedStateMachine(this.stateMachine));
+            await this.stateMachine.ForEach(extension => extension.StartedStateMachine(this.stateMachine))
+                .ConfigureAwait(false);
 
             await this.Execute().ConfigureAwait(false);
         }
@@ -235,13 +242,12 @@ namespace Appccelerate.StateMachine
         /// Stops the state machine. Events will be queued until the state machine is started.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task Stop()
+        public async Task Stop()
         {
             this.IsRunning = false;
 
-            this.stateMachine.ForEach(extension => extension.StoppedStateMachine(this.stateMachine));
-
-            return TaskEx.Completed;
+            await this.stateMachine.ForEach(extension => extension.StoppedStateMachine(this.stateMachine))
+                .ConfigureAwait(false);
         }
 
         /// <summary>

@@ -48,7 +48,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when executing the transition"._(async () =>
                 {
-                    this.machine.Initialize(Values.Source);
+                    await this.machine.Initialize(Values.Source);
                     await this.machine.Start();
                     await this.machine.Fire(Values.Event, Values.Parameter);
                 });
@@ -70,7 +70,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when executing the transition"._(async () =>
                 {
-                    this.machine.Initialize(Values.Source);
+                    await this.machine.Initialize(Values.Source);
                     await this.machine.Start();
                     await this.machine.Fire(Values.Event, Values.Parameter);
                 });
@@ -88,7 +88,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when executing the transition"._(async () =>
                 {
-                    this.machine.Initialize(Values.Source);
+                    await this.machine.Initialize(Values.Source);
                     await this.machine.Start();
                     await this.machine.Fire(Values.Event, Values.Parameter);
                 });
@@ -107,7 +107,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when executing the transition"._(async () =>
                 {
-                    this.machine.Initialize(Values.Source);
+                    await this.machine.Initialize(Values.Source);
                     await this.machine.Start();
                     await this.machine.Fire(Values.Event, Values.Parameter);
                 });
@@ -126,7 +126,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when initializing the state machine"._(async () =>
                 {
-                    this.machine.Initialize(state);
+                    await this.machine.Initialize(state);
                     await this.machine.Start();
                 });
 
@@ -148,7 +148,7 @@ namespace Appccelerate.StateMachine.Async
                     this.machine.In(Values.Source)
                         .On(Values.Event).Execute(() => throw Values.Exception);
 
-                    this.machine.Initialize(Values.Source);
+                    await this.machine.Initialize(Values.Source);
                     await this.machine.Start();
                 });
 

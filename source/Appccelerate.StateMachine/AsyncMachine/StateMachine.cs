@@ -123,15 +123,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
                 return this.currentState;
             }
+        }
 
-            set
-            {
-                IState<TState, TEvent> oldState = this.currentState;
+        private async Task SetCurrentState(IState<TState, TEvent> newCurrentState)
+        {
+            IState<TState, TEvent> oldState = this.currentState;
 
-                this.currentState = value;
+            this.currentState = newCurrentState;
 
-                this.extensions.ForEach(extension => extension.SwitchedState(this, oldState, this.currentState));
-            }
+            await this.ForEach(extension => extension.SwitchedState(this, oldState, this.currentState))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,9 +156,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// Executes the specified <paramref name="action"/> for all extensions.
         /// </summary>
         /// <param name="action">The action to execute.</param>
-        public void ForEach(Action<IExtension<TState, TEvent>> action)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task ForEach(Func<IExtension<TState, TEvent>, Task> action)
         {
-            this.extensions.ForEach(action);
+            foreach (var extension in this.extensions)
+            {
+                await action(extension)
+                    .ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -176,13 +182,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// Initializes the state machine by setting the specified initial state.
         /// </summary>
         /// <param name="initialState">The initial state of the state machine.</param>
-        public void Initialize(TState initialState)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task Initialize(TState initialState)
         {
-            this.extensions.ForEach(extension => extension.InitializingStateMachine(this, ref initialState));
+            await this.ForEach(extension => extension.InitializingStateMachine(this, ref initialState))
+                .ConfigureAwait(false);
 
             this.Initialize(this.states[initialState]);
 
-            this.extensions.ForEach(extension => extension.InitializedStateMachine(this, initialState));
+            await this.ForEach(extension => extension.InitializedStateMachine(this, initialState))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -193,12 +202,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
         {
             this.CheckThatStateMachineIsInitialized();
 
-            this.extensions.ForEach(extension => extension.EnteringInitialState(this, this.initialStateId.Value));
+            await this.ForEach(extension => extension.EnteringInitialState(this, this.initialStateId.Value))
+                .ConfigureAwait(false);
 
             var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
             await this.EnterInitialState(this.states[this.initialStateId.Value], context).ConfigureAwait(false);
 
-            this.extensions.ForEach(extension => extension.EnteredInitialState(this, this.initialStateId.Value, context));
+            await this.ForEach(extension => extension.EnteredInitialState(this, this.initialStateId.Value, context))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -212,7 +223,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.CheckThatStateMachineIsInitialized();
             this.CheckThatStateMachineHasEnteredInitialState();
 
-            this.extensions.ForEach(extension => extension.FiringEvent(this, ref eventId, ref eventArgument));
+            await this.ForEach(extension => extension.FiringEvent(this, ref eventId, ref eventArgument))
+                .ConfigureAwait(false);
 
             ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(this.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
             ITransitionResult<TState, TEvent> result = await this.CurrentState.Fire(context).ConfigureAwait(false);
@@ -223,9 +235,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 return;
             }
 
-            this.CurrentState = result.NewState;
+            await this.SetCurrentState(result.NewState)
+                .ConfigureAwait(false);
 
-            this.extensions.ForEach(extension => extension.FiredEvent(this, context));
+            await this.ForEach(extension => extension.FiredEvent(this, context))
+                .ConfigureAwait(false);
 
             this.OnTransitionCompleted(context);
         }
@@ -376,7 +390,10 @@ namespace Appccelerate.StateMachine.AsyncMachine
         private async Task EnterInitialState(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
         {
             var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
-            this.CurrentState = await initializer.EnterInitialState().ConfigureAwait(false);
+            var newCurrentState = await initializer.EnterInitialState().
+                ConfigureAwait(false);
+            await this.SetCurrentState(newCurrentState)
+                .ConfigureAwait(false);
         }
 
         private void RaiseEvent<T>(EventHandler<T> eventHandler, T arguments, ITransitionContext<TState, TEvent> context, bool raiseEventOnException)
