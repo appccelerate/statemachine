@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Async\AsyncActiveStateMachines.cs" />
     <Compile Include="Async\AsyncPassiveStateMachines.cs" />
     <Compile Include="Async\CustomTypes.cs" />
     <Compile Include="Async\ExceptionHandling.cs" />

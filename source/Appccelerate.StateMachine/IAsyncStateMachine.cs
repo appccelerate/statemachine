@@ -121,7 +121,7 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Stops the state machine. Events will be queued until the state machine is started.
         /// </summary>
-        void Stop();
+        Task Stop();
 
         /// <summary>
         /// Adds an extension.

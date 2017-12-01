@@ -35,7 +35,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <param name="guard">The guard.</param>
         public ArgumentGuardHolder(Func<T, bool> guard)
         {
-            this.guard = argument => Task.FromResult(guard(argument));
+            this.guard = argument => guard(argument) ? TaskEx.True : TaskEx.False;
         }
 
         /// <summary>
