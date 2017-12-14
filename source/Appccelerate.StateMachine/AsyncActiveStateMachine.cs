@@ -74,8 +74,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionDeclined
         {
-            add { this.stateMachine.TransitionDeclined += value; }
-            remove { this.stateMachine.TransitionDeclined -= value; }
+            add => this.stateMachine.TransitionDeclined += value;
+            remove => this.stateMachine.TransitionDeclined -= value;
         }
 
         /// <summary>
@@ -83,8 +83,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionExceptionEventArgs<TState, TEvent>> TransitionExceptionThrown
         {
-            add { this.stateMachine.TransitionExceptionThrown += value; }
-            remove { this.stateMachine.TransitionExceptionThrown -= value; }
+            add => this.stateMachine.TransitionExceptionThrown += value;
+            remove => this.stateMachine.TransitionExceptionThrown -= value;
         }
 
         /// <summary>
@@ -92,8 +92,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionBegin
         {
-            add { this.stateMachine.TransitionBegin += value; }
-            remove { this.stateMachine.TransitionBegin -= value; }
+            add => this.stateMachine.TransitionBegin += value;
+            remove => this.stateMachine.TransitionBegin -= value;
         }
 
         /// <summary>
@@ -101,8 +101,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>> TransitionCompleted
         {
-            add { this.stateMachine.TransitionCompleted += value; }
-            remove { this.stateMachine.TransitionCompleted -= value; }
+            add => this.stateMachine.TransitionCompleted += value;
+            remove => this.stateMachine.TransitionCompleted -= value;
         }
 
         /// <summary>
@@ -233,34 +233,66 @@ namespace Appccelerate.StateMachine
                 await this.InitializeStateMachineIfInitializationIsPending()
                     .ConfigureAwait(false);
 
-                while (this.priorityEvents.TryPop(out var eventInformation))
-                {
-                    await this.stateMachine.Fire(
-                            eventInformation.EventId,
-                            eventInformation.EventArgument)
-                        .ConfigureAwait(false);
+                await this.ProcessPriorityEvents(cancellationToken)
+                    .ConfigureAwait(false);
 
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return;
-                    }
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
                 }
 
-                while (this.events.TryDequeue(out var eventInformation))
-                {
-                    await this.stateMachine.Fire(
-                            eventInformation.EventId,
-                            eventInformation.EventArgument)
-                        .ConfigureAwait(false);
+                await this.ProcessNormalEvents(cancellationToken)
+                    .ConfigureAwait(false);
 
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return;
-                    }
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
                 }
 
                 await this.workerCompletionSource.Task.ConfigureAwait(false);
                 this.workerCompletionSource = new TaskCompletionSource<bool>();
+            }
+        }
+
+        private async Task ProcessNormalEvents(
+            CancellationToken cancellationToken)
+        {
+            while (this.events.TryDequeue(out var eventInformation))
+            {
+                await this.stateMachine.Fire(
+                        eventInformation.EventId,
+                        eventInformation.EventArgument)
+                    .ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                await this.ProcessPriorityEvents(cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
+        }
+
+        private async Task ProcessPriorityEvents(
+            CancellationToken cancellationToken)
+        {
+            while (this.priorityEvents.TryPop(out var eventInformation))
+            {
+                await this.stateMachine.Fire(
+                        eventInformation.EventId,
+                        eventInformation.EventArgument)
+                    .ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
             }
         }
 

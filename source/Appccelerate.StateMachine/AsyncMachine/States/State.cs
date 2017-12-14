@@ -305,7 +305,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             foreach (var actionHolder in this.EntryActions)
             {
-                await this.ExecuteEntryAction(actionHolder, context).ConfigureAwait(false);
+                await this.ExecuteEntryAction(actionHolder, context)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -347,7 +348,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             foreach (var actionHolder in this.ExitActions)
             {
-                await this.ExecuteExitAction(actionHolder, context).ConfigureAwait(false);
+                await this.ExecuteExitAction(actionHolder, context)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -400,7 +402,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.LastActiveState != null
                        ?
-                           await this.LastActiveState.EnterDeep(context).ConfigureAwait(false)
+                           await this.LastActiveState.EnterDeep(context)
+                               .ConfigureAwait(false)
                        :
                            this;
         }
@@ -409,7 +412,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.LastActiveState != null
                        ?
-                           await this.LastActiveState.EnterShallow(context).ConfigureAwait(false)
+                           await this.LastActiveState.EnterShallow(context)
+                               .ConfigureAwait(false)
                        :
                            this;
         }
@@ -418,7 +422,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.initialState != null
                        ?
-                           await this.initialState.EnterShallow(context).ConfigureAwait(false)
+                           await this.initialState.EnterShallow(context)
+                               .ConfigureAwait(false)
                        :
                            this;
         }
