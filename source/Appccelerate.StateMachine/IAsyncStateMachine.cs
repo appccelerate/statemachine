@@ -108,7 +108,8 @@ namespace Appccelerate.StateMachine
         /// Initializes the state machine to the specified initial state.
         /// </summary>
         /// <param name="initialState">The state to which the state machine is initialized.</param>
-        void Initialize(TState initialState);
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task Initialize(TState initialState);
 
         /// <summary>
         /// Starts the state machine. Events will be processed.
@@ -121,7 +122,8 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Stops the state machine. Events will be queued until the state machine is started.
         /// </summary>
-        void Stop();
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task Stop();
 
         /// <summary>
         /// Adds an extension.

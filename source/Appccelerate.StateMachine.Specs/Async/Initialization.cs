@@ -152,9 +152,9 @@ namespace Appccelerate.StateMachine.Async
 
                     await machine.Load(loader);                });
 
-            "when initializing the state machine"._(() =>
-                    receivedException = Catch.Exception(() =>
-                        machine.Initialize(0)));
+            "when initializing the state machine"._(async () =>
+                    receivedException = await Catch.Exception(async () =>
+                        await machine.Initialize(0)));
 
             "should throw an invalid operation exception"._(() =>
                 {

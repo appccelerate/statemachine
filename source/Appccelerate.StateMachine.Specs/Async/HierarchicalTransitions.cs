@@ -83,7 +83,7 @@ namespace Appccelerate.StateMachine.Async
                 machine.In(grandParentOfDestinationState)
                     .ExecuteOnEntry(() => log += "enter" + grandParentOfDestinationState);
 
-                machine.Initialize(sourceState);
+                await machine.Initialize(sourceState);
                 await machine.Start();
             });
 
@@ -165,7 +165,7 @@ namespace Appccelerate.StateMachine.Async
                 machine.In(commonAncestorState)
                     .ExecuteOnExit(() => commonAncestorStateLeft = true);
 
-                machine.Initialize(sourceState);
+                await machine.Initialize(sourceState);
                 await machine.Start();
             });
 

@@ -305,7 +305,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             foreach (var actionHolder in this.EntryActions)
             {
-                await this.ExecuteEntryAction(actionHolder, context).ConfigureAwait(false);
+                await this.ExecuteEntryAction(actionHolder, context)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -313,34 +314,42 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             try
             {
-                await actionHolder.Execute(context.EventArgument).ConfigureAwait(false);
+                await actionHolder
+                    .Execute(context.EventArgument)
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                this.HandleEntryActionException(context, exception);
+                await this.HandleEntryActionException(context, exception)
+                    .ConfigureAwait(false);
             }
         }
 
-        private void HandleEntryActionException(ITransitionContext<TState, TEvent> context, Exception exception)
+        private async Task HandleEntryActionException(ITransitionContext<TState, TEvent> context, Exception exception)
         {
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandlingEntryActionException(
-                    this.stateMachineInformation, this, context, ref exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandlingEntryActionException(
+                        this.stateMachineInformation, this, context, ref exception))
+                .ConfigureAwait(false);
 
             HandleException(exception, context);
 
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandledEntryActionException(
-                    this.stateMachineInformation, this, context, exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandledEntryActionException(
+                        this.stateMachineInformation, this, context, exception))
+                .ConfigureAwait(false);
         }
 
         private async Task ExecuteExitActions(ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in this.ExitActions)
             {
-                await this.ExecuteExitAction(actionHolder, context).ConfigureAwait(false);
+                await this.ExecuteExitAction(actionHolder, context)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -348,27 +357,34 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             try
             {
-                await actionHolder.Execute(context.EventArgument).ConfigureAwait(false);
+                await actionHolder
+                    .Execute(context.EventArgument)
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                this.HandleExitActionException(context, exception);
+                await this.HandleExitActionException(context, exception)
+                    .ConfigureAwait(false);
             }
         }
 
-        private void HandleExitActionException(ITransitionContext<TState, TEvent> context, Exception exception)
+        private async Task HandleExitActionException(ITransitionContext<TState, TEvent> context, Exception exception)
         {
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandlingExitActionException(
-                    this.stateMachineInformation, this, context, ref exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandlingExitActionException(
+                        this.stateMachineInformation, this, context, ref exception))
+                .ConfigureAwait(false);
 
             HandleException(exception, context);
 
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandledExitActionException(
-                    this.stateMachineInformation, this, context, exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandledExitActionException(
+                        this.stateMachineInformation, this, context, exception))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -386,7 +402,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.LastActiveState != null
                        ?
-                           await this.LastActiveState.EnterDeep(context).ConfigureAwait(false)
+                           await this.LastActiveState.EnterDeep(context)
+                               .ConfigureAwait(false)
                        :
                            this;
         }
@@ -395,7 +412,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.LastActiveState != null
                        ?
-                           await this.LastActiveState.EnterShallow(context).ConfigureAwait(false)
+                           await this.LastActiveState.EnterShallow(context)
+                               .ConfigureAwait(false)
                        :
                            this;
         }
@@ -404,7 +422,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             return this.initialState != null
                        ?
-                           await this.initialState.EnterShallow(context).ConfigureAwait(false)
+                           await this.initialState.EnterShallow(context)
+                               .ConfigureAwait(false)
                        :
                            this;
         }

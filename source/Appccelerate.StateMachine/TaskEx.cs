@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="CurrentStateExtension.cs" company="Appccelerate">
+// <copyright file="TaskEx.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,20 +16,16 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine
 {
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine;
 
-    public class CurrentStateExtension : AsyncExtensionBase<int, int>
+    internal static class TaskEx
     {
-        public int CurrentState { get; private set; }
+        public static readonly Task Completed = Task.FromResult(0);
 
-        public override Task SwitchedState(IStateMachineInformation<int, int> stateMachine, IState<int, int> oldState, IState<int, int> newState)
-        {
-            this.CurrentState = newState.Id;
+        public static readonly Task<bool> True = Task.FromResult(true);
 
-            return Task.CompletedTask;
-        }
+        public static readonly Task<bool> False = Task.FromResult(false);
     }
 }

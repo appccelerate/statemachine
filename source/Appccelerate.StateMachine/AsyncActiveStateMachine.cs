@@ -1,4 +1,4 @@
-﻿// <copyright file="AsyncPassiveStateMachine.cs" company="Appccelerate">
+﻿// <copyright file="AsyncActiveStateMachine.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,48 +18,49 @@ namespace Appccelerate.StateMachine
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Threading;
     using System.Threading.Tasks;
     using Appccelerate.StateMachine.AsyncMachine;
     using Appccelerate.StateMachine.AsyncMachine.Events;
     using Appccelerate.StateMachine.AsyncSyntax;
     using Appccelerate.StateMachine.Persistence;
 
-    public class AsyncPassiveStateMachine<TState, TEvent> : IAsyncStateMachine<TState, TEvent>
+    public class AsyncActiveStateMachine<TState, TEvent> : IAsyncStateMachine<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
         private readonly StateMachine<TState, TEvent> stateMachine;
-
         private readonly ConcurrentQueue<EventInformation<TEvent>> events;
         private readonly ConcurrentStack<EventInformation<TEvent>> priorityEvents;
-
         private bool initialized;
-        private bool executing;
         private bool pendingInitialization;
+        private CancellationTokenSource stopToken;
+        private Task worker;
+        private TaskCompletionSource<bool> workerCompletionSource = new TaskCompletionSource<bool>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncPassiveStateMachine&lt;TState, TEvent&gt;"/> class.
+        /// Initializes a new instance of the <see cref="AsyncActiveStateMachine&lt;TState, TEvent&gt;"/> class.
         /// </summary>
-        public AsyncPassiveStateMachine()
+        public AsyncActiveStateMachine()
             : this(default(string))
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncPassiveStateMachine{TState, TEvent}"/> class.
+        /// Initializes a new instance of the <see cref="AsyncActiveStateMachine{TState, TEvent}"/> class.
         /// </summary>
         /// <param name="name">The name of the state machine. Used in log messages.</param>
-        public AsyncPassiveStateMachine(string name)
+        public AsyncActiveStateMachine(string name)
             : this(name, null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncPassiveStateMachine{TState, TEvent}"/> class.
+        /// Initializes a new instance of the <see cref="AsyncActiveStateMachine{TState, TEvent}"/> class.
         /// </summary>
         /// <param name="name">The name of the state machine. Used in log messages.</param>
         /// <param name="factory">The factory.</param>
-        public AsyncPassiveStateMachine(string name, IFactory<TState, TEvent> factory)
+        public AsyncActiveStateMachine(string name, IFactory<TState, TEvent> factory)
         {
             this.stateMachine = new StateMachine<TState, TEvent>(
                 name ?? this.GetType().FullNameToString(),
@@ -73,8 +74,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionDeclined
         {
-            add { this.stateMachine.TransitionDeclined += value; }
-            remove { this.stateMachine.TransitionDeclined -= value; }
+            add => this.stateMachine.TransitionDeclined += value;
+            remove => this.stateMachine.TransitionDeclined -= value;
         }
 
         /// <summary>
@@ -82,8 +83,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionExceptionEventArgs<TState, TEvent>> TransitionExceptionThrown
         {
-            add { this.stateMachine.TransitionExceptionThrown += value; }
-            remove { this.stateMachine.TransitionExceptionThrown -= value; }
+            add => this.stateMachine.TransitionExceptionThrown += value;
+            remove => this.stateMachine.TransitionExceptionThrown -= value;
         }
 
         /// <summary>
@@ -91,8 +92,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionBegin
         {
-            add { this.stateMachine.TransitionBegin += value; }
-            remove { this.stateMachine.TransitionBegin -= value; }
+            add => this.stateMachine.TransitionBegin += value;
+            remove => this.stateMachine.TransitionBegin -= value;
         }
 
         /// <summary>
@@ -100,18 +101,15 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>> TransitionCompleted
         {
-            add { this.stateMachine.TransitionCompleted += value; }
-            remove { this.stateMachine.TransitionCompleted -= value; }
+            add => this.stateMachine.TransitionCompleted += value;
+            remove => this.stateMachine.TransitionCompleted -= value;
         }
 
         /// <summary>
         /// Gets a value indicating whether this instance is running. The state machine is running if if was started and not yet stopped.
         /// </summary>
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
-        public bool IsRunning
-        {
-            get; private set;
-        }
+        public bool IsRunning => this.worker != null && !this.worker.IsCompleted;
 
         /// <summary>
         /// Define the behavior of a state.
@@ -157,7 +155,7 @@ namespace Appccelerate.StateMachine
                 .ForEach(extension => extension.EventQueued(this.stateMachine, eventId, eventArgument))
                 .ConfigureAwait(false);
 
-            await this.Execute().ConfigureAwait(false);
+            this.workerCompletionSource.TrySetResult(true);
         }
 
         /// <summary>
@@ -184,7 +182,7 @@ namespace Appccelerate.StateMachine
                 .ForEach(extension => extension.EventQueuedWithPriority(this.stateMachine, eventId, eventArgument))
                 .ConfigureAwait(false);
 
-            await this.Execute().ConfigureAwait(false);
+            this.workerCompletionSource.TrySetResult(true);
         }
 
         /// <summary>
@@ -213,12 +211,89 @@ namespace Appccelerate.StateMachine
         {
             this.CheckThatStateMachineIsInitialized();
 
-            this.IsRunning = true;
+            if (this.IsRunning)
+            {
+                return;
+            }
 
-            await this.stateMachine.ForEach(extension => extension.StartedStateMachine(this.stateMachine))
+            this.stopToken = new CancellationTokenSource();
+            this.worker = Task.Run(
+                () => this.ProcessEventQueue(this.stopToken.Token),
+                CancellationToken.None);
+
+            await this.stateMachine
+                .ForEach(extension => extension.StartedStateMachine(this.stateMachine))
                 .ConfigureAwait(false);
+        }
 
-            await this.Execute().ConfigureAwait(false);
+        private async Task ProcessEventQueue(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await this.InitializeStateMachineIfInitializationIsPending()
+                    .ConfigureAwait(false);
+
+                await this.ProcessPriorityEvents(cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                await this.ProcessNormalEvents(cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                await this.workerCompletionSource.Task.ConfigureAwait(false);
+                this.workerCompletionSource = new TaskCompletionSource<bool>();
+            }
+        }
+
+        private async Task ProcessNormalEvents(
+            CancellationToken cancellationToken)
+        {
+            while (this.events.TryDequeue(out var eventInformation))
+            {
+                await this.stateMachine.Fire(
+                        eventInformation.EventId,
+                        eventInformation.EventArgument)
+                    .ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                await this.ProcessPriorityEvents(cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
+        }
+
+        private async Task ProcessPriorityEvents(
+            CancellationToken cancellationToken)
+        {
+            while (this.priorityEvents.TryPop(out var eventInformation))
+            {
+                await this.stateMachine.Fire(
+                        eventInformation.EventId,
+                        eventInformation.EventArgument)
+                    .ConfigureAwait(false);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
         }
 
         /// <summary>
@@ -244,9 +319,21 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Stop()
         {
-            this.IsRunning = false;
+            this.stopToken.Cancel();
+            this.workerCompletionSource.TrySetCanceled();
 
-            await this.stateMachine.ForEach(extension => extension.StoppedStateMachine(this.stateMachine))
+            try
+            {
+                await this.worker
+                    .ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // ignored intentionally
+            }
+
+            await this.stateMachine
+                .ForEach(extension => extension.StoppedStateMachine(this.stateMachine))
                 .ConfigureAwait(false);
         }
 
@@ -283,7 +370,9 @@ namespace Appccelerate.StateMachine
 
             this.CheckThatNotAlreadyInitialized();
 
-            this.initialized = await this.stateMachine.Load(stateMachineLoader).ConfigureAwait(false);
+            await this.stateMachine.Load(stateMachineLoader).ConfigureAwait(false);
+
+            this.initialized = true;
         }
 
         private void CheckThatNotAlreadyInitialized()
@@ -302,45 +391,6 @@ namespace Appccelerate.StateMachine
             }
         }
 
-        private async Task Execute()
-        {
-            if (this.executing || !this.IsRunning)
-            {
-                return;
-            }
-
-            this.executing = true;
-            try
-            {
-                await this.ProcessQueuedEvents().ConfigureAwait(false);
-            }
-            finally
-            {
-                this.executing = false;
-            }
-        }
-
-        private async Task ProcessQueuedEvents()
-        {
-            await this.InitializeStateMachineIfInitializationIsPending().ConfigureAwait(false);
-
-            while (this.priorityEvents.TryPop(out var eventInformation))
-            {
-                await this.stateMachine.Fire(
-                        eventInformation.EventId,
-                        eventInformation.EventArgument)
-                    .ConfigureAwait(false);
-            }
-
-            while (this.events.TryDequeue(out var eventInformation))
-            {
-                await this.stateMachine.Fire(
-                        eventInformation.EventId,
-                        eventInformation.EventArgument)
-                    .ConfigureAwait(false);
-            }
-        }
-
         private async Task InitializeStateMachineIfInitializationIsPending()
         {
             if (!this.pendingInitialization)
@@ -348,7 +398,9 @@ namespace Appccelerate.StateMachine
                 return;
             }
 
-            await this.stateMachine.EnterInitialState().ConfigureAwait(false);
+            await this.stateMachine
+                .EnterInitialState()
+                .ConfigureAwait(false);
 
             this.pendingInitialization = false;
         }

@@ -66,12 +66,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         {
             private readonly List<Item> items = new List<Item>();
 
-            public override void ExecutedTransition(
+            public override Task ExecutedTransition(
                 IStateMachineInformation<States, Events> stateMachine,
                 ITransition<States, Events> transition,
                 ITransitionContext<States, Events> transitionContext)
             {
                 this.items.Add(new Item(stateMachine, transition.Source, transition.Target, transitionContext));
+
+                return Task.CompletedTask;
             }
 
             public IReadOnlyCollection<Item> Items => this.items;

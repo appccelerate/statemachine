@@ -41,7 +41,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
             this.action = argument =>
             {
                 action(argument);
-                return Task.WhenAll();
+                return TaskEx.Completed;
             };
 
             this.parameter = parameter;

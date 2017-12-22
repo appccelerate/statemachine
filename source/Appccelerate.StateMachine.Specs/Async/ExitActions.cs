@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when leaving the state"._(async () =>
                 {
-                    machine.Initialize(State);
+                    await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event);
                 });
@@ -91,7 +91,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when leaving the state"._(async () =>
                 {
-                    machine.Initialize(State);
+                    await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event);
                 });
@@ -139,7 +139,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when leaving the state"._(async () =>
                 {
-                    machine.Initialize(State);
+                    await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event);
                 });
@@ -196,7 +196,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when entering the state"._(async () =>
                 {
-                    machine.Initialize(State);
+                    await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event);
                 });
@@ -236,7 +236,7 @@ namespace Appccelerate.StateMachine.Async
 
             "when leaving the state"._(async () =>
                 {
-                    machine.Initialize(State);
+                    await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event, argument);
                 });

@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.Async
         {
             "when initializing to a leaf state and starting the state machine"._(async () =>
             {
-                this.machine.Initialize(LeafState);
+                await this.machine.Initialize(LeafState);
                 await this.machine.Start();
             });
 
@@ -81,7 +81,7 @@ namespace Appccelerate.StateMachine.Async
         {
             "when initializing to a super state and starting the state machine"._(async () =>
             {
-                this.machine.Initialize(SuperState);
+                await this.machine.Initialize(SuperState);
                 await this.machine.Start();
             });
 

@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
     using System;
+    using System.Threading.Tasks;
     using Appccelerate.StateMachine.AsyncMachine;
     using FakeItEasy;
 
@@ -59,11 +60,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         {
             public IExtension<States, Events> Extension { private get; set; }
 
-            public void ForEach(Action<IExtension<States, Events>> action)
+            public async Task ForEach(Func<IExtension<States, Events>, Task> action)
             {
                 if (this.Extension != null)
                 {
-                    action(this.Extension);
+                    await action(this.Extension);
                 }
             }
         }
