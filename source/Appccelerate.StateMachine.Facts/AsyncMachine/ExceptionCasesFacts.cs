@@ -63,11 +63,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         [Fact]
-        public void ThrowsException_WhenInitializeIsCalledTwice()
+        public async Task ThrowsException_WhenInitializeIsCalledTwice()
         {
-            this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(StateMachine.States.A);
 
-            Action action = () => this.testee.Initialize(StateMachine.States.B);
+            Func<Task> action = async () => await this.testee.Initialize(StateMachine.States.B);
 
             action.ShouldThrow<InvalidOperationException>();
         }

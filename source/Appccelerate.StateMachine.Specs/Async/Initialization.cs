@@ -87,17 +87,17 @@ namespace Appccelerate.StateMachine.Async
             AsyncPassiveStateMachine<int, int> machine,
             Exception receivedException)
         {
-            "establish an initialized state machine"._(() =>
+            "establish an initialized state machine"._(async () =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
-                    machine.Initialize(TestState);
+                    await machine.Initialize(TestState);
                 });
 
-            "when state machine is initialized again"._(() =>
+            "when state machine is initialized again"._(async () =>
                 {
                     try
                     {
-                        machine.Initialize(TestState);
+                        await machine.Initialize(TestState);
                     }
                     catch (Exception e)
                     {
@@ -150,7 +150,8 @@ namespace Appccelerate.StateMachine.Async
                     loader.SetCurrentState(new Initializable<int> { Value = 1 });
                     loader.SetHistoryStates(new Dictionary<int, int>());
 
-                    await machine.Load(loader);                });
+                    await machine.Load(loader);
+                });
 
             "when initializing the state machine"._(async () =>
                     receivedException = await Catch.Exception(async () =>

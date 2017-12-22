@@ -111,9 +111,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public TState CurrentStateId => this.CurrentState.Id;
 
         /// <summary>
-        /// Gets or sets the state of the current.
+        /// Gets the current state.
         /// </summary>
-        /// <value>The state of the current.</value>
+        /// <value>The current state.</value>
         private IState<TState, TEvent> CurrentState
         {
             get
