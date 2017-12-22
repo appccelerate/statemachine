@@ -14,13 +14,27 @@
     <description>Hierarchical state machine with fluent definition syntax
       Features:
       states and events can be defined with enums, strings or ints - resulting in single class state machines,
-      actions on transitions, entry and exit actions, transition guards, 
+      actions on transitions, entry and exit actions, transition guards,
       hierarchical with different history behaviors to initialize state always to same state or last active state,
       fluent definition interface,
       synchronous/asynchronous state machine (passive state machine handles state transitions synchronously, active state machine handles state transitions asynchronously on the worker thread of the state machine),
       extensible thorough logging,
       state machine report for description of state machine (csv, yEd)</description>
     <releaseNotes>
+      (PRE_RELEASE)
+      missing to 5.0:
+      - define a state machine from a definition (faster creation of state machines) (requested by Jason Sobell https://github.com/jsobell)
+      - pass IState instead of TState to extensions (requested by https://github.com/djack42
+
+      5.0:
+      - targeting .net standard 1.1 (needed for async active state machine)
+      - adds AsyncActiveStateMachine - state machine supporting dot net standard with an internal worker thread.
+      - AsyncPassiveStateMachine's internal event queue is now thread-safe.
+      - Extensions are now notified when a state machine is loaded (thanks to https://github.com/djack42)
+      - Extensions of async state machines support now async as well.
+      - fixed: non-initialized state machines can now be loaded
+      - fixed: namespace in generated XML for YEd (thanks to https://github.com/djack42)
+
       4.4.0:
       - back to .net standard 1.0
       - fixed nuget package containing wrong assembly
@@ -29,11 +43,11 @@
       - adds AsyncPassiveStateMachine that supports async/await for transition actions, entry/exit actions, guards and save/load.
       - targets .net standard 1.3 to support async/await
 
-      3.3.0: 
-      - fixed: wrong target framework was specified in nuget package. Now targets .net standard 1.0 
+      3.3.0:
+      - fixed: wrong target framework was specified in nuget package. Now targets .net standard 1.0
 
-      3.2.0: 
-      - targets now .net standard 1.0 so you can use the state machine almost anywhere .net exists 
+      3.2.0:
+      - targets now .net standard 1.0 so you can use the state machine almost anywhere .net exists
       - fixed a bug when passing a 'null' argument to the state machine
     </releaseNotes>
     <copyright>Copyright 2012-2017</copyright>
@@ -44,9 +58,9 @@
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.dll" target="lib\netstandard1.0" />
-    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.pdb" target="lib\netstandard1.0" />
-    <file src="bin\Release\netstandard1.0\Appccelerate.StateMachine.xml" target="lib\netstandard1.0" />
+    <file src="bin\Release\netstandard1.1\Appccelerate.StateMachine.dll" target="lib\netstandard1.0" />
+    <file src="bin\Release\netstandard1.1\Appccelerate.StateMachine.pdb" target="lib\netstandard1.0" />
+    <file src="bin\Release\netstandard1.1\Appccelerate.StateMachine.xml" target="lib\netstandard1.0" />
     <file src="**\*.cs" target="src" />
-  </files>  
+  </files>
 </package>
