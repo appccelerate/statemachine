@@ -26,7 +26,7 @@
   <PropertyGroup>
     <CodeAnalysisRuleSet>Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <AdditionalFiles Include="Analyzers.ruleset" />
     <AdditionalFiles Include="stylecop.json" />

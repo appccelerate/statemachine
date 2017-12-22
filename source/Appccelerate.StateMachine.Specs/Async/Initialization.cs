@@ -19,6 +19,8 @@
 namespace Appccelerate.StateMachine.Async
 {
     using System;
+    using System.Collections.Generic;
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Persistence;
     using FakeItEasy;
@@ -139,12 +141,16 @@ namespace Appccelerate.StateMachine.Async
             AsyncPassiveStateMachine<int, int> machine,
             Exception receivedException)
         {
-            "establish a loaded state machine"._(async () =>
+            "establish a loaded initialized state machine"._(async () =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
-                    await machine.Load(A.Fake<IAsyncStateMachineLoader<int>>());
-                });
+                    var loader = new Persisting.StateMachineLoader<int>();
+
+                    loader.SetCurrentState(new Initializable<int> { Value = 1 });
+                    loader.SetHistoryStates(new Dictionary<int, int>());
+
+                    await machine.Load(loader);                });
 
             "when initializing the state machine"._(() =>
                     receivedException = Catch.Exception(() =>

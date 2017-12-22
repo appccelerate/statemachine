@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Sync
 {
     using System;
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.Extensions;
     using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Persistence;
@@ -34,7 +35,7 @@ namespace Appccelerate.StateMachine.Sync
             A, B, S, S1, S2
         }
 
-        private enum Event
+        public enum Event
         {
             B, X, S2, S
         }
@@ -43,12 +44,14 @@ namespace Appccelerate.StateMachine.Sync
         public void Loading(
             StateMachineSaver<State> saver,
             StateMachineLoader<State> loader,
+            FakeExtension extension,
             State sourceState,
             State targetState)
         {
             "establish a saved state machine with history"._(() =>
                 {
                     var machine = new PassiveStateMachine<State, Event>();
+
                     DefineMachine(machine);
                     machine.Initialize(State.A);
                     machine.Start();
@@ -66,7 +69,10 @@ namespace Appccelerate.StateMachine.Sync
                     loader.SetCurrentState(saver.CurrentStateId);
                     loader.SetHistoryStates(saver.HistoryStates);
 
+                    extension = new FakeExtension();
                     var loadedMachine = new PassiveStateMachine<State, Event>();
+                    loadedMachine.AddExtension(extension);
+
                     DefineMachine(loadedMachine);
                     loadedMachine.Load(loader);
 
@@ -85,6 +91,32 @@ namespace Appccelerate.StateMachine.Sync
 
             "it should reset all history states of super states"._(() =>
                 targetState.Should().Be(State.S2));
+
+            "it should notify extensions"._(()
+                => extension.LoadedCurrentState
+                    .Should().BeEquivalentTo(State.B));
+        }
+
+        [Scenario]
+        public void LoadingNonInitializedStateMachine(
+            PassiveStateMachine<State, Event> loadedMachine)
+        {
+            "when a non-initialized state machine is loaded"._(() =>
+            {
+                var loader = new StateMachineLoader<State>();
+                loader.SetCurrentState(new Initializable<State>());
+                loader.SetHistoryStates(new Dictionary<State, State>());
+
+                loadedMachine = new PassiveStateMachine<State, Event>();
+                DefineMachine(loadedMachine);
+                loadedMachine.Load(loader);
+            });
+
+            "it should not be initialized already"._(() =>
+            {
+                Action act = () => loadedMachine.Initialize(State.S);
+                act.ShouldNotThrow();
+            });
         }
 
         [Scenario]
@@ -127,6 +159,19 @@ namespace Appccelerate.StateMachine.Sync
 
             fsm.In(State.S)
                 .On(Event.B).Goto(State.B);
+        }
+
+        public class FakeExtension : ExtensionBase<State, Event>
+        {
+            public List<State> LoadedCurrentState { get; } = new List<State>();
+
+            public override void Loaded(
+                IStateMachineInformation<State, Event> stateMachineInformation,
+                Initializable<State> loadedCurrentState,
+                IDictionary<State, State> loadedHistoryStates)
+            {
+                this.LoadedCurrentState.Add(loadedCurrentState.Value);
+            }
         }
 
         public class StateMachineSaver<TState> : IStateMachineSaver<TState>
