@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine.Reports
         private static readonly XNamespace Xsi = "http://www.w3.org/2001/XMLSchema-instance";
         private static readonly XNamespace Y = "http://www.yworks.com/xml/graphml";
         private static readonly XNamespace YEd = "http://www.yworks.com/xml/yed/3";
-        private static readonly XNamespace SchemaLocation = "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd";
+        private static readonly XNamespace SchemaLocation = "http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd";
         //// ReSharper restore StaticFieldInGenericType
         private readonly TextWriter textWriter;
 

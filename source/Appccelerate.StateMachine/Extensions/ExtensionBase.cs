@@ -19,7 +19,8 @@
 namespace Appccelerate.StateMachine.Extensions
 {
     using System;
-
+    using System.Collections.Generic;
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
 
     /// <summary>
@@ -257,6 +258,13 @@ namespace Appccelerate.StateMachine.Extensions
             IStateMachineInformation<TState, TEvent> stateMachine,
             ITransition<TState, TEvent> transition,
             ITransitionContext<TState, TEvent> transitionContext)
+        {
+        }
+
+        public virtual void Loaded(
+            IStateMachineInformation<TState, TEvent> stateMachineInformation,
+            Initializable<TState> loadedCurrentState,
+            IDictionary<TState, TState> loadedHistoryStates)
         {
         }
     }

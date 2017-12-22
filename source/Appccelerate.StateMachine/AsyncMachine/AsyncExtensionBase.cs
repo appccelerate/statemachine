@@ -19,7 +19,9 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.Infrastructure;
 
     /// <summary>
     /// Base class for state machine extensions with empty implementation.
@@ -301,6 +303,13 @@ namespace Appccelerate.StateMachine.AsyncMachine
             ITransitionContext<TState, TEvent> transitionContext)
         {
             return TaskEx.Completed;
+        }
+
+        public virtual void Loaded(
+            IStateMachineInformation<TState, TEvent> stateMachineInformation,
+            Initializable<TState> loadedCurrentState,
+            IDictionary<TState, TState> loadedHistoryStates)
+        {
         }
     }
 }

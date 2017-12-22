@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Async
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine;
     using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Persistence;
     using FakeItEasy;
@@ -35,7 +36,7 @@ namespace Appccelerate.StateMachine.Async
             A, B, S, S1, S2
         }
 
-        private enum Event
+        public enum Event
         {
             B, X, S2, S
         }
@@ -44,6 +45,7 @@ namespace Appccelerate.StateMachine.Async
         public void Loading(
             StateMachineSaver<State> saver,
             StateMachineLoader<State> loader,
+            FakeExtension extension,
             State sourceState,
             State targetState)
         {
@@ -67,7 +69,10 @@ namespace Appccelerate.StateMachine.Async
                     loader.SetCurrentState(saver.CurrentStateId);
                     loader.SetHistoryStates(saver.HistoryStates);
 
+                    extension = new FakeExtension();
                     var loadedMachine = new AsyncPassiveStateMachine<State, Event>();
+                    loadedMachine.AddExtension(extension);
+
                     DefineMachine(loadedMachine);
                     await loadedMachine.Load(loader);
 
@@ -86,6 +91,47 @@ namespace Appccelerate.StateMachine.Async
 
             "it should reset all history states of super states"._(() =>
                 targetState.Should().Be(State.S2));
+
+            "it should notify extensions"._(()
+                => extension.LoadedCurrentState
+                    .Should().BeEquivalentTo(State.B));
+        }
+
+        public class FakeExtension : AsyncExtensionBase<State, Event>
+        {
+            public List<State> LoadedCurrentState { get; } = new List<State>();
+
+            public override void Loaded(
+                IStateMachineInformation<State, Event> stateMachineInformation,
+                Initializable<State> loadedCurrentState,
+                IDictionary<State, State> loadedHistoryStates)
+            {
+                this.LoadedCurrentState.Add(loadedCurrentState.Value);
+            }
+        }
+
+        [Scenario]
+        public void LoadingNonInitializedStateMachine(
+            AsyncPassiveStateMachine<State, Event> loadedMachine)
+        {
+            "when a non-initialized state machine is loaded"._(
+                async () =>
+                {
+                    var loader = new StateMachineLoader<State>();
+                    loader.SetCurrentState(new Initializable<State>());
+                    loader.SetHistoryStates(new Dictionary<State, State>());
+
+                    loadedMachine = new AsyncPassiveStateMachine<State, Event>();
+                    DefineMachine(loadedMachine);
+                    await loadedMachine.Load(loader);
+                });
+
+            "it should not be initialized already"._(
+                () =>
+                {
+                    Action act = () => loadedMachine.Initialize(State.S);
+                    act.ShouldNotThrow();
+                });
         }
 
         [Scenario]

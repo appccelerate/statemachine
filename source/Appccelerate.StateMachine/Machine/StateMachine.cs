@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Appccelerate.StateMachine.Infrastructure;
@@ -310,13 +311,56 @@ namespace Appccelerate.StateMachine.Machine
             stateMachineSaver.SaveHistoryStates(historyStates);
         }
 
-        public void Load(IStateMachineLoader<TState> stateMachineLoader)
+        public bool Load(IStateMachineLoader<TState> stateMachineLoader)
         {
-            Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
+            Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
             this.CheckThatStateMachineIsNotAlreadyInitialized();
 
-            this.LoadCurrentState(stateMachineLoader);
-            this.LoadHistoryStates(stateMachineLoader);
+            Initializable<TState> loadedCurrentState = stateMachineLoader.LoadCurrentState();
+            IDictionary<TState, TState> historyStates = stateMachineLoader.LoadHistoryStates();
+
+            var initialized = SetCurrentState();
+            LoadHistoryStates();
+            NotifyExtensions();
+
+            return initialized;
+
+            bool SetCurrentState()
+            {
+                if (loadedCurrentState.IsInitialized)
+                {
+                    this.currentState = this.states[loadedCurrentState.Value];
+                    return true;
+                }
+
+                this.currentState = null;
+                return false;
+            }
+
+            void LoadHistoryStates()
+            {
+                foreach (KeyValuePair<TState, TState> historyState in historyStates)
+                {
+                    IState<TState, TEvent> superState = this.states[historyState.Key];
+                    IState<TState, TEvent> lastActiveState = this.states[historyState.Value];
+
+                    if (!superState.SubStates.Contains(lastActiveState))
+                    {
+                        throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
+                    }
+
+                    superState.LastActiveState = lastActiveState;
+                }
+            }
+
+            void NotifyExtensions()
+            {
+                this.extensions.ForEach(
+                    extension => extension.Loaded(
+                        this,
+                        loadedCurrentState,
+                        historyStates));
+            }
         }
 
         // ReSharper disable once UnusedParameter.Local
@@ -345,30 +389,6 @@ namespace Appccelerate.StateMachine.Machine
         private void OnTransitionCompleted(ITransitionContext<TState, TEvent> transitionContext)
         {
             this.RaiseEvent(this.TransitionCompleted, new TransitionCompletedEventArgs<TState, TEvent>(this.CurrentStateId, transitionContext), transitionContext, true);
-        }
-
-        private void LoadCurrentState(IStateMachineLoader<TState> stateMachineLoader)
-        {
-            Initializable<TState> loadedCurrentState = stateMachineLoader.LoadCurrentState();
-
-            this.currentState = loadedCurrentState.IsInitialized ? this.states[loadedCurrentState.Value] : null;
-        }
-
-        private void LoadHistoryStates(IStateMachineLoader<TState> stateMachineLoader)
-        {
-            IDictionary<TState, TState> historyStates = stateMachineLoader.LoadHistoryStates();
-            foreach (KeyValuePair<TState, TState> historyState in historyStates)
-            {
-                IState<TState, TEvent> superState = this.states[historyState.Key];
-                IState<TState, TEvent> lastActiveState = this.states[historyState.Value];
-
-                if (!superState.SubStates.Contains(lastActiveState))
-                {
-                    throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
-                }
-
-                superState.LastActiveState = lastActiveState;
-            }
         }
 
         /// <summary>

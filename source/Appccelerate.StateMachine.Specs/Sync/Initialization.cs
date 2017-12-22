@@ -19,6 +19,8 @@
 namespace Appccelerate.StateMachine.Sync
 {
     using System;
+    using System.Collections.Generic;
+    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Persistence;
     using FakeItEasy;
@@ -140,11 +142,14 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             Exception receivedException)
         {
-            "establish a loaded state machine"._(() =>
+            "establish a loaded initialized state machine"._(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
-                    machine.Load(A.Fake<IStateMachineLoader<int>>());
+                    var loader = new Persisting.StateMachineLoader<int>();
+                    loader.SetCurrentState(new Initializable<int> { Value = 1 });
+                    loader.SetHistoryStates(new Dictionary<int, int>());
+                    machine.Load(loader);
                 });
 
             "when initializing the state machine"._(() =>
@@ -154,8 +159,8 @@ namespace Appccelerate.StateMachine.Sync
             "should throw an invalid operation exception"._(() =>
                 {
                     receivedException
-                        .Should().BeAssignableTo<InvalidOperationException>();
-                    receivedException.Message
+                        .Should().BeAssignableTo<InvalidOperationException>()
+                        .Which.Message
                         .Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized);
                 });
         }
