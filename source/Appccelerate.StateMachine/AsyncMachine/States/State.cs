@@ -219,6 +219,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             context.AddRecord(this.Id, RecordType.Enter);
 
+            await this.extensionHost
+                .ForEach(extension =>
+                    extension.EnteringState(
+                        this.stateMachineInformation,
+                        this,
+                        context))
+                .ConfigureAwait(false);
+
             await this.ExecuteEntryActions(context).ConfigureAwait(false);
         }
 

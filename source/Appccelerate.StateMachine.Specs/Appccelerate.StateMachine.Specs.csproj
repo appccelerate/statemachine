@@ -80,6 +80,7 @@
     <Compile Include="Async\AsyncPassiveStateMachines.cs" />
     <Compile Include="Async\CustomTypes.cs" />
     <Compile Include="Async\ExceptionHandling.cs" />
+    <Compile Include="Async\Extensions.cs" />
     <Compile Include="Async\HierarchicalStateMachineInitialization.cs" />
     <Compile Include="Async\HierarchicalTransitions.cs" />
     <Compile Include="Async\Initialization.cs" />
