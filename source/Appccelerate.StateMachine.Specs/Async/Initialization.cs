@@ -22,8 +22,6 @@ namespace Appccelerate.StateMachine.Async
     using System.Collections.Generic;
     using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Persistence;
-    using FakeItEasy;
     using FluentAssertions;
     using Xbehave;
 
@@ -38,7 +36,7 @@ namespace Appccelerate.StateMachine.Async
             AsyncPassiveStateMachine<int, int> machine,
             bool entryActionExecuted)
         {
-            "establish an initialized state machine"._(() =>
+            "establish an initialized state machine"._(async () =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -47,7 +45,7 @@ namespace Appccelerate.StateMachine.Async
                     machine.In(TestState)
                         .ExecuteOnEntry(() => entryActionExecuted = true);
 
-                    machine.Initialize(TestState);
+                    await machine.Initialize(TestState);
                 });
 
             "when starting the state machine"._(() =>
