@@ -102,6 +102,7 @@
     <Compile Include="Sync\ExceptionHandling.cs" />
     <Compile Include="Sync\ExitActions.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
+    <Compile Include="Sync\Extensions.cs" />
     <Compile Include="Sync\StateMachineExtensions.cs" />
     <Compile Include="Sync\Guards.cs" />
     <Compile Include="Sync\HierarchicalStateMachineInitialization.cs" />

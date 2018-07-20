@@ -260,6 +260,11 @@ namespace Appccelerate.StateMachine.Machine
             ITransition<TState, TEvent> transition,
             ITransitionContext<TState, TEvent> context);
 
+        void EnteringState(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            IState<TState, TEvent> state,
+            ITransitionContext<TState, TEvent> context);
+
         void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             Initializable<TState> loadedCurrentState,
