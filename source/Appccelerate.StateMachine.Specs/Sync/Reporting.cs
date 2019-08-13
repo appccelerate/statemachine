@@ -31,16 +31,16 @@ namespace Appccelerate.StateMachine.Sync
             IStateMachine<string, int> machine,
             IStateMachineReport<string, int> report)
         {
-            "establish a state machine"._(() =>
+            "establish a state machine".x(() =>
                 machine = new PassiveStateMachine<string, int>());
 
-            "establish a state machine reporter"._(() =>
+            "establish a state machine reporter".x(() =>
                 report = A.Fake<IStateMachineReport<string, int>>());
 
-            "when creating a report"._(() =>
+            "when creating a report".x(() =>
                 machine.Report(report));
 
-            "it should call the passed reporter"._(() =>
+            "it should call the passed reporter".x(() =>
                 A.CallTo(() => report.Report(A<string>._, A<IEnumerable<IState<string, int>>>._, A<Initializable<string>>._)));
         }
     }

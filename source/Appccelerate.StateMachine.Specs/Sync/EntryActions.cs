@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             bool entryActionExecuted)
         {
-            "establish a state machine with entry action on a state"._(() =>
+            "establish a state machine with entry action on a state".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -40,13 +40,13 @@ namespace Appccelerate.StateMachine.Sync
                         .ExecuteOnEntry(() => entryActionExecuted = true);
                 });
 
-            "when entering the state"._(() =>
+            "when entering the state".x(() =>
                 {
                     machine.Initialize(State);
                     machine.Start();
                 });
 
-            "it should execute the entry action"._(() =>
+            "it should execute the entry action".x(() =>
                 entryActionExecuted.Should().BeTrue());
         }
 
@@ -57,7 +57,7 @@ namespace Appccelerate.StateMachine.Sync
         {
             const string Parameter = "parameter";
 
-            "establish a state machine with entry action with parameter on a state"._(() =>
+            "establish a state machine with entry action with parameter on a state".x(() =>
             {
                 machine = new PassiveStateMachine<int, int>();
 
@@ -65,16 +65,16 @@ namespace Appccelerate.StateMachine.Sync
                     .ExecuteOnEntryParametrized(p => parameter = p, Parameter);
             });
 
-            "when entering the state"._(() =>
+            "when entering the state".x(() =>
             {
                 machine.Initialize(State);
                 machine.Start();
             });
 
-            "it should execute the entry action"._(() =>
+            "it should execute the entry action".x(() =>
                 parameter.Should().NotBeNull());
 
-            "it should pass parameter to the entry action"._(() =>
+            "it should pass parameter to the entry action".x(() =>
                 parameter.Should().Be(Parameter));
         }
 
@@ -84,7 +84,7 @@ namespace Appccelerate.StateMachine.Sync
             bool entryAction1Executed,
             bool entryAction2Executed)
         {
-            "establish a state machine with several entry actions on a state"._(() =>
+            "establish a state machine with several entry actions on a state".x(() =>
             {
                 machine = new PassiveStateMachine<int, int>();
 
@@ -93,13 +93,13 @@ namespace Appccelerate.StateMachine.Sync
                     .ExecuteOnEntry(() => entryAction2Executed = true);
             });
 
-            "when entering the state"._(() =>
+            "when entering the state".x(() =>
             {
                 machine.Initialize(State);
                 machine.Start();
             });
 
-            "It should execute all entry actions"._(() =>
+            "It should execute all entry actions".x(() =>
             {
                 entryAction1Executed
                     .Should().BeTrue("first action should be executed");
@@ -120,7 +120,7 @@ namespace Appccelerate.StateMachine.Sync
             var exception3 = new Exception();
             var receivedException = new List<Exception>();
 
-            "establish a state machine with several entry actions on a state and some of them throw an exception"._(() =>
+            "establish a state machine with several entry actions on a state and some of them throw an exception".x(() =>
             {
                 machine = new PassiveStateMachine<int, int>();
 
@@ -140,13 +140,13 @@ namespace Appccelerate.StateMachine.Sync
                 machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
             });
 
-            "when entering the state"._(() =>
+            "when entering the state".x(() =>
             {
                 machine.Initialize(State);
                 machine.Start();
             });
 
-            "it should execute all entry actions on entry"._(() =>
+            "it should execute all entry actions on entry".x(() =>
             {
                 entryAction1Executed
                     .Should().BeTrue("action 1 should be executed");
@@ -158,7 +158,7 @@ namespace Appccelerate.StateMachine.Sync
                     .Should().BeTrue("action 3 should be executed");
             });
 
-            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event"._(() =>
+            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
                 receivedException
                     .Should().BeEquivalentTo(new object[]
                                                  {
@@ -175,7 +175,7 @@ namespace Appccelerate.StateMachine.Sync
             const int AnotherState = 3;
             const int Argument = 17;
 
-            "establish a state machine with an entry action taking an event argument"._(() =>
+            "establish a state machine with an entry action taking an event argument".x(() =>
             {
                 machine = new PassiveStateMachine<int, int>();
 
@@ -186,14 +186,14 @@ namespace Appccelerate.StateMachine.Sync
                     .ExecuteOnEntry((int argument) => passedArgument = argument);
             });
 
-            "when entering the state"._(() =>
+            "when entering the state".x(() =>
             {
                 machine.Initialize(State);
                 machine.Start();
                 machine.Fire(Event, Argument);
             });
 
-            "it should pass event argument to entry action"._(() =>
+            "it should pass event argument to entry action".x(() =>
                 passedArgument.Should().Be(Argument));
         }
     }

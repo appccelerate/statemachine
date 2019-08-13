@@ -38,7 +38,7 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             bool entryActionExecuted)
         {
-            "establish an initialized state machine"._(() =>
+            "establish an initialized state machine".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -50,13 +50,13 @@ namespace Appccelerate.StateMachine.Sync
                     machine.Initialize(TestState);
                 });
 
-            "when starting the state machine"._(() =>
+            "when starting the state machine".x(() =>
                 machine.Start());
 
-            "should set current state of state machine to state to which it is initialized"._(() =>
+            "should set current state of state machine to state to which it is initialized".x(() =>
                 this.testExtension.CurrentState.Should().Be(TestState));
 
-            "should execute entry action of state to which state machine is initialized"._(() =>
+            "should execute entry action of state to which state machine is initialized".x(() =>
                 entryActionExecuted.Should().BeTrue());
         }
 
@@ -65,7 +65,7 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             bool entryActionExecuted)
         {
-            "establish a state machine"._(() =>
+            "establish a state machine".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -75,10 +75,10 @@ namespace Appccelerate.StateMachine.Sync
                         .ExecuteOnEntry(() => entryActionExecuted = true);
                 });
 
-            "when state machine is initialized"._(() =>
+            "when state machine is initialized".x(() =>
                 machine.Initialize(TestState));
 
-            "should not yet execute any entry actions"._(() =>
+            "should not yet execute any entry actions".x(() =>
                 entryActionExecuted.Should().BeFalse());
         }
 
@@ -87,13 +87,13 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             Exception receivedException)
         {
-            "establish an initialized state machine"._(() =>
+            "establish an initialized state machine".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
                     machine.Initialize(TestState);
                 });
 
-            "when state machine is initialized again"._(() =>
+            "when state machine is initialized again".x(() =>
                 {
                     try
                     {
@@ -105,7 +105,7 @@ namespace Appccelerate.StateMachine.Sync
                     }
                 });
 
-            "should throw an invalid operation exception"._(() =>
+            "should throw an invalid operation exception".x(() =>
                 {
                     receivedException
                         .Should().BeAssignableTo<InvalidOperationException>();
@@ -119,16 +119,16 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             Exception receivedException)
         {
-            "establish an uninitialized state machine"._(() =>
+            "establish an uninitialized state machine".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
                 });
 
-            "when starting the state machine"._(() =>
+            "when starting the state machine".x(() =>
                 receivedException = Catch.Exception(() =>
                     machine.Start()));
 
-            "should throw an invalid operation exception"._(() =>
+            "should throw an invalid operation exception".x(() =>
                 {
                     receivedException
                         .Should().BeAssignableTo<InvalidOperationException>();
@@ -142,7 +142,7 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             Exception receivedException)
         {
-            "establish a loaded initialized state machine"._(() =>
+            "establish a loaded initialized state machine".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -152,11 +152,11 @@ namespace Appccelerate.StateMachine.Sync
                     machine.Load(loader);
                 });
 
-            "when initializing the state machine"._(() =>
+            "when initializing the state machine".x(() =>
                     receivedException = Catch.Exception(() =>
                         machine.Initialize(0)));
 
-            "should throw an invalid operation exception"._(() =>
+            "should throw an invalid operation exception".x(() =>
                 {
                     receivedException
                         .Should().BeAssignableTo<InvalidOperationException>()

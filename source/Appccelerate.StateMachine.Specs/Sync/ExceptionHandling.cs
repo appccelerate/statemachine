@@ -41,14 +41,14 @@ namespace Appccelerate.StateMachine.Sync
         [Scenario]
         public void TransitionActionException()
         {
-            "establish a transition action throwing an exception"._(() =>
+            "establish a transition action throwing an exception".x(() =>
                 this.machine.In(Values.Source)
                     .On(Values.Event).Goto(Values.Destination).Execute(() =>
                         {
                             throw Values.Exception;
                         }));
 
-            "when executing the transition"._(() =>
+            "when executing the transition".x(() =>
                 {
                     this.machine.Initialize(Values.Source);
                     this.machine.Start();
@@ -61,7 +61,7 @@ namespace Appccelerate.StateMachine.Sync
         [Scenario]
         public void EntryActionException()
         {
-            "establish an entry action throwing an exception"._(() =>
+            "establish an entry action throwing an exception".x(() =>
                 {
                     this.machine.In(Values.Source)
                         .On(Values.Event).Goto(Values.Destination);
@@ -73,7 +73,7 @@ namespace Appccelerate.StateMachine.Sync
                             });
                 });
 
-            "when executing the transition"._(() =>
+            "when executing the transition".x(() =>
                 {
                     this.machine.Initialize(Values.Source);
                     this.machine.Start();
@@ -86,7 +86,7 @@ namespace Appccelerate.StateMachine.Sync
         [Scenario]
         public void ExitActionException()
         {
-            "establish an exit action throwing an exception"._(() =>
+            "establish an exit action throwing an exception".x(() =>
                     this.machine.In(Values.Source)
                         .ExecuteOnExit(() =>
                             {
@@ -94,7 +94,7 @@ namespace Appccelerate.StateMachine.Sync
                             })
                         .On(Values.Event).Goto(Values.Destination));
 
-            "when executing the transition"._(() =>
+            "when executing the transition".x(() =>
                 {
                     this.machine.Initialize(Values.Source);
                     this.machine.Start();
@@ -107,7 +107,7 @@ namespace Appccelerate.StateMachine.Sync
         [Scenario]
         public void GuardException()
         {
-            "establish a guard throwing an exception"._(() =>
+            "establish a guard throwing an exception".x(() =>
                     this.machine.In(Values.Source)
                         .On(Values.Event)
                             .If(() =>
@@ -116,7 +116,7 @@ namespace Appccelerate.StateMachine.Sync
                                 })
                                 .Goto(Values.Destination));
 
-            "when executing the transition"._(() =>
+            "when executing the transition".x(() =>
                 {
                     this.machine.Initialize(Values.Source);
                     this.machine.Start();
@@ -131,23 +131,23 @@ namespace Appccelerate.StateMachine.Sync
         {
             const int State = 1;
 
-            "establish a entry action for the initial state that throws an exception"._(() =>
+            "establish a entry action for the initial state that throws an exception".x(() =>
                 this.machine.In(State)
                     .ExecuteOnEntry(() =>
                         {
                             throw Values.Exception;
                         }));
 
-            "when initializing the state machine"._(() =>
+            "when initializing the state machine".x(() =>
                 {
                     this.machine.Initialize(State);
                     this.machine.Start();
                 });
 
-            "should catch exception and fire transition exception event"._(() =>
+            "should catch exception and fire transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.Exception.Should().NotBeNull());
 
-            "should pass thrown exception to event arguments of transition exception event"._(() =>
+            "should pass thrown exception to event arguments of transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.Exception.Should().BeSameAs(Values.Exception));
         }
 
@@ -155,7 +155,7 @@ namespace Appccelerate.StateMachine.Sync
         public void NoExceptionHandlerRegistered(
             Exception catchedException)
         {
-            "establish an exception throwing state machine without a registered exception handler"._(() =>
+            "establish an exception throwing state machine without a registered exception handler".x(() =>
                 {
                     this.machine = new PassiveStateMachine<int, int>();
 
@@ -169,29 +169,29 @@ namespace Appccelerate.StateMachine.Sync
                     this.machine.Start();
                 });
 
-            "when an exception occurs"._(() =>
+            "when an exception occurs".x(() =>
                 catchedException = Catch.Exception(() => this.machine.Fire(Values.Event)));
 
-            "should (re-)throw exception"._(() =>
+            "should (re-)throw exception".x(() =>
                 catchedException.InnerException
                     .Should().BeSameAs(Values.Exception));
         }
 
         private void ItShouldHandleTransitionException()
         {
-            "should catch exception and fire transition exception event"._(() =>
+            "should catch exception and fire transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.Should().NotBeNull());
 
-            "should pass source state of failing transition to event arguments of transition exception event"._(() =>
+            "should pass source state of failing transition to event arguments of transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.StateId.Should().Be(Values.Source));
 
-            "should pass event id causing transition to event arguments of transition exception event"._(() =>
+            "should pass event id causing transition to event arguments of transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.EventId.Should().Be(Values.Event));
 
-            "should pass thrown exception to event arguments of transition exception event"._(() =>
+            "should pass thrown exception to event arguments of transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.Exception.Should().BeSameAs(Values.Exception));
 
-            "should pass event parameter to event argument of transition exception event"._(() =>
+            "should pass event parameter to event argument of transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.EventArgument.Should().Be(Values.Parameter));
         }
 

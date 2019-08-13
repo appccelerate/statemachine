@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             bool exitActionExecuted)
         {
-            "establish a state machine with exit action on a state"._(() =>
+            "establish a state machine with exit action on a state".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -43,14 +43,14 @@ namespace Appccelerate.StateMachine.Sync
                         .On(Event).Goto(AnotherState);
                 });
 
-            "when leaving the state"._(() =>
+            "when leaving the state".x(() =>
                 {
                     machine.Initialize(State);
                     machine.Start();
                     machine.Fire(Event);
                 });
 
-            "it should execute the exit action"._(() =>
+            "it should execute the exit action".x(() =>
                 exitActionExecuted.Should().BeTrue());
         }
 
@@ -61,7 +61,7 @@ namespace Appccelerate.StateMachine.Sync
         {
             const string Parameter = "parameter";
 
-            "establish a state machine with exit action with parameter on a state"._(() =>
+            "establish a state machine with exit action with parameter on a state".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -70,17 +70,17 @@ namespace Appccelerate.StateMachine.Sync
                         .On(Event).Goto(AnotherState);
                 });
 
-            "when leaving the state"._(() =>
+            "when leaving the state".x(() =>
                 {
                     machine.Initialize(State);
                     machine.Start();
                     machine.Fire(Event);
                 });
 
-            "it should execute the exit action"._(() =>
+            "it should execute the exit action".x(() =>
                 parameter.Should().NotBeNull());
 
-            "it should pass parameter to the exit action"._(() =>
+            "it should pass parameter to the exit action".x(() =>
                 parameter.Should().Be(Parameter));
         }
 
@@ -90,7 +90,7 @@ namespace Appccelerate.StateMachine.Sync
             bool exitAction1Executed,
             bool exitAction2Executed)
         {
-            "establish a state machine with several exit actions on a state"._(() =>
+            "establish a state machine with several exit actions on a state".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -100,14 +100,14 @@ namespace Appccelerate.StateMachine.Sync
                         .On(Event).Goto(AnotherState);
                 });
 
-            "when leaving the state"._(() =>
+            "when leaving the state".x(() =>
                 {
                     machine.Initialize(State);
                     machine.Start();
                     machine.Fire(Event);
                 });
 
-            "It should execute all exit actions"._(() =>
+            "It should execute all exit actions".x(() =>
                 {
                     exitAction1Executed
                         .Should().BeTrue("first action should be executed");
@@ -128,7 +128,7 @@ namespace Appccelerate.StateMachine.Sync
             var exception3 = new Exception();
             var receivedException = new List<Exception>();
 
-            "establish a state machine with several exit actions on a state and some of them throw an exception"._(() =>
+            "establish a state machine with several exit actions on a state and some of them throw an exception".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -149,14 +149,14 @@ namespace Appccelerate.StateMachine.Sync
                     machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
                 });
 
-            "when entering the state"._(() =>
+            "when entering the state".x(() =>
                 {
                     machine.Initialize(State);
                     machine.Start();
                     machine.Fire(Event);
                 });
 
-            "it should execute all entry actions on entry"._(() =>
+            "it should execute all entry actions on entry".x(() =>
                 {
                     exitAction1Executed
                         .Should().BeTrue("action 1 should be executed");
@@ -168,7 +168,7 @@ namespace Appccelerate.StateMachine.Sync
                         .Should().BeTrue("action 3 should be executed");
                 });
 
-            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event"._(() =>
+            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
                 receivedException
                     .Should().BeEquivalentTo(new object[]
                                                     {
@@ -183,7 +183,7 @@ namespace Appccelerate.StateMachine.Sync
         {
             const int Argument = 17;
 
-            "establish a state machine with an exit action taking an event argument"._(() =>
+            "establish a state machine with an exit action taking an event argument".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -195,14 +195,14 @@ namespace Appccelerate.StateMachine.Sync
                         .ExecuteOnEntry((int argument) => passedArgument = argument);
                 });
 
-            "when leaving the state"._(() =>
+            "when leaving the state".x(() =>
                 {
                     machine.Initialize(State);
                     machine.Start();
                     machine.Fire(Event, Argument);
                 });
 
-            "it should pass event argument to exit action"._(() =>
+            "it should pass event argument to exit action".x(() =>
                 passedArgument.Should().Be(Argument));
         }
     }

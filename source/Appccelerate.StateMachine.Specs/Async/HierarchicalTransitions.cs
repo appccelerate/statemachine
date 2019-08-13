@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine.Async
 
             var log = string.Empty;
 
-            "establish a hierarchical state machine"._(async () =>
+            "establish a hierarchical state machine".x(async () =>
             {
                 machine = new AsyncPassiveStateMachine<string, int>();
 
@@ -87,26 +87,26 @@ namespace Appccelerate.StateMachine.Async
                 await machine.Start();
             });
 
-            "when firing an event resulting in a transition without a common ancestor"._(()
+            "when firing an event resulting in a transition without a common ancestor".x(()
                 => machine.Fire(Event));
 
-            "it should execute exit action of source state"._(() =>
+            "it should execute exit action of source state".x(() =>
                 log.Should().Contain("exit" + sourceState));
 
-            "it should execute exit action of parents of source state (recursively)"._(()
+            "it should execute exit action of parents of source state (recursively)".x(()
                 => log
                     .Should().Contain("exit" + parentOfSourceState)
                     .And.Contain("exit" + grandParentOfSourceState));
 
-            "it should execute entry action of parents of destination state (recursively)"._(()
+            "it should execute entry action of parents of destination state (recursively)".x(()
                 => log
                     .Should().Contain("enter" + parentOfDestinationState)
                     .And.Contain("enter" + grandParentOfDestinationState));
 
-            "it should execute entry action of destination state"._(()
+            "it should execute entry action of destination state".x(()
                 => log.Should().Contain("enter" + destinationState));
 
-            "it should execute actions from source upwards and then downwards to destination state"._(() =>
+            "it should execute actions from source upwards and then downwards to destination state".x(() =>
             {
                 string[] states =
                     {
@@ -140,7 +140,7 @@ namespace Appccelerate.StateMachine.Async
 
             bool commonAncestorStateLeft = false;
 
-            "establish a hierarchical state machine"._(async () =>
+            "establish a hierarchical state machine".x(async () =>
             {
                 machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -169,10 +169,10 @@ namespace Appccelerate.StateMachine.Async
                 await machine.Start();
             });
 
-            "when firing an event resulting in a transition with a common ancestor"._(()
+            "when firing an event resulting in a transition with a common ancestor".x(()
                 => machine.Fire(Event));
 
-            "the state machine should remain inside common ancestor state"._(()
+            "the state machine should remain inside common ancestor state".x(()
                 => commonAncestorStateLeft
                     .Should().BeFalse());
         }
