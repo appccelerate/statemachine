@@ -1,7 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Appccelerate.StateMachine</Title>
+    <Copyright>Copyright ©  2008-2019</Copyright>
+    <Authors>Appccelerate team</Authors>
+    <Company>Appccelerate</Company>
+    <Product>Appccelerate</Product>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -9,37 +17,22 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Appccelerate.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
-    <NoWarn>1701;1702;1705;1600;1591</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.0\Appccelerate.StateMachine.xml</DocumentationFile>
-    <NoWarn>1701;1702;1705;1600;1591</NoWarn>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <TreatSpecificWarningsAsErrors />
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <CodeAnalysisRuleSet>Analyzers.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>../Analyzers.Productive.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="Analyzers.ruleset" />
+    <None Remove="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Appccelerate.Development" Version="2.1.0" />
-    <PackageReference Include="Appccelerate.VersionTask" Version="1.22.0" />
-    <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="1.0.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
   </ItemGroup>
+
+  <Import Project="..\Appccelerate.StateMachine.props" />
 
 </Project>
