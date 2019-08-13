@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             Action action = () => this.testee.SuperState = this.testee;
 
             action
-                .ShouldThrow<ArgumentException>().WithMessage(ExceptionMessages.StateCannotBeItsOwnSuperState(this.testee.ToString()));
+                .Should().Throw<ArgumentException>().WithMessage(ExceptionMessages.StateCannotBeItsOwnSuperState(this.testee.ToString()));
         }
 
         [Fact]

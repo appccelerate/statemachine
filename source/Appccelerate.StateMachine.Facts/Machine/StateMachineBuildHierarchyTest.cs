@@ -54,7 +54,7 @@ namespace Appccelerate.StateMachine.Machine
                                   .WithSubState(StateMachine.States.B1)
                                   .WithSubState(StateMachine.States.B2);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
     }
 }

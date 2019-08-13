@@ -130,7 +130,7 @@ namespace Appccelerate.StateMachine.Async
                 () =>
                 {
                     Action act = () => loadedMachine.Initialize(State.S);
-                    act.ShouldNotThrow();
+                    act.Should().NotThrow();
                 });
         }
 

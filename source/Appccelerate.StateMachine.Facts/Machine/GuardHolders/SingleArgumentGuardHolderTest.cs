@@ -74,7 +74,7 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
             Action action = () => this.testee.Execute(Argument);
 
             action
-                .ShouldThrow<ArgumentException>()
+                .Should().Throw<ArgumentException>()
                 .WithMessage(GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(Argument, this.testee.Describe()));
         }
     }

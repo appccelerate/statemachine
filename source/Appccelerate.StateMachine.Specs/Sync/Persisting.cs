@@ -115,7 +115,7 @@ namespace Appccelerate.StateMachine.Sync
             "it should not be initialized already".x(() =>
             {
                 Action act = () => loadedMachine.Initialize(State.S);
-                act.ShouldNotThrow();
+                act.Should().NotThrow();
             });
         }
 
