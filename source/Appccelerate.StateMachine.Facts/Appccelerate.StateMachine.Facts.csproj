@@ -1,184 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.props" Condition="Exists('..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.props')" />
-  <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F206C6F3-01CD-4D81-8C2A-C1AB4AC8100E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Appccelerate.StateMachine</RootNamespace>
-    <AssemblyName>Appccelerate.StateMachine.Facts</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet />
+
+  <PropertyGroup>
+    <Title>Appccelerate.StateMachine.Test</Title>
+	<Copyright>Copyright ©  2008-2019</Copyright>
+    <Authors>Appccelerate team</Authors>
+    <Company>Appccelerate</Company>
+	<Product>Appccelerate</Product>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet />
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="ConfigureAwait, Version=1.1.0.0, Culture=neutral, PublicKeyToken=233850a516558a98, processorArchitecture=MSIL">
-      <HintPath>..\packages\ConfigureAwait.Fody.1.1.0\lib\portable-net45+wp8+win+wpa81\ConfigureAwait.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="FakeItEasy, Version=5.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
-      <HintPath>..\packages\FakeItEasy.5.1.1\lib\net45\FakeItEasy.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentAssertions, Version=5.8.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.5.8.0\lib\net45\FluentAssertions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\packages\xunit.abstractions.2.0.3\lib\net35\xunit.abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit.core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\packages\xunit.extensibility.core.2.4.1\lib\net452\xunit.core.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit.execution.desktop, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\packages\xunit.extensibility.execution.2.4.1\lib\net452\xunit.execution.desktop.dll</HintPath>
-    </Reference>
+    <None Remove="stylecop.json" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="ActiveStateMachineTest.cs" />
-    <Compile Include="AsyncMachine\Builder.cs" />
-    <Compile Include="AsyncMachine\StateMachineAssertionsExtensionMethods.cs" />
-    <Compile Include="Builder.cs" />
-    <Compile Include="Events.cs" />
-    <Compile Include="ExtensionTest.cs" />
-    <Compile Include="AsyncMachine\ActionHolders\ArgumentActionHolderFacts.cs" />
-    <Compile Include="AsyncMachine\ExceptionCasesFacts.cs" />
-    <Compile Include="AsyncMachine\GuardHolders\ArgumentGuardHolderFacts.cs" />
-    <Compile Include="AsyncMachine\GuardFacts.cs" />
-    <Compile Include="AsyncMachine\HierarchyBuilderFacts.cs" />
-    <Compile Include="AsyncMachine\MissableFacts.cs" />
-    <Compile Include="AsyncMachine\StateActionFacts.cs" />
-    <Compile Include="AsyncMachine\States\StateFacts.cs" />
-    <Compile Include="AsyncMachine\Syntax\SyntaxFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\ExceptionThrowingActionTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\ExceptionThrowingGuardTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\GuardsTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\HierarchicalTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\InternalTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\SelfTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\SourceIsDescendantOfTargetTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\SourceIsParentOfTargetTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\SuccessfulTransitionWithExecutedActionsFactsBase.cs" />
-    <Compile Include="AsyncMachine\Transitions\TransitionDefinedInSuperStateTransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\TransitionDictionaryFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\TransitionFacts.cs" />
-    <Compile Include="AsyncMachine\Transitions\TransitionFactsBase.cs" />
-    <Compile Include="Machine\ActionHolders\ArgumentActionHolderTest.cs" />
-    <Compile Include="Machine\ActionHolders\SingleArgumentTransitionActionHolderTest.cs" />
-    <Compile Include="Machine\ExceptionCasesTest.cs" />
-    <Compile Include="Machine\GuardHolders\SingleArgumentGuardHolderTest.cs" />
-    <Compile Include="Machine\GuardTest.cs" />
-    <Compile Include="Machine\HierarchyBuilderTest.cs" />
-    <Compile Include="Machine\MissableTest.cs" />
-    <Compile Include="Machine\StateActionTest.cs" />
-    <Compile Include="Machine\StateMachineBuildHierarchyTest.cs" />
-    <Compile Include="Machine\StateMachineTest.cs" />
-    <Compile Include="Machine\States\StateTest.cs" />
-    <Compile Include="Machine\Syntax\SyntaxTest.cs" />
-    <Compile Include="Machine\TransitionsTest.cs" />
-    <Compile Include="Machine\Transitions\ExceptionThrowingActionTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\ExceptionThrowingGuardTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\GuardsTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\HierarchicalTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\InternalTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\SelfTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\SourceIsDescendantOfTargetTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\SourceIsParentOfTargetTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\SuccessfulTransitionWithExecutedActionsTestBase.cs" />
-    <Compile Include="Machine\Transitions\TransitionDefinedInSuperStateTransitionTest.cs" />
-    <Compile Include="Machine\Transitions\TransitionDictionaryTest.cs" />
-    <Compile Include="Machine\Transitions\TransitionTest.cs" />
-    <Compile Include="Machine\Transitions\TransitionTestBase.cs" />
-    <Compile Include="PassiveStateMachineTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\GlobalAssemblyInfo.cs" />
-    <Compile Include="Reports\CsvStateMachineReportGeneratorTest.cs" />
-    <Compile Include="Reports\StateMachineReportGeneratorTest.cs" />
-    <Compile Include="Reports\YEdStateMachineReportGeneratorTest.cs" />
-    <Compile Include="StateMachineAssertionsExtensionMethods.cs" />
-    <Compile Include="StateMachineTestBase.cs" />
-    <Compile Include="States.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Analyzers.ruleset" />
-    <None Include="app.config" />
-    <None Include="NuGet.config" />
-    <None Include="packages.config" />
-    <None Include="Settings.stylecop" />
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Appccelerate.StateMachine\Appccelerate.StateMachine.csproj">
-      <Project>{3b998204-8d0e-413d-b2c1-6f0e5c5e0e1c}</Project>
-      <Name>Appccelerate.StateMachine</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+	<Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets'))" />
-    <Error Condition="!Exists('..\packages\Appccelerate.Development.Analyzers.2.1.0\build\Appccelerate.Development.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Appccelerate.Development.Analyzers.2.1.0\build\Appccelerate.Development.Analyzers.targets'))" />
-    <Error Condition="!Exists('..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.props'))" />
-    <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.targets'))" />
-    <Error Condition="!Exists('..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.props'))" />
-    <Error Condition="!Exists('..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.targets'))" />
-  </Target>
-  <Import Project="..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets" Condition="Exists('..\packages\Appccelerate.CheckHintPathTask.1.15.0\build\Appccelerate.CheckHintPathTask.targets')" />
-  <Import Project="..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets" Condition="Exists('..\packages\Appccelerate.VersionTask.1.22.0\build\Appccelerate.VersionTask.targets')" />
-  <Import Project="..\packages\Appccelerate.Development.Analyzers.2.1.0\build\Appccelerate.Development.Analyzers.targets" Condition="Exists('..\packages\Appccelerate.Development.Analyzers.2.1.0\build\Appccelerate.Development.Analyzers.targets')" />
-  <Import Project="..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets" Condition="Exists('..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" />
-  <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.targets" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" />
-  <Import Project="..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.targets" Condition="Exists('..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.targets')" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\Appccelerate.StateMachine\Appccelerate.StateMachine.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\Appccelerate.StateMachine.Facts.props" />  
+  
 </Project>
