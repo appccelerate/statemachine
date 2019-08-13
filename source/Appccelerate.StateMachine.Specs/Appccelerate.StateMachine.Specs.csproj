@@ -46,17 +46,18 @@
     <Reference Include="FakeItEasy, Version=3.3.2.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
       <HintPath>..\packages\FakeItEasy.3.3.2\lib\net40\FakeItEasy.dll</HintPath>
     </Reference>
-    <Reference Include="FluentAssertions, Version=4.19.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.4.19.2\lib\net45\FluentAssertions.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentAssertions.Core, Version=4.19.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.4.19.2\lib\net45\FluentAssertions.Core.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=5.8.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.5.8.0\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Xbehave.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=e4957f48888f9fe8, processorArchitecture=MSIL">
