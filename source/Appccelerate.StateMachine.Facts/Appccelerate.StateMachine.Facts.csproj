@@ -21,11 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-	<Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Appccelerate.StateMachine\Appccelerate.StateMachine.csproj" />
   </ItemGroup>
 
