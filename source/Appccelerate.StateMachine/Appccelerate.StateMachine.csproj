@@ -13,7 +13,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Appccelerate.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
@@ -26,6 +25,13 @@
 
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="1.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <Import Project="..\Appccelerate.StateMachine.props" />
