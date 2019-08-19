@@ -10,7 +10,10 @@
     <Authors>Appccelerate team</Authors>
     <Company>Appccelerate</Company>
     <Product>Appccelerate</Product>
-    
+  </PropertyGroup>
+  
+  <!-- nuget package -->
+  <PropertyGroup>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/appccelerate/statemachine</RepositoryUrl>
@@ -43,30 +46,42 @@
       - fixed a bug when passing a 'null' argument to the state machine
     </PackageReleaseNotes>
     <PackageTags>Appccelerate state-machine</PackageTags>
-  
-</PropertyGroup>
+  </PropertyGroup>
 
+  <!-- nuget symbol package -->
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <!-- strong name signing -->
   <PropertyGroup>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Appccelerate.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
-    <CodeAnalysisRuleSet>../Analyzers.Productive.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <!-- Stylecop / Analyzers -->
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>../Analyzers.Productive.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="stylecop.json" />
-    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
   </ItemGroup>
-
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 
+  <!-- versioning -->
   <ItemGroup>
     <PackageReference Include="MinVer" Version="1.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
   </ItemGroup>
 
   <Import Project="..\Appccelerate.StateMachine.props" />
