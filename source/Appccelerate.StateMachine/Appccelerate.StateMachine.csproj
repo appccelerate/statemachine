@@ -74,6 +74,9 @@
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>$(NoWarn),SA0001</NoWarn>
+  </PropertyGroup>
 
   <!-- versioning -->
   <ItemGroup>
