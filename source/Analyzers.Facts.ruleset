@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Analyzers" ToolsVersion="15.0">
+<RuleSet Name="Analyzers" ToolsVersion="14.0">
   <IncludeAll Action="Warning" />
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1000" Action="Warning" />
@@ -26,14 +26,16 @@
     <Rule Id="IDE0001" Action="None" />
   </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <Rule Id="SA1008" Action="None" />
+    <Rule Id="SA1009" Action="None" />
+    <Rule Id="SA1101" Action="None" />
     <Rule Id="SA1118" Action="None" />
     <Rule Id="SA1201" Action="None" />
     <Rule Id="SA1202" Action="None" />
     <Rule Id="SA1204" Action="None" />
     <Rule Id="SA1407" Action="None" />
     <Rule Id="SA1600" Action="None" />
-    <Rule Id="SA1601" Action="None" />
-    <Rule Id="SA1602" Action="None" />
+    <Rule Id="SA1633" Action="None" />
     <Rule Id="SA1652" Action="None" />
   </Rules>
 </RuleSet>

@@ -49,7 +49,7 @@ namespace Appccelerate.StateMachine.Async
             State sourceState,
             State targetState)
         {
-            "establish a saved state machine with history"._(async () =>
+            "establish a saved state machine with history".x(async () =>
                 {
                     var machine = new AsyncPassiveStateMachine<State, Event>();
                     DefineMachine(machine);
@@ -64,7 +64,7 @@ namespace Appccelerate.StateMachine.Async
                     await machine.Save(saver);
                 });
 
-            "when state machine is loaded"._(async () =>
+            "when state machine is loaded".x(async () =>
                 {
                     loader.SetCurrentState(saver.CurrentStateId);
                     loader.SetHistoryStates(saver.HistoryStates);
@@ -86,13 +86,13 @@ namespace Appccelerate.StateMachine.Async
                     await loadedMachine.Fire(Event.S);
                 });
 
-            "it should reset current state"._(() =>
+            "it should reset current state".x(() =>
                 sourceState.Should().Be(State.B));
 
-            "it should reset all history states of super states"._(() =>
+            "it should reset all history states of super states".x(() =>
                 targetState.Should().Be(State.S2));
 
-            "it should notify extensions"._(()
+            "it should notify extensions".x(()
                 => extension.LoadedCurrentState
                     .Should().BeEquivalentTo(State.B));
         }
@@ -114,7 +114,7 @@ namespace Appccelerate.StateMachine.Async
         public void LoadingNonInitializedStateMachine(
             AsyncPassiveStateMachine<State, Event> loadedMachine)
         {
-            "when a non-initialized state machine is loaded"._(
+            "when a non-initialized state machine is loaded".x(
                 async () =>
                 {
                     var loader = new StateMachineLoader<State>();
@@ -126,11 +126,11 @@ namespace Appccelerate.StateMachine.Async
                     await loadedMachine.Load(loader);
                 });
 
-            "it should not be initialized already"._(
+            "it should not be initialized already".x(
                 () =>
                 {
                     Action act = () => loadedMachine.Initialize(State.S);
-                    act.ShouldNotThrow();
+                    act.Should().NotThrow();
                 });
         }
 
@@ -139,18 +139,18 @@ namespace Appccelerate.StateMachine.Async
             IAsyncStateMachine<string, int> machine,
             Exception receivedException)
         {
-            "establish an initialized state machine"._(() =>
+            "establish an initialized state machine".x(() =>
                 {
                     machine = new AsyncPassiveStateMachine<string, int>();
                     machine.Initialize("initial");
                 });
 
-            "when state machine is loaded"._(async () =>
+            "when state machine is loaded".x(async () =>
                 {
                     receivedException = await Catch.Exception(async () => await machine.Load(A.Fake<IAsyncStateMachineLoader<string>>()));
                 });
 
-            "it should throw invalid operation exception"._(() =>
+            "it should throw invalid operation exception".x(() =>
                 {
                     receivedException.Should().BeOfType<InvalidOperationException>();
                     receivedException.Message.Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized);

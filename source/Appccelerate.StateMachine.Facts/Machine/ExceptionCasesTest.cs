@@ -65,7 +65,7 @@ namespace Appccelerate.StateMachine.Machine
         public void ExceptionIfNotInitialized()
         {
             Action action = () => this.testee.Fire(StateMachine.Events.A);
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Action action = () => { var state = this.testee.CurrentStateId; };
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Appccelerate.StateMachine.Machine
 
             Action action = () => this.testee.Initialize(StateMachine.States.B);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace Appccelerate.StateMachine.Machine
         public void NotInitialized()
         {
             Action action = () => this.testee.Fire(StateMachine.Events.B);
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace Appccelerate.StateMachine.Machine
                     .WithInitialSubState(StateMachine.States.B);
             };
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -226,7 +226,7 @@ namespace Appccelerate.StateMachine.Machine
 
             Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).Goto(StateMachine.States.C);
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
+            action.Should().Throw<InvalidOperationException>().WithMessage(ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
         }
 
         [Fact]
@@ -237,7 +237,7 @@ namespace Appccelerate.StateMachine.Machine
 
             Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).Execute(() => { });
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
+            action.Should().Throw<InvalidOperationException>().WithMessage(ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
         }
 
         [Fact]
@@ -248,7 +248,7 @@ namespace Appccelerate.StateMachine.Machine
 
             Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).If(() => false).Execute(() => { });
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(ExceptionMessages.TransitionWithoutGuardHasToBeLast);
+            action.Should().Throw<InvalidOperationException>().WithMessage(ExceptionMessages.TransitionWithoutGuardHasToBeLast);
         }
 
         [Fact]
@@ -257,7 +257,7 @@ namespace Appccelerate.StateMachine.Machine
             this.testee.Initialize(StateMachine.States.A);
             Action action = () => this.testee.Load(A.Fake<IStateMachineLoader<StateMachine.States>>());
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
+            action.Should().Throw<InvalidOperationException>().WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
         }
 
         [Fact]
@@ -278,7 +278,7 @@ namespace Appccelerate.StateMachine.Machine
 
             Action action = () => this.testee.Load(loader);
 
-            action.ShouldThrow<InvalidOperationException>()
+            action.Should().Throw<InvalidOperationException>()
                 .WithMessage(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
         }
 

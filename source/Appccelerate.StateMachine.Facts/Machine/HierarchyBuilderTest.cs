@@ -96,7 +96,7 @@ namespace Appccelerate.StateMachine.Machine
             A.CallTo(() => this.states[SubState]).Returns(subState);
 
             this.testee.Invoking(t => t.WithInitialSubState(SubState))
-                .ShouldThrow<InvalidOperationException>()
+                .Should().Throw<InvalidOperationException>()
                 .WithMessage(ExceptionMessages.CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet(
                     SuperState,
                     subState));

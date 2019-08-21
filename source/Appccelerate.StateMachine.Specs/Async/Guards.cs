@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Async
             AsyncPassiveStateMachine<int, int> machine,
             CurrentStateExtension currentStateExtension)
         {
-            "establish a state machine with guarded transitions"._(async () =>
+            "establish a state machine with guarded transitions".x(async () =>
             {
                 machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -55,10 +55,10 @@ namespace Appccelerate.StateMachine.Async
                 await machine.Start();
             });
 
-            "when an event is fired"._(()
+            "when an event is fired".x(()
                 => machine.Fire(Event));
 
-            "it should take transition guarded with first matching guard"._(()
+            "it should take transition guarded with first matching guard".x(()
                 => currentStateExtension.CurrentState.Should().Be(DestinationState));
         }
 
@@ -68,7 +68,7 @@ namespace Appccelerate.StateMachine.Async
         {
             bool declined = false;
 
-            "establish state machine with no matching guard"._(async () =>
+            "establish state machine with no matching guard".x(async () =>
             {
                 machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -85,10 +85,10 @@ namespace Appccelerate.StateMachine.Async
                 await machine.Start();
             });
 
-            "when an event is fired"._(()
+            "when an event is fired".x(()
                 => machine.Fire(Event));
 
-            "it should notify about declined transition"._(()
+            "it should notify about declined transition".x(()
                 => declined.Should().BeTrue("TransitionDeclined event should be fired"));
         }
 
@@ -97,7 +97,7 @@ namespace Appccelerate.StateMachine.Async
             AsyncPassiveStateMachine<int, int> machine,
             CurrentStateExtension currentStateExtension)
         {
-            "establish a state machine with otherwise guard and no machting other guard"._(async () =>
+            "establish a state machine with otherwise guard and no machting other guard".x(async () =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -113,10 +113,10 @@ namespace Appccelerate.StateMachine.Async
                     await machine.Start();
                 });
 
-            "when an event is fired"._(()
+            "when an event is fired".x(()
                 => machine.Fire(Event));
 
-            "it should_take_transition_guarded_with_otherwise"._(()
+            "it should_take_transition_guarded_with_otherwise".x(()
                 => currentStateExtension.CurrentState.Should().Be(DestinationState));
         }
     }

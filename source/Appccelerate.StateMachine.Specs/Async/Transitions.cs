@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine.Async
             bool asyncExitActionExecuted,
             bool asyncEntryActionExecuted)
         {
-            "establish a state machine with transitions"._(async () =>
+            "establish a state machine with transitions".x(async () =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -75,31 +75,31 @@ namespace Appccelerate.StateMachine.Async
                     await machine.Start();
                 });
 
-            "when firing an event onto the state machine"._(()
+            "when firing an event onto the state machine".x(()
                 => machine.Fire(Event, Parameter));
 
-            "it should execute transition by switching state"._(()
+            "it should execute transition by switching state".x(()
                 => CurrentStateExtension.CurrentState.Should().Be(DestinationState));
 
-            "it should execute synchronous transition actions"._(()
+            "it should execute synchronous transition actions".x(()
                 => actualParameter.Should().NotBeNull());
 
-            "it should execute asynchronous transition actions"._(()
+            "it should execute asynchronous transition actions".x(()
                 => asyncActualParameter.Should().NotBeNull());
 
-            "it should pass parameters to transition action"._(()
+            "it should pass parameters to transition action".x(()
                 => actualParameter.Should().Be(Parameter));
 
-            "it should execute synchronous exit action of source state"._(()
+            "it should execute synchronous exit action of source state".x(()
                 => exitActionExecuted.Should().BeTrue());
 
-            "it should execute asynchronous exit action of source state"._(()
+            "it should execute asynchronous exit action of source state".x(()
                 => asyncExitActionExecuted.Should().BeTrue());
 
-            "it should execute synchronous entry action of destination state"._(()
+            "it should execute synchronous entry action of destination state".x(()
                 => entryActionExecuted.Should().BeTrue());
 
-            "it should execute asynchronous entry action of destination state"._(()
+            "it should execute asynchronous entry action of destination state".x(()
                 => asyncEntryActionExecuted.Should().BeTrue());
         }
     }

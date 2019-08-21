@@ -109,7 +109,7 @@ namespace Appccelerate.StateMachine
             this.testee.Initialize(States.A);
             Action action = () => this.testee.Initialize(States.A);
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
+            action.Should().Throw<InvalidOperationException>().WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace Appccelerate.StateMachine
             Action action = () => this.testee.Start();
 
             action
-                .ShouldThrow<InvalidOperationException>();
+                .Should().Throw<InvalidOperationException>();
         }
 
         /// <summary>

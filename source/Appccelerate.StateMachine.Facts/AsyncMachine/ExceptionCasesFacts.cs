@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public void ThrowsExceptionIfNotInitialized_WhenFiringAnEvent()
         {
             Func<Task> action = async () => await this.testee.Fire(StateMachine.Events.A, Missing.Value);
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             // ReSharper disable once UnusedVariable
             Action action = () => { var state = this.testee.CurrentStateId; };
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             Func<Task> action = async () => await this.testee.Initialize(StateMachine.States.B);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -270,7 +270,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public void ThrowsException_WhenFiringAnEventOntoAnNotInitializedStateMachine()
         {
             Func<Task> action = async () => await this.testee.Fire(StateMachine.Events.B, Missing.Value);
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -287,7 +287,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                     .WithInitialSubState(StateMachine.States.B);
             };
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -299,7 +299,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 .WithSubState(StateMachine.States.B1)
                 .WithSubState(StateMachine.States.B2);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -311,7 +311,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).Goto(StateMachine.States.C);
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
+            action.Should().Throw<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
         }
 
         [Fact]
@@ -322,7 +322,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).Execute(() => { });
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
+            action.Should().Throw<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
         }
 
         [Fact]
@@ -333,7 +333,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).If(() => false).Execute(() => { });
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.TransitionWithoutGuardHasToBeLast);
+            action.Should().Throw<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.TransitionWithoutGuardHasToBeLast);
         }
 
         [Fact]
@@ -342,7 +342,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.testee.Initialize(StateMachine.States.A);
             Func<Task> action = async () => await this.testee.Load(A.Fake<IAsyncStateMachineLoader<StateMachine.States>>());
 
-            action.ShouldThrow<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.StateMachineIsAlreadyInitialized);
+            action.Should().Throw<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.StateMachineIsAlreadyInitialized);
         }
 
         [Fact]
@@ -363,7 +363,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             Func<Task> action = async () => await this.testee.Load(loader);
 
-            action.ShouldThrow<InvalidOperationException>()
+            action.Should().Throw<InvalidOperationException>()
                 .WithMessage(Machine.ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
         }
 

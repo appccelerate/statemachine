@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             Action action = () => this.testee.Add(Events.B, transition);
 
             action
-                .ShouldThrow<Exception>()
+                .Should().Throw<Exception>()
                 .WithMessage(ExceptionMessages.TransitionDoesAlreadyExist(transition, this.state));
         }
     }
