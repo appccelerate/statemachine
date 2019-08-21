@@ -39,7 +39,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         [Fact]
         public void ExitsOfAllStatesFromSourceUpToTarget()
         {
-                this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionContext);
 
             A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappened()
                 .Then(A.CallTo(() => this.intermediate.Exit(this.TransitionContext)).MustHaveHappened())
