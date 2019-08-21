@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using System.Globalization;
 
     /// <summary>
-    /// Holds all exception messages
+    /// Holds all exception messages.
     /// </summary>
     public static class TransitionsExceptionMessages
     {
@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <typeparam name="TEvent">The type of the event.</typeparam>
         /// <param name="transition">The transition.</param>
         /// <param name="state">The state.</param>
-        /// <returns>error message</returns>
+        /// <returns>error message.</returns>
         public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransition<TState, TEvent> transition, IState<TState, TEvent> state)
             where TState : IComparable
             where TEvent : IComparable

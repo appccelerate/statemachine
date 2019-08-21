@@ -27,8 +27,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     /// <summary>
     /// Describes a transition.
     /// </summary>
-    /// <typeparam name="TState">Type fo the states</typeparam>
-    /// <typeparam name="TEvent">Type of the events</typeparam>
+    /// <typeparam name="TState">Type fo the states.</typeparam>
+    /// <typeparam name="TEvent">Type of the events.</typeparam>
     public class TransitionInfo<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable

@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.AsyncSyntax
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Defines the Otherwise syntax
+    /// Defines the Otherwise syntax.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// Defines the target state of the transition.
         /// </summary>
         /// <param name="target">The target.</param>
-        /// <returns>Go to syntax</returns>
+        /// <returns>Go to syntax.</returns>
         IGotoSyntax<TState, TEvent> Goto(TState target);
     }
 
@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// Defines the transition actions.
         /// </summary>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IOtherwiseExecuteSyntax<TState, TEvent> Execute(Action action);
 
         /// <summary>
@@ -50,14 +50,14 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// </summary>
         /// <typeparam name="T">The type of the action argument.</typeparam>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IOtherwiseExecuteSyntax<TState, TEvent> Execute<T>(Action<T> action);
 
         /// <summary>
         /// Defines the transition actions.
         /// </summary>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IOtherwiseExecuteSyntax<TState, TEvent> Execute(Func<Task> action);
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// </summary>
         /// <typeparam name="T">The type of the action argument.</typeparam>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IOtherwiseExecuteSyntax<TState, TEvent> Execute<T>(Func<T, Task> action);
     }
 }
