@@ -14,7 +14,7 @@
   
   <!-- nuget package -->
   <PropertyGroup>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/appccelerate/statemachine</RepositoryUrl>
     <PackageIconUrl>https://github.com/appccelerate/appccelerate/raw/master/docs/nuget.png</PackageIconUrl>
@@ -30,6 +30,9 @@
       state machine report for description of state machine (csv, yEd)
     </description>
     <PackageReleaseNotes>
+      5.0.0:
+      - changed release pipeline of Appccelerate.StateMachine and lots of internal stuff
+
       4.4.0:
       - back to .net standard 1.0
       - fixed nuget package containing wrong assembly
