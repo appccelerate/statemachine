@@ -83,10 +83,16 @@
     </PackageReference>
   </ItemGroup>
 
+  <!-- license -->
   <ItemGroup>
-    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
+  <!-- xml documentation file generation -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+  
   <Import Project="..\Appccelerate.StateMachine.props" />
 
 </Project>
