@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
     using System.Globalization;
 
     /// <summary>
-    /// Holds all exception messages
+    /// Holds all exception messages.
     /// </summary>
     public static class ActionHoldersExceptionMessages
     {
@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
         /// </summary>
         /// <param name="argument">The argument.</param>
         /// <param name="action">The action.</param>
-        /// <returns>error message</returns>
+        /// <returns>error message.</returns>
         public static string CannotCastArgumentToActionArgument(object argument, string action)
         {
             return string.Format(

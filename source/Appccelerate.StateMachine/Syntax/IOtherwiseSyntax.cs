@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Syntax
     using System;
 
     /// <summary>
-    /// Defines the Otherwise syntax
+    /// Defines the Otherwise syntax.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.Syntax
         /// Defines the target state of the transition.
         /// </summary>
         /// <param name="target">The target.</param>
-        /// <returns>Go to syntax</returns>
+        /// <returns>Go to syntax.</returns>
         IGotoSyntax<TState, TEvent> Goto(TState target);
     }
 
@@ -41,7 +41,7 @@ namespace Appccelerate.StateMachine.Syntax
         /// Defines the transition actions.
         /// </summary>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IOtherwiseExecuteSyntax<TState, TEvent> Execute(Action action);
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Appccelerate.StateMachine.Syntax
         /// </summary>
         /// <typeparam name="T">The type of the action argument.</typeparam>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IOtherwiseExecuteSyntax<TState, TEvent> Execute<T>(Action<T> action);
     }
 }

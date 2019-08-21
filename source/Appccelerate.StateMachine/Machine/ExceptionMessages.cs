@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.Machine
     using System.Globalization;
 
     /// <summary>
-    /// Holds all exception messages
+    /// Holds all exception messages.
     /// </summary>
     public static class ExceptionMessages
     {
@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Machine
         /// State cannot be its own super-state..
         /// </summary>
         /// <param name="state">The state.</param>
-        /// <returns>error message</returns>
+        /// <returns>error message.</returns>
         public static string StateCannotBeItsOwnSuperState(string state)
         {
             return string.Format(CultureInfo.InvariantCulture, "State {0} cannot be its own super-state.", state);
@@ -94,7 +94,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <typeparam name="TEvent">The type of the event.</typeparam>
         /// <param name="transition">The transition.</param>
         /// <param name="state">The state.</param>
-        /// <returns>error message</returns>
+        /// <returns>error message.</returns>
         public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransition<TState, TEvent> transition, IState<TState, TEvent> state)
             where TState : IComparable
             where TEvent : IComparable

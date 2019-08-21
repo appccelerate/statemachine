@@ -31,14 +31,14 @@ namespace Appccelerate.StateMachine.Syntax
         /// Defines the target state of the transition.
         /// </summary>
         /// <param name="target">The target.</param>
-        /// <returns>Go to syntax</returns>
+        /// <returns>Go to syntax.</returns>
         IGotoInIfSyntax<TState, TEvent> Goto(TState target);
 
         /// <summary>
         /// Defines the transition actions.
         /// </summary>
         /// <param name="action">The actions to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IIfOrOtherwiseSyntax<TState, TEvent> Execute(Action action);
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Appccelerate.StateMachine.Syntax
         /// </summary>
         /// <typeparam name="T">The type of the action argument.</typeparam>
         /// <param name="action">The actions to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IIfOrOtherwiseSyntax<TState, TEvent> Execute<T>(Action<T> action);
     }
 }

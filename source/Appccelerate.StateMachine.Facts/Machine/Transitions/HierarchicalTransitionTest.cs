@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         [Fact]
         public void EntersStatesBelowCommonSuperStateToTarget()
         {
-                this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionContext);
 
             A.CallTo(() => this.superStateOfTarget.Entry(this.TransitionContext)).MustHaveHappened()
                 .Then(A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened());

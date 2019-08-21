@@ -38,7 +38,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         {
             this.Testee.Fire(this.TransitionContext);
 
-            A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         {
             this.Testee.Fire(this.TransitionContext);
 
-            A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]

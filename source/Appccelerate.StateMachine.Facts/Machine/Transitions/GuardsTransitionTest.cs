@@ -43,7 +43,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             this.Testee.Fire(this.TransitionContext);
 
-            A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]

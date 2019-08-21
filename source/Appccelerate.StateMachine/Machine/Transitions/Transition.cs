@@ -142,7 +142,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         ///    b. The source state is lower in the hierarchy than the target state
         ///    --> exit the source state and move up the hierarchy on the source state side
         ///    c. The target state is lower in the hierarchy than the source state
-        ///    --> move up the hierarchy on the target state side, afterward enter target state
+        ///    --> move up the hierarchy on the target state side, afterward enter target state.
         /// </remarks>
         /// <param name="source">The source state.</param>
         /// <param name="target">The target state.</param>
