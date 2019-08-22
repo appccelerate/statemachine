@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine
         private bool pendingInitialization;
         private CancellationTokenSource stopToken;
         private Task worker;
-        private TaskCompletionSource<bool> workerCompletionSource = new TaskCompletionSource<bool>();
+        private TaskCompletionSource<bool> workerCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncActiveStateMachine&lt;TState, TEvent&gt;"/> class.
@@ -250,7 +250,7 @@ namespace Appccelerate.StateMachine
                 }
 
                 await this.workerCompletionSource.Task.ConfigureAwait(false);
-                this.workerCompletionSource = new TaskCompletionSource<bool>();
+                this.workerCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             }
         }
 
