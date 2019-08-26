@@ -34,8 +34,7 @@ namespace Appccelerate.StateMachine.Machine
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class StateMachine<TState, TEvent> :
         INotifier<TState, TEvent>,
-        IStateMachineInformation<TState, TEvent>,
-        IExtensionHost<TState, TEvent>
+        IStateMachineInformation<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
@@ -59,7 +58,7 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="name">The name of this state machine used in log messages.</param>
         public StateMachine(string name)
-            : this(name, null)
+            : this(name, null, new Extensions<TState, TEvent>())
         {
         }
 
@@ -68,12 +67,13 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="name">The name of this state machine used in log messages.</param>
         /// <param name="factory">The factory used to create internal instances.</param>
-        public StateMachine(string name, IFactory<TState, TEvent> factory)
+        /// <param name="extensions">The instance used for extension handling.</param>
+        public StateMachine(string name, IFactory<TState, TEvent> factory, Extensions<TState, TEvent> extensions)
         {
             this.name = name;
-            this.factory = factory ?? new StandardFactory<TState, TEvent>(this, this);
+            this.factory = factory ?? new StandardFactory<TState, TEvent>(this, extensions);
             this.states = new StateDictionary<TState, TEvent>(this.factory);
-            this.extensions = new Extensions<TState, TEvent>();
+            this.extensions = extensions;
 
             this.initialStateId = new Initializable<TState>();
         }

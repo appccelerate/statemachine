@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    public class Extensions<TState, TEvent>
+    public class Extensions<TState, TEvent> : IExtensionHost<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {

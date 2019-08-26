@@ -72,7 +72,8 @@ namespace Appccelerate.StateMachine
         {
             this.stateMachine = new StateMachine<TState, TEvent>(
                 name ?? this.GetType().FullNameToString(),
-                factory);
+                factory,
+                new Extensions<TState, TEvent>());
 
             this.queue = new LinkedList<EventInformation<TEvent>>();
         }
