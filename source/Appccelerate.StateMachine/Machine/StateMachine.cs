@@ -179,6 +179,16 @@ namespace Appccelerate.StateMachine.Machine
         }
 
         /// <summary>
+        /// Defines the hierarchy on.
+        /// </summary>
+        /// <param name="superStateId">The super state id.</param>
+        /// <returns>Syntax to build a state hierarchy.</returns>
+        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
+        {
+            return new HierarchyBuilder<TState, TEvent>(this.states, superStateId);
+        }
+
+        /// <summary>
         /// Initializes the state machine by setting the specified initial state.
         /// </summary>
         /// <param name="initialState">The initial state of the state machine.</param>
@@ -241,16 +251,6 @@ namespace Appccelerate.StateMachine.Machine
             this.extensions.ForEach(extension => extension.FiredEvent(this, context));
 
             this.OnTransitionCompleted(context);
-        }
-
-        /// <summary>
-        /// Defines the hierarchy on.
-        /// </summary>
-        /// <param name="superStateId">The super state id.</param>
-        /// <returns>Syntax to build a state hierarchy.</returns>
-        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
-        {
-            return new HierarchyBuilder<TState, TEvent>(this.states, superStateId);
         }
 
         public void OnExceptionThrown(ITransitionContext<TState, TEvent> context, Exception exception)
