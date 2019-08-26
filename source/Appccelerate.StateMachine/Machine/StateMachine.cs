@@ -43,7 +43,7 @@ namespace Appccelerate.StateMachine.Machine
         private readonly IFactory<TState, TEvent> factory;
         private readonly Initializable<TState> initialStateId;
         private readonly string name;
-        private readonly List<IExtension<TState, TEvent>> extensions;
+        private readonly Extensions<TState, TEvent> extensions;
         private IState<TState, TEvent> currentState;
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Appccelerate.StateMachine.Machine
             this.name = name;
             this.factory = factory ?? new StandardFactory<TState, TEvent>(this, this);
             this.states = new StateDictionary<TState, TEvent>(this.factory);
-            this.extensions = new List<IExtension<TState, TEvent>>();
+            this.extensions = new Extensions<TState, TEvent>();
 
             this.initialStateId = new Initializable<TState>();
         }
