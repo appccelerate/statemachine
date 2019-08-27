@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using States;
 
     /// <summary>
@@ -90,13 +91,10 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <returns>All transitions.</returns>
         public IEnumerable<TransitionInfoNew<TState, TEvent>> GetTransitions()
         {
-            var list = new List<TransitionInfoNew<TState, TEvent>>();
-            foreach (var eventId in this.transitions.Keys)
-            {
-                this.GetTransitionsOfEvent(eventId, list);
-            }
-
-            return list;
+            return this.transitions
+                .SelectMany(eventIdAndStates =>
+                    eventIdAndStates.Value.Select(transition =>
+                        new TransitionInfoNew<TState, TEvent>(eventIdAndStates.Key, transition.Source, transition.Target, transition.Guard, transition.Actions)));
         }
 
         /// <summary>
@@ -124,19 +122,6 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             var list = new List<TransitionNew<TState, TEvent>>();
             this.transitions.Add(eventId, list);
-        }
-
-        /// <summary>
-        /// Gets all the transitions associated to the specified event.
-        /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="list">The list to add the transition.</param>
-        private void GetTransitionsOfEvent(TEvent eventId, List<TransitionInfoNew<TState, TEvent>> list)
-        {
-            foreach (var transition in this.transitions[eventId])
-            {
-                list.Add(new TransitionInfoNew<TState, TEvent>(eventId, transition.Source, transition.Target, transition.Guard, transition.Actions));
-            }
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <value>The event id.</value>
         public TEvent EventId
         {
-            get; private set;
+            get;
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <value>The source.</value>
         public StateNew<TState, TEvent> Source
         {
-            get; private set;
+            get;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <value>The target.</value>
         public StateNew<TState, TEvent> Target
         {
-            get; private set;
+            get;
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <value>The guard.</value>
         public IGuardHolder Guard
         {
-            get; private set;
+            get;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <value>The actions.</value>
         public IEnumerable<IActionHolder> Actions
         {
-            get;  private set;
+            get;
         }
     }
 }

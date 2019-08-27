@@ -38,10 +38,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
         public IGuardHolder Guard { get; set; }
 
-        public ICollection<IActionHolder> Actions
-        {
-            get { return this.actions; }
-        }
+        public ICollection<IActionHolder> Actions => this.actions;
 
         public override string ToString()
         {

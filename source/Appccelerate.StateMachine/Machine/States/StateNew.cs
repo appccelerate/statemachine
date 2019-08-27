@@ -85,19 +85,19 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Gets the unique id of this state.
         /// </summary>
         /// <value>The id of this state.</value>
-        public TState Id { get; private set; }
+        public TState Id { get; }
 
         /// <summary>
         /// Gets the entry actions.
         /// </summary>
         /// <value>The entry actions.</value>
-        public IList<IActionHolder> EntryActions { get; private set; }
+        public IList<IActionHolder> EntryActions { get; }
 
         /// <summary>
         /// Gets the exit actions.
         /// </summary>
         /// <value>The exit action.</value>
-        public IList<IActionHolder> ExitActions { get; private set; }
+        public IList<IActionHolder> ExitActions { get; }
 
         /// <summary>
         /// Gets or sets the initial sub state of this state.
@@ -173,19 +173,13 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Gets the sub-states of this state.
         /// </summary>
         /// <value>The sub-states of this state.</value>
-        public ICollection<StateNew<TState, TEvent>> SubStates
-        {
-            get { return this.subStates; }
-        }
+        public ICollection<StateNew<TState, TEvent>> SubStates => this.subStates;
 
         /// <summary>
         /// Gets the transitions that start in this state.
         /// </summary>
         /// <value>The transitions.</value>
-        public ITransitionDictionaryNew<TState, TEvent> Transitions
-        {
-            get { return this.transitions; }
-        }
+        public ITransitionDictionaryNew<TState, TEvent> Transitions => this.transitions;
 
         public override string ToString()
         {
