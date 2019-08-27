@@ -40,7 +40,6 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly IFactory<TState, TEvent> factory;
-        private readonly string name;
         private readonly StateContainer<TState, TEvent> stateContainer;
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="extensions">The instance used for extension handling.</param>
         public StateMachine(string name, IFactory<TState, TEvent> factory)
         {
-            this.name = name;
+            this.Name = name;
             this.factory = factory ?? new StandardFactory<TState, TEvent>(this, this);
             this.stateContainer = new StateContainer<TState, TEvent>(this.factory);
         }
@@ -97,19 +96,13 @@ namespace Appccelerate.StateMachine.Machine
         /// Gets the name of this instance.
         /// </summary>
         /// <value>The name of this instance.</value>
-        public string Name
-        {
-            get { return this.name; }
-        }
+        public string Name { get; }
 
         /// <summary>
         /// Gets the id of the current state.
         /// </summary>
         /// <value>The id of the current state.</value>
-        public TState CurrentStateId
-        {
-            get { return this.CurrentState.Id; }
-        }
+        public TState CurrentStateId => this.CurrentState.Id;
 
         /// <summary>
         /// Gets or sets the state of the current.
@@ -273,7 +266,7 @@ namespace Appccelerate.StateMachine.Machine
         /// </returns>
         public override string ToString()
         {
-            return this.name ?? base.ToString();
+            return this.Name ?? base.ToString();
         }
 
         /// <summary>
