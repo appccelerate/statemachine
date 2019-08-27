@@ -37,7 +37,7 @@ namespace Appccelerate.StateMachine.Machine.Syntax
         [Fact]
         public void Syntax()
         {
-            IEntryActionSyntax<int, int> s = new StateBuilderNew<int, int>(null, null, null);
+            IEntryActionSyntax<int, int> s = new StateBuilderNew<int, int>(0, null);
 
             // ReSharper disable once UnusedVariable
             Action a = () =>

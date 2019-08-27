@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Globalization;
+    using States;
 
     /// <summary>
     /// Holds all exception messages.
@@ -107,6 +108,20 @@ namespace Appccelerate.StateMachine.Machine
                         transition,
                         state,
                         transition.Source);
+        }
+
+        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, StateNew<TState, TEvent> stateAlreadyHavingASuperState)
+            where TState : IComparable
+            where TEvent : IComparable
+        {
+            Guard.AgainstNullArgument("stateAlreadyHavingASuperState", stateAlreadyHavingASuperState);
+
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Cannot set state {0} as a super state because the state {1} has already a super state {2}.",
+                newSuperStateId,
+                stateAlreadyHavingASuperState.Id,
+                stateAlreadyHavingASuperState.SuperState.Id);
         }
     }
 }
