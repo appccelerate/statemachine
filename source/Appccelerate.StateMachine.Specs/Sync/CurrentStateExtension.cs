@@ -19,15 +19,14 @@
 namespace Appccelerate.StateMachine.Sync
 {
     using Appccelerate.StateMachine.Extensions;
-    using Appccelerate.StateMachine.Machine;
 
     public class CurrentStateExtension : ExtensionBase<int, int>
     {
         public int CurrentState { get; private set; }
 
-        public override void SwitchedState(IStateMachineInformation<int, int> stateMachine, IState<int, int> oldState, IState<int, int> newState)
+        public override void SwitchedState(IStateMachineInformation<int, int> stateMachine, int oldState, int newState)
         {
-            this.CurrentState = newState.Id;
+            this.CurrentState = newState;
         }
     }
 }
