@@ -35,11 +35,6 @@ namespace Appccelerate.StateMachine.Machine.States
         where TEvent : IComparable
     {
         /// <summary>
-        /// Collection of the sub-states of this state.
-        /// </summary>
-        private readonly List<StateNew<TState, TEvent>> subStates;
-
-        /// <summary>
         /// Collection of transitions that start in this state (<see cref="ITransition{TState,TEvent}.Source"/> is equal to this state).
         /// </summary>
         private readonly TransitionDictionaryNew<TState, TEvent> transitions;
@@ -68,7 +63,6 @@ namespace Appccelerate.StateMachine.Machine.States
             this.Id = id;
             this.level = 1;
 
-            this.subStates = new List<StateNew<TState, TEvent>>();
             this.transitions = new TransitionDictionaryNew<TState, TEvent>(this);
 
             this.EntryActions = new List<IActionHolder>();
@@ -173,7 +167,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Gets the sub-states of this state.
         /// </summary>
         /// <value>The sub-states of this state.</value>
-        public ICollection<StateNew<TState, TEvent>> SubStates => this.subStates;
+        public ICollection<StateNew<TState, TEvent>> SubStates { get; } = new List<StateNew<TState, TEvent>>();
 
         /// <summary>
         /// Gets the transitions that start in this state.
@@ -199,7 +193,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// </summary>
         private void SetLevelOfSubStates()
         {
-            foreach (var state in this.subStates)
+            foreach (var state in this.SubStates)
             {
                 state.Level = this.level + 1;
             }
