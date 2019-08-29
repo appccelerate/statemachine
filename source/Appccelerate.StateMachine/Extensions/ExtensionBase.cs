@@ -74,7 +74,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="oldState">The old state.</param>
         /// <param name="newState">The new state.</param>
-        public virtual void SwitchedState(IStateMachineInformation<TState, TEvent> stateMachine, IState<TState, TEvent> oldState, IState<TState, TEvent> newState)
+        public virtual void SwitchedState(IStateMachineInformation<TState, TEvent> stateMachine, TState oldState, TState newState)
         {
         }
 

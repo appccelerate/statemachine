@@ -61,6 +61,35 @@ namespace Appccelerate.StateMachine.Sync
         }
 
         [Scenario]
+        public void StartForStateMachineBuiltByStateMachineDefinitionBuilder(
+            PassiveStateMachine<int, int> machine,
+            bool entryActionExecuted)
+        {
+            "establish an initialized state machine".x(() =>
+            {
+                machine = new StateMachineDefinitionBuilder<int, int>()
+                    .WithConfiguration(x =>
+                        x.In(TestState)
+                            .ExecuteOnEntry(() => entryActionExecuted = true))
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                machine.AddExtension(this.testExtension);
+
+                machine.Initialize(TestState);
+            });
+
+            "when starting the state machine".x(() =>
+                machine.Start());
+
+            "should set current state of state machine to state to which it is initialized".x(() =>
+                this.testExtension.CurrentState.Should().Be(TestState));
+
+            "should execute entry action of state to which state machine is initialized".x(() =>
+                entryActionExecuted.Should().BeTrue());
+        }
+
+        [Scenario]
         public void Initialize(
             PassiveStateMachine<int, int> machine,
             bool entryActionExecuted)

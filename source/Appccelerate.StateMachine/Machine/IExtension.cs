@@ -67,8 +67,8 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="newState">The new state.</param>
         void SwitchedState(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            IState<TState, TEvent> oldState,
-            IState<TState, TEvent> newState);
+            TState oldState,
+            TState newState);
 
         /// <summary>
         /// Called when the state machine is initializing.

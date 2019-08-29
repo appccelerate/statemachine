@@ -9,17 +9,11 @@
         where TState : IComparable
         where TEvent : IComparable
     {
-        public StateContainer(IFactory<TState, TEvent> factory)
-        {
-            this.States = new StateDictionary<TState, TEvent>(factory);
-        }
-
         public List<IExtension<TState, TEvent>> Extensions { get; } = new List<IExtension<TState, TEvent>>();
 
         public Initializable<TState> InitialStateId { get; } = new Initializable<TState>();
 
-        public IState<TState, TEvent> CurrentState { get; set; }
-
-        public IStateDictionary<TState, TEvent> States { get; }
+//        public IState<TState, TEvent> CurrentState { get; set; }
+        public TState CurrentState { get; set; }
     }
 }

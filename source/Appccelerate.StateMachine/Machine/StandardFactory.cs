@@ -38,23 +38,25 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;
-        private readonly IExtensionHost<TState, TEvent> extensionHost;
-
-        public StandardFactory(IStateMachineInformation<TState, TEvent> stateMachineInformation, IExtensionHost<TState, TEvent> extensionHost)
-        {
-            this.stateMachineInformation = stateMachineInformation;
-            this.extensionHost = extensionHost;
-        }
+//        private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;
+//        private readonly IExtensionHost<TState, TEvent> extensionHost;
+//
+//        public StandardFactory(IStateMachineInformation<TState, TEvent> stateMachineInformation, IExtensionHost<TState, TEvent> extensionHost)
+//        {
+//            this.stateMachineInformation = stateMachineInformation;
+//            this.extensionHost = extensionHost;
+//        }
 
         public virtual IState<TState, TEvent> CreateState(TState id)
         {
-            return new State<TState, TEvent>(id, this.stateMachineInformation, this.extensionHost);
+            return null;
+//            return new State<TState, TEvent>(id, this.stateMachineInformation, this.extensionHost);
         }
 
         public virtual ITransition<TState, TEvent> CreateTransition()
         {
-            return new Transition<TState, TEvent>(this.stateMachineInformation, this.extensionHost);
+            return null;
+//            return new Transition<TState, TEvent>(this.stateMachineInformation, this.extensionHost);
         }
 
         public virtual IActionHolder CreateActionHolder(Action action)
