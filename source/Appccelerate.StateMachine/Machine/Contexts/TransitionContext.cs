@@ -22,51 +22,35 @@ namespace Appccelerate.StateMachine.Machine.Contexts
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Text;
+    using States;
 
     /// <summary>
     /// Provides context information during a transition.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    [DebuggerDisplay("State = {state} Event = {eventId} EventArguments = {eventArguments}")]
+    [DebuggerDisplay("State = {StateDefinition} Event = {EventId} EventArguments = {EventArgument}")]
     public class TransitionContext<TState, TEvent> : ITransitionContext<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IState<TState, TEvent> state;
-        private readonly Missable<TEvent> eventId;
-        private readonly object eventArgument;
-        private readonly List<Record> records;
+        private readonly List<Record> records = new List<Record>();
 
-        public TransitionContext(IState<TState, TEvent> state, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
+        public TransitionContext(StateNew<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
         {
-            this.state = state;
-            this.eventId = eventId;
-            this.eventArgument = eventArgument;
+            this.StateDefinition = stateDefinition;
+            this.EventId = eventId;
+            this.EventArgument = eventArgument;
             this.Notifier = notifier;
-
-            this.records = new List<Record>();
         }
 
-        public IState<TState, TEvent> State
-        {
-            get { return this.state; }
-        }
+        public StateNew<TState, TEvent> StateDefinition { get; }
 
-        public Missable<TEvent> EventId
-        {
-            get { return this.eventId; }
-        }
+        public Missable<TEvent> EventId { get; }
 
-        public object EventArgument
-        {
-            get { return this.eventArgument; }
-        }
+        public object EventArgument { get; }
 
-        private INotifier<TState, TEvent> Notifier
-        {
-            get; set;
-        }
+        public INotifier<TState, TEvent> Notifier { get; }
 
         public void OnExceptionThrown(Exception exception)
         {

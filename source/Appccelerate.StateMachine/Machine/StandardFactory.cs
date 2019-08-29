@@ -38,15 +38,6 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-//        private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;
-//        private readonly IExtensionHost<TState, TEvent> extensionHost;
-//
-//        public StandardFactory(IStateMachineInformation<TState, TEvent> stateMachineInformation, IExtensionHost<TState, TEvent> extensionHost)
-//        {
-//            this.stateMachineInformation = stateMachineInformation;
-//            this.extensionHost = extensionHost;
-//        }
-
         public virtual IState<TState, TEvent> CreateState(TState id)
         {
             return null;
@@ -94,9 +85,21 @@ namespace Appccelerate.StateMachine.Machine
             return new ArgumentGuardHolder<T>(guard);
         }
 
-        public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(IState<TState, TEvent> state, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
+        public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(StateNew<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
         {
-            return new TransitionContext<TState, TEvent>(state, eventId, eventArgument, notifier);
+            return new TransitionContext<TState, TEvent>(stateDefinition, eventId, eventArgument, notifier);
+        }
+
+        public virtual ITransitionContext<TState, TEvent> CreateTransitionContextForSuperStateOf(ITransitionContext<TState, TEvent> context)
+        {
+            var stateDefinitionOfSuperState = context.StateDefinition.SuperState;
+            return new TransitionContext<TState, TEvent>(stateDefinitionOfSuperState, context.EventId, context.EventArgument, context.Notifier);
+        }
+
+        public virtual ITransitionContext<TState, TEvent> CreateTransitionContextForInitialStateOf(ITransitionContext<TState, TEvent> context)
+        {
+            var stateDefinitionOfInitialState = context.StateDefinition.InitialState;
+            return new TransitionContext<TState, TEvent>(stateDefinitionOfInitialState, context.EventId, context.EventArgument, context.Notifier);
         }
 
         public virtual StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)

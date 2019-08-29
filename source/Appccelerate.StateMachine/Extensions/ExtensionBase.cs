@@ -141,7 +141,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="state">The state.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
-        public virtual void HandlingEntryActionException(IStateMachineInformation<TState, TEvent> stateMachine, IState<TState, TEvent> state, ITransitionContext<TState, TEvent> context, ref Exception exception)
+        public virtual void HandlingEntryActionException(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContext<TState, TEvent> context, ref Exception exception)
         {
         }
 
@@ -152,7 +152,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="state">The state.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception.</param>
-        public virtual void HandledEntryActionException(IStateMachineInformation<TState, TEvent> stateMachine, IState<TState, TEvent> state, ITransitionContext<TState, TEvent> context, Exception exception)
+        public virtual void HandledEntryActionException(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContext<TState, TEvent> context, Exception exception)
         {
         }
 
@@ -163,7 +163,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="state">The state.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
-        public virtual void HandlingExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, IState<TState, TEvent> state, ITransitionContext<TState, TEvent> context, ref Exception exception)
+        public virtual void HandlingExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContext<TState, TEvent> context, ref Exception exception)
         {
         }
 
@@ -174,7 +174,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="state">The state.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception.</param>
-        public virtual void HandledExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, IState<TState, TEvent> state, ITransitionContext<TState, TEvent> context, Exception exception)
+        public virtual void HandledExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContext<TState, TEvent> context, Exception exception)
         {
         }
 

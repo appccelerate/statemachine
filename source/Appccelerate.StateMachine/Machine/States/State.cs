@@ -210,11 +210,11 @@ namespace Appccelerate.StateMachine.Machine.States
         /// </summary>
         /// <param name="context">The event context.</param>
         /// <returns>The result of the transition.</returns>
-        public ITransitionResult<TState, TEvent> Fire(ITransitionContext<TState, TEvent> context)
+        public ITransitionResult<TState> Fire(ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
 
-            ITransitionResult<TState, TEvent> result = TransitionResult<TState, TEvent>.NotFired;
+            ITransitionResult<TState> result = TransitionResult<TState>.NotFired;
 
             var transitionsForEvent = this.transitions[context.EventId.Value];
             if (transitionsForEvent != null)
@@ -350,14 +350,14 @@ namespace Appccelerate.StateMachine.Machine.States
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandlingEntryActionException(
-                    this.stateMachineInformation, this, context, ref exception));
+                    this.stateMachineInformation, this.Id, context, ref exception));
 
             HandleException(exception, context);
 
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandledEntryActionException(
-                    this.stateMachineInformation, this, context, exception));
+                    this.stateMachineInformation, this.Id, context, exception));
         }
 
         private void ExecuteExitActions(ITransitionContext<TState, TEvent> context)
@@ -385,14 +385,14 @@ namespace Appccelerate.StateMachine.Machine.States
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandlingExitActionException(
-                    this.stateMachineInformation, this, context, ref exception));
+                    this.stateMachineInformation, this.Id, context, ref exception));
 
             HandleException(exception, context);
 
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandledExitActionException(
-                    this.stateMachineInformation, this, context, exception));
+                    this.stateMachineInformation, this.Id, context, exception));
         }
 
         /// <summary>

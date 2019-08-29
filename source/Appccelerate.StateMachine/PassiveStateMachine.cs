@@ -33,9 +33,7 @@ namespace Appccelerate.StateMachine
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class PassiveStateMachine<TState, TEvent> :
-        IStateMachine<TState, TEvent>,
-        IStateMachineInformation<TState, TEvent>,
-        IExtensionHost<TState, TEvent>
+        IStateMachine<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
@@ -49,6 +47,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         private readonly LinkedList<EventInformation<TEvent>> events;
 
+        private readonly StateContainer<TState, TEvent> stateContainer;
+
         /// <summary>
         /// Whether the state machine is initialized.
         /// </summary>
@@ -61,7 +61,6 @@ namespace Appccelerate.StateMachine
 
         private bool pendingInitialization;
 
-        private readonly StateContainer<TState, TEvent> stateContainer = new StateContainer<TState, TEvent>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PassiveStateMachine&lt;TState, TEvent&gt;"/> class.
@@ -76,7 +75,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="name">The name of the state machine. Used in log messages.</param>
         public PassiveStateMachine(string name)
-            : this(name, (IFactory<TState, TEvent>)null)
+            : this(name, null)
         {
         }
 
@@ -87,25 +86,18 @@ namespace Appccelerate.StateMachine
         /// <param name="factory">The factory.</param>
         public PassiveStateMachine(string name, IFactory<TState, TEvent> factory)
         {
-            this.Name = name;
-            this.stateMachine = new StateMachine<TState, TEvent>(factory);
             this.events = new LinkedList<EventInformation<TEvent>>();
         }
 
 
 
-        public PassiveStateMachine(string name, StateMachine<TState, TEvent> stateMachine)
+        public PassiveStateMachine(StateMachine<TState, TEvent> stateMachine, StateContainer<TState, TEvent> stateContainer)
         {
-            this.Name = name;
             this.stateMachine = stateMachine;
+            this.stateContainer = stateContainer;
             this.events = new LinkedList<EventInformation<TEvent>>();
         }
 
-
-
-        public string Name { get; }
-
-        public TState CurrentStateId => this.stateContainer.CurrentState;
 
 
         /// <summary>
@@ -153,24 +145,6 @@ namespace Appccelerate.StateMachine
             get; private set;
         }
 
-
-
-
-
-
-        /// <summary>
-        /// Executes the specified <paramref name="action"/> for all extensions.
-        /// </summary>
-        /// <param name="action">The action to execute.</param>
-        public void ForEach(Action<IExtension<TState, TEvent>> action)
-        {
-            this.stateContainer.Extensions.ForEach(action);
-        }
-
-
-
-
-
         /// <summary>
         /// Define the behavior of a state.
         /// </summary>
@@ -209,7 +183,7 @@ namespace Appccelerate.StateMachine
         {
             this.events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
 
-            this.ForEach(extension => extension.EventQueued(this, eventId, eventArgument));
+            this.stateContainer.ForEach(extension => extension.EventQueued(this.stateContainer, eventId, eventArgument));
 
             this.Execute();
         }
@@ -232,7 +206,7 @@ namespace Appccelerate.StateMachine
         {
             this.events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
 
-            this.ForEach(extension => extension.EventQueuedWithPriority(this, eventId, eventArgument));
+            this.stateContainer.ForEach(extension => extension.EventQueuedWithPriority(this.stateContainer, eventId, eventArgument));
 
             this.Execute();
         }
@@ -248,7 +222,7 @@ namespace Appccelerate.StateMachine
             this.initialized = true;
             this.pendingInitialization = true;
 
-            this.stateMachine.Initialize(initialState, this.stateContainer, this);
+            this.stateMachine.Initialize(initialState, this.stateContainer, this.stateContainer);
         }
 
         /// <summary>
@@ -262,7 +236,7 @@ namespace Appccelerate.StateMachine
 
             this.IsRunning = true;
 
-            this.ForEach(extension => extension.StartedStateMachine(this));
+            this.stateContainer.ForEach(extension => extension.StartedStateMachine(this.stateContainer));
 
             this.Execute();
         }
@@ -284,7 +258,7 @@ namespace Appccelerate.StateMachine
         /// </returns>
         public override string ToString()
         {
-            return this.Name ?? this.GetType().FullName;
+            return this.stateContainer.Name ?? this.GetType().FullName;
         }
 
         /// <summary>
@@ -294,7 +268,7 @@ namespace Appccelerate.StateMachine
         {
             this.IsRunning = false;
 
-            this.ForEach(extension => extension.StoppedStateMachine(this));
+            this.stateContainer.ForEach(extension => extension.StoppedStateMachine(this.stateContainer));
         }
 
         /// <summary>
@@ -397,7 +371,7 @@ namespace Appccelerate.StateMachine
                 return;
             }
 
-            this.stateMachine.EnterInitialState(this.stateContainer, this);
+            this.stateMachine.EnterInitialState(this.stateContainer, this.stateContainer);
 
             this.pendingInitialization = false;
         }
@@ -419,7 +393,7 @@ namespace Appccelerate.StateMachine
         /// <param name="e">The event to fire.</param>
         private void FireEventOnStateMachine(EventInformation<TEvent> e)
         {
-            this.stateMachine.Fire(e.EventId, e.EventArgument, this.stateContainer, this);
+            this.stateMachine.Fire(e.EventId, e.EventArgument, this.stateContainer, this.stateContainer);
         }
     }
 }

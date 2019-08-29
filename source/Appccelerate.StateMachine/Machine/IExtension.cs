@@ -132,7 +132,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
         void HandlingEntryActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            IState<TState, TEvent> state,
+            TState state,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
@@ -145,7 +145,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="exception">The exception.</param>
         void HandledEntryActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            IState<TState, TEvent> state,
+            TState state,
             ITransitionContext<TState, TEvent> context,
             Exception exception);
 
@@ -158,7 +158,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
         void HandlingExitActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            IState<TState, TEvent> state,
+            TState state,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
@@ -171,7 +171,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="exception">The exception.</param>
         void HandledExitActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            IState<TState, TEvent> state,
+            TState state,
             ITransitionContext<TState, TEvent> context,
             Exception exception);
 

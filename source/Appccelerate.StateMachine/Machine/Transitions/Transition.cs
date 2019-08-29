@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             get { return this.Target == null; }
         }
 
-        public ITransitionResult<TState, TEvent> Fire(ITransitionContext<TState, TEvent> context)
+        public ITransitionResult<TState> Fire(ITransitionContext<TState, TEvent> context)
         {
             LiteGuard.AgainstNullArgument("context", context);
 
@@ -70,7 +70,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                     this,
                     context));
 
-                return TransitionResult<TState, TEvent>.NotFired;
+                return TransitionResult<TState>.NotFired;
             }
 
             context.OnTransitionBegin();
@@ -80,7 +80,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 this,
                 context));
 
-            IState<TState, TEvent> newState = context.State;
+            IState<TState, TEvent> newState = null;
 
             if (!this.IsInternalTransition)
             {
@@ -100,9 +100,9 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 this,
                 context));
 
-            return new TransitionResult<TState, TEvent>(true, newState);
+            return new TransitionResult<TState>(true, newState.Id);
         }
-
+        
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);
@@ -237,7 +237,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
         private void UnwindSubStates(ITransitionContext<TState, TEvent> context)
         {
-            for (IState<TState, TEvent> o = context.State; o != this.Source; o = o.SuperState)
+            for (IState<TState, TEvent> o = null; o != this.Source; o = o.SuperState)
             {
                 o.Exit(context);
             }

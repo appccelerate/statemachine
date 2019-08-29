@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="TransitionResult.cs" company="Appccelerate">
+// <copyright file="ITransition.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,32 +16,25 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using Transitions;
 
-    public class TransitionResult<TState>
-        : ITransitionResult<TState>
+    /// <summary>
+    /// Represents a transition in the state machine.
+    /// </summary>
+    /// <typeparam name="TState">The type of the state.</typeparam>
+    /// <typeparam name="TEvent">The type of the event.</typeparam>
+    public interface ITransitionLogic<TState, TEvent>
         where TState : IComparable
+        where TEvent : IComparable
     {
-        public static readonly ITransitionResult<TState> NotFired = new TransitionResult<TState>(false, default(TState));
-
-        public TransitionResult(bool fired, TState newState)
-        {
-            this.Fired = fired;
-            this.NewState = newState;
-        }
-
         /// <summary>
-        /// Gets a value indicating whether this <see cref="ITransitionResult{TState, TEvent}"/> is fired.
+        /// Fires the transition.
         /// </summary>
-        /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
-        public bool Fired { get; private set; }
-
-        /// <summary>
-        /// Gets the new state the state machine is in.
-        /// </summary>
-        /// <value>The new state.</value>
-        public TState NewState { get; private set; }
+        /// <param name="context">The event context.</param>
+        /// <returns>The result of the transition.</returns>
+        ITransitionResult<TState> Fire(ITransitionContext<TState, TEvent> context, TransitionNew<TState, TEvent> transitionDefinition);
     }
 }

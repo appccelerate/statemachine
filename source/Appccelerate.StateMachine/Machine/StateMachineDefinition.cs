@@ -1,6 +1,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using States;
 
     public class StateMachineDefinition<TState, TEvent>
         where TState : IComparable
@@ -20,9 +21,14 @@ namespace Appccelerate.StateMachine.Machine
 
         public PassiveStateMachine<TState, TEvent> CreatePassiveStateMachine(string name)
         {
+            var stateContainer = new StateContainer<TState, TEvent>(name);
             var factory = new StandardFactory<TState, TEvent>();
-            var stateMachine = new StateMachine<TState, TEvent>(factory);
-            return new PassiveStateMachine<TState, TEvent>(name, stateMachine);
+
+            var stateLogic = new StateLogic<TState, TEvent>(factory, stateContainer, stateContainer, () => null);
+
+            var stateMachine = new StateMachine<TState, TEvent>(factory, stateLogic, this.stateDefinitions);
+
+            return new PassiveStateMachine<TState, TEvent>(stateMachine, stateContainer);
         }
     }
 }

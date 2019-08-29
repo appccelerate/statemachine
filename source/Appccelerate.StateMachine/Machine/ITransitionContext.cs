@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using States;
 
     /// <summary>
     /// Provides information about the current transition.
@@ -29,11 +30,13 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        IState<TState, TEvent> State { get; }
+        StateNew<TState, TEvent> StateDefinition { get; }
 
         Missable<TEvent> EventId { get; }
 
         object EventArgument { get; }
+
+        INotifier<TState, TEvent> Notifier { get; }
 
         void AddRecord(TState stateId, RecordType recordType);
 

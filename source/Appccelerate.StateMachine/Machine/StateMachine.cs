@@ -19,14 +19,8 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Appccelerate.StateMachine.Infrastructure;
     using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Persistence;
     using Appccelerate.StateMachine.Syntax;
-    using Transitions;
 
     /// <summary>
     /// Base implementation of a state machine.
@@ -39,12 +33,14 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly IFactory<TState, TEvent> factory;
+        private readonly IStateLogic<TState, TEvent> stateLogic;
+        private readonly IStateDictionaryNew<TState, TEvent> stateDefinitions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
         /// </summary>
         public StateMachine()
-            : this(null)
+            : this(null, null, null)
         {
         }
 
@@ -53,9 +49,11 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="name">The name of this state machine used in log messages.</param>
         /// <param name="factory">The factory used to create internal instances.</param>
-        public StateMachine(IFactory<TState, TEvent> factory)
+        public StateMachine(IFactory<TState, TEvent> factory, IStateLogic<TState, TEvent> stateLogic, IStateDictionaryNew<TState, TEvent> stateDefinitions)
         {
             this.factory = factory;
+            this.stateLogic = stateLogic;
+            this.stateDefinitions = stateDefinitions;
         }
 
         /// <summary>
@@ -132,7 +130,6 @@ namespace Appccelerate.StateMachine.Machine
             stateContainer.Extensions.ForEach(extension => extension.EnteringInitialState(stateMachineInformation, stateContainer.InitialStateId.Value));
 
             var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
-//            this.EnterInitialState(stateContainer.States[stateContainer.InitialStateId.Value], context, stateContainer, stateMachineInformation);
             this.EnterInitialState(context, stateContainer, stateMachineInformation);
 
             stateContainer.Extensions.ForEach(extension => extension.EnteredInitialState(stateMachineInformation, stateContainer.InitialStateId.Value, context));
@@ -159,10 +156,9 @@ namespace Appccelerate.StateMachine.Machine
 
             stateContainer.Extensions.ForEach(extension => extension.FiringEvent(stateMachineInformation, ref eventId, ref eventArgument));
 
-//            ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(stateContainer.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
-            ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(eventId), eventArgument, this);
-//            ITransitionResult<TState, TEvent> result = this.CurrentState.Fire(context);
-            ITransitionResult<TState, TEvent> result = new TransitionResult<TState, TEvent>(false, null);
+            var stateDefinition = this.stateDefinitions[stateContainer.CurrentState];
+            ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(stateDefinition, new Missable<TEvent>(eventId), eventArgument, this);
+            var result = this.stateLogic.Fire(context);
 
             if (!result.Fired)
             {
@@ -170,7 +166,7 @@ namespace Appccelerate.StateMachine.Machine
                 return;
             }
 
-            SwitchStateTo(result.NewState.Id, stateContainer, stateMachineInformation);
+            SwitchStateTo(result.NewState, stateContainer, stateMachineInformation);
 
             stateContainer.Extensions.ForEach(extension => extension.FiredEvent(stateMachineInformation, context));
 
