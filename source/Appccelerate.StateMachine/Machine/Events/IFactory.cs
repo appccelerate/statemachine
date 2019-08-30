@@ -48,6 +48,6 @@ namespace Appccelerate.StateMachine.Machine.Events
 
         ITransitionContext<TState, TEvent> CreateTransitionContext(IStateDefinition<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier);
 
-        StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context);
+        StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IStateDefinition<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context);
     }
 }

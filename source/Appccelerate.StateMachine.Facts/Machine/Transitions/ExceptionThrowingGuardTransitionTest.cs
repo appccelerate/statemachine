@@ -42,20 +42,21 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             this.Testee.Guard = guard;
         }
 
-        [Fact]
-        public void CallsExtensionToHandleException()
-        {
-            var extension = A.Fake<IExtension<States, Events>>();
-
-            this.ExtensionHost.Extension = extension;
-
-            this.Testee.Fire(this.TransitionContext);
-
-            A.CallTo(() => extension.HandlingGuardException(this.StateMachineInformation, this.Testee, this.TransitionContext, ref this.exception)).MustHaveHappened();
-            A.CallTo(() => extension.HandledGuardException(this.StateMachineInformation, this.Testee, this.TransitionContext, this.exception)).MustHaveHappened();
-        }
-
-        // Todo: wtjerry
+// Todo: wtjerry
+//        [Fact]
+//        public void CallsExtensionToHandleException()
+//        {
+//            var extension = A.Fake<IExtension<States, Events>>();
+//
+//            this.ExtensionHost.Extension = extension;
+//
+//            this.Testee.Fire(this.TransitionContext);
+//
+//            A.CallTo(() => extension.HandlingGuardException(this.StateMachineInformation, this.Testee, this.TransitionContext, ref this.exception)).MustHaveHappened();
+//            A.CallTo(() => extension.HandledGuardException(this.StateMachineInformation, this.Testee, this.TransitionContext, this.exception)).MustHaveHappened();
+//        }
+//
+//        
         //        [Fact]
         //        public void ReturnsNotFiredTransitionResult()
         //        {

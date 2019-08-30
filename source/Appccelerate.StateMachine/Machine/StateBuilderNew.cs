@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine.Machine
         public StateBuilderNew(TState stateId, IStateDictionaryNew<TState, TEvent> stateDefinitionDictionary)
         {
             this.stateDefinitionDictionary = stateDefinitionDictionary;
-            this.stateDefinition = new StateNew<TState, TEvent>(stateId);
+            this.stateDefinition = this.stateDefinitionDictionary[stateId];
         }
 
         /// <summary>

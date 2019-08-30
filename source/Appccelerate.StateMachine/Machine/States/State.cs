@@ -350,14 +350,14 @@ namespace Appccelerate.StateMachine.Machine.States
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandlingEntryActionException(
-                    this.stateMachineInformation, this.Id, context, ref exception));
+                    this.stateMachineInformation, null, context, ref exception));
 
             HandleException(exception, context);
 
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandledEntryActionException(
-                    this.stateMachineInformation, this.Id, context, exception));
+                    this.stateMachineInformation, null, context, exception));
         }
 
         private void ExecuteExitActions(ITransitionContext<TState, TEvent> context)
@@ -385,14 +385,14 @@ namespace Appccelerate.StateMachine.Machine.States
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandlingExitActionException(
-                    this.stateMachineInformation, this.Id, context, ref exception));
+                    this.stateMachineInformation, null, context, ref exception));
 
             HandleException(exception, context);
 
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandledExitActionException(
-                    this.stateMachineInformation, this.Id, context, exception));
+                    this.stateMachineInformation, null, context, exception));
         }
 
         /// <summary>

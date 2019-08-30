@@ -79,14 +79,13 @@ namespace Appccelerate.StateMachine.Machine
         private static void SwitchStateTo(TState newState, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
             var oldState = stateContainer.CurrentState;
-            
+
             stateContainer.CurrentState = newState;
-            
+
             stateContainer.Extensions.ForEach(extension =>
                 extension.SwitchedState(stateMachineInformation, oldState, newState));
         }
 
-        
         /// <summary>
         /// Define the behavior of a state.
         /// </summary>
@@ -188,89 +187,90 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.RaiseEvent(this.TransitionBegin, new TransitionEventArgs<TState, TEvent>(transitionContext), transitionContext, true);
         }
-//
-//        /// <summary>
-//        /// Creates a report with the specified generator.
-//        /// </summary>
-//        /// <param name="reportGenerator">The report generator.</param>
-//        public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
-//        {
-//            Guard.AgainstNullArgument("reportGenerator", reportGenerator);
-//
-//            reportGenerator.Report(this.ToString(), this.stateContainer.States.GetStates(), this.stateContainer.InitialStateId);
-//        }
-//
-//        public void Save(IStateMachineSaver<TState> stateMachineSaver)
-//        {
-//            Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
-//
-//            stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentState != null ?
-//                new Initializable<TState> { Value = this.stateContainer.CurrentState.Id } :
-//                new Initializable<TState>());
-//
-//            IEnumerable<IState<TState, TEvent>> superStatesWithLastActiveState = this.stateContainer.States.GetStates()
-//                .Where(s => s.SubStates.Any())
-//                .Where(s => s.LastActiveState != null)
-//                .ToList();
-//
-//            var historyStates = superStatesWithLastActiveState.ToDictionary(
-//                s => s.Id,
-//                s => s.LastActiveState.Id);
-//
-//            stateMachineSaver.SaveHistoryStates(historyStates);
-//        }
-//
-//        public bool Load(IStateMachineLoader<TState> stateMachineLoader)
-//        {
-//            Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
-//            this.CheckThatStateMachineIsNotAlreadyInitialized();
-//
-//            Initializable<TState> loadedCurrentState = stateMachineLoader.LoadCurrentState();
-//            IDictionary<TState, TState> historyStates = stateMachineLoader.LoadHistoryStates();
-//
-//            var initialized = SetCurrentState();
-//            LoadHistoryStates();
-//            NotifyExtensions();
-//
-//            return initialized;
-//
-//            bool SetCurrentState()
-//            {
-//                if (loadedCurrentState.IsInitialized)
-//                {
-//                    this.stateContainer.CurrentState = this.stateContainer.States[loadedCurrentState.Value];
-//                    return true;
-//                }
-//
-//                this.stateContainer.CurrentState = null;
-//                return false;
-//            }
-//
-//            void LoadHistoryStates()
-//            {
-//                foreach (KeyValuePair<TState, TState> historyState in historyStates)
-//                {
-//                    IState<TState, TEvent> superState = this.stateContainer.States[historyState.Key];
-//                    IState<TState, TEvent> lastActiveState = this.stateContainer.States[historyState.Value];
-//
-//                    if (!superState.SubStates.Contains(lastActiveState))
-//                    {
-//                        throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
-//                    }
-//
-//                    superState.LastActiveState = lastActiveState;
-//                }
-//            }
-//
-//            void NotifyExtensions()
-//            {
-//                this.stateContainer.Extensions.ForEach(
-//                    extension => extension.Loaded(
-//                        this,
-//                        loadedCurrentState,
-//                        historyStates));
-//            }
-//        }
+        
+        // Todo: wtjerry
+        //        /// <summary>
+        //        /// Creates a report with the specified generator.
+        //        /// </summary>
+        //        /// <param name="reportGenerator">The report generator.</param>
+        //        public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
+        //        {
+        //            Guard.AgainstNullArgument("reportGenerator", reportGenerator);
+        //
+        //            reportGenerator.Report(this.ToString(), this.stateContainer.States.GetStates(), this.stateContainer.InitialStateId);
+        //        }
+        //
+        //        public void Save(IStateMachineSaver<TState> stateMachineSaver)
+        //        {
+        //            Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
+        //
+        //            stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentState != null ?
+        //                new Initializable<TState> { Value = this.stateContainer.CurrentState.Id } :
+        //                new Initializable<TState>());
+        //
+        //            IEnumerable<IState<TState, TEvent>> superStatesWithLastActiveState = this.stateContainer.States.GetStates()
+        //                .Where(s => s.SubStates.Any())
+        //                .Where(s => s.LastActiveState != null)
+        //                .ToList();
+        //
+        //            var historyStates = superStatesWithLastActiveState.ToDictionary(
+        //                s => s.Id,
+        //                s => s.LastActiveState.Id);
+        //
+        //            stateMachineSaver.SaveHistoryStates(historyStates);
+        //        }
+        //
+        //        public bool Load(IStateMachineLoader<TState> stateMachineLoader)
+        //        {
+        //            Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
+        //            this.CheckThatStateMachineIsNotAlreadyInitialized();
+        //
+        //            Initializable<TState> loadedCurrentState = stateMachineLoader.LoadCurrentState();
+        //            IDictionary<TState, TState> historyStates = stateMachineLoader.LoadHistoryStates();
+        //
+        //            var initialized = SetCurrentState();
+        //            LoadHistoryStates();
+        //            NotifyExtensions();
+        //
+        //            return initialized;
+        //
+        //            bool SetCurrentState()
+        //            {
+        //                if (loadedCurrentState.IsInitialized)
+        //                {
+        //                    this.stateContainer.CurrentState = this.stateContainer.States[loadedCurrentState.Value];
+        //                    return true;
+        //                }
+        //
+        //                this.stateContainer.CurrentState = null;
+        //                return false;
+        //            }
+        //
+        //            void LoadHistoryStates()
+        //            {
+        //                foreach (KeyValuePair<TState, TState> historyState in historyStates)
+        //                {
+        //                    IState<TState, TEvent> superState = this.stateContainer.States[historyState.Key];
+        //                    IState<TState, TEvent> lastActiveState = this.stateContainer.States[historyState.Value];
+        //
+        //                    if (!superState.SubStates.Contains(lastActiveState))
+        //                    {
+        //                        throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
+        //                    }
+        //
+        //                    superState.LastActiveState = lastActiveState;
+        //                }
+        //            }
+        //
+        //            void NotifyExtensions()
+        //            {
+        //                this.stateContainer.Extensions.ForEach(
+        //                    extension => extension.Loaded(
+        //                        this,
+        //                        loadedCurrentState,
+        //                        historyStates));
+        //            }
+        //        }
 
         // ReSharper disable once UnusedParameter.Local
         private static void RethrowExceptionIfNoHandlerRegistered<T>(Exception exception, EventHandler<T> exceptionHandler)
@@ -325,10 +325,10 @@ namespace Appccelerate.StateMachine.Machine
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-//            var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
-            var initializer = this.factory.CreateStateMachineInitializer(null, context);
-            var newState = initializer.EnterInitialState();
-            SwitchStateTo(newState.Id, stateContainer, stateMachineInformation);
+            var initialState = this.stateDefinitions[stateContainer.InitialStateId.Value];
+            var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
+            var newState = initializer.EnterInitialState(this.stateLogic, stateContainer);
+            SwitchStateTo(newState, stateContainer, stateMachineInformation);
         }
 
         private void RaiseEvent<T>(EventHandler<T> eventHandler, T arguments, ITransitionContext<TState, TEvent> context, bool raiseEventOnException)

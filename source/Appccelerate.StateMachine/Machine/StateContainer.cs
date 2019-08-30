@@ -12,7 +12,7 @@
         where TState : IComparable
         where TEvent : IComparable
     {
-        private Dictionary<TState, IStateDefinition<TState, TEvent>> lastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> lastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
 
         public StateContainer()
             : this(default(string))

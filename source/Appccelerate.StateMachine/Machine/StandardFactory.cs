@@ -89,7 +89,7 @@ namespace Appccelerate.StateMachine.Machine
             return new TransitionContext<TState, TEvent>(stateDefinition, eventId, eventArgument, notifier);
         }
 
-        public virtual StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
+        public virtual StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IStateDefinition<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
         {
             return new StateMachineInitializer<TState, TEvent>(initialState, context);
         }

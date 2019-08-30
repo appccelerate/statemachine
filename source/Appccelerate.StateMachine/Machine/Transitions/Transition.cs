@@ -77,7 +77,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             this.extensionHost.ForEach(extension => extension.ExecutingTransition(
                 this.stateMachineInformation,
-                this,
+                null,
                 context));
 
             IState<TState, TEvent> newState = null;
@@ -97,7 +97,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             this.extensionHost.ForEach(extension => extension.ExecutedTransition(
                 this.stateMachineInformation,
-                this,
+                null,
                 context));
 
             return new TransitionResult<TState>(true, newState.Id);
@@ -206,11 +206,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             }
             catch (Exception exception)
             {
-                this.extensionHost.ForEach(extention => extention.HandlingGuardException(this.stateMachineInformation, this, context, ref exception));
+                this.extensionHost.ForEach(extention => extention.HandlingGuardException(this.stateMachineInformation, null, context, ref exception));
 
                 HandleException(exception, context);
 
-                this.extensionHost.ForEach(extention => extention.HandledGuardException(this.stateMachineInformation, this, context, exception));
+                this.extensionHost.ForEach(extention => extention.HandledGuardException(this.stateMachineInformation, null, context, exception));
 
                 return false;
             }
@@ -226,11 +226,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 }
                 catch (Exception exception)
                 {
-                    this.extensionHost.ForEach(extension => extension.HandlingTransitionException(this.stateMachineInformation, this, context, ref exception));
+                    this.extensionHost.ForEach(extension => extension.HandlingTransitionException(this.stateMachineInformation, null, context, ref exception));
 
                     HandleException(exception, context);
 
-                    this.extensionHost.ForEach(extension => extension.HandledTransitionException(this.stateMachineInformation, this, context, exception));
+                    this.extensionHost.ForEach(extension => extension.HandledTransitionException(this.stateMachineInformation, null, context, exception));
                 }
             }
         }

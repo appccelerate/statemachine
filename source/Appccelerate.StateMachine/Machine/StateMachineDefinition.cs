@@ -33,5 +33,17 @@ namespace Appccelerate.StateMachine.Machine
 
             return new PassiveStateMachine<TState, TEvent>(stateMachine, stateContainer);
         }
+
+        // todo: wtjerry
+        public StateMachine<TState, TEvent> CreateStateMachine(StateContainer<TState, TEvent> stateContainer)
+        {
+            var factory = new StandardFactory<TState, TEvent>();
+
+            var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
+            transitionLogic.SetStateLogic(stateLogic);
+
+            return new StateMachine<TState, TEvent>(factory, stateLogic, this.stateDefinitions);
+        }
     }
 }
