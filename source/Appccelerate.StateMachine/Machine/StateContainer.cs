@@ -12,6 +12,8 @@
         where TState : IComparable
         where TEvent : IComparable
     {
+        private Dictionary<TState, IStateDefinition<TState, TEvent>> lastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+
         public StateContainer()
             : this(default(string))
         {
@@ -39,12 +41,20 @@
 
         public IStateDefinition<TState, TEvent> GetLastActiveStateOrNullFor(TState state)
         {
-            throw new NotImplementedException();
+            this.lastActiveStates.TryGetValue(state, out var lastActiveState);
+            return lastActiveState;
         }
 
         public void SetLastActiveStateFor(TState state, IStateDefinition<TState, TEvent> newLastActiveState)
         {
-            throw new NotImplementedException();
+            if (this.lastActiveStates.ContainsKey(state))
+            {
+                this.lastActiveStates[state] = newLastActiveState;
+            }
+            else
+            {
+                this.lastActiveStates.Add(state, newLastActiveState);
+            }
         }
     }
 }
