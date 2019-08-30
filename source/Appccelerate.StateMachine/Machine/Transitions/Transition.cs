@@ -102,7 +102,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             return new TransitionResult<TState>(true, newState.Id);
         }
-        
+
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);

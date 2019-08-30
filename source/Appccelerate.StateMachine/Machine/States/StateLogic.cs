@@ -19,7 +19,6 @@
 namespace Appccelerate.StateMachine.Machine.States
 {
     using System;
-    using System.Collections.Generic;
     using Appccelerate.StateMachine.Machine.ActionHolders;
     using Appccelerate.StateMachine.Machine.Transitions;
 
@@ -55,7 +54,8 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <returns>The result of the transition.</returns>
         public ITransitionResult<TState> Fire(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContext<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             Guard.AgainstNullArgument("context", context);
 
@@ -65,7 +65,7 @@ namespace Appccelerate.StateMachine.Machine.States
             {
                 foreach (var transitionDefinition in transitionsForEvent)
                 {
-                    result = this.transitionLogic.Fire(transitionDefinition, context);
+                    result = this.transitionLogic.Fire(transitionDefinition, context, lastActiveStateModifier);
                     if (result.Fired)
                     {
                         return result;
@@ -75,7 +75,7 @@ namespace Appccelerate.StateMachine.Machine.States
 
             if (stateDefinition.SuperState != null)
             {
-                result = this.Fire(stateDefinition.SuperState, context);
+                result = this.Fire(stateDefinition.SuperState, context, lastActiveStateModifier);
             }
 
             return result;
@@ -94,19 +94,21 @@ namespace Appccelerate.StateMachine.Machine.States
 
         public void Exit(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContext<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             Guard.AgainstNullArgument("context", context);
 
             context.AddRecord(stateDefinition.Id, RecordType.Exit);
 
             this.ExecuteExitActions(stateDefinition, context);
-            this.SetThisStateAsLastStateOfSuperState(stateDefinition);
+            SetThisStateAsLastStateOfSuperState(stateDefinition, lastActiveStateModifier);
         }
 
         public TState EnterByHistory(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContext<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             var result = stateDefinition.Id;
 
@@ -117,11 +119,11 @@ namespace Appccelerate.StateMachine.Machine.States
                     break;
 
                 case HistoryType.Shallow:
-                    result = this.EnterHistoryShallow(context);
+                    result = this.EnterHistoryShallow(stateDefinition, context, lastActiveStateModifier);
                     break;
 
                 case HistoryType.Deep:
-                    result = this.EnterHistoryDeep(context);
+                    result = this.EnterHistoryDeep(stateDefinition, context, lastActiveStateModifier);
                     break;
             }
 
@@ -144,13 +146,18 @@ namespace Appccelerate.StateMachine.Machine.States
 
         private TState EnterDeep(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContext<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             this.Entry(stateDefinition, context);
 
-            return this.LastActiveState == null ?
-                        this :
-                        this.LastActiveState.EnterDeep(context);
+            var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
+            if (lastActiveState == null)
+            {
+                return stateDefinition.Id;
+            }
+
+            return this.EnterDeep(lastActiveState, context, lastActiveStateModifier);
         }
 
         private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
@@ -247,30 +254,40 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <summary>
         /// Sets this instance as the last state of this instance's super state.
         /// </summary>
-        private void SetThisStateAsLastStateOfSuperState(IStateDefinition<TState, TEvent> stateDefinition)
+        private static void SetThisStateAsLastStateOfSuperState(IStateDefinition<TState, TEvent> stateDefinition, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             if (stateDefinition.SuperState != null)
             {
-                this.superState.LastActiveState = this;
+                lastActiveStateModifier.SetLastActiveStateFor(stateDefinition.SuperState.Id, stateDefinition);
             }
         }
 
-        private TState EnterHistoryDeep(ITransitionContext<TState, TEvent> context)
+        private TState EnterHistoryDeep(
+            IStateDefinition<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
-            return this.LastActiveState != null
-                       ?
-                           this.LastActiveState.EnterDeep(context)
-                       :
-                           this;
+            var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
+            if (lastActiveState == null)
+            {
+                return stateDefinition.Id;
+            }
+
+            return this.EnterDeep(lastActiveState, context, lastActiveStateModifier);
         }
 
-        private TState EnterHistoryShallow(ITransitionContext<TState, TEvent> context)
+        private TState EnterHistoryShallow(
+            IStateDefinition<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
-            return this.LastActiveState != null
-                       ?
-                           this.LastActiveState.EnterShallow(context)
-                       :
-                           this;
+            var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
+            if (lastActiveState == null)
+            {
+                return stateDefinition.Id;
+            }
+
+            return this.EnterShallow(lastActiveState, context);
         }
 
         private TState EnterHistoryNone(

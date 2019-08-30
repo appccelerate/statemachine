@@ -158,7 +158,7 @@ namespace Appccelerate.StateMachine.Machine
 
             var stateDefinition = this.stateDefinitions[stateContainer.CurrentState];
             ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(stateDefinition, new Missable<TEvent>(eventId), eventArgument, this);
-            var result = this.stateLogic.Fire(context);
+            var result = this.stateLogic.Fire(stateDefinition, context, stateContainer);
 
             if (!result.Fired)
             {

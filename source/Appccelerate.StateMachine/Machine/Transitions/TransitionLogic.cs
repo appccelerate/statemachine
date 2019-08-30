@@ -45,7 +45,10 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             this.stateLogic = stateLogicToSet;
         }
 
-        public ITransitionResult<TState> Fire(ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context)
+        public ITransitionResult<TState> Fire(
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             LiteGuard.AgainstNullArgument("context", context);
 
@@ -70,11 +73,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             if (!transitionDefinition.IsInternalTransition)
             {
-                this.UnwindSubStates(transitionDefinition, context);
+                this.UnwindSubStates(transitionDefinition, context, lastActiveStateModifier);
 
-                this.Fire(transitionDefinition, transitionDefinition.Source, transitionDefinition.Target, context);
+                this.Fire(transitionDefinition, transitionDefinition.Source, transitionDefinition.Target, context, lastActiveStateModifier);
 
-                newState = this.stateLogic.EnterByHistory(transitionDefinition.Target, context);
+                newState = this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier);
             }
             else
             {
@@ -132,13 +135,14 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             IStateDefinition<TState, TEvent> source,
             IStateDefinition<TState, TEvent> target,
-            ITransitionContext<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             if (source == transitionDefinition.Target)
             {
                 // Handles 1.
                 // Handles 3. after traversing from the source to the target.
-                this.stateLogic.Exit(source, context);
+                this.stateLogic.Exit(source, context, lastActiveStateModifier);
                 this.PerformActions(transitionDefinition, context);
                 this.stateLogic.Entry(transitionDefinition.Target, context);
             }
@@ -151,7 +155,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             {
                 //// Handles 4.
                 //// Handles 5a. after traversing the hierarchy until a common ancestor if found.
-                this.stateLogic.Exit(source, context);
+                this.stateLogic.Exit(source, context, lastActiveStateModifier);
                 this.PerformActions(transitionDefinition, context);
                 this.stateLogic.Entry(target, context);
             }
@@ -163,21 +167,21 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 // Handles 5b.
                 if (source.Level > target.Level)
                 {
-                    this.stateLogic.Exit(source, context);
-                    this.Fire(transitionDefinition, source.SuperState, target, context);
+                    this.stateLogic.Exit(source, context, lastActiveStateModifier);
+                    this.Fire(transitionDefinition, source.SuperState, target, context, lastActiveStateModifier);
                 }
                 else if (source.Level < target.Level)
                 {
                     // Handles 2.
                     // Handles 5c.
-                    this.Fire(transitionDefinition, source, target.SuperState, context);
+                    this.Fire(transitionDefinition, source, target.SuperState, context, lastActiveStateModifier);
                     this.stateLogic.Entry(target, context);
                 }
                 else
                 {
                     // Handles 5a.
-                    this.stateLogic.Exit(source, context);
-                    this.Fire(transitionDefinition, source.SuperState, target.SuperState, context);
+                    this.stateLogic.Exit(source, context, lastActiveStateModifier);
+                    this.Fire(transitionDefinition, source.SuperState, target.SuperState, context, lastActiveStateModifier);
                     this.stateLogic.Entry(target, context);
                 }
             }
@@ -198,7 +202,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
                 HandleException(exception, context);
 
-                this.extensionHost.ForEach(extension => 
+                this.extensionHost.ForEach(extension =>
                     extension.HandledGuardException(this.stateMachineInformation, null, context, exception));
 
                 return false;
@@ -215,12 +219,12 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 }
                 catch (Exception exception)
                 {
-                    this.extensionHost.ForEach(extension => 
+                    this.extensionHost.ForEach(extension =>
                         extension.HandlingTransitionException(this.stateMachineInformation, null, context, ref exception));
 
                     HandleException(exception, context);
 
-                    this.extensionHost.ForEach(extension => 
+                    this.extensionHost.ForEach(extension =>
                         extension.HandledTransitionException(this.stateMachineInformation, null, context, exception));
                 }
             }
@@ -228,12 +232,13 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
         private void UnwindSubStates(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContext<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             var o = context.StateDefinition;
             while (o != transitionDefinition.Source)
             {
-                this.stateLogic.Exit(o, context);
+                this.stateLogic.Exit(o, context, lastActiveStateModifier);
                 o = o.SuperState;
             }
         }

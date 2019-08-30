@@ -3,10 +3,12 @@
     using System;
     using System.Collections.Generic;
     using Infrastructure;
+    using States;
 
     public class StateContainer<TState, TEvent> :
         IExtensionHost<TState, TEvent>,
-        IStateMachineInformation<TState, TEvent>
+        IStateMachineInformation<TState, TEvent>,
+        ILastActiveStateModifier<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
@@ -28,6 +30,16 @@
         public void ForEach(Action<IExtension<TState, TEvent>> action)
         {
             this.Extensions.ForEach(action);
+        }
+
+        public IStateDefinition<TState, TEvent> GetLastActiveStateOrNullFor(TState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetLastActiveStateFor(TState state, IStateDefinition<TState, TEvent> newLastActiveState)
+        {
+            throw new NotImplementedException();
         }
     }
 }

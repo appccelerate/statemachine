@@ -35,12 +35,12 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="context">The event context.</param>
         /// <returns>The result of the transition.</returns>
-        ITransitionResult<TState> Fire(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
+        ITransitionResult<TState> Fire(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
 
         void Entry(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
 
-        void Exit(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
+        void Exit(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
 
-        TState EnterByHistory(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
+        TState EnterByHistory(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
     }
 }
