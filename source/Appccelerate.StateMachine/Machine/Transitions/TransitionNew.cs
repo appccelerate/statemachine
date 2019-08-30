@@ -40,6 +40,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
         public ICollection<IActionHolder> Actions => this.actions;
 
+        public bool IsInternalTransition => this.Target == null;
+
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);

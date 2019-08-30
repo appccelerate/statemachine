@@ -19,10 +19,8 @@
 namespace Appccelerate.StateMachine.Machine.States
 {
     using System;
-    using System.Runtime.InteropServices.ComTypes;
     using Appccelerate.StateMachine.Machine.ActionHolders;
     using Appccelerate.StateMachine.Machine.Transitions;
-    using Events;
 
     /// <summary>
     /// A state of the state machine.
@@ -35,21 +33,18 @@ namespace Appccelerate.StateMachine.Machine.States
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IFactory<TState, TEvent> factory;
         private readonly IExtensionHost<TState, TEvent> extensionHost;
         private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;
-        private readonly Func<ITransitionLogic<TState, TEvent>> transitionLogicFunc;
+        private readonly ITransitionLogic<TState, TEvent> transitionLogic;
 
         public StateLogic(
-            IFactory<TState, TEvent> factory,
+            ITransitionLogic<TState, TEvent> transitionLogic,
             IExtensionHost<TState, TEvent> extensionHost,
-            IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            Func<ITransitionLogic<TState, TEvent>> transitionLogicFunc)
+            IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-            this.factory = factory;
             this.extensionHost = extensionHost;
             this.stateMachineInformation = stateMachineInformation;
-            this.transitionLogicFunc = transitionLogicFunc;
+            this.transitionLogic = transitionLogic;
         }
 
         /// <summary>
@@ -57,18 +52,20 @@ namespace Appccelerate.StateMachine.Machine.States
         /// </summary>
         /// <param name="context">The event context.</param>
         /// <returns>The result of the transition.</returns>
-        public ITransitionResult<TState> Fire(ITransitionContext<TState, TEvent> context)
+        public ITransitionResult<TState> Fire(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
 
             ITransitionResult<TState> result = TransitionResult<TState>.NotFired;
 
-            var transitionsForEvent = context.StateDefinition.Transitions[context.EventId.Value];
+            var transitionsForEvent = stateDefinition.Transitions[context.EventId.Value];
             if (transitionsForEvent != null)
             {
                 foreach (var transitionDefinition in transitionsForEvent)
                 {
-                    result = this.transitionLogicFunc().Fire(context, transitionDefinition);
+                    result = this.transitionLogic.Fire(transitionDefinition, context);
                     if (result.Fired)
                     {
                         return result;
@@ -76,42 +73,47 @@ namespace Appccelerate.StateMachine.Machine.States
                 }
             }
 
-            if (context.StateDefinition.SuperState != null)
+            if (stateDefinition.SuperState != null)
             {
-                var superStateTransitionContext = this.factory.CreateTransitionContextForSuperStateOf(context);
-                result = this.Fire(superStateTransitionContext);
+                result = this.Fire(stateDefinition.SuperState, context);
             }
 
             return result;
         }
 
-        public void Entry(ITransitionContext<TState, TEvent> context)
+        public void Entry(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
 
-            context.AddRecord(context.StateDefinition.Id, RecordType.Enter);
+            context.AddRecord(stateDefinition.Id, RecordType.Enter);
 
-            this.ExecuteEntryActions(context);
+            this.ExecuteEntryActions(stateDefinition, context);
         }
 
-        public void Exit(ITransitionContext<TState, TEvent> context)
+        public void Exit(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
 
-            context.AddRecord(context.StateDefinition.Id, RecordType.Exit);
+            context.AddRecord(stateDefinition.Id, RecordType.Exit);
 
-            this.ExecuteExitActions(context);
-            this.SetThisStateAsLastStateOfSuperState(context);
+            this.ExecuteExitActions(stateDefinition, context);
+            this.SetThisStateAsLastStateOfSuperState(stateDefinition);
         }
 
-        public TState EnterByHistory(ITransitionContext<TState, TEvent> context)
+        public TState EnterByHistory(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
-            var result = context.StateDefinition.Id;
+            var result = stateDefinition.Id;
 
-            switch (context.StateDefinition.HistoryType)
+            switch (stateDefinition.HistoryType)
             {
                 case HistoryType.None:
-                    result = this.EnterHistoryNone(context);
+                    result = this.EnterHistoryNone(stateDefinition, context);
                     break;
 
                 case HistoryType.Shallow:
@@ -126,22 +128,25 @@ namespace Appccelerate.StateMachine.Machine.States
             return result;
         }
 
-        public TState EnterShallow(ITransitionContext<TState, TEvent> context)
+        public TState EnterShallow(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
-            this.Entry(context);
+            this.Entry(stateDefinition, context);
 
-            if (context.StateDefinition.InitialState == null)
+            if (stateDefinition.InitialState == null)
             {
-                return context.StateDefinition.Id;
+                return stateDefinition.Id;
             }
 
-            var initialStateTransitionContext = this.factory.CreateTransitionContextForInitialStateOf(context);
-            return this.EnterShallow(initialStateTransitionContext);
+            return this.EnterShallow(stateDefinition, context);
         }
 
-        public TState EnterDeep(ITransitionContext<TState, TEvent> context)
+        private TState EnterDeep(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
-            this.Entry(context);
+            this.Entry(stateDefinition, context);
 
             return this.LastActiveState == null ?
                         this :
@@ -153,15 +158,20 @@ namespace Appccelerate.StateMachine.Machine.States
             context.OnExceptionThrown(exception);
         }
 
-        private void ExecuteEntryActions(ITransitionContext<TState, TEvent> context)
+        private void ExecuteEntryActions(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
-            foreach (var actionHolder in context.StateDefinition.EntryActions)
+            foreach (var actionHolder in stateDefinition.EntryActions)
             {
-                this.ExecuteEntryAction(actionHolder, context);
+                this.ExecuteEntryAction(stateDefinition, actionHolder, context);
             }
         }
 
-        private void ExecuteEntryAction(IActionHolder actionHolder, ITransitionContext<TState, TEvent> context)
+        private void ExecuteEntryAction(
+            StateNew<TState, TEvent> stateDefinition,
+            IActionHolder actionHolder,
+            ITransitionContext<TState, TEvent> context)
         {
             try
             {
@@ -169,34 +179,42 @@ namespace Appccelerate.StateMachine.Machine.States
             }
             catch (Exception exception)
             {
-                this.HandleEntryActionException(context, exception);
+                this.HandleEntryActionException(stateDefinition, context, exception);
             }
         }
 
-        private void HandleEntryActionException(ITransitionContext<TState, TEvent> context, Exception exception)
+        private void HandleEntryActionException(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context,
+            Exception exception)
         {
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandlingEntryActionException(
-                    this.stateMachineInformation, context.StateDefinition.Id, context, ref exception));
+                    this.stateMachineInformation, stateDefinition.Id, context, ref exception));
 
             HandleException(exception, context);
 
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandledEntryActionException(
-                    this.stateMachineInformation, context.StateDefinition.Id, context, exception));
+                    this.stateMachineInformation, stateDefinition.Id, context, exception));
         }
 
-        private void ExecuteExitActions(ITransitionContext<TState, TEvent> context)
+        private void ExecuteExitActions(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
-            foreach (var actionHolder in context.StateDefinition.ExitActions)
+            foreach (var actionHolder in stateDefinition.ExitActions)
             {
-                this.ExecuteExitAction(actionHolder, context);
+                this.ExecuteExitAction(stateDefinition, actionHolder, context);
             }
         }
 
-        private void ExecuteExitAction(IActionHolder actionHolder, ITransitionContext<TState, TEvent> context)
+        private void ExecuteExitAction(
+            StateNew<TState, TEvent> stateDefinition,
+            IActionHolder actionHolder,
+            ITransitionContext<TState, TEvent> context)
         {
             try
             {
@@ -204,31 +222,34 @@ namespace Appccelerate.StateMachine.Machine.States
             }
             catch (Exception exception)
             {
-                this.HandleExitActionException(context, exception);
+                this.HandleExitActionException(stateDefinition, context, exception);
             }
         }
 
-        private void HandleExitActionException(ITransitionContext<TState, TEvent> context, Exception exception)
+        private void HandleExitActionException(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context,
+            Exception exception)
         {
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandlingExitActionException(
-                    this.stateMachineInformation, context.StateDefinition.Id, context, ref exception));
+                    this.stateMachineInformation, stateDefinition.Id, context, ref exception));
 
             HandleException(exception, context);
 
             this.extensionHost.ForEach(
                 extension =>
                 extension.HandledExitActionException(
-                    this.stateMachineInformation, context.StateDefinition.Id, context, exception));
+                    this.stateMachineInformation, stateDefinition.Id, context, exception));
         }
 
         /// <summary>
         /// Sets this instance as the last state of this instance's super state.
         /// </summary>
-        private void SetThisStateAsLastStateOfSuperState(ITransitionContext<TState, TEvent> context)
+        private void SetThisStateAsLastStateOfSuperState(StateNew<TState, TEvent> stateDefinition)
         {
-            if (context.StateDefinition.SuperState != null)
+            if (stateDefinition.SuperState != null)
             {
                 this.superState.LastActiveState = this;
             }
@@ -252,15 +273,16 @@ namespace Appccelerate.StateMachine.Machine.States
                            this;
         }
 
-        private TState EnterHistoryNone(ITransitionContext<TState, TEvent> context)
+        private TState EnterHistoryNone(
+            StateNew<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
-            if (context.StateDefinition.InitialState != null)
+            if (stateDefinition.InitialState != null)
             {
-                var initialStateTransitionContext = this.factory.CreateTransitionContextForInitialStateOf(context);
-                return this.EnterShallow(initialStateTransitionContext);
+                return this.EnterShallow(stateDefinition.InitialState, context);
             }
 
-            return context.StateDefinition.Id;
+            return stateDefinition.Id;
         }
     }
 }

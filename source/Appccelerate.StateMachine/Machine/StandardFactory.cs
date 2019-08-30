@@ -25,7 +25,6 @@ namespace Appccelerate.StateMachine.Machine
     using Appccelerate.StateMachine.Machine.Events;
     using Appccelerate.StateMachine.Machine.GuardHolders;
     using Appccelerate.StateMachine.Machine.States;
-    using Appccelerate.StateMachine.Machine.Transitions;
 
     /// <summary>
     /// Standard implementation of the state machine factory.
@@ -88,18 +87,6 @@ namespace Appccelerate.StateMachine.Machine
         public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(StateNew<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
         {
             return new TransitionContext<TState, TEvent>(stateDefinition, eventId, eventArgument, notifier);
-        }
-
-        public virtual ITransitionContext<TState, TEvent> CreateTransitionContextForSuperStateOf(ITransitionContext<TState, TEvent> context)
-        {
-            var stateDefinitionOfSuperState = context.StateDefinition.SuperState;
-            return new TransitionContext<TState, TEvent>(stateDefinitionOfSuperState, context.EventId, context.EventArgument, context.Notifier);
-        }
-
-        public virtual ITransitionContext<TState, TEvent> CreateTransitionContextForInitialStateOf(ITransitionContext<TState, TEvent> context)
-        {
-            var stateDefinitionOfInitialState = context.StateDefinition.InitialState;
-            return new TransitionContext<TState, TEvent>(stateDefinitionOfInitialState, context.EventId, context.EventArgument, context.Notifier);
         }
 
         public virtual StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)

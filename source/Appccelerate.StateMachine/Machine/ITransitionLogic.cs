@@ -35,6 +35,6 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="context">The event context.</param>
         /// <returns>The result of the transition.</returns>
-        ITransitionResult<TState> Fire(ITransitionContext<TState, TEvent> context, TransitionNew<TState, TEvent> transitionDefinition);
+        ITransitionResult<TState> Fire(TransitionNew<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context);
     }
 }

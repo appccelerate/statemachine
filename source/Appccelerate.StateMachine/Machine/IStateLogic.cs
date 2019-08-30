@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using States;
 
     /// <summary>
     /// Represents a state of the state machine.
@@ -34,12 +35,12 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="context">The event context.</param>
         /// <returns>The result of the transition.</returns>
-        ITransitionResult<TState> Fire(ITransitionContext<TState, TEvent> context);
+        ITransitionResult<TState> Fire(StateNew<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
 
-        void Entry(ITransitionContext<TState, TEvent> context);
+        void Entry(StateNew<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
 
-        void Exit(ITransitionContext<TState, TEvent> context);
+        void Exit(StateNew<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
 
-        TState EnterByHistory(ITransitionContext<TState, TEvent> context);
+        TState EnterByHistory(StateNew<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
     }
 }

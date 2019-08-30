@@ -2,6 +2,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using States;
+    using Transitions;
 
     public class StateMachineDefinition<TState, TEvent>
         where TState : IComparable
@@ -24,7 +25,9 @@ namespace Appccelerate.StateMachine.Machine
             var stateContainer = new StateContainer<TState, TEvent>(name);
             var factory = new StandardFactory<TState, TEvent>();
 
-            var stateLogic = new StateLogic<TState, TEvent>(factory, stateContainer, stateContainer, () => null);
+            var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
+            transitionLogic.SetStateLogic(stateLogic);
 
             var stateMachine = new StateMachine<TState, TEvent>(factory, stateLogic, this.stateDefinitions);
 
