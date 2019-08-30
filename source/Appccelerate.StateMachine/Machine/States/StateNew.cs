@@ -234,7 +234,7 @@ namespace Appccelerate.StateMachine.Machine.States
             }
         }
 
-        public IReadOnlyDictionary<TEvent, IEnumerable<TransitionNew<TState, TEvent>>> Transitions => this.transitions.Transitions;
+        public IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions => this.transitions.Transitions;
 
         public IStateDefinition<TState, TEvent> InitialState => this.InitialStateModifiable;
 

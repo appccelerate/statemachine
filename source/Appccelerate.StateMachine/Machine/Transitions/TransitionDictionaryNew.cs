@@ -52,10 +52,10 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             this.transitions = new Dictionary<TEvent, List<TransitionNew<TState, TEvent>>>();
         }
 
-        public IReadOnlyDictionary<TEvent, IEnumerable<TransitionNew<TState, TEvent>>> Transitions =>
+        public IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions =>
             this.transitions.ToDictionary(
                 pair => pair.Key,
-                pair2 => (IEnumerable<TransitionNew<TState, TEvent>>)pair2.Value);
+                pair => (IEnumerable<ITransitionDefinition<TState, TEvent>>)pair.Value);
 
         /// <summary>
         /// Gets the transitions for the specified event id.

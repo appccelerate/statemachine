@@ -26,19 +26,17 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using Appccelerate.StateMachine.Machine.GuardHolders;
     using States;
 
-    public class TransitionNew<TState, TEvent>
+    public class TransitionNew<TState, TEvent> : ITransitionDefinition<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly List<IActionHolder> actions = new List<IActionHolder>();
-
         public IStateDefinition<TState, TEvent> Source { get; set; }
 
         public IStateDefinition<TState, TEvent> Target { get; set; }
 
         public IGuardHolder Guard { get; set; }
 
-        public ICollection<IActionHolder> Actions => this.actions;
+        public ICollection<IActionHolder> ActionsModifiable { get; } = new List<IActionHolder>();
 
         public bool IsInternalTransition => this.Target == null;
 
@@ -46,5 +44,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         {
             return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);
         }
+
+        public IEnumerable<IActionHolder> Actions => this.ActionsModifiable;
     }
 }

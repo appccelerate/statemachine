@@ -263,7 +263,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private StateBuilderNew<TState, TEvent> ExecuteInternal(Action action)
         {
-            this.currentTransition.Actions.Add(new ArgumentLessActionHolder(action));
+            this.currentTransition.ActionsModifiable.Add(new ArgumentLessActionHolder(action));
 
             this.CheckGuards();
 
@@ -272,7 +272,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private StateBuilderNew<TState, TEvent> ExecuteInternal<T>(Action<T> action)
         {
-            this.currentTransition.Actions.Add( new ArgumentActionHolder<T>(action));
+            this.currentTransition.ActionsModifiable.Add( new ArgumentActionHolder<T>(action));
 
             this.CheckGuards();
 

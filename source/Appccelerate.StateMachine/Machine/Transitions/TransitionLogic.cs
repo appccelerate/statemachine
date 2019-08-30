@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             this.stateLogic = stateLogicToSet;
         }
 
-        public ITransitionResult<TState> Fire(TransitionNew<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context)
+        public ITransitionResult<TState> Fire(ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context)
         {
             LiteGuard.AgainstNullArgument("context", context);
 
@@ -129,7 +129,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <param name="target">The target state.</param>
         /// <param name="context">The event context.</param>
         private void Fire(
-            TransitionNew<TState, TEvent> transitionDefinition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             IStateDefinition<TState, TEvent> source,
             IStateDefinition<TState, TEvent> target,
             ITransitionContext<TState, TEvent> context)
@@ -184,7 +184,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         }
 
         private bool ShouldFire(
-            TransitionNew<TState, TEvent> transitionDefinition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             try
@@ -205,7 +205,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             }
         }
 
-        private void PerformActions(TransitionNew<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context)
+        private void PerformActions(ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context)
         {
             foreach (var action in transitionDefinition.Actions)
             {
@@ -227,7 +227,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         }
 
         private void UnwindSubStates(
-            TransitionNew<TState, TEvent> transitionDefinition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             var o = context.StateDefinition;
