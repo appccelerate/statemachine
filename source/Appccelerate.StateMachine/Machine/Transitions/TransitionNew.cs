@@ -32,9 +32,9 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     {
         private readonly List<IActionHolder> actions = new List<IActionHolder>();
 
-        public StateNew<TState, TEvent> Source { get; set; }
+        public IStateDefinition<TState, TEvent> Source { get; set; }
 
-        public StateNew<TState, TEvent> Target { get; set; }
+        public IStateDefinition<TState, TEvent> Target { get; set; }
 
         public IGuardHolder Guard { get; set; }
 

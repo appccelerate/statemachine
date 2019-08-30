@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine.States
 {
     using System;
+    using System.Collections.Generic;
     using Appccelerate.StateMachine.Machine.ActionHolders;
     using Appccelerate.StateMachine.Machine.Transitions;
 
@@ -53,15 +54,14 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <param name="context">The event context.</param>
         /// <returns>The result of the transition.</returns>
         public ITransitionResult<TState> Fire(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
 
             ITransitionResult<TState> result = TransitionResult<TState>.NotFired;
 
-            var transitionsForEvent = stateDefinition.Transitions[context.EventId.Value];
-            if (transitionsForEvent != null)
+            if (stateDefinition.Transitions.TryGetValue(context.EventId.Value, out var transitionsForEvent))
             {
                 foreach (var transitionDefinition in transitionsForEvent)
                 {
@@ -82,7 +82,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         public void Entry(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
@@ -93,7 +93,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         public void Exit(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
@@ -105,7 +105,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         public TState EnterByHistory(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             var result = stateDefinition.Id;
@@ -129,7 +129,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         public TState EnterShallow(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             this.Entry(stateDefinition, context);
@@ -143,7 +143,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         private TState EnterDeep(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             this.Entry(stateDefinition, context);
@@ -159,7 +159,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         private void ExecuteEntryActions(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in stateDefinition.EntryActions)
@@ -169,7 +169,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         private void ExecuteEntryAction(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             IActionHolder actionHolder,
             ITransitionContext<TState, TEvent> context)
         {
@@ -184,7 +184,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         private void HandleEntryActionException(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             Exception exception)
         {
@@ -202,7 +202,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         private void ExecuteExitActions(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in stateDefinition.ExitActions)
@@ -212,7 +212,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         private void ExecuteExitAction(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             IActionHolder actionHolder,
             ITransitionContext<TState, TEvent> context)
         {
@@ -227,7 +227,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         private void HandleExitActionException(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             Exception exception)
         {
@@ -247,7 +247,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <summary>
         /// Sets this instance as the last state of this instance's super state.
         /// </summary>
-        private void SetThisStateAsLastStateOfSuperState(StateNew<TState, TEvent> stateDefinition)
+        private void SetThisStateAsLastStateOfSuperState(IStateDefinition<TState, TEvent> stateDefinition)
         {
             if (stateDefinition.SuperState != null)
             {
@@ -274,7 +274,7 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         private TState EnterHistoryNone(
-            StateNew<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             if (stateDefinition.InitialState != null)

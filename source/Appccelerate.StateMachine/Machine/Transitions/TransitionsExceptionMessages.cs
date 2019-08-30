@@ -57,7 +57,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <param name="transition">The transition.</param>
         /// <param name="state">The state.</param>
         /// <returns>error message.</returns>
-        public static string TransitionDoesAlreadyExist<TState, TEvent>(TransitionNew<TState, TEvent> transition, StateNew<TState, TEvent> state)
+        public static string TransitionDoesAlreadyExist<TState, TEvent>(TransitionNew<TState, TEvent> transition, IStateDefinition<TState, TEvent> state)
             where TState : IComparable
             where TEvent : IComparable
         {

@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.Machine.States
     /// </summary>
     /// <typeparam name="TState">The type of the state id.</typeparam>
     /// <typeparam name="TEvent">The type of the event id.</typeparam>
-    public class StateNew<TState, TEvent>
+    public class StateNew<TState, TEvent> : IStateDefinition<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
@@ -64,9 +64,6 @@ namespace Appccelerate.StateMachine.Machine.States
             this.level = 1;
 
             this.transitions = new TransitionDictionaryNew<TState, TEvent>(this);
-
-            this.EntryActions = new List<IActionHolder>();
-            this.ExitActions = new List<IActionHolder>();
         }
 
         /// <summary>
@@ -85,19 +82,19 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Gets the entry actions.
         /// </summary>
         /// <value>The entry actions.</value>
-        public IList<IActionHolder> EntryActions { get; }
+        public IList<IActionHolder> EntryActionsModifiable { get; } = new List<IActionHolder>();
 
         /// <summary>
         /// Gets the exit actions.
         /// </summary>
         /// <value>The exit action.</value>
-        public IList<IActionHolder> ExitActions { get; }
+        public IList<IActionHolder> ExitActionsModifiable { get; } = new List<IActionHolder>();
 
         /// <summary>
         /// Gets or sets the initial sub state of this state.
         /// </summary>
         /// <value>The initial sub state of this state.</value>
-        public StateNew<TState, TEvent> InitialState
+        public StateNew<TState, TEvent> InitialStateModifiable
         {
             get
             {
@@ -120,7 +117,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// The <see cref="Level"/> of this state is changed accordingly to the super-state.
         /// </remarks>
         /// <value>The super-state of this super.</value>
-        public StateNew<TState, TEvent> SuperState
+        public StateNew<TState, TEvent> SuperStateModifiable
         {
             get
             {
@@ -161,19 +158,19 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Gets or sets the history type of this state.
         /// </summary>
         /// <value>The type of the history.</value>
-        public HistoryType HistoryType { get; set; } = HistoryType.None;
+        public HistoryType HistoryTypeModifiable { get; set; } = HistoryType.None;
 
         /// <summary>
         /// Gets the sub-states of this state.
         /// </summary>
         /// <value>The sub-states of this state.</value>
-        public ICollection<StateNew<TState, TEvent>> SubStates { get; } = new List<StateNew<TState, TEvent>>();
+        public ICollection<StateNew<TState, TEvent>> SubStatesModifiable { get; } = new List<StateNew<TState, TEvent>>();
 
         /// <summary>
         /// Gets the transitions that start in this state.
         /// </summary>
         /// <value>The transitions.</value>
-        public ITransitionDictionaryNew<TState, TEvent> Transitions => this.transitions;
+        public ITransitionDictionaryNew<TState, TEvent> TransitionsModifiable => this.transitions;
 
         public override string ToString()
         {
@@ -193,7 +190,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// </summary>
         private void SetLevelOfSubStates()
         {
-            foreach (var state in this.SubStates)
+            foreach (var state in this.SubStatesModifiable)
             {
                 state.Level = this.level + 1;
             }
@@ -236,5 +233,19 @@ namespace Appccelerate.StateMachine.Machine.States
                 throw new ArgumentException(StatesExceptionMessages.StateCannotBeTheInitialStateOfSuperStateBecauseItIsNotADirectSubState(value.ToString(), this.ToString()));
             }
         }
+
+        public IReadOnlyDictionary<TEvent, IEnumerable<TransitionNew<TState, TEvent>>> Transitions => this.transitions.Transitions;
+
+        public IStateDefinition<TState, TEvent> InitialState => this.InitialStateModifiable;
+
+        public HistoryType HistoryType => this.HistoryTypeModifiable;
+
+        public IStateDefinition<TState, TEvent> SuperState => this.SuperStateModifiable;
+
+        public IEnumerable<IStateDefinition<TState, TEvent>> SubStates => this.SubStatesModifiable;
+
+        public IEnumerable<IActionHolder> EntryActions => this.EntryActionsModifiable;
+
+        public IEnumerable<IActionHolder> ExitActions => this.ExitActionsModifiable;
     }
 }

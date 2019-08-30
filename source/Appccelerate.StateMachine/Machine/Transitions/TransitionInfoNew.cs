@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         where TState : IComparable
         where TEvent : IComparable
     {
-        public TransitionInfoNew(TEvent eventId, StateNew<TState, TEvent> source, StateNew<TState, TEvent> target, IGuardHolder guard, IEnumerable<IActionHolder> actions)
+        public TransitionInfoNew(TEvent eventId, IStateDefinition<TState, TEvent> source, IStateDefinition<TState, TEvent> target, IGuardHolder guard, IEnumerable<IActionHolder> actions)
         {
             this.EventId = eventId;
             this.Source = source;
@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// Gets the source.
         /// </summary>
         /// <value>The source.</value>
-        public StateNew<TState, TEvent> Source
+        public IStateDefinition<TState, TEvent> Source
         {
             get;
         }
@@ -65,7 +65,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// Gets the target.
         /// </summary>
         /// <value>The target.</value>
-        public StateNew<TState, TEvent> Target
+        public IStateDefinition<TState, TEvent> Target
         {
             get;
         }

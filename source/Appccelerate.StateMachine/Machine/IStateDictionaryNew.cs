@@ -19,7 +19,6 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    using System.Collections.Generic;
     using States;
 
     public interface IStateDictionaryNew<TState, TEvent>

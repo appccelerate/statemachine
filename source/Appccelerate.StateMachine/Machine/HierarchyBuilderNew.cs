@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public IInitialSubStateSyntax<TState> WithHistoryType(HistoryType historyType)
         {
-            this.superState.HistoryType = historyType;
+            this.superState.HistoryTypeModifiable = historyType;
 
             return this;
         }
@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.WithSubState(stateId);
 
-            this.superState.InitialState = this.states[stateId];
+            this.superState.InitialStateModifiable = this.states[stateId];
 
             return this;
         }
@@ -64,8 +64,8 @@ namespace Appccelerate.StateMachine.Machine
 
             this.CheckThatStateHasNotAlreadyASuperState(subState);
 
-            subState.SuperState = this.superState;
-            this.superState.SubStates.Add(subState);
+            subState.SuperStateModifiable = this.superState;
+            this.superState.SubStatesModifiable.Add(subState);
 
             return this;
         }

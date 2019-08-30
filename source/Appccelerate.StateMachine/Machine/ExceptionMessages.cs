@@ -110,7 +110,7 @@ namespace Appccelerate.StateMachine.Machine
                         transition.Source);
         }
 
-        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, StateNew<TState, TEvent> stateAlreadyHavingASuperState)
+        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
             where TState : IComparable
             where TEvent : IComparable
         {

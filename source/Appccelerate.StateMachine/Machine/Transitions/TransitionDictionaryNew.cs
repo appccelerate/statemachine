@@ -40,17 +40,22 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <summary>
         /// The state this transition dictionary belongs to.
         /// </summary>
-        private readonly StateNew<TState, TEvent> state;
+        private readonly IStateDefinition<TState, TEvent> state;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransitionDictionaryNew&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         /// <param name="state">The state.</param>
-        public TransitionDictionaryNew(StateNew<TState, TEvent> state)
+        public TransitionDictionaryNew(IStateDefinition<TState, TEvent> state)
         {
             this.state = state;
             this.transitions = new Dictionary<TEvent, List<TransitionNew<TState, TEvent>>>();
         }
+
+        public IReadOnlyDictionary<TEvent, IEnumerable<TransitionNew<TState, TEvent>>> Transitions =>
+            this.transitions.ToDictionary(
+                pair => pair.Key,
+                pair2 => (IEnumerable<TransitionNew<TState, TEvent>>)pair2.Value);
 
         /// <summary>
         /// Gets the transitions for the specified event id.

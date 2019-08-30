@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Machine.Contexts
     {
         private readonly List<Record> records = new List<Record>();
 
-        public TransitionContext(StateNew<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
+        public TransitionContext(IStateDefinition<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
         {
             this.StateDefinition = stateDefinition;
             this.EventId = eventId;
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Machine.Contexts
             this.Notifier = notifier;
         }
 
-        public StateNew<TState, TEvent> StateDefinition { get; }
+        public IStateDefinition<TState, TEvent> StateDefinition { get; }
 
         public Missable<TEvent> EventId { get; }
 

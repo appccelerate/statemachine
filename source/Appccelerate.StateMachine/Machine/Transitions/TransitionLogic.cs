@@ -130,8 +130,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <param name="context">The event context.</param>
         private void Fire(
             TransitionNew<TState, TEvent> transitionDefinition,
-            StateNew<TState, TEvent> source,
-            StateNew<TState, TEvent> target,
+            IStateDefinition<TState, TEvent> source,
+            IStateDefinition<TState, TEvent> target,
             ITransitionContext<TState, TEvent> context)
         {
             if (source == transitionDefinition.Target)

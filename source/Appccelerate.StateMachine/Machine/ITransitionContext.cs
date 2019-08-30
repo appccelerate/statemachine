@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        StateNew<TState, TEvent> StateDefinition { get; }
+        IStateDefinition<TState, TEvent> StateDefinition { get; }
 
         Missable<TEvent> EventId { get; }
 

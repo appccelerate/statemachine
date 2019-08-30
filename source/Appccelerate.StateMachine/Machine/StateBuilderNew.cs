@@ -65,7 +65,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.stateDefinition.EntryActions.Add(new ArgumentLessActionHolder(action));
+            this.stateDefinition.EntryActionsModifiable.Add(new ArgumentLessActionHolder(action));
 
             return this;
         }
@@ -74,7 +74,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.stateDefinition.EntryActions.Add(new ArgumentActionHolder<T>(action));
+            this.stateDefinition.EntryActionsModifiable.Add(new ArgumentActionHolder<T>(action));
 
             return this;
         }
@@ -88,7 +88,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <returns>Exit action syntax.</returns>
         IEntryActionSyntax<TState, TEvent> IEntryActionSyntax<TState, TEvent>.ExecuteOnEntryParametrized<T>(Action<T> action, T parameter)
         {
-            this.stateDefinition.EntryActions.Add(new ParametrizedActionHolder<T>(action, parameter));
+            this.stateDefinition.EntryActionsModifiable.Add(new ParametrizedActionHolder<T>(action, parameter));
 
             return this;
         }
@@ -102,7 +102,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.stateDefinition.ExitActions.Add(new ArgumentLessActionHolder(action));
+            this.stateDefinition.ExitActionsModifiable.Add(new ArgumentLessActionHolder(action));
 
             return this;
         }
@@ -111,7 +111,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.stateDefinition.ExitActions.Add(new ArgumentActionHolder<T>(action));
+            this.stateDefinition.ExitActionsModifiable.Add(new ArgumentActionHolder<T>(action));
 
             return this;
         }
@@ -125,7 +125,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <returns>Exit action syntax.</returns>
         IExitActionSyntax<TState, TEvent> IExitActionSyntax<TState, TEvent>.ExecuteOnExitParametrized<T>(Action<T> action, T parameter)
         {
-            this.stateDefinition.ExitActions.Add(new ParametrizedActionHolder<T>(action, parameter));
+            this.stateDefinition.ExitActionsModifiable.Add(new ParametrizedActionHolder<T>(action, parameter));
 
             return this;
         }
@@ -147,7 +147,7 @@ namespace Appccelerate.StateMachine.Machine
         private void CreateTransition()
         {
             this.currentTransition = new TransitionNew<TState, TEvent>();
-            this.stateDefinition.Transitions.Add(this.currentEventId, this.currentTransition);
+            this.stateDefinition.TransitionsModifiable.Add(this.currentEventId, this.currentTransition);
         }
 
         /// <summary>
@@ -337,7 +337,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private void CheckGuards()
         {
-            var transitionsByEvent = this.stateDefinition.Transitions.GetTransitions().GroupBy(t => t.EventId).ToList();
+            var transitionsByEvent = this.stateDefinition.TransitionsModifiable.GetTransitions().GroupBy(t => t.EventId).ToList();
             var withMoreThenOneTransitionWithoutGuard = transitionsByEvent.Where(g => g.Count(t => t.Guard == null) > 1);
 
             if (withMoreThenOneTransitionWithoutGuard.Any())
