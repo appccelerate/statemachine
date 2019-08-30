@@ -30,9 +30,9 @@
 
         public Initializable<TState> InitialStateId { get; } = new Initializable<TState>();
 
-        public TState CurrentState { get; set; }
+        public IStateDefinition<TState, TEvent> CurrentState { get; set; }
 
-        public TState CurrentStateId => this.CurrentState;
+        public TState CurrentStateId => this.CurrentState.Id;
 
         public void ForEach(Action<IExtension<TState, TEvent>> action)
         {
