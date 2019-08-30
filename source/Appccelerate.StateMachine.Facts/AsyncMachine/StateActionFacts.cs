@@ -16,125 +16,126 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
+    using System.Threading.Tasks;
     using FluentAssertions;
+    using StateMachine.AsyncMachine;
     using Xunit;
 
     public class StateActionFacts
     {
-        private readonly Machine.StateMachine<StateMachine.States, StateMachine.Events> testee;
+        private readonly StateMachine<States, Events> testee;
 
         public StateActionFacts()
         {
-            this.testee = new Machine.StateMachine<StateMachine.States, StateMachine.Events>();
+            this.testee = new StateMachine<States, Events>();
         }
 
-        // Todo: wtjerry
-        //        [Fact]
-        //        public void EntryAction()
-        //        {
-        //            bool entered = false;
-        //
-        //            this.testee.In(StateMachine.States.A)
-        //                .ExecuteOnEntry(() => entered = true);
-        //
-        //            this.testee.Initialize(StateMachine.States.A);
-        //
-        //            this.testee.EnterInitialState();
-        //
-        //            entered.Should().BeTrue("entry action was not executed.");
-        //        }
-        //
-        //        [Fact]
-        //        public void EntryActions()
-        //        {
-        //            bool entered1 = false;
-        //            bool entered2 = false;
-        //
-        //            this.testee.In(StateMachine.States.A)
-        //                .ExecuteOnEntry(() => entered1 = true)
-        //                .ExecuteOnEntry(() => entered2 = true);
-        //
-        //            this.testee.Initialize(StateMachine.States.A);
-        //
-        //            this.testee.EnterInitialState();
-        //
-        //            entered1.Should().BeTrue("entry action was not executed.");
-        //            entered2.Should().BeTrue("entry action was not executed.");
-        //        }
-        //
-        //        [Fact]
-        //        public void ParameterizedEntryAction()
-        //        {
-        //            const int Parameter = 3;
-        //
-        //            int receivedValue = 0;
-        //
-        //            this.testee.In(StateMachine.States.A)
-        //                .ExecuteOnEntryParametrized(parameter => receivedValue = parameter, Parameter);
-        //
-        //            this.testee.Initialize(StateMachine.States.A);
-        //
-        //            this.testee.EnterInitialState();
-        //
-        //            receivedValue.Should().Be(Parameter);
-        //        }
-        //
-        //        [Fact]
-        //        public void ExitAction()
-        //        {
-        //            bool exit = false;
-        //
-        //            this.testee.In(StateMachine.States.A)
-        //                .ExecuteOnExit(() => exit = true)
-        //                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
-        //
-        //            this.testee.Initialize(StateMachine.States.A);
-        //            this.testee.EnterInitialState();
-        //
-        //            this.testee.Fire(StateMachine.Events.B);
-        //
-        //            exit.Should().BeTrue("exit action was not executed.");
-        //        }
-        //
-        //        [Fact]
-        //        public void ExitActions()
-        //        {
-        //            bool exit1 = false;
-        //            bool exit2 = false;
-        //
-        //            this.testee.In(StateMachine.States.A)
-        //                .ExecuteOnExit(() => exit1 = true)
-        //                .ExecuteOnExit(() => exit2 = true)
-        //                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
-        //
-        //            this.testee.Initialize(StateMachine.States.A);
-        //            this.testee.EnterInitialState();
-        //
-        //            this.testee.Fire(StateMachine.Events.B);
-        //
-        //            exit1.Should().BeTrue("exit action was not executed.");
-        //            exit2.Should().BeTrue("exit action was not executed.");
-        //        }
-        //
-        //        [Fact]
-        //        public void ParametrizedExitAction()
-        //        {
-        //            const int Parameter = 3;
-        //
-        //            int receivedValue = 0;
-        //
-        //            this.testee.In(StateMachine.States.A)
-        //                .ExecuteOnExitParametrized(value => receivedValue = value, Parameter)
-        //                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
-        //
-        //            this.testee.Initialize(StateMachine.States.A);
-        //            this.testee.EnterInitialState();
-        //
-        //            this.testee.Fire(StateMachine.Events.B);
-        //
-        //            receivedValue.Should().Be(Parameter);
-        //        }
+        [Fact]
+        public async Task EntryAction()
+        {
+            var entered = false;
+
+            this.testee.In(States.A)
+                .ExecuteOnEntry(() => entered = true);
+
+            await this.testee.Initialize(States.A);
+
+            await this.testee.EnterInitialState();
+
+            entered.Should().BeTrue("entry action was not executed.");
+        }
+
+        [Fact]
+        public async Task EntryActions()
+        {
+            var entered1 = false;
+            var entered2 = false;
+
+            this.testee.In(States.A)
+                .ExecuteOnEntry(() => entered1 = true)
+                .ExecuteOnEntry(() => entered2 = true);
+
+            await this.testee.Initialize(States.A);
+
+            await this.testee.EnterInitialState();
+
+            entered1.Should().BeTrue("entry action was not executed.");
+            entered2.Should().BeTrue("entry action was not executed.");
+        }
+
+        [Fact]
+        public async Task ParameterizedEntryAction()
+        {
+            const int Parameter = 3;
+
+            var receivedValue = 0;
+
+            this.testee.In(States.A)
+                .ExecuteOnEntryParametrized(parameter => receivedValue = parameter, Parameter);
+
+            await this.testee.Initialize(States.A);
+
+            await this.testee.EnterInitialState();
+
+            receivedValue.Should().Be(Parameter);
+        }
+
+        [Fact]
+        public async Task ExitAction()
+        {
+            var exit = false;
+
+            this.testee.In(States.A)
+                .ExecuteOnExit(() => exit = true)
+                .On(Events.B).Goto(States.B);
+
+            await this.testee.Initialize(States.A);
+            await this.testee.EnterInitialState();
+
+            await this.testee.Fire(Events.B, null);
+
+            exit.Should().BeTrue("exit action was not executed.");
+        }
+
+        [Fact]
+        public async Task ExitActions()
+        {
+            var exit1 = false;
+            var exit2 = false;
+
+            this.testee.In(States.A)
+                .ExecuteOnExit(() => exit1 = true)
+                .ExecuteOnExit(() => exit2 = true)
+                .On(Events.B).Goto(States.B);
+
+            await this.testee.Initialize(States.A);
+            await this.testee.EnterInitialState();
+
+            await this.testee.Fire(Events.B, null);
+
+            exit1.Should().BeTrue("exit action was not executed.");
+            exit2.Should().BeTrue("exit action was not executed.");
+        }
+
+        [Fact]
+        public async Task ParametrizedExitAction()
+        {
+            const int Parameter = 3;
+
+            var receivedValue = 0;
+
+            this.testee.In(States.A)
+                .ExecuteOnExitParametrized(value => receivedValue = value, Parameter)
+                .On(Events.B).Goto(States.B);
+
+            await this.testee.Initialize(States.A);
+            await this.testee.EnterInitialState();
+
+            await this.testee.Fire(Events.B, null);
+
+            receivedValue.Should().Be(Parameter);
+        }
     }
 }
