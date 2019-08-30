@@ -55,13 +55,14 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             A.CallTo(() => extension.HandledGuardException(this.StateMachineInformation, this.Testee, this.TransitionContext, this.exception)).MustHaveHappened();
         }
 
-        [Fact]
-        public void ReturnsNotFiredTransitionResult()
-        {
-            ITransitionResult<States, Events> result = this.Testee.Fire(this.TransitionContext);
-
-            result.Fired.Should().BeFalse();
-        }
+        // Todo: wtjerry
+        //        [Fact]
+        //        public void ReturnsNotFiredTransitionResult()
+        //        {
+        //            ITransitionResult<States, Events> result = this.Testee.Fire(this.TransitionContext);
+        //
+        //            result.Fired.Should().BeFalse();
+        //        }
 
         [Fact]
         public void NotifiesExceptionOnTransitionContext()

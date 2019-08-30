@@ -119,7 +119,8 @@ namespace Appccelerate.StateMachine
 
             public TransitionContextBuilder WithState(IState<TState, TEvent> state)
             {
-                A.CallTo(() => this.transitionContext.State).Returns(state);
+                // Todo: wtjerry
+//                A.CallTo(() => this.transitionContext.State).Returns(state);
 
                 return this;
             }

@@ -12,6 +12,11 @@
         where TState : IComparable
         where TEvent : IComparable
     {
+        public StateContainer()
+            : this(default(string))
+        {
+        }
+
         public StateContainer(string name)
         {
             this.Name = name;

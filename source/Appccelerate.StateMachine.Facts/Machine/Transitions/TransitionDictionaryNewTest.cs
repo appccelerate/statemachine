@@ -50,34 +50,35 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
                 .WithMessage(TransitionsExceptionMessages.TransitionDoesAlreadyExist(transition, A.Fake<StateNew<States, Events>>()));
         }
 
-        [Fact]
-        public void GetTransitionsReturnsOneAddedTransition()
-        {
-            var testee = new TransitionDictionaryNew<States, Events>(A.Fake<StateNew<States, Events>>());
-
-            var fakeAction = A.Fake<IActionHolder>();
-            var fakeGuard = A.Fake<IGuardHolder>();
-            var fakeSource = A.Fake<StateNew<States, Events>>();
-            var fakeTarget = A.Fake<StateNew<States, Events>>();
-
-            var transition = new TransitionNew<States, Events>();
-            testee.Add(Events.A, transition);
-
-            transition.Actions.Add(fakeAction);
-            transition.Guard = fakeGuard;
-            transition.Source = fakeSource;
-            transition.Target = fakeTarget;
-
-            var transitionInfos = testee.GetTransitions().ToList();
-            transitionInfos.Should().HaveCount(1);
-
-            var transitionInfo = transitionInfos.Single();
-            transitionInfo.EventId.Should().Be(Events.A);
-            transitionInfo.Actions.Should().ContainSingle(x => x == fakeAction);
-            transitionInfo.Guard.Should().BeSameAs(fakeGuard);
-            transitionInfo.Source.Should().BeSameAs(fakeSource);
-            transitionInfo.Target.Should().BeSameAs(fakeTarget);
-        }
+        // Todo: wtjerry
+        //        [Fact]
+        //        public void GetTransitionsReturnsOneAddedTransition()
+        //        {
+        //            var testee = new TransitionDictionaryNew<States, Events>(A.Fake<StateNew<States, Events>>());
+        //
+        //            var fakeAction = A.Fake<IActionHolder>();
+        //            var fakeGuard = A.Fake<IGuardHolder>();
+        //            var fakeSource = A.Fake<StateNew<States, Events>>();
+        //            var fakeTarget = A.Fake<StateNew<States, Events>>();
+        //
+        //            var transition = new TransitionNew<States, Events>();
+        //            testee.Add(Events.A, transition);
+        //
+        //            transition.Actions.Add(fakeAction);
+        //            transition.Guard = fakeGuard;
+        //            transition.Source = fakeSource;
+        //            transition.Target = fakeTarget;
+        //
+        //            var transitionInfos = testee.GetTransitions().ToList();
+        //            transitionInfos.Should().HaveCount(1);
+        //
+        //            var transitionInfo = transitionInfos.Single();
+        //            transitionInfo.EventId.Should().Be(Events.A);
+        //            transitionInfo.Actions.Should().ContainSingle(x => x == fakeAction);
+        //            transitionInfo.Guard.Should().BeSameAs(fakeGuard);
+        //            transitionInfo.Source.Should().BeSameAs(fakeSource);
+        //            transitionInfo.Target.Should().BeSameAs(fakeTarget);
+        //        }
 
         [Fact]
         public void GetTransitionsReturnsAllAddedTransitions()
