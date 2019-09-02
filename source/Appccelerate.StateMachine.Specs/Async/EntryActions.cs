@@ -207,7 +207,7 @@ namespace Appccelerate.StateMachine.Async
 
         [Scenario]
         public void EventArgument(
-            PassiveStateMachine<int, int> machine,
+            AsyncPassiveStateMachine<int, int> machine,
             int passedArgument,
             int asyncPassedArgument)
         {
@@ -217,7 +217,7 @@ namespace Appccelerate.StateMachine.Async
 
             "establish a state machine with an entry action taking an event argument".x(() =>
             {
-                machine = new PassiveStateMachine<int, int>();
+                machine = new AsyncPassiveStateMachine<int, int>();
 
                 machine.In(State)
                     .On(Event).Goto(anotherState);
@@ -231,11 +231,11 @@ namespace Appccelerate.StateMachine.Async
                     });
             });
 
-            "when entering the state".x(() =>
+            "when entering the state".x(async () =>
             {
-                machine.Initialize(State);
-                machine.Start();
-                machine.Fire(Event, argument);
+                await machine.Initialize(State);
+                await machine.Start();
+                await machine.Fire(Event, argument);
             });
 
             "it should pass event argument to synchronousentry action".x(()
