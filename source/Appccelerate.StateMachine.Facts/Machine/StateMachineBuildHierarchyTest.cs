@@ -16,12 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Facts.Machine
 {
     using System;
-
     using FluentAssertions;
-
+    using StateMachine.Machine;
     using Xunit;
 
     /// <summary>
@@ -30,31 +29,22 @@ namespace Appccelerate.StateMachine.Machine
     public class StateMachineBuildHierarchyTest
     {
         /// <summary>
-        /// Object under test.
-        /// </summary>
-        private readonly StateMachine<StateMachine.States, StateMachine.Events> testee;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StateMachineBuildHierarchyTest"/> class.
-        /// </summary>
-        public StateMachineBuildHierarchyTest()
-        {
-            this.testee = new StateMachine<StateMachine.States, StateMachine.Events>();
-        }
-
-        /// <summary>
         /// If the super-state is specified as the initial state of its sub-states then an <see cref="ArgumentException"/> is thrown.
         /// </summary>
         [Fact]
         public void AddHierarchicalStatesInitialStateIsSuperStateItself()
         {
-            Action action = () => this.testee.DefineHierarchyOn(StateMachine.States.B)
-                                  .WithHistoryType(HistoryType.None)
-                                  .WithInitialSubState(StateMachine.States.B)
-                                  .WithSubState(StateMachine.States.B1)
-                                  .WithSubState(StateMachine.States.B2);
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+                .WithConfiguration(sm =>
+                    sm
+                        .DefineHierarchyOn(StateMachine.States.B)
+                        .WithHistoryType(HistoryType.None)
+                        .WithInitialSubState(StateMachine.States.B)
+                        .WithSubState(StateMachine.States.B1)
+                        .WithSubState(StateMachine.States.B2));
 
-            action.Should().Throw<ArgumentException>();
+            Action a = () => stateMachineDefinitionBuilder.Build();
+            a.Should().Throw<ArgumentException>();
         }
     }
 }
