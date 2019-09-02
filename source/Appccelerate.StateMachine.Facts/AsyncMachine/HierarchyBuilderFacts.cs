@@ -16,31 +16,32 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System;
     using FakeItEasy;
     using FluentAssertions;
+    using StateMachine.AsyncMachine;
     using Xunit;
 
     public class HierarchyBuilderFacts
     {
         private const string SuperState = "SuperState";
 
-        private readonly Machine.HierarchyBuilder<string, int> testee;
+        private readonly HierarchyBuilder<string, int> testee;
 
-        private readonly Machine.IStateDictionary<string, int> states;
+        private readonly IStateDictionary<string, int> states;
 
-        private readonly Machine.IState<string, int> superState;
+        private readonly IState<string, int> superState;
 
         public HierarchyBuilderFacts()
         {
-            this.superState = A.Fake<Machine.IState<string, int>>();
+            this.superState = A.Fake<IState<string, int>>();
             A.CallTo(() => this.superState.Id).Returns(SuperState);
-            this.states = A.Fake<Machine.IStateDictionary<string, int>>();
+            this.states = A.Fake<IStateDictionary<string, int>>();
             A.CallTo(() => this.states[SuperState]).Returns(this.superState);
 
-            this.testee = new Machine.HierarchyBuilder<string, int>(this.states, SuperState);
+            this.testee = new HierarchyBuilder<string, int>(this.states, SuperState);
         }
 
         [Theory]
@@ -59,7 +60,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public void SetsInitialSubStateOfSuperState()
         {
             const string SubState = "SubState";
-            var subState = A.Fake<Machine.IState<string, int>>();
+            var subState = A.Fake<IState<string, int>>();
             subState.SuperState = null;
             A.CallTo(() => this.states[SubState]).Returns(subState);
 
@@ -73,7 +74,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public void AddsSubStatesToSuperState()
         {
             const string AnotherSubState = "AnotherSubState";
-            var anotherSubState = A.Fake<Machine.IState<string, int>>();
+            var anotherSubState = A.Fake<IState<string, int>>();
             anotherSubState.SuperState = null;
             A.CallTo(() => this.states[AnotherSubState]).Returns(anotherSubState);
 
@@ -87,13 +88,13 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public void ThrowsExceptionIfSubStateAlreadyHasASuperState()
         {
             const string SubState = "SubState";
-            var subState = A.Fake<Machine.IState<string, int>>();
-            subState.SuperState = A.Fake<Machine.IState<string, int>>();
+            var subState = A.Fake<IState<string, int>>();
+            subState.SuperState = A.Fake<IState<string, int>>();
             A.CallTo(() => this.states[SubState]).Returns(subState);
 
             this.testee.Invoking(t => t.WithInitialSubState(SubState))
                 .Should().Throw<InvalidOperationException>()
-                .WithMessage(Machine.ExceptionMessages.CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet(
+                .WithMessage(ExceptionMessages.CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet(
                     SuperState,
                     subState));
         }

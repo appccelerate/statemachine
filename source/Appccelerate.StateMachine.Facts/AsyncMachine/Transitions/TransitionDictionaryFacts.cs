@@ -16,27 +16,28 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.Transitions
+namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 {
     using System;
-    using Appccelerate.StateMachine.Machine;
     using FakeItEasy;
     using FluentAssertions;
+    using StateMachine.AsyncMachine;
+    using StateMachine.AsyncMachine.Transitions;
     using Xunit;
-    using Events = Appccelerate.StateMachine.Events;
-    using States = Appccelerate.StateMachine.States;
+    using Events = StateMachine.Events;
+    using States = StateMachine.States;
 
     public class TransitionDictionaryFacts
     {
         private readonly IState<States, Events> state;
 
-        private readonly Machine.Transitions.TransitionDictionary<States, Events> testee;
+        private readonly TransitionDictionary<States, Events> testee;
 
         public TransitionDictionaryFacts()
         {
             this.state = A.Fake<IState<States, Events>>();
 
-            this.testee = new Machine.Transitions.TransitionDictionary<States, Events>(this.state);
+            this.testee = new TransitionDictionary<States, Events>(this.state);
         }
 
         [Fact]
