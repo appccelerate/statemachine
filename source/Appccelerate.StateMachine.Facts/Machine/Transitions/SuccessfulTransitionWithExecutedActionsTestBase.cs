@@ -16,52 +16,53 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Extensions;
-    using Appccelerate.StateMachine.Machine.ActionHolders;
+    using Extensions;
     using FluentAssertions;
-    using States;
+    using StateMachine.Machine;
+    using StateMachine.Machine.ActionHolders;
+    using StateMachine.Machine.States;
+    using StateMachine.Machine.Transitions;
     using Xunit;
 
     public abstract class SuccessfulTransitionWithExecutedActionsTestBase : TransitionTestBase
     {
-        // Todo: wtjerry
-        //        [Fact]
-        //        public void ReturnsSuccessfulTransitionResult()
-        //        {
-        //            ITransitionResult<States, Events> result = this.Testee.Fire(this.TransitionContext);
-        //
-        //            result.Should().BeSuccessfulTransitionResultWithNewState(this.Target);
-        //        }
-//
-//        [Fact]
-//        public void ExecutesActions()
-//        {
-//            bool executed = false;
-//
-//            this.Testee.Actions.Add(new ArgumentLessActionHolder(() => executed = true));
-//
-//            this.Testee.Fire(this.TransitionContext);
-//
-//            executed.Should().BeTrue("actions should be executed");
-//        }
-//
-//        [Fact]
-//        public void TellsExtensionsAboutExecutedTransition()
-//        {
-//            var extension = new FakeExtension();
-//            this.ExtensionHost.Extension = extension;
-//
-//            this.Testee.Fire(this.TransitionContext);
-//
-//            extension.Items.Should().Contain(new FakeExtension.Item(
-//                this.StateMachineInformation,
-//                this.Source,
-//                this.Target,
-//                this.TransitionContext));
-//        }
+        [Fact]
+        public void ReturnsSuccessfulTransitionResult()
+        {
+            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+
+            result.Should().BeSuccessfulTransitionResultWithNewState(this.Target);
+        }
+
+        [Fact]
+        public void ExecutesActions()
+        {
+            bool executed = false;
+
+            this.TransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(() => executed = true));
+
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+
+            executed.Should().BeTrue("actions should be executed");
+        }
+
+        [Fact]
+        public void TellsExtensionsAboutExecutedTransition()
+        {
+            var extension = new FakeExtension();
+            this.ExtensionHost.Extension = extension;
+
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+
+            extension.Items.Should().Contain(new FakeExtension.Item(
+                this.StateMachineInformation,
+                this.Source,
+                this.Target,
+                this.TransitionContext));
+        }
 
         public class FakeExtension : ExtensionBase<States, Events>
         {
@@ -123,7 +124,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 public Item(
                     IStateMachineInformation<States, Events> stateMachine,
                     IStateDefinition<States, Events> source,
-                    IStateDefinition<States, Events> target,
+                    IStateDefinition<States, Events> target, 
                     ITransitionContext<States, Events> transitionContext)
                 {
                     this.StateMachine = stateMachine;

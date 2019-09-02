@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             {
                 this.extensionHost.ForEach(extension => extension.SkippedTransition(
                     this.stateMachineInformation,
-                    this,
+                    null,
                     context));
 
                 return TransitionResult<TState>.NotFired;

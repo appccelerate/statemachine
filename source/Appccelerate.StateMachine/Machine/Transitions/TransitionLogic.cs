@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             {
                 this.extensionHost.ForEach(extension => extension.SkippedTransition(
                     this.stateMachineInformation,
-                    null,
+                    transitionDefinition,
                     context));
 
                 return TransitionResult<TState>.NotFired;
@@ -128,9 +128,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         ///    c. The target state is lower in the hierarchy than the source state
         ///    --> move up the hierarchy on the target state side, afterward enter target state.
         /// </remarks>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="source">The source state.</param>
         /// <param name="target">The target state.</param>
         /// <param name="context">The event context.</param>
+        /// <param name="lastActiveStateModifier">The last active state modifier.</param>
         private void Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             IStateDefinition<TState, TEvent> source,

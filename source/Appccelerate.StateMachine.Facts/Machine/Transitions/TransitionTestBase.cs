@@ -16,10 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using System;
     using FakeItEasy;
+    using StateMachine.Machine;
+    using StateMachine.Machine.States;
+    using StateMachine.Machine.Transitions;
 
     public class TransitionTestBase
     {
@@ -31,24 +34,34 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         {
         }
 
-        protected Transition<States, Events> Testee { get; }
+        protected TransitionNew<States, Events> TransitionDefinition { get; }
 
-        protected TestableExtensionHost ExtensionHost { get; private set; }
+        protected TransitionLogic<States, Events> Testee { get; }
 
-        protected IStateMachineInformation<States, Events> StateMachineInformation { get; private set; }
+        protected IStateLogic<States, Events> StateLogic { get; }
 
-        protected IState<States, Events> Source { get; set; }
+        protected ILastActiveStateModifier<States, Events> LastActiveStateModifier { get; }
 
-        protected IState<States, Events> Target { get; set; }
+        protected TestableExtensionHost ExtensionHost { get; }
+
+        protected IStateMachineInformation<States, Events> StateMachineInformation { get; }
+
+        protected IStateDefinition<States, Events> Source { get; set; }
+
+        protected IStateDefinition<States, Events> Target { get; set; }
 
         protected ITransitionContext<States, Events> TransitionContext { get; set; }
 
         public TransitionTestBase()
         {
+            this.StateLogic = A.Fake<IStateLogic<States, Events>>();
+            this.LastActiveStateModifier = A.Fake<ILastActiveStateModifier<States, Events>>();
             this.StateMachineInformation = A.Fake<IStateMachineInformation<States, Events>>();
             this.ExtensionHost = new TestableExtensionHost();
+            this.TransitionDefinition = new TransitionNew<States, Events>();
 
-            this.Testee = new Transition<States, Events>(this.StateMachineInformation, this.ExtensionHost);
+            this.Testee = new TransitionLogic<States, Events>(this.ExtensionHost, this.StateMachineInformation);
+            this.Testee.SetStateLogic(this.StateLogic);
         }
 
         public class TestableExtensionHost : IExtensionHost<States, Events>

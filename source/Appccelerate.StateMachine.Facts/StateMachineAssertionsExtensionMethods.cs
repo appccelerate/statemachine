@@ -16,40 +16,39 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Facts
 {
     using System;
-    using Appccelerate.StateMachine.Machine;
     using FluentAssertions.Execution;
     using FluentAssertions.Primitives;
+    using StateMachine.Machine;
+    using StateMachine.Machine.States;
 
     public static class StateMachineAssertionsExtensionMethods
     {
-        // Todo: wtjerry
-        //        public static void BeSuccessfulTransitionResultWithNewState<TStates, TEvents>(this ObjectAssertions assertions, IState<TStates, TEvents> expectedNewState)
-        //            where TStates : IComparable
-        //            where TEvents : IComparable
-        //        {
-        //            ITransitionResult<TStates, TEvents> transitionResult = (ITransitionResult<TStates, TEvents>)assertions.Subject;
-        //
-        //            Execute.Assertion
-        //                   .ForCondition(transitionResult.Fired)
-        //                   .FailWith("expected successful (fired) transition result.");
-        //
-        //            Execute.Assertion
-        //                   .ForCondition(transitionResult.NewState.Id.CompareTo(expectedNewState.Id) == 0)
-        //                   .FailWith("expected transition result with new state = `" + expectedNewState.Id + "`, but found `" + transitionResult.NewState.Id + "`.");
-        //        }
-        //
-        //        public static void BeNotFiredTransitionResult<TStates, TEvents>(this ObjectAssertions assertions)
-        //            where TStates : IComparable
-        //            where TEvents : IComparable
-        //        {
-        //            ITransitionResult<TStates, TEvents> transitionResult = (ITransitionResult<TStates, TEvents>)assertions.Subject;
-        //
-        //            Execute.Assertion
-        //                   .ForCondition(!transitionResult.Fired)
-        //                   .FailWith("expected not fired transition result.");
-        //        }
+        public static void BeSuccessfulTransitionResultWithNewState<TStates, TEvents>(this ObjectAssertions assertions, IStateDefinition<TStates, TEvents> expectedNewState)
+            where TStates : IComparable
+            where TEvents : IComparable
+        {
+            var transitionResult = (ITransitionResult<TStates>)assertions.Subject;
+
+            Execute.Assertion
+                   .ForCondition(transitionResult.Fired)
+                   .FailWith("expected successful (fired) transition result.");
+
+            Execute.Assertion
+                   .ForCondition(transitionResult.NewState.CompareTo(expectedNewState.Id) == 0)
+                   .FailWith("expected transition result with new state = `" + expectedNewState.Id + "`, but found `" + transitionResult.NewState + "`.");
+        }
+
+        public static void BeNotFiredTransitionResult<TStates>(this ObjectAssertions assertions)
+            where TStates : IComparable
+        {
+            var transitionResult = (ITransitionResult<TStates>)assertions.Subject;
+
+            Execute.Assertion
+                   .ForCondition(!transitionResult.Fired)
+                   .FailWith("expected not fired transition result.");
+        }
     }
 }

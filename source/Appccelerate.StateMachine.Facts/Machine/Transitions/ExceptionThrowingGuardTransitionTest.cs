@@ -16,11 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using System;
     using FakeItEasy;
     using FluentAssertions;
+    using StateMachine.Machine;
     using Xunit;
 
     public class ExceptionThrowingGuardTransitionTest : TransitionTestBase
@@ -29,46 +30,44 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
         public ExceptionThrowingGuardTransitionTest()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
-            this.Target = Builder<States, Events>.CreateState().Build();
-            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
+            this.Target = Builder<States, Events>.CreateStateDefinition().Build();
+            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithStateDefinition(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Target;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Target;
 
             this.exception = new Exception();
 
             var guard = Builder<States, Events>.CreateGuardHolder().Throwing(this.exception).Build();
-            this.Testee.Guard = guard;
+            this.TransitionDefinition.Guard = guard;
         }
 
-// Todo: wtjerry
-//        [Fact]
-//        public void CallsExtensionToHandleException()
-//        {
-//            var extension = A.Fake<IExtension<States, Events>>();
-//
-//            this.ExtensionHost.Extension = extension;
-//
-//            this.Testee.Fire(this.TransitionContext);
-//
-//            A.CallTo(() => extension.HandlingGuardException(this.StateMachineInformation, this.Testee, this.TransitionContext, ref this.exception)).MustHaveHappened();
-//            A.CallTo(() => extension.HandledGuardException(this.StateMachineInformation, this.Testee, this.TransitionContext, this.exception)).MustHaveHappened();
-//        }
-//
-//        
-        //        [Fact]
-        //        public void ReturnsNotFiredTransitionResult()
-        //        {
-        //            ITransitionResult<States, Events> result = this.Testee.Fire(this.TransitionContext);
-        //
-        //            result.Fired.Should().BeFalse();
-        //        }
+        [Fact]
+        public void CallsExtensionToHandleException()
+        {
+            var extension = A.Fake<IExtension<States, Events>>();
+
+            this.ExtensionHost.Extension = extension;
+
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+
+            A.CallTo(() => extension.HandlingGuardException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, ref this.exception)).MustHaveHappened();
+            A.CallTo(() => extension.HandledGuardException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, this.exception)).MustHaveHappened();
+        }
+
+        [Fact]
+        public void ReturnsNotFiredTransitionResult()
+        {
+            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+
+            result.Fired.Should().BeFalse();
+        }
 
         [Fact]
         public void NotifiesExceptionOnTransitionContext()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             A.CallTo(() => this.TransitionContext.OnExceptionThrown(this.exception)).MustHaveHappened();
         }

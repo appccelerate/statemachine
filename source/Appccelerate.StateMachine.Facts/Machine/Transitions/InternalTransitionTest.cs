@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using FakeItEasy;
     using Xunit;
@@ -25,28 +25,28 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     {
         public InternalTransitionTest()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
             this.Target = this.Source;
-            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
+            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithStateDefinition(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = null; // target == null indicates an internal transition
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = null; // target == null indicates an internal transition
         }
 
         [Fact]
         public void DoesNotExitState()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustNotHaveHappened();
+            A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustNotHaveHappened();
         }
 
         [Fact]
         public void DoesNotEnterState()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Source.Entry(this.TransitionContext)).MustNotHaveHappened();
+            A.CallTo(() => this.StateLogic.Entry(this.Source, this.TransitionContext)).MustNotHaveHappened();
         }
     }
 }

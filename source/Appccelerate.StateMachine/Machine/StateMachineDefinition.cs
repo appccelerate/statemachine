@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine.Machine
             return new ActiveStateMachine<TState, TEvent>(stateMachine, stateContainer);
         }
 
-        // todo: wtjerry
+        // todo wtjerry: should this be removed? It is only used by tests
         public StateMachine<TState, TEvent> CreateStateMachine(StateContainer<TState, TEvent> stateContainer)
         {
             var factory = new StandardFactory<TState, TEvent>();

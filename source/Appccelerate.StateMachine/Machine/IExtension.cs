@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
+    using Infrastructure;
     using States;
     using Transitions;
 
@@ -129,7 +129,7 @@ namespace Appccelerate.StateMachine.Machine
         /// Called before an entry action exception is handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
-        /// <param name="state">The state.</param>
+        /// <param name="stateDefinition">The state definition.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
         void HandlingEntryActionException(
@@ -142,7 +142,7 @@ namespace Appccelerate.StateMachine.Machine
         /// Called after an entry action exception was handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
-        /// <param name="state">The state.</param>
+        /// <param name="stateDefinition">The state definition.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception.</param>
         void HandledEntryActionException(
@@ -155,7 +155,7 @@ namespace Appccelerate.StateMachine.Machine
         /// Called before an exit action exception is handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
-        /// <param name="state">The state.</param>
+        /// <param name="stateDefinition">The state definition.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
         void HandlingExitActionException(
@@ -168,7 +168,7 @@ namespace Appccelerate.StateMachine.Machine
         /// Called after an exit action exception was handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
-        /// <param name="state">The state.</param>
+        /// <param name="stateDefinition">The state definition.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception.</param>
         void HandledExitActionException(
@@ -181,12 +181,12 @@ namespace Appccelerate.StateMachine.Machine
         /// Called before a guard exception is handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
-        /// <param name="transition">The transition.</param>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="transitionContext">The transition context.</param>
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
         void HandlingGuardException(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            ITransitionDefinition<TState, TEvent> transition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             ref Exception exception);
 
@@ -194,12 +194,12 @@ namespace Appccelerate.StateMachine.Machine
         /// Called after a guard exception was handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
-        /// <param name="transition">The transition.</param>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="transitionContext">The transition context.</param>
         /// <param name="exception">The exception.</param>
         void HandledGuardException(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            ITransitionDefinition<TState, TEvent> transition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             Exception exception);
 
@@ -207,12 +207,12 @@ namespace Appccelerate.StateMachine.Machine
         /// Called before a transition exception is handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
-        /// <param name="transition">The transition.</param>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
         void HandlingTransitionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            ITransitionDefinition<TState, TEvent> transition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
@@ -220,12 +220,12 @@ namespace Appccelerate.StateMachine.Machine
         /// Called after a transition exception is handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
-        /// <param name="transition">The transition.</param>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="transitionContext">The transition context.</param>
         /// <param name="exception">The exception.</param>
         void HandledTransitionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            ITransitionDefinition<TState, TEvent> transition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             Exception exception);
 
@@ -233,33 +233,33 @@ namespace Appccelerate.StateMachine.Machine
         /// Called when a guard of a transition returns false and therefore the transition is not executed.
         /// </summary>
         /// <param name="stateMachineInformation">The state machine.</param>
-        /// <param name="transition">The transition.</param>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="context">The transition context.</param>
         void SkippedTransition(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            ITransition<TState, TEvent> transition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context);
 
         /// <summary>
         /// Called when a transition is going to be executed. After the guard of the transition evaluated to true.
         /// </summary>
         /// <param name="stateMachineInformation">The state machine.</param>
-        /// <param name="transition">The transition.</param>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="context">The transition context.</param>
         void ExecutingTransition(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            ITransitionDefinition<TState, TEvent> transition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context);
 
         /// <summary>
         /// Called when a transition was executed.
         /// </summary>
         /// <param name="stateMachineInformation">The state machine.</param>
-        /// <param name="transition">The transition.</param>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="context">The transition context.</param>
         void ExecutedTransition(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            ITransitionDefinition<TState, TEvent> transition,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context);
 
         void Loaded(
