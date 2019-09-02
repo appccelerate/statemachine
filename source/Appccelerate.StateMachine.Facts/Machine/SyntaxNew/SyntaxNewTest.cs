@@ -16,13 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Syntax
+namespace Appccelerate.StateMachine.Facts.Machine.SyntaxNew
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
-
-    using Appccelerate.StateMachine.SyntaxNew;
-
+    using StateMachine.Machine;
     using Xunit;
 
     /// <summary>
@@ -37,60 +34,60 @@ namespace Appccelerate.StateMachine.Machine.Syntax
         [Fact]
         public void Syntax()
         {
-            IEntryActionSyntax<int, int> s = new StateBuilderNew<int, int>(0, null);
-
-            // ReSharper disable once UnusedVariable
-            Action a = () =>
-                s
-                    .ExecuteOnEntry(() => { })
-                    .ExecuteOnEntry((int i) => { })
-                    .ExecuteOnEntryParametrized(p => { }, 4)
-                    .ExecuteOnEntryParametrized(p => { }, "test")
-                    .ExecuteOnExit(() => { })
-                    .ExecuteOnExit((string st) => { })
-                    .ExecuteOnExitParametrized(p => { }, 4)
-                    .ExecuteOnExitParametrized(p => { }, "test")
-                    .On(3)
-                        .If(() => true).Goto(4).Execute(() => { }).Execute((int i) => { })
-                        .If(() => true).Goto(4)
-                        .If(() => true).Execute(() => { }).Execute((int i) => { }).Execute(() => { })
-                        .If<string>(this.AGuard).Execute(() => { }).Execute((int i) => { })
-                        .Otherwise().Goto(4)
-                    .On(5)
-                        .If(() => true).Execute(() => { })
-                        .Otherwise()
-                    .On(2)
-                        .If<int>(i => i != 0).Goto(7)
-                        .Otherwise().Goto(7)
-                    .On(1)
-                        .If(() => true).Goto(7).Execute(() => { }).Execute<string>(argument => { })
-                    .On(1)
-                        .If(() => true).Execute(() => { })
-                        .If(() => true).Execute((string argument) => { })
-                        .Otherwise().Execute(() => { }).Execute((int i) => { })
-                    .On(4)
-                        .Goto(5).Execute(() => { }).Execute<string>(argument => { })
-                    .On(5)
-                        .Execute(() => { }).Execute((int i) => { })
-                    .On(7)
-                        .Goto(4)
-                    .On(8)
-                    .On(9);
+            new StateMachineDefinitionBuilder<int, int>()
+                .WithConfiguration(sm =>
+                    sm
+                        .In(0)
+                            .ExecuteOnEntry(() => { })
+                            .ExecuteOnEntry((int i) => { })
+                            .ExecuteOnEntryParametrized(p => { }, 4)
+                            .ExecuteOnEntryParametrized(p => { }, "test")
+                            .ExecuteOnExit(() => { })
+                            .ExecuteOnExit((string st) => { })
+                            .ExecuteOnExitParametrized(p => { }, 4)
+                            .ExecuteOnExitParametrized(p => { }, "test")
+                            .On(3)
+                                .If(() => true).Goto(4).Execute(() => { }).Execute((int i) => { })
+                                .If(() => true).Goto(4)
+                                .If(() => true).Execute(() => { }).Execute((int i) => { }).Execute(() => { })
+                                .If<string>(AGuard).Execute(() => { }).Execute((int i) => { })
+                                .Otherwise().Goto(4)
+                            .On(5)
+                                .If(() => true).Execute(() => { })
+                                .Otherwise()
+                            .On(2)
+                                .If<int>(i => i != 0).Goto(7)
+                                .Otherwise().Goto(7)
+                            .On(1)
+                                .If(() => true).Goto(7).Execute(() => { }).Execute<string>(argument => { })
+                            .On(1)
+                                .If(() => true).Execute(() => { })
+                                .If(() => true).Execute((string argument) => { })
+                                .Otherwise().Execute(() => { }).Execute((int i) => { })
+                            .On(4)
+                                .Goto(5).Execute(() => { }).Execute<string>(argument => { })
+                            .On(5)
+                                .Execute(() => { }).Execute((int i) => { })
+                            .On(7)
+                                .Goto(4)
+                            .On(8)
+                            .On(9));
         }
 
         [Fact]
         public void DefineHierarchySyntax()
         {
-            var stateMachine = new StateMachine<int, int>();
-
-            stateMachine.DefineHierarchyOn(1)
-                .WithHistoryType(HistoryType.Deep)
-                .WithInitialSubState(2)
-                .WithSubState(3)
-                .WithSubState(4);
+            new StateMachineDefinitionBuilder<int, int>()
+                .WithConfiguration(sm =>
+                    sm
+                        .DefineHierarchyOn(1)
+                            .WithHistoryType(HistoryType.Deep)
+                            .WithInitialSubState(2)
+                            .WithSubState(3)
+                            .WithSubState(4));
         }
 
-        private bool AGuard(string argument)
+        private static bool AGuard(string argument)
         {
             return true;
         }
