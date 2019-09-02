@@ -19,10 +19,9 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    using System.Diagnostics.Tracing;
-    using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Syntax;
+    using Events;
     using States;
+    using Syntax;
 
     /// <summary>
     /// Base implementation of a state machine.
@@ -49,8 +48,9 @@ namespace Appccelerate.StateMachine.Machine
         /// <summary>
         /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
         /// </summary>
-        /// <param name="name">The name of this state machine used in log messages.</param>
         /// <param name="factory">The factory used to create internal instances.</param>
+        /// <param name="stateLogic">The state logic used to handle state changes.</param>
+        /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
         public StateMachine(IFactory<TState, TEvent> factory, IStateLogic<TState, TEvent> stateLogic, IStateDictionaryNew<TState, TEvent> stateDefinitions)
         {
             this.factory = factory;
@@ -88,6 +88,7 @@ namespace Appccelerate.StateMachine.Machine
                 extension.SwitchedState(stateMachineInformation, oldState, newState));
         }
 
+        // todo: wtjerry
         /// <summary>
         /// Define the behavior of a state.
         /// </summary>
@@ -98,6 +99,7 @@ namespace Appccelerate.StateMachine.Machine
             return null;
         }
 
+        // todo: wtjerry
         /// <summary>
         /// Defines the hierarchy on.
         /// </summary>
@@ -112,6 +114,8 @@ namespace Appccelerate.StateMachine.Machine
         /// Initializes the state machine by setting the specified initial state.
         /// </summary>
         /// <param name="initialState">The initial state of the state machine.</param>
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
         public void Initialize(TState initialState, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
             stateContainer.Extensions.ForEach(extension => extension.InitializingStateMachine(stateMachineInformation, ref initialState));
@@ -124,6 +128,8 @@ namespace Appccelerate.StateMachine.Machine
         /// <summary>
         /// Enters the initial state that was previously set with <see cref="Initialize(TState)"/>.
         /// </summary>
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
         public void EnterInitialState(StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
             CheckThatStateMachineIsInitialized(stateContainer);
@@ -140,6 +146,8 @@ namespace Appccelerate.StateMachine.Machine
         /// Fires the specified event.
         /// </summary>
         /// <param name="eventId">The event.</param>
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
         public void Fire(TEvent eventId, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
             this.Fire(eventId, Missing.Value, stateContainer, stateMachineInformation);
@@ -150,6 +158,8 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
         public void Fire(TEvent eventId, object eventArgument, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
             CheckThatStateMachineIsInitialized(stateContainer);
@@ -297,6 +307,7 @@ namespace Appccelerate.StateMachine.Machine
         /// Fires the <see cref="TransitionCompleted"/> event.
         /// </summary>
         /// <param name="transitionContext">The transition event context.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
         private void OnTransitionCompleted(ITransitionContext<TState, TEvent> transitionContext, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
             this.RaiseEvent(
@@ -312,6 +323,7 @@ namespace Appccelerate.StateMachine.Machine
         /// Initializes the state machine by setting the specified initial state.
         /// </summary>
         /// <param name="initialState">The initial state.</param>
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
         private static void Initialize(TState initialState, StateContainer<TState, TEvent> stateContainer)
         {
             if (stateContainer.InitialStateId.IsInitialized)
@@ -364,14 +376,15 @@ namespace Appccelerate.StateMachine.Machine
                 throw new InvalidOperationException(ExceptionMessages.StateMachineNotInitialized);
             }
         }
-//
-//        private void CheckThatStateMachineIsNotAlreadyInitialized()
-//        {
-//            if (this.stateContainer.CurrentState != null || this.stateContainer.InitialStateId.IsInitialized)
-//            {
-//                throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
-//            }
-//        }
+
+        // Todo: wtjerry
+        //        private void CheckThatStateMachineIsNotAlreadyInitialized()
+        //        {
+        //            if (this.stateContainer.CurrentState != null || this.stateContainer.InitialStateId.IsInitialized)
+        //            {
+        //                throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
+        //            }
+        //        }
 
         private static void CheckThatStateMachineHasEnteredInitialState(StateContainer<TState, TEvent> stateContainer)
         {
