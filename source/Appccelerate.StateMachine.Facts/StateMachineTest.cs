@@ -28,21 +28,30 @@ namespace Appccelerate.StateMachine.Facts
     using Xunit;
 
     /// <summary>
-    /// Tests the <see cref="PassiveStateMachine{TState,TEvent}"/> class.
+    /// Tests the <see cref="PassiveStateMachine{TState,TEvent}"/> and <see cref="ActiveStateMachine{TState,TEvent}"/> class.
     /// </summary>
-    public class PassiveStateMachineTest
+    public class StateMachineTest
     {
-        [Fact]
-        public void InitializeWhenNotStartedThenNoStateIsEntered()
+        public static IEnumerable<object[]> StateMachineInstantiationProvider =>
+            new List<object[]>
+            {
+                new object[] { "PassiveStateMachine", new Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>>(smd => smd.CreatePassiveStateMachine()) },
+                new object[] { "ActiveStateMachine", new Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>>(smd => smd.CreateActiveStateMachine()) }
+            };
+
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void InitializeWhenNotStartedThenNoStateIsEntered(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             var enteredState = false;
 
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
                     x.In(States.A)
                         .ExecuteOnEntry(() => enteredState = true))
-                .Build()
-                .CreatePassiveStateMachine();
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
 
             testee.Initialize(States.A);
 
@@ -50,17 +59,19 @@ namespace Appccelerate.StateMachine.Facts
                 .Should().BeFalse();
         }
 
-        [Fact]
-        public void InitializeWhenStartedThenInitialStateIsEntered()
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void InitializeWhenStartedThenInitialStateIsEntered(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             var enteredStateSignal = new AutoResetEvent(false);
 
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
                     x.In(States.A)
                         .ExecuteOnEntry(() => enteredStateSignal.Set()))
-                .Build()
-                .CreatePassiveStateMachine();
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
 
             testee.Initialize(States.A);
             testee.Start();
@@ -69,12 +80,14 @@ namespace Appccelerate.StateMachine.Facts
                 .Should().BeTrue();
         }
 
-        [Fact]
-        public void InitializeWhenInitializedTwiceThenInvalidOperationException()
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void InitializeWhenInitializedTwiceThenInvalidOperationException(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
-                .Build()
-                .CreatePassiveStateMachine();
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
 
             testee.Initialize(States.A);
             Action action = () => testee.Initialize(States.A);
@@ -84,12 +97,14 @@ namespace Appccelerate.StateMachine.Facts
                 .WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
         }
 
-        [Fact]
-        public void StartingAnUninitializedStateMachineThenInvalidOperationException()
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void StartingAnUninitializedStateMachineThenInvalidOperationException(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
-                .Build()
-                .CreatePassiveStateMachine();
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
 
             Action action = () => testee.Start();
 
@@ -100,12 +115,16 @@ namespace Appccelerate.StateMachine.Facts
         /// <summary>
         /// The <see cref="IStateMachine{TState,TEvent}.IsRunning"/> reflects the state of the state machine.
         /// </summary>
-        [Fact]
-        public void StartStop()
+        /// <param name="dummyName">Unused parameter. Just here to give each Theory test case a name.</param>
+        /// <param name="createStateMachine">Function to create a IStateMachine from a StateMachineDefinition.</param>
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void StartStop(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
-                .Build()
-                .CreatePassiveStateMachine();
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
 
             testee.Initialize(States.A);
 
@@ -123,15 +142,18 @@ namespace Appccelerate.StateMachine.Facts
         /// <summary>
         /// An event can be fired onto the state machine and all notifications are signaled.
         /// </summary>
-        [Fact]
-        public void FireEvent()
+        /// <param name="dummyName">Unused parameter. Just here to give each Theory test case a name.</param>
+        /// <param name="createStateMachine">Function to create a IStateMachine from a StateMachineDefinition.</param>
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void FireEvent(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             var exceptions = new List<EventArgs>();
             var transitionBeginMessages = new List<TransitionEventArgs<States, Events>>();
             var transitionCompletedMessages = new List<TransitionCompletedEventArgs<States, Events>>();
             var transitionDeclinedMessages = new List<TransitionEventArgs<States, Events>>();
 
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
                     x.DefineHierarchyOn(States.B)
                         .WithHistoryType(HistoryType.None)
@@ -160,8 +182,9 @@ namespace Appccelerate.StateMachine.Facts
                 .WithConfiguration(x =>
                     x.In(States.A)
                         .On(Events.B).Goto(States.B))
-                .Build()
-                .CreatePassiveStateMachine();
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
 
             testee.TransitionExceptionThrown += (sender, e) => exceptions.Add(e);
             testee.TransitionBegin += (sender, e) => transitionBeginMessages.Add(e);
@@ -199,16 +222,19 @@ namespace Appccelerate.StateMachine.Facts
         /// <summary>
         /// With FirePriority, an event can be added to the front of the queued events.
         /// </summary>
-        [Fact]
-        public void PriorityFire()
+        /// <param name="dummyName">Unused parameter. Just here to give each Theory test case a name.</param>
+        /// <param name="createStateMachine">Function to create a IStateMachine from a StateMachineDefinition.</param>
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void PriorityFire(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             const int Transitions = 3;
             var exceptions = new List<EventArgs>();
             var transitionCompletedMessages = new List<TransitionCompletedEventArgs<States, Events>>();
             var transitionDeclinedMessages = new List<TransitionEventArgs<States, Events>>();
 
-            PassiveStateMachine<States, Events> testee = null;
-            testee = new StateMachineDefinitionBuilder<States, Events>()
+            IStateMachine<States, Events> testee = null;
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
                     x.In(States.A)
                         .On(Events.B).Goto(States.B).Execute(() =>
@@ -222,8 +248,9 @@ namespace Appccelerate.StateMachine.Facts
                 .WithConfiguration(x =>
                     x.In(States.C)
                         .On(Events.D).Goto(States.D))
-                .Build()
-                .CreatePassiveStateMachine();
+                .Build();
+
+            testee = createStateMachine(stateMachineDefinition);
 
             void FireD() => testee.Fire(Events.D);
             void FirePriorityC() => testee.FirePriority(Events.C);
@@ -252,22 +279,26 @@ namespace Appccelerate.StateMachine.Facts
         /// When the state machine is stopped then no events are processed.
         /// All events queued are processed when state machine is started.
         /// </summary>
-        [Fact]
-        public void StopAndRestart()
+        /// <param name="dummyName">Unused parameter. Just here to give each Theory test case a name.</param>
+        /// <param name="createStateMachine">Function to create a IStateMachine from a StateMachineDefinition.</param>
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void StopAndRestart(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             const int Transitions = 2;
             var transitionBeginMessages = new List<TransitionEventArgs<States, Events>>();
             var transitionCompletedMessages = new List<TransitionCompletedEventArgs<States, Events>>();
 
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
                     x.In(States.A)
                         .On(Events.B).Goto(States.B))
                 .WithConfiguration(x =>
                     x.In(States.B)
                         .On(Events.C).Goto(States.C))
-                .Build()
-                .CreatePassiveStateMachine();
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
 
             testee.TransitionBegin += (sender, e) => transitionBeginMessages.Add(e);
             testee.TransitionCompleted += (sender, e) => transitionCompletedMessages.Add(e);
@@ -298,12 +329,16 @@ namespace Appccelerate.StateMachine.Facts
         /// <summary>
         /// The state machine can be started twice with no effect.
         /// </summary>
-        [Fact]
-        public void StartTwice()
+        /// <param name="dummyName">Unused parameter. Just here to give each Theory test case a name.</param>
+        /// <param name="createStateMachine">Function to create a IStateMachine from a StateMachineDefinition.</param>
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void StartTwice(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
-                .Build()
-                .CreatePassiveStateMachine();
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
 
             testee.Initialize(States.A);
 
@@ -319,7 +354,7 @@ namespace Appccelerate.StateMachine.Facts
         /// <param name="testee">The state machine to test.</param>
         /// <param name="numberOfTransitionCompletedMessages">The number of transition completed messages.</param>
         /// <returns>Event that is signaled when <paramref name="numberOfTransitionCompletedMessages"/> transition completed messages were received.</returns>
-        private static AutoResetEvent SetUpWaitForAllTransitions(PassiveStateMachine<States, Events> testee, int numberOfTransitionCompletedMessages)
+        private static AutoResetEvent SetUpWaitForAllTransitions(IStateMachine<States, Events> testee, int numberOfTransitionCompletedMessages)
         {
             var numberOfTransitionCompletedMessagesReceived = 0;
             var allTransitionsCompleted = new AutoResetEvent(false);
