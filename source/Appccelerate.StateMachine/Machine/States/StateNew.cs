@@ -67,11 +67,6 @@ namespace Appccelerate.StateMachine.Machine.States
         }
 
         /// <summary>
-        /// Gets or sets the last active state of this state.
-        /// </summary>
-        /// <value>The last state of the active.</value>
-
-        /// <summary>
         /// Gets the unique id of this state.
         /// </summary>
         /// <value>The id of this state.</value>
@@ -95,11 +90,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <value>The initial sub state of this state.</value>
         public StateNew<TState, TEvent> InitialStateModifiable
         {
-            get
-            {
-                return this.initialState;
-            }
-
+            get => this.initialState;
             set
             {
                 this.CheckInitialStateIsNotThisInstance(value);
@@ -118,11 +109,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <value>The super-state of this super.</value>
         public StateNew<TState, TEvent> SuperStateModifiable
         {
-            get
-            {
-                return this.superState;
-            }
-
+            get => this.superState;
             set
             {
                 this.CheckSuperStateIsNotThisInstance(value);
@@ -140,11 +127,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <value>The level.</value>
         public int Level
         {
-            get
-            {
-                return this.level;
-            }
-
+            get => this.level;
             set
             {
                 this.level = value;
