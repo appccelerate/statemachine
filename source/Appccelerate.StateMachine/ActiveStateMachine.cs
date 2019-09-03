@@ -21,10 +21,10 @@ namespace Appccelerate.StateMachine
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Persistence;
-    using Appccelerate.StateMachine.Syntax;
+    using Machine;
+    using Machine.Events;
+    using Persistence;
+    using Syntax;
 
     /// <summary>
     /// An active state machine.
@@ -61,7 +61,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="name">The name of the state machine. Used in log messages.</param>
         public ActiveStateMachine(string name)
-            : this(name, (IFactory<TState, TEvent>)null)
+            : this(name, null)
         {
         }
 
@@ -75,8 +75,6 @@ namespace Appccelerate.StateMachine
             this.queue = new LinkedList<EventInformation<TEvent>>();
         }
 
-
-
         public ActiveStateMachine(StateMachine<TState, TEvent> stateMachine, StateContainer<TState, TEvent> stateContainer)
         {
             this.stateMachine = stateMachine;
@@ -85,16 +83,13 @@ namespace Appccelerate.StateMachine
             this.queue = new LinkedList<EventInformation<TEvent>>();
         }
 
-
-
-        
         /// <summary>
         /// Occurs when no transition could be executed.
         /// </summary>
         public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionDeclined
         {
-            add { this.stateMachine.TransitionDeclined += value; }
-            remove { this.stateMachine.TransitionDeclined -= value; }
+            add => this.stateMachine.TransitionDeclined += value;
+            remove => this.stateMachine.TransitionDeclined -= value;
         }
 
         /// <summary>
@@ -102,8 +97,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionExceptionEventArgs<TState, TEvent>> TransitionExceptionThrown
         {
-            add { this.stateMachine.TransitionExceptionThrown += value; }
-            remove { this.stateMachine.TransitionExceptionThrown -= value; }
+            add => this.stateMachine.TransitionExceptionThrown += value;
+            remove => this.stateMachine.TransitionExceptionThrown -= value;
         }
 
         /// <summary>
@@ -111,8 +106,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionBegin
         {
-            add { this.stateMachine.TransitionBegin += value; }
-            remove { this.stateMachine.TransitionBegin -= value; }
+            add => this.stateMachine.TransitionBegin += value;
+            remove => this.stateMachine.TransitionBegin -= value;
         }
 
         /// <summary>
@@ -120,18 +115,15 @@ namespace Appccelerate.StateMachine
         /// </summary>
         public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>> TransitionCompleted
         {
-            add { this.stateMachine.TransitionCompleted += value; }
-            remove { this.stateMachine.TransitionCompleted -= value; }
+            add => this.stateMachine.TransitionCompleted += value;
+            remove => this.stateMachine.TransitionCompleted -= value;
         }
 
         /// <summary>
         /// Gets a value indicating whether this instance is running. The state machine is running if if was started and not yet stopped.
         /// </summary>
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
-        public bool IsRunning
-        {
-            get { return this.worker != null && !this.worker.IsCompleted; }
-        }
+        public bool IsRunning => this.worker != null && !this.worker.IsCompleted;
 
         /// <summary>
         /// Define the behavior of a state.
@@ -230,7 +222,8 @@ namespace Appccelerate.StateMachine
         {
             Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
 
-//            this.stateMachine.Save(stateMachineSaver);
+            // todo wtjerry: fix once save works again
+            //            this.stateMachine.Save(stateMachineSaver);
         }
 
         /// <summary>
@@ -244,7 +237,8 @@ namespace Appccelerate.StateMachine
 
             this.CheckThatNotAlreadyInitialized();
 
-//            this.initialized = this.stateMachine.Load(stateMachineLoader);
+            // todo wtjerry: fix once load works again
+            //            this.initialized = this.stateMachine.Load(stateMachineLoader);
         }
 
         /// <summary>
@@ -328,7 +322,8 @@ namespace Appccelerate.StateMachine
         /// <param name="reportGenerator">The report generator.</param>
         public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
         {
-//            this.stateMachine.Report(reportGenerator);
+            // todo wtjerry: fix once report works again
+            //            this.stateMachine.Report(reportGenerator);
         }
 
         /// <summary>

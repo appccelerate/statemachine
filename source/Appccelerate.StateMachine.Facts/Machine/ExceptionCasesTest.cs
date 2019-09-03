@@ -361,7 +361,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithMessage(ExceptionMessages.TransitionWithoutGuardHasToBeLast);
         }
 
-        // todo: wtjerry
+        // todo wtjerry: fix once Load works again
 //        [Fact]
 //        public void ThrowsExceptionOnLoading_WhenAlreadyInitialized()
 //        {

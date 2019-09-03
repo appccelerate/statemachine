@@ -23,7 +23,7 @@ namespace Appccelerate.StateMachine.Reports
 
     using Xunit;
 
-    // Todo: wtjerry
+    // todo wtjerry: fix once Report works again
     //    public class StateMachineReportGeneratorTest
     //    {
     //        private readonly StateMachine<States, Events> machine;

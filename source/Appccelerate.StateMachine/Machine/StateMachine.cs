@@ -88,7 +88,7 @@ namespace Appccelerate.StateMachine.Machine
                 extension.SwitchedState(stateMachineInformation, oldState, newState));
         }
 
-        // todo: wtjerry
+        // todo wtjerry: remove 'In' once all tests are move to StateMachineDefinitionBuilder
         /// <summary>
         /// Define the behavior of a state.
         /// </summary>
@@ -99,7 +99,7 @@ namespace Appccelerate.StateMachine.Machine
             return null;
         }
 
-        // todo: wtjerry
+        // todo wtjerry: remove 'DefineHierarchyOn' once all tests are move to StateMachineDefinitionBuilder
         /// <summary>
         /// Defines the hierarchy on.
         /// </summary>
@@ -200,7 +200,7 @@ namespace Appccelerate.StateMachine.Machine
             this.RaiseEvent(this.TransitionBegin, new TransitionEventArgs<TState, TEvent>(transitionContext), transitionContext, true);
         }
         
-        // Todo: wtjerry
+        // todo wtjerry: fix save, load and report
         //        /// <summary>
         //        /// Creates a report with the specified generator.
         //        /// </summary>
@@ -377,7 +377,7 @@ namespace Appccelerate.StateMachine.Machine
             }
         }
 
-        // Todo: wtjerry
+        // todo wtjerry: fix once Load works again
         //        private void CheckThatStateMachineIsNotAlreadyInitialized()
         //        {
         //            if (this.stateContainer.CurrentState != null || this.stateContainer.InitialStateId.IsInitialized)
