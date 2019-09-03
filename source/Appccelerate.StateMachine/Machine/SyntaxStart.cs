@@ -10,9 +10,9 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly IStateDictionaryNew<TState, TEvent> stateDefinitionDictionary;
-        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
+        private readonly IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
-        public SyntaxStart(IStateDictionaryNew<TState, TEvent> stateDefinitionDictionary, Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
+        public SyntaxStart(IStateDictionaryNew<TState, TEvent> stateDefinitionDictionary, IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             this.stateDefinitionDictionary = stateDefinitionDictionary;
             this.initiallyLastActiveStates = initiallyLastActiveStates;

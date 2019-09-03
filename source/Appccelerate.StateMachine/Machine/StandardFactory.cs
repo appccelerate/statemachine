@@ -19,12 +19,9 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.Contexts;
-    using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Machine.GuardHolders;
-    using Appccelerate.StateMachine.Machine.States;
+    using Contexts;
+    using Events;
+    using States;
 
     /// <summary>
     /// Standard implementation of the state machine factory.
@@ -37,47 +34,6 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        public virtual IState<TState, TEvent> CreateState(TState id)
-        {
-            return null;
-//            return new State<TState, TEvent>(id, this.stateMachineInformation, this.extensionHost);
-        }
-
-        public virtual IActionHolder CreateActionHolder(Action action)
-        {
-            return new ArgumentLessActionHolder(action);
-        }
-
-        public virtual IActionHolder CreateActionHolder<T>(Action<T> action)
-        {
-            return new ArgumentActionHolder<T>(action);
-        }
-
-        public virtual IActionHolder CreateActionHolder<T>(Action<T> action, T parameter)
-        {
-            return new ParametrizedActionHolder<T>(action, parameter);
-        }
-
-        public virtual IActionHolder CreateTransitionActionHolder(Action action)
-        {
-            return new ArgumentLessActionHolder(action);
-        }
-
-        public virtual IActionHolder CreateTransitionActionHolder<T>(Action<T> action)
-        {
-            return new ArgumentActionHolder<T>(action);
-        }
-
-        public virtual IGuardHolder CreateGuardHolder(Func<bool> guard)
-        {
-            return new ArgumentLessGuardHolder(guard);
-        }
-
-        public virtual IGuardHolder CreateGuardHolder<T>(Func<T, bool> guard)
-        {
-            return new ArgumentGuardHolder<T>(guard);
-        }
-
         public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(IStateDefinition<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
         {
             return new TransitionContext<TState, TEvent>(stateDefinition, eventId, eventArgument, notifier);
