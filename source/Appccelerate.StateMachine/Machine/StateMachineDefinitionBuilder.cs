@@ -2,6 +2,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
+    using States;
     using SyntaxNew;
 
     public class StateMachineDefinitionBuilder<TState, TEvent>
@@ -20,11 +21,12 @@ namespace Appccelerate.StateMachine.Machine
         public StateMachineDefinition<TState, TEvent> Build()
         {
             var stateDefinitionDictionary = new StateDictionaryNew<TState, TEvent>();
-            var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionary);
+            var initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+            var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionary, initiallyLastActiveStates);
 
             this.setupFunctions.ForEach(f => f(syntaxStart));
 
-            return new StateMachineDefinition<TState, TEvent>(stateDefinitionDictionary);
+            return new StateMachineDefinition<TState, TEvent>(stateDefinitionDictionary, initiallyLastActiveStates);
         }
     }
 }

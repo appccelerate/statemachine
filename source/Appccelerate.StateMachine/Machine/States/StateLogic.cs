@@ -19,8 +19,8 @@
 namespace Appccelerate.StateMachine.Machine.States
 {
     using System;
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.Transitions;
+    using ActionHolders;
+    using Transitions;
 
     /// <summary>
     /// A state of the state machine.
@@ -50,7 +50,9 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <summary>
         /// Goes recursively up the state hierarchy until a state is found that can handle the event.
         /// </summary>
+        /// <param name="stateDefinition">The state definition of the state in which the event should be fired.</param>
         /// <param name="context">The event context.</param>
+        /// <param name="lastActiveStateModifier">The last active state modifier.</param>
         /// <returns>The result of the transition.</returns>
         public ITransitionResult<TState> Fire(
             IStateDefinition<TState, TEvent> stateDefinition,
@@ -136,12 +138,13 @@ namespace Appccelerate.StateMachine.Machine.States
         {
             this.Entry(stateDefinition, context);
 
-            if (stateDefinition.InitialState == null)
+            var initialState = stateDefinition.InitialState;
+            if (initialState == null)
             {
                 return stateDefinition.Id;
             }
 
-            return this.EnterShallow(stateDefinition, context);
+            return this.EnterShallow(initialState, context);
         }
 
         private TState EnterDeep(

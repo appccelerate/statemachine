@@ -19,7 +19,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-
+    using System.Collections.Generic;
     using Appccelerate.StateMachine.SyntaxNew;
     using States;
 
@@ -33,12 +33,16 @@ namespace Appccelerate.StateMachine.Machine
         private readonly StateNew<TState, TEvent> superState;
 
         private readonly IStateDictionaryNew<TState, TEvent> states;
+        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
-        public HierarchyBuilderNew(TState superStateId, IStateDictionaryNew<TState, TEvent> states)
+        public HierarchyBuilderNew(
+            TState superStateId, IStateDictionaryNew<TState, TEvent> states, 
+            Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             Guard.AgainstNullArgument("states", states);
 
             this.states = states;
+            this.initiallyLastActiveStates = initiallyLastActiveStates;
             this.superState = this.states[superStateId];
         }
 
@@ -54,6 +58,7 @@ namespace Appccelerate.StateMachine.Machine
             this.WithSubState(stateId);
 
             this.superState.InitialStateModifiable = this.states[stateId];
+            this.initiallyLastActiveStates.Add(this.superState.Id, this.states[stateId]);
 
             return this;
         }

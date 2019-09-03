@@ -21,8 +21,8 @@ namespace Appccelerate.StateMachine.Machine.States
     using System;
     using System.Collections.Generic;
 
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.Transitions;
+    using ActionHolders;
+    using Transitions;
 
     /// <summary>
     /// A state of the state machine.
@@ -70,7 +70,6 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Gets or sets the last active state of this state.
         /// </summary>
         /// <value>The last state of the active.</value>
-        public StateNew<TState, TEvent> LastActiveState { get; set; }
 
         /// <summary>
         /// Gets the unique id of this state.
@@ -106,7 +105,7 @@ namespace Appccelerate.StateMachine.Machine.States
                 this.CheckInitialStateIsNotThisInstance(value);
                 this.CheckInitialStateIsASubState(value);
 
-                this.initialState = this.LastActiveState = value;
+                this.initialState = value;
             }
         }
 

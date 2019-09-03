@@ -1,6 +1,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using System.Collections.Generic;
     using States;
     using Transitions;
 
@@ -9,10 +10,12 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly IStateDictionaryNew<TState, TEvent> stateDefinitions;
+        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
-        public StateMachineDefinition(IStateDictionaryNew<TState, TEvent> stateDefinitions)
+        public StateMachineDefinition(IStateDictionaryNew<TState, TEvent> stateDefinitions, Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             this.stateDefinitions = stateDefinitions;
+            this.initiallyLastActiveStates = initiallyLastActiveStates;
         }
 
         public PassiveStateMachine<TState, TEvent> CreatePassiveStateMachine()
@@ -23,6 +26,11 @@ namespace Appccelerate.StateMachine.Machine
         public PassiveStateMachine<TState, TEvent> CreatePassiveStateMachine(string name)
         {
             var stateContainer = new StateContainer<TState, TEvent>(name);
+            foreach (var stateIdAndLastActiveState in this.initiallyLastActiveStates)
+            {
+                stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
+            }
+
             var factory = new StandardFactory<TState, TEvent>();
 
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
@@ -42,6 +50,11 @@ namespace Appccelerate.StateMachine.Machine
         public ActiveStateMachine<TState, TEvent> CreateActiveStateMachine(string name)
         {
             var stateContainer = new StateContainer<TState, TEvent>(name);
+            foreach (var stateIdAndLastActiveState in this.initiallyLastActiveStates)
+            {
+                stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
+            }
+
             var factory = new StandardFactory<TState, TEvent>();
 
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
@@ -56,6 +69,11 @@ namespace Appccelerate.StateMachine.Machine
         // todo wtjerry: should this be removed? It is only used by tests
         public StateMachine<TState, TEvent> CreateStateMachine(StateContainer<TState, TEvent> stateContainer)
         {
+            foreach (var stateIdAndLastActiveState in this.initiallyLastActiveStates)
+            {
+                stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
+            }
+
             var factory = new StandardFactory<TState, TEvent>();
 
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
