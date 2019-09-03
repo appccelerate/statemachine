@@ -30,8 +30,6 @@ namespace Appccelerate.StateMachine.Machine.Events
     {
         IState<TState, TEvent> CreateState(TState id);
 
-        ITransition<TState, TEvent> CreateTransition();
-
         IActionHolder CreateActionHolder(Action action);
 
         IActionHolder CreateActionHolder<T>(Action<T> action);

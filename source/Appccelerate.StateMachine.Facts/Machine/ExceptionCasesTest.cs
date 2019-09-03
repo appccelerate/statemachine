@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Facts.Machine
 {
     using System;
+    using System.Collections.Generic;
     using Appccelerate.StateMachine.Machine;
     using FluentAssertions;
     using StateMachine.Machine.States;
@@ -43,7 +44,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var testee = new StateMachine<StateMachine.States, Events>(
                 new StandardFactory<StateMachine.States, Events>(),
                 stateLogic,
-                new StateDictionaryNew<StateMachine.States, Events>());
+                new Dictionary<StateMachine.States, StateNew<StateMachine.States, Events>>());
 
             Action action = () => testee.Fire(Events.A, stateContainer, stateContainer);
             action.Should().Throw<InvalidOperationException>();
@@ -72,7 +73,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var testee = new StateMachine<StateMachine.States, Events>(
                 new StandardFactory<StateMachine.States, Events>(),
                 stateLogic,
-                new StateDictionaryNew<StateMachine.States, Events>());
+                new Dictionary<StateMachine.States, StateNew<StateMachine.States, Events>>());
 
             testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
 
@@ -384,7 +385,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 //            var stateContainer = new StateContainer<StateMachine.States, Events>();
 //
 //            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
-//                .WithConfiguration(x => 
+//                .WithConfiguration(x =>
 //                    x.DefineHierarchyOn(StateMachine.States.B)
 //                        .WithHistoryType(HistoryType.Deep)
 //                        .WithInitialSubState(StateMachine.States.B1)

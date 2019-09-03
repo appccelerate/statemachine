@@ -36,7 +36,8 @@ namespace Appccelerate.StateMachine.Machine
         private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
         public HierarchyBuilderNew(
-            TState superStateId, IStateDictionaryNew<TState, TEvent> states, 
+            TState superStateId,
+            IStateDictionaryNew<TState, TEvent> states,
             Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             Guard.AgainstNullArgument("states", states);

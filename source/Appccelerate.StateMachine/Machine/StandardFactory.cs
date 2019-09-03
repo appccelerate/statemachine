@@ -43,12 +43,6 @@ namespace Appccelerate.StateMachine.Machine
 //            return new State<TState, TEvent>(id, this.stateMachineInformation, this.extensionHost);
         }
 
-        public virtual ITransition<TState, TEvent> CreateTransition()
-        {
-            return null;
-//            return new Transition<TState, TEvent>(this.stateMachineInformation, this.extensionHost);
-        }
-
         public virtual IActionHolder CreateActionHolder(Action action)
         {
             return new ArgumentLessActionHolder(action);

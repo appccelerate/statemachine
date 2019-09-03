@@ -218,6 +218,8 @@ namespace Appccelerate.StateMachine.Machine.States
 
         public IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions => this.transitions.Transitions;
 
+        public IEnumerable<TransitionInfoNew<TState, TEvent>> TransitionInfos => this.transitions.GetTransitions();
+
         public IStateDefinition<TState, TEvent> InitialState => this.InitialStateModifiable;
 
         public HistoryType HistoryType => this.HistoryTypeModifiable;

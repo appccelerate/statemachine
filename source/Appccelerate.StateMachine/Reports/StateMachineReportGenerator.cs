@@ -23,9 +23,10 @@ namespace Appccelerate.StateMachine.Reports
     using System.Globalization;
     using System.Linq;
     using System.Text;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Machine.Transitions;
+    using Infrastructure;
+    using Machine;
+    using Machine.States;
+    using Machine.Transitions;
 
     /// <summary>
     /// Creates a textual report of a state machine.
@@ -48,7 +49,7 @@ namespace Appccelerate.StateMachine.Reports
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
         /// <param name="initialStateId">The initial state id.</param>
-        public void Report(string name, IEnumerable<IState<TState, TEvent>> states, Initializable<TState> initialStateId)
+        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialStateId)
         {
             states = states.ToList();
 
@@ -72,12 +73,35 @@ namespace Appccelerate.StateMachine.Reports
         }
 
         /// <summary>
+        /// Creates the part of the report for the specified state.
+        /// </summary>
+        /// <param name="state">The state.</param>
+        /// <param name="report">The report to add to.</param>
+        /// <param name="indentation">The current indentation level.</param>
+        private void ReportState(IStateDefinition<TState, TEvent> state, StringBuilder report, string indentation)
+        {
+            ReportStateNameInitialStateHistoryTypeEntryAndExitAction(report, indentation, state);
+
+            indentation += "    ";
+
+            foreach (var transition in state.TransitionInfos)
+            {
+                ReportTransition(report, indentation, transition);
+            }
+
+            foreach (var subState in state.SubStates)
+            {
+                this.ReportState(subState, report, indentation);
+            }
+        }
+
+        /// <summary>
         /// Reports the state name, initial state, history type, entry and exit action.
         /// </summary>
         /// <param name="report">The report.</param>
         /// <param name="indentation">The current indentation.</param>
         /// <param name="state">The state.</param>
-        private static void ReportStateNameInitialStateHistoryTypeEntryAndExitAction(StringBuilder report, string indentation, IState<TState, TEvent> state)
+        private static void ReportStateNameInitialStateHistoryTypeEntryAndExitAction(StringBuilder report, string indentation, IStateDefinition<TState, TEvent> state)
         {
             report.AppendFormat(
                 CultureInfo.InvariantCulture,
@@ -108,7 +132,7 @@ namespace Appccelerate.StateMachine.Reports
         /// <param name="report">The report.</param>
         /// <param name="indentation">The indentation.</param>
         /// <param name="transition">The transition.</param>
-        private static void ReportTransition(StringBuilder report, string indentation, TransitionInfo<TState, TEvent> transition)
+        private static void ReportTransition(StringBuilder report, string indentation, TransitionInfoNew<TState, TEvent> transition)
         {
             report.AppendFormat(
                 CultureInfo.InvariantCulture,
@@ -119,29 +143,6 @@ namespace Appccelerate.StateMachine.Reports
                 string.Join(", ", transition.Actions.Select(action => action.Describe())),
                 transition.Guard != null ? transition.Guard.Describe() : string.Empty,
                 Environment.NewLine);
-        }
-
-        /// <summary>
-        /// Creates the part of the report for the specified state.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <param name="report">The report to add to.</param>
-        /// <param name="indentation">The current indentation level.</param>
-        private void ReportState(IState<TState, TEvent> state, StringBuilder report, string indentation)
-        {
-            ReportStateNameInitialStateHistoryTypeEntryAndExitAction(report, indentation, state);
-
-            indentation += "    ";
-
-            foreach (var transition in state.Transitions.GetTransitions())
-            {
-                ReportTransition(report, indentation, transition);
-            }
-
-            foreach (var subState in state.SubStates)
-            {
-                this.ReportState(subState, report, indentation);
-            }
         }
     }
 }

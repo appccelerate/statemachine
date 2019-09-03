@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.Sync
     using Appccelerate.StateMachine.Machine;
     using FakeItEasy;
     using FluentAssertions;
+    using Specs.Sync;
     using Xbehave;
 
     public class ActiveStateMachines

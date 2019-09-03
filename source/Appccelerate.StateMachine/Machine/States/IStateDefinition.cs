@@ -13,6 +13,8 @@ namespace Appccelerate.StateMachine.Machine.States
 
         IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions { get; }
 
+        IEnumerable<TransitionInfoNew<TState, TEvent>> TransitionInfos { get; }
+
         int Level { get; }
 
         IStateDefinition<TState, TEvent> InitialState { get; }

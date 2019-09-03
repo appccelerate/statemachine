@@ -61,7 +61,6 @@ namespace Appccelerate.StateMachine
 
         private bool pendingInitialization;
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PassiveStateMachine&lt;TState, TEvent&gt;"/> class.
         /// </summary>
@@ -243,8 +242,7 @@ namespace Appccelerate.StateMachine
         /// <param name="reportGenerator">The report generator.</param>
         public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
         {
-            // todo wtjerry: fix once report works again
-            //            this.stateMachine.Report(reportGenerator);
+            this.stateMachine.Report(reportGenerator, this.ToString(), this.stateContainer.InitialStateId);
         }
 
         /// <summary>

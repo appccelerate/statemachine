@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Facts
 {
     using System;
+    using System.Collections.Generic;
     using FakeItEasy;
     using FluentAssertions;
     using StateMachine.Machine;
@@ -48,7 +49,7 @@ namespace Appccelerate.StateMachine.Facts
             var testee = new StateMachine<States, Events>(
                 standardFactory,
                 A.Fake<IStateLogic<States, Events>>(),
-                new StateDictionaryNew<States, Events>());
+                new Dictionary<States, StateNew<States, Events>>());
 
             testee.Initialize(initialState, stateContainer, information);
 
@@ -69,11 +70,11 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var standardFactory = new StandardFactory<States, Events>();
-            var testee = new StateMachine<States, Events>(
-                standardFactory,
-                A.Fake<IStateLogic<States, Events>>(),
-                new StateDictionaryNew<States, Events>());
+            var testee = new StateMachineDefinitionBuilder<States, Events>()
+                .WithConfiguration(x =>
+                    x.In(InitialState))
+                .Build()
+                .CreateStateMachine(stateContainer);
 
             testee.Initialize(InitialState, stateContainer, information);
             testee.EnterInitialState(stateContainer, information);
@@ -98,12 +99,13 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(overrideExtension);
 
-            var transitionLogic = new TransitionLogic<States, Events>(stateContainer, stateContainer);
-            var stateLogic = new StateLogic<States, Events>(transitionLogic, stateContainer, stateContainer);
-            var testee = new StateMachine<States, Events>(
-                new StandardFactory<States, Events>(),
-                stateLogic,
-                new StateDictionaryNew<States, Events>());
+            var testee = new StateMachineDefinitionBuilder<States, Events>()
+                .WithConfiguration(x =>
+                    x.In(States.A))
+                .WithConfiguration(x =>
+                    x.In(States.B))
+                .Build()
+                .CreateStateMachine(stateContainer);
 
             testee.Initialize(
                 States.A,

@@ -19,7 +19,9 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using System.Collections.Generic;
     using Events;
+    using Infrastructure;
     using States;
     using Syntax;
 
@@ -35,7 +37,7 @@ namespace Appccelerate.StateMachine.Machine
     {
         private readonly IFactory<TState, TEvent> factory;
         private readonly IStateLogic<TState, TEvent> stateLogic;
-        private readonly IStateDictionaryNew<TState, TEvent> stateDefinitions;
+        private readonly IReadOnlyDictionary<TState, StateNew<TState, TEvent>> stateDefinitions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
@@ -51,7 +53,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="factory">The factory used to create internal instances.</param>
         /// <param name="stateLogic">The state logic used to handle state changes.</param>
         /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
-        public StateMachine(IFactory<TState, TEvent> factory, IStateLogic<TState, TEvent> stateLogic, IStateDictionaryNew<TState, TEvent> stateDefinitions)
+        public StateMachine(IFactory<TState, TEvent> factory, IStateLogic<TState, TEvent> stateLogic, IReadOnlyDictionary<TState, StateNew<TState, TEvent>> stateDefinitions)
         {
             this.factory = factory;
             this.stateLogic = stateLogic;
@@ -199,19 +201,19 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.RaiseEvent(this.TransitionBegin, new TransitionEventArgs<TState, TEvent>(transitionContext), transitionContext, true);
         }
-        
-        // todo wtjerry: fix save, load and report
-        //        /// <summary>
-        //        /// Creates a report with the specified generator.
-        //        /// </summary>
-        //        /// <param name="reportGenerator">The report generator.</param>
-        //        public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
-        //        {
-        //            Guard.AgainstNullArgument("reportGenerator", reportGenerator);
-        //
-        //            reportGenerator.Report(this.ToString(), this.stateContainer.States.GetStates(), this.stateContainer.InitialStateId);
-        //        }
-        //
+
+        /// <summary>
+        /// Creates a report with the specified generator.
+        /// </summary>
+        /// <param name="reportGenerator">The report generator.</param>
+        /// <param name="name">The state machine name.</param>
+        /// <param name="initialStateId">The initial state id.</param>
+        public void Report(IStateMachineReport<TState, TEvent> reportGenerator, string name, Initializable<TState> initialStateId)
+        {
+            reportGenerator.Report(name, this.stateDefinitions.Values, initialStateId);
+        }
+
+        // todo wtjerry: fix save and load
         //        public void Save(IStateMachineSaver<TState> stateMachineSaver)
         //        {
         //            Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);

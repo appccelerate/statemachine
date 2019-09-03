@@ -16,12 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
     using FakeItEasy;
+    using Infrastructure;
+    using Machine;
+    using Machine.States;
     using Xbehave;
 
     public class Reporting
@@ -41,7 +42,9 @@ namespace Appccelerate.StateMachine.Sync
                 machine.Report(report));
 
             "it should call the passed reporter".x(() =>
-                A.CallTo(() => report.Report(A<string>._, A<IEnumerable<IState<string, int>>>._, A<Initializable<string>>._)));
+                A.CallTo(() =>
+                        report.Report(A<string>._, A<IEnumerable<IStateDefinition<string, int>>>._, A<Initializable<string>>._))
+                    .MustHaveHappened());
         }
     }
 }

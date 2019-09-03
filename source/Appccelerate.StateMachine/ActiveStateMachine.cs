@@ -322,8 +322,7 @@ namespace Appccelerate.StateMachine
         /// <param name="reportGenerator">The report generator.</param>
         public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
         {
-            // todo wtjerry: fix once report works again
-            //            this.stateMachine.Report(reportGenerator);
+            this.stateMachine.Report(reportGenerator, this.ToString(), this.stateContainer.InitialStateId);
         }
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace Appccelerate.StateMachine.Reports
     using System.IO;
     using System.Linq;
 
-    using Appccelerate.StateMachine.Machine;
+    using Machine.States;
 
     /// <summary>
     /// Writes the states of a state machine to a stream as csv.
@@ -49,7 +49,7 @@ namespace Appccelerate.StateMachine.Reports
         /// Writes the specified states.
         /// </summary>
         /// <param name="states">The states.</param>
-        public void Write(IEnumerable<IState<TState, TEvent>> states)
+        public void Write(IEnumerable<IStateDefinition<TState, TEvent>> states)
         {
             states = states.ToList();
 
@@ -68,11 +68,11 @@ namespace Appccelerate.StateMachine.Reports
             this.writer.WriteLine("Source;Entry;Exit;Children");
         }
 
-        private void ReportState(IState<TState, TEvent> state)
+        private void ReportState(IStateDefinition<TState, TEvent> state)
         {
-            string entry = string.Join(", ", state.EntryActions.Select(action => action.Describe()));
-            string exit = string.Join(", ", state.ExitActions.Select(action => action.Describe()));
-            string children = string.Join(", ", state.SubStates.Select(s => s.Id.ToString()));
+            var entry = string.Join(", ", state.EntryActions.Select(action => action.Describe()));
+            var exit = string.Join(", ", state.ExitActions.Select(action => action.Describe()));
+            var children = string.Join(", ", state.SubStates.Select(s => s.Id.ToString()));
 
             this.writer.WriteLine(
                 "{0};{1};{2};{3}",

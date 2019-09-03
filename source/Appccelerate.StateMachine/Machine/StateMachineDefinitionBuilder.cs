@@ -26,7 +26,7 @@ namespace Appccelerate.StateMachine.Machine
 
             this.setupFunctions.ForEach(f => f(syntaxStart));
 
-            return new StateMachineDefinition<TState, TEvent>(stateDefinitionDictionary, initiallyLastActiveStates);
+            return new StateMachineDefinition<TState, TEvent>(stateDefinitionDictionary.ReadOnlyDictionary, initiallyLastActiveStates);
         }
     }
 }

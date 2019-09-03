@@ -124,7 +124,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
                 public Item(
                     IStateMachineInformation<States, Events> stateMachine,
                     IStateDefinition<States, Events> source,
-                    IStateDefinition<States, Events> target, 
+                    IStateDefinition<States, Events> target,
                     ITransitionContext<States, Events> transitionContext)
                 {
                     this.StateMachine = stateMachine;

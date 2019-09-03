@@ -21,8 +21,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using System;
     using System.Collections.Generic;
 
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.GuardHolders;
+    using ActionHolders;
+    using GuardHolders;
     using States;
 
     /// <summary>
@@ -47,45 +47,30 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// Gets the event id.
         /// </summary>
         /// <value>The event id.</value>
-        public TEvent EventId
-        {
-            get;
-        }
+        public TEvent EventId { get; }
 
         /// <summary>
         /// Gets the source.
         /// </summary>
         /// <value>The source.</value>
-        public IStateDefinition<TState, TEvent> Source
-        {
-            get;
-        }
+        public IStateDefinition<TState, TEvent> Source { get; }
 
         /// <summary>
         /// Gets the target.
         /// </summary>
         /// <value>The target.</value>
-        public IStateDefinition<TState, TEvent> Target
-        {
-            get;
-        }
+        public IStateDefinition<TState, TEvent> Target { get; }
 
         /// <summary>
         /// Gets the guard.
         /// </summary>
         /// <value>The guard.</value>
-        public IGuardHolder Guard
-        {
-            get;
-        }
+        public IGuardHolder Guard { get; }
 
         /// <summary>
         /// Gets the actions.
         /// </summary>
         /// <value>The actions.</value>
-        public IEnumerable<IActionHolder> Actions
-        {
-            get;
-        }
+        public IEnumerable<IActionHolder> Actions { get; }
     }
 }

@@ -41,5 +41,7 @@ namespace Appccelerate.StateMachine.Machine
                 return this.dictionary[stateId];
             }
         }
+
+        public IReadOnlyDictionary<TState, StateNew<TState, TEvent>> ReadOnlyDictionary => this.dictionary;
     }
 }

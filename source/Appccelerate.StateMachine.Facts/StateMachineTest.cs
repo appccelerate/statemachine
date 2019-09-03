@@ -122,6 +122,8 @@ namespace Appccelerate.StateMachine.Facts
         public void StartStop(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+                .WithConfiguration(x =>
+                    x.In(States.A))
                 .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
@@ -336,6 +338,8 @@ namespace Appccelerate.StateMachine.Facts
         public void StartTwice(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+                .WithConfiguration(x =>
+                    x.In(States.A))
                 .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
