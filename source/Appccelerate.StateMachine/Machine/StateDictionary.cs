@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="IStateDictionary.cs" company="Appccelerate">
+// <copyright file="StateDictionary.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,15 +19,29 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using System.Collections.Generic;
+
     using States;
 
-    public interface IStateDictionaryNew<TState, TEvent>
+    public class StateDictionary<TState, TEvent> : IStateDictionary<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        StateNew<TState, TEvent> this[TState stateId]
+        private readonly Dictionary<TState, StateDefinition<TState, TEvent>> dictionary = new Dictionary<TState, StateDefinition<TState, TEvent>>();
+
+        public StateDefinition<TState, TEvent> this[TState stateId]
         {
-            get;
+            get
+            {
+                if (!this.dictionary.ContainsKey(stateId))
+                {
+                    this.dictionary.Add(stateId, new StateDefinition<TState, TEvent>(stateId));
+                }
+
+                return this.dictionary[stateId];
+            }
         }
+
+        public IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> ReadOnlyDictionary => this.dictionary;
     }
 }

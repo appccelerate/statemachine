@@ -49,7 +49,7 @@ namespace Appccelerate.StateMachine.Facts
             var testee = new StateMachine<States, Events>(
                 standardFactory,
                 A.Fake<IStateLogic<States, Events>>(),
-                new Dictionary<States, StateNew<States, Events>>());
+                new Dictionary<States, StateDefinition<States, Events>>());
 
             testee.Initialize(initialState, stateContainer, information);
 

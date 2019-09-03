@@ -29,19 +29,19 @@ namespace Appccelerate.StateMachine.Facts.Machine
     public class HierarchyBuilderTest
     {
         private const string SuperState = "SuperState";
-        private readonly HierarchyBuilderNew<string, int> testee;
-        private readonly IStateDictionaryNew<string, int> states;
-        private readonly StateNew<string, int> superState;
+        private readonly HierarchyBuilder<string, int> testee;
+        private readonly IStateDictionary<string, int> states;
+        private readonly StateDefinition<string, int> superState;
         private readonly IDictionary<string, IStateDefinition<string, int>> initiallyLastActiveStates;
 
         public HierarchyBuilderTest()
         {
-            this.superState = new StateNew<string, int>(SuperState);
-            this.states = A.Fake<IStateDictionaryNew<string, int>>();
+            this.superState = new StateDefinition<string, int>(SuperState);
+            this.states = A.Fake<IStateDictionary<string, int>>();
             A.CallTo(() => this.states[SuperState]).Returns(this.superState);
             this.initiallyLastActiveStates = A.Fake<IDictionary<string, IStateDefinition<string, int>>>();
 
-            this.testee = new HierarchyBuilderNew<string, int>(SuperState, this.states, this.initiallyLastActiveStates);
+            this.testee = new HierarchyBuilder<string, int>(SuperState, this.states, this.initiallyLastActiveStates);
         }
 
         [Theory]
@@ -60,7 +60,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         public void SetsInitialSubStateOfSuperState()
         {
             const string SubState = "SubState";
-            var subState = new StateNew<string, int>(SubState)
+            var subState = new StateDefinition<string, int>(SubState)
             {
                 SuperStateModifiable = null
             };
@@ -76,7 +76,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         public void SettingTheInitialSubStateAlsoAddsItToTheInitiallyLastActiveStates()
         {
             const string SubState = "SubState";
-            var subState = new StateNew<string, int>(SubState)
+            var subState = new StateDefinition<string, int>(SubState)
             {
                 SuperStateModifiable = null
             };
@@ -91,7 +91,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         public void AddsSubStatesToSuperState()
         {
             const string AnotherSubState = "AnotherSubState";
-            var anotherSubState = new StateNew<string, int>(AnotherSubState)
+            var anotherSubState = new StateDefinition<string, int>(AnotherSubState)
             {
                 SuperStateModifiable = null
             };
@@ -112,9 +112,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
         public void ThrowsExceptionIfSubStateAlreadyHasASuperState()
         {
             const string SubState = "SubState";
-            var subState = new StateNew<string, int>(SubState)
+            var subState = new StateDefinition<string, int>(SubState)
             {
-                SuperStateModifiable = new StateNew<string, int>("SomeOtherSuperState")
+                SuperStateModifiable = new StateDefinition<string, int>("SomeOtherSuperState")
             };
             A.CallTo(() => this.states[SubState]).Returns(subState);
 

@@ -26,12 +26,12 @@ namespace Appccelerate.StateMachine.Facts.Machine.States
     using Events = Events;
     using States = StateMachine.States;
 
-    public class StateNewTest
+    public class StateTest
     {
         [Fact]
         public void HierarchyWhenDefiningAStateAsItsOwnSuperStateThenAnExceptionIsThrown()
         {
-            var testee = new StateNew<States, Events>(States.A);
+            var testee = new StateDefinition<States, Events>(States.A);
 
             Action action = () => testee.SuperStateModifiable = testee;
 
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.States
         [Fact]
         public void HierarchyWhenDefiningAStateAsItsOwnInitialSubStateThenAnExceptionIsThrown()
         {
-            var testee = new StateNew<States, Events>(States.A);
+            var testee = new StateDefinition<States, Events>(States.A);
 
             Action action = () => testee.InitialStateModifiable = testee;
 
@@ -57,10 +57,10 @@ namespace Appccelerate.StateMachine.Facts.Machine.States
         [Fact]
         public void HierarchyWhenDefiningAStateAAndAssigningAnInitialStateThatDoesntHaveStateAAsSuperStateThenAnExceptionIsThrown()
         {
-            var testee = new StateNew<States, Events>(States.A);
+            var testee = new StateDefinition<States, Events>(States.A);
 
-            var initialState = A.Fake<StateNew<States, Events>>();
-            initialState.SuperStateModifiable = A.Fake<StateNew<States, Events>>();
+            var initialState = A.Fake<StateDefinition<States, Events>>();
+            initialState.SuperStateModifiable = A.Fake<StateDefinition<States, Events>>();
 
             Action action = () => testee.InitialStateModifiable = initialState;
 
@@ -74,9 +74,9 @@ namespace Appccelerate.StateMachine.Facts.Machine.States
         public void HierarchyWhenSettingLevelThenTheLevelOfAllChildrenIsUpdated()
         {
             const int Level = 2;
-            var testee = new StateNew<States, Events>(States.A);
+            var testee = new StateDefinition<States, Events>(States.A);
 
-            var subState = A.Fake<StateNew<States, Events>>();
+            var subState = A.Fake<StateDefinition<States, Events>>();
 
             testee.SubStatesModifiable.Add(subState);
 

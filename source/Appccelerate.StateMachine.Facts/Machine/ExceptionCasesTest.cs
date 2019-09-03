@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var testee = new StateMachine<StateMachine.States, Events>(
                 new StandardFactory<StateMachine.States, Events>(),
                 stateLogic,
-                new Dictionary<StateMachine.States, StateNew<StateMachine.States, Events>>());
+                new Dictionary<StateMachine.States, StateDefinition<StateMachine.States, Events>>());
 
             Action action = () => testee.Fire(Events.A, stateContainer, stateContainer);
             action.Should().Throw<InvalidOperationException>();
@@ -73,7 +73,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var testee = new StateMachine<StateMachine.States, Events>(
                 new StandardFactory<StateMachine.States, Events>(),
                 stateLogic,
-                new Dictionary<StateMachine.States, StateNew<StateMachine.States, Events>>());
+                new Dictionary<StateMachine.States, StateDefinition<StateMachine.States, Events>>());
 
             testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
 

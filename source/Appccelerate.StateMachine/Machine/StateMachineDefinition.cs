@@ -9,10 +9,10 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IReadOnlyDictionary<TState, StateNew<TState, TEvent>> stateDefinitions;
+        private readonly IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions;
         private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
-        public StateMachineDefinition(IReadOnlyDictionary<TState, StateNew<TState, TEvent>> stateDefinitions, Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
+        public StateMachineDefinition(IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions, Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             this.stateDefinitions = stateDefinitions;
             this.initiallyLastActiveStates = initiallyLastActiveStates;

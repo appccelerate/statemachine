@@ -1,4 +1,4 @@
-namespace Appccelerate.StateMachine.SyntaxNew
+namespace Appccelerate.StateMachine.Syntax
 {
     using System;
 

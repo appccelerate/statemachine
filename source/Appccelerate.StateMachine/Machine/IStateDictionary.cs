@@ -1,5 +1,5 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="IHierarchySyntax.cs" company="Appccelerate">
+//-------------------------------------------------------------------------------
+// <copyright file="IStateDictionary.cs" company="Appccelerate">
 //   Copyright (c) 2008-2017 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,20 +16,18 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.SyntaxNew
+namespace Appccelerate.StateMachine.Machine
 {
-    public interface IHierarchySyntax<in TState>
-    {
-        IInitialSubStateSyntax<TState> WithHistoryType(HistoryType historyType);
-    }
+    using System;
+    using States;
 
-    public interface IInitialSubStateSyntax<in TState>
+    public interface IStateDictionary<TState, TEvent>
+        where TState : IComparable
+        where TEvent : IComparable
     {
-        ISubStateSyntax<TState> WithInitialSubState(TState stateId);
-    }
-
-    public interface ISubStateSyntax<in TState>
-    {
-        ISubStateSyntax<TState> WithSubState(TState stateId);
+        StateDefinition<TState, TEvent> this[TState stateId]
+        {
+            get;
+        }
     }
 }

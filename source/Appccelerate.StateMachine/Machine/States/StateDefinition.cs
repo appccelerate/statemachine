@@ -30,14 +30,14 @@ namespace Appccelerate.StateMachine.Machine.States
     /// </summary>
     /// <typeparam name="TState">The type of the state id.</typeparam>
     /// <typeparam name="TEvent">The type of the event id.</typeparam>
-    public class StateNew<TState, TEvent> : IStateDefinition<TState, TEvent>
+    public class StateDefinition<TState, TEvent> : IStateDefinition<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
         /// <summary>
-        /// Collection of transitions that start in this state (<see cref="ITransition{TState,TEvent}.Source"/> is equal to this state).
+        /// Collection of transitions that start in this state (<see cref="ITransitionDefinition{TState,TEvent}.Source"/> is equal to this state).
         /// </summary>
-        private readonly TransitionDictionaryNew<TState, TEvent> transitions;
+        private readonly TransitionDictionary<TState, TEvent> transitions;
 
         /// <summary>
         /// The level of this state within the state hierarchy [1..maxLevel].
@@ -47,23 +47,23 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <summary>
         /// The super-state of this state. Null for states with <see cref="level"/> equal to 1.
         /// </summary>
-        private StateNew<TState, TEvent> superState;
+        private StateDefinition<TState, TEvent> superState;
 
         /// <summary>
         /// The initial sub-state of this state.
         /// </summary>
-        private StateNew<TState, TEvent> initialState;
+        private StateDefinition<TState, TEvent> initialState;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StateNew&lt;TState, TEvent&gt;"/> class.
+        /// Initializes a new instance of the <see cref="StateDefinition{TState,TEvent}"/> class.
         /// </summary>
         /// <param name="id">The unique id of this state.</param>
-        public StateNew(TState id)
+        public StateDefinition(TState id)
         {
             this.Id = id;
             this.level = 1;
 
-            this.transitions = new TransitionDictionaryNew<TState, TEvent>(this);
+            this.transitions = new TransitionDictionary<TState, TEvent>(this);
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Gets or sets the initial sub state of this state.
         /// </summary>
         /// <value>The initial sub state of this state.</value>
-        public StateNew<TState, TEvent> InitialStateModifiable
+        public StateDefinition<TState, TEvent> InitialStateModifiable
         {
             get => this.initialState;
             set
@@ -107,7 +107,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// The <see cref="Level"/> of this state is changed accordingly to the super-state.
         /// </remarks>
         /// <value>The super-state of this super.</value>
-        public StateNew<TState, TEvent> SuperStateModifiable
+        public StateDefinition<TState, TEvent> SuperStateModifiable
         {
             get => this.superState;
             set
@@ -146,13 +146,13 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Gets the sub-states of this state.
         /// </summary>
         /// <value>The sub-states of this state.</value>
-        public ICollection<StateNew<TState, TEvent>> SubStatesModifiable { get; } = new List<StateNew<TState, TEvent>>();
+        public ICollection<StateDefinition<TState, TEvent>> SubStatesModifiable { get; } = new List<StateDefinition<TState, TEvent>>();
 
         /// <summary>
         /// Gets the transitions that start in this state.
         /// </summary>
         /// <value>The transitions.</value>
-        public ITransitionDictionaryNew<TState, TEvent> TransitionsModifiable => this.transitions;
+        public ITransitionDictionary<TState, TEvent> TransitionsModifiable => this.transitions;
 
         public override string ToString()
         {
@@ -183,7 +183,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// </summary>
         /// <param name="newSuperState">The value.</param>
         // ReSharper disable once UnusedParameter.Local
-        private void CheckSuperStateIsNotThisInstance(StateNew<TState, TEvent> newSuperState)
+        private void CheckSuperStateIsNotThisInstance(StateDefinition<TState, TEvent> newSuperState)
         {
             if (this == newSuperState)
             {
@@ -196,7 +196,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// </summary>
         /// <param name="newInitialState">The value.</param>
         // ReSharper disable once UnusedParameter.Local
-        private void CheckInitialStateIsNotThisInstance(StateNew<TState, TEvent> newInitialState)
+        private void CheckInitialStateIsNotThisInstance(StateDefinition<TState, TEvent> newInitialState)
         {
             if (this == newInitialState)
             {
@@ -208,7 +208,7 @@ namespace Appccelerate.StateMachine.Machine.States
         /// Throws an exception if the new initial state is not a sub-state of this instance.
         /// </summary>
         /// <param name="value">The value.</param>
-        private void CheckInitialStateIsASubState(StateNew<TState, TEvent> value)
+        private void CheckInitialStateIsASubState(StateDefinition<TState, TEvent> value)
         {
             if (value.SuperState != this)
             {
@@ -218,7 +218,7 @@ namespace Appccelerate.StateMachine.Machine.States
 
         public IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions => this.transitions.Transitions;
 
-        public IEnumerable<TransitionInfoNew<TState, TEvent>> TransitionInfos => this.transitions.GetTransitions();
+        public IEnumerable<TransitionInfo<TState, TEvent>> TransitionInfos => this.transitions.GetTransitions();
 
         public IStateDefinition<TState, TEvent> InitialState => this.InitialStateModifiable;
 

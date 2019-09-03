@@ -3,7 +3,7 @@ namespace Appccelerate.StateMachine.Machine
     using System;
     using System.Collections.Generic;
     using States;
-    using SyntaxNew;
+    using Syntax;
 
     public class StateMachineDefinitionBuilder<TState, TEvent>
         where TState : IComparable
@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public StateMachineDefinition<TState, TEvent> Build()
         {
-            var stateDefinitionDictionary = new StateDictionaryNew<TState, TEvent>();
+            var stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
             var initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
             var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionary, initiallyLastActiveStates);
 

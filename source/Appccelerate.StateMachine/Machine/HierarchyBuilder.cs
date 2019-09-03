@@ -20,24 +20,24 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.SyntaxNew;
     using States;
+    using Syntax;
 
-    public class HierarchyBuilderNew<TState, TEvent> :
+    public class HierarchyBuilder<TState, TEvent> :
         IHierarchySyntax<TState>,
         IInitialSubStateSyntax<TState>,
         ISubStateSyntax<TState>
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly StateNew<TState, TEvent> superState;
+        private readonly StateDefinition<TState, TEvent> superState;
 
-        private readonly IStateDictionaryNew<TState, TEvent> states;
+        private readonly IStateDictionary<TState, TEvent> states;
         private readonly IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
-        public HierarchyBuilderNew(
+        public HierarchyBuilder(
             TState superStateId,
-            IStateDictionaryNew<TState, TEvent> states,
+            IStateDictionary<TState, TEvent> states,
             IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             Guard.AgainstNullArgument("states", states);
@@ -76,7 +76,7 @@ namespace Appccelerate.StateMachine.Machine
             return this;
         }
 
-        private void CheckThatStateHasNotAlreadyASuperState(StateNew<TState, TEvent> subState)
+        private void CheckThatStateHasNotAlreadyASuperState(StateDefinition<TState, TEvent> subState)
         {
             Guard.AgainstNullArgument("subState", subState);
 

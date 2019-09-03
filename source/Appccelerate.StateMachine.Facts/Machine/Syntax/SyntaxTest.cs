@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Facts.Machine.SyntaxNew
+namespace Appccelerate.StateMachine.Facts.Machine.Syntax
 {
     using System.Diagnostics.CodeAnalysis;
     using StateMachine.Machine;
@@ -25,7 +25,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.SyntaxNew
     /// <summary>
     /// Tests the syntax.
     /// </summary>
-    public class SyntaxNewTest
+    public class SyntaxTest
     {
         /// <summary>
         /// Simple check whether all possible cases can be defined with the syntax (not an actual test really).

@@ -37,7 +37,7 @@ namespace Appccelerate.StateMachine.Machine
     {
         private readonly IFactory<TState, TEvent> factory;
         private readonly IStateLogic<TState, TEvent> stateLogic;
-        private readonly IReadOnlyDictionary<TState, StateNew<TState, TEvent>> stateDefinitions;
+        private readonly IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="factory">The factory used to create internal instances.</param>
         /// <param name="stateLogic">The state logic used to handle state changes.</param>
         /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
-        public StateMachine(IFactory<TState, TEvent> factory, IStateLogic<TState, TEvent> stateLogic, IReadOnlyDictionary<TState, StateNew<TState, TEvent>> stateDefinitions)
+        public StateMachine(IFactory<TState, TEvent> factory, IStateLogic<TState, TEvent> stateLogic, IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions)
         {
             this.factory = factory;
             this.stateLogic = stateLogic;

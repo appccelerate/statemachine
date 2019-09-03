@@ -132,7 +132,7 @@ namespace Appccelerate.StateMachine.Reports
         /// <param name="report">The report.</param>
         /// <param name="indentation">The indentation.</param>
         /// <param name="transition">The transition.</param>
-        private static void ReportTransition(StringBuilder report, string indentation, TransitionInfoNew<TState, TEvent> transition)
+        private static void ReportTransition(StringBuilder report, string indentation, TransitionInfo<TState, TEvent> transition)
         {
             report.AppendFormat(
                 CultureInfo.InvariantCulture,

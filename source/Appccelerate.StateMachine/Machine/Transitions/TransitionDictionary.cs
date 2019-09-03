@@ -28,14 +28,14 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public class TransitionDictionaryNew<TState, TEvent> : ITransitionDictionaryNew<TState, TEvent>
+    public class TransitionDictionary<TState, TEvent> : ITransitionDictionary<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
         /// <summary>
         /// The transitions.
         /// </summary>
-        private readonly Dictionary<TEvent, List<TransitionNew<TState, TEvent>>> transitions;
+        private readonly Dictionary<TEvent, List<Transition<TState, TEvent>>> transitions;
 
         /// <summary>
         /// The state this transition dictionary belongs to.
@@ -43,13 +43,13 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         private readonly IStateDefinition<TState, TEvent> state;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TransitionDictionaryNew&lt;TState, TEvent&gt;"/> class.
+        /// Initializes a new instance of the <see cref="TransitionDictionary&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         /// <param name="state">The state.</param>
-        public TransitionDictionaryNew(IStateDefinition<TState, TEvent> state)
+        public TransitionDictionary(IStateDefinition<TState, TEvent> state)
         {
             this.state = state;
-            this.transitions = new Dictionary<TEvent, List<TransitionNew<TState, TEvent>>>();
+            this.transitions = new Dictionary<TEvent, List<Transition<TState, TEvent>>>();
         }
 
         public IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions =>
@@ -63,7 +63,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <value>transitions for the event id.</value>
         /// <param name="eventId">Id of the event.</param>
         /// <returns>The transitions for the event id.</returns>
-        public ICollection<TransitionNew<TState, TEvent>> this[TEvent eventId]
+        public ICollection<Transition<TState, TEvent>> this[TEvent eventId]
         {
             get
             {
@@ -77,7 +77,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// </summary>
         /// <param name="eventId">The event id.</param>
         /// <param name="transition">The transition.</param>
-        public void Add(TEvent eventId, TransitionNew<TState, TEvent> transition)
+        public void Add(TEvent eventId, Transition<TState, TEvent> transition)
         {
             Guard.AgainstNullArgument("transition", transition);
 
@@ -94,19 +94,19 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// Gets all transitions.
         /// </summary>
         /// <returns>All transitions.</returns>
-        public IEnumerable<TransitionInfoNew<TState, TEvent>> GetTransitions()
+        public IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions()
         {
             return this.transitions
                 .SelectMany(eventIdAndStates =>
                     eventIdAndStates.Value.Select(transition =>
-                        new TransitionInfoNew<TState, TEvent>(eventIdAndStates.Key, transition.Source, transition.Target, transition.Guard, transition.Actions)));
+                        new TransitionInfo<TState, TEvent>(eventIdAndStates.Key, transition.Source, transition.Target, transition.Guard, transition.Actions)));
         }
 
         /// <summary>
         /// Throws an exception if the specified transition is already defined on this state.
         /// </summary>
         /// <param name="transition">The transition.</param>
-        private void CheckTransitionDoesNotYetExist(TransitionNew<TState, TEvent> transition)
+        private void CheckTransitionDoesNotYetExist(Transition<TState, TEvent> transition)
         {
             if (transition.Source != null)
             {
@@ -125,7 +125,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 return;
             }
 
-            var list = new List<TransitionNew<TState, TEvent>>();
+            var list = new List<Transition<TState, TEvent>>();
             this.transitions.Add(eventId, list);
         }
     }

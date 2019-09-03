@@ -26,7 +26,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using Appccelerate.StateMachine.Machine.GuardHolders;
     using States;
 
-    public class TransitionNew<TState, TEvent> : ITransitionDefinition<TState, TEvent>
+    public class Transition<TState, TEvent> : ITransitionDefinition<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {

@@ -30,14 +30,14 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
     using Events = Events;
     using States = StateMachine.States;
 
-    public class TransitionDictionaryNewTest
+    public class TransitionDictionaryTest
     {
         [Fact]
         public void TransitionWhenTransitionIsAlreadyUsedForAnotherStateThenThrowException()
         {
-            var testee = new TransitionDictionaryNew<States, Events>(A.Fake<StateNew<States, Events>>());
+            var testee = new TransitionDictionary<States, Events>(A.Fake<StateDefinition<States, Events>>());
 
-            var transition = A.Fake<TransitionNew<States, Events>>();
+            var transition = A.Fake<Transition<States, Events>>();
             transition.Source = null;
 
             testee.Add(Events.A, transition);
@@ -46,20 +46,20 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 
             action
                 .Should().Throw<InvalidOperationException>()
-                .WithMessage(TransitionsExceptionMessages.TransitionDoesAlreadyExist(transition, A.Fake<StateNew<States, Events>>()));
+                .WithMessage(TransitionsExceptionMessages.TransitionDoesAlreadyExist(transition, A.Fake<StateDefinition<States, Events>>()));
         }
 
         [Fact]
         public void GetTransitionsReturnsOneAddedTransition()
         {
-            var testee = new TransitionDictionaryNew<States, Events>(A.Fake<StateNew<States, Events>>());
+            var testee = new TransitionDictionary<States, Events>(A.Fake<StateDefinition<States, Events>>());
 
             var fakeAction = A.Fake<IActionHolder>();
             var fakeGuard = A.Fake<IGuardHolder>();
-            var fakeSource = A.Fake<StateNew<States, Events>>();
-            var fakeTarget = A.Fake<StateNew<States, Events>>();
+            var fakeSource = A.Fake<StateDefinition<States, Events>>();
+            var fakeTarget = A.Fake<StateDefinition<States, Events>>();
 
-            var transition = new TransitionNew<States, Events>();
+            var transition = new Transition<States, Events>();
             testee.Add(Events.A, transition);
 
             transition.ActionsModifiable.Add(fakeAction);
@@ -81,11 +81,11 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void GetTransitionsReturnsAllAddedTransitions()
         {
-            var testee = new TransitionDictionaryNew<States, Events>(A.Fake<StateNew<States, Events>>());
+            var testee = new TransitionDictionary<States, Events>(A.Fake<StateDefinition<States, Events>>());
 
-            var transitionA = A.Fake<TransitionNew<States, Events>>();
-            var transitionB = A.Fake<TransitionNew<States, Events>>();
-            var transitionC = A.Fake<TransitionNew<States, Events>>();
+            var transitionA = A.Fake<Transition<States, Events>>();
+            var transitionB = A.Fake<Transition<States, Events>>();
+            var transitionC = A.Fake<Transition<States, Events>>();
             testee.Add(Events.A, transitionA);
             testee.Add(Events.B, transitionB);
             testee.Add(Events.C, transitionC);

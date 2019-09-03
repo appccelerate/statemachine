@@ -20,10 +20,9 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
+    using Transitions;
 
-    using Appccelerate.StateMachine.Machine.Transitions;
-
-    public interface ITransitionDictionaryNew<TState, TEvent>
+    public interface ITransitionDictionary<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
@@ -32,13 +31,13 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <param name="eventId">The event id.</param>
         /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, TransitionNew<TState, TEvent> transition);
+        void Add(TEvent eventId, Transition<TState, TEvent> transition);
 
         /// <summary>
         /// Gets all transitions.
         /// </summary>
         /// <returns>All transitions.</returns>
-        IEnumerable<TransitionInfoNew<TState, TEvent>> GetTransitions();
+        IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions();
 
         /// <summary>
         /// Gets the transitions for the specified event id.
@@ -46,6 +45,6 @@ namespace Appccelerate.StateMachine.Machine
         /// <value>transitions for the event id.</value>
         /// <param name="eventId">Id of the event.</param>
         /// <returns>The transitions for the event id.</returns>
-        ICollection<TransitionNew<TState, TEvent>> this[TEvent eventId] { get; }
+        ICollection<Transition<TState, TEvent>> this[TEvent eventId] { get; }
     }
 }

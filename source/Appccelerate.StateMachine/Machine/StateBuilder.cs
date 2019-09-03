@@ -21,9 +21,9 @@ namespace Appccelerate.StateMachine.Machine
     using System;
     using System.Linq;
     using ActionHolders;
-    using Appccelerate.StateMachine.SyntaxNew;
     using GuardHolders;
     using States;
+    using Syntax;
     using Transitions;
 
     /// <summary>
@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.Machine
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public sealed class StateBuilderNew<TState, TEvent> :
+    public sealed class StateBuilder<TState, TEvent> :
         IEntryActionSyntax<TState, TEvent>,
         IGotoInIfSyntax<TState, TEvent>,
         IOtherwiseSyntax<TState, TEvent>,
@@ -42,15 +42,15 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly StateNew<TState, TEvent> stateDefinition;
+        private readonly StateDefinition<TState, TEvent> stateDefinition;
 
-        private readonly IStateDictionaryNew<TState, TEvent> stateDefinitionDictionary;
+        private readonly IStateDictionary<TState, TEvent> stateDefinitionDictionary;
 
-        private TransitionNew<TState, TEvent> currentTransition;
+        private Transition<TState, TEvent> currentTransition;
 
         private TEvent currentEventId;
 
-        public StateBuilderNew(TState stateId, IStateDictionaryNew<TState, TEvent> stateDefinitionDictionary)
+        public StateBuilder(TState stateId, IStateDictionary<TState, TEvent> stateDefinitionDictionary)
         {
             this.stateDefinitionDictionary = stateDefinitionDictionary;
             this.stateDefinition = this.stateDefinitionDictionary[stateId];
@@ -146,7 +146,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private void CreateTransition()
         {
-            this.currentTransition = new TransitionNew<TState, TEvent>();
+            this.currentTransition = new Transition<TState, TEvent>();
             this.stateDefinition.TransitionsModifiable.Add(this.currentEventId, this.currentTransition);
         }
 
@@ -261,7 +261,7 @@ namespace Appccelerate.StateMachine.Machine
             return this.ExecuteInternal(action);
         }
 
-        private StateBuilderNew<TState, TEvent> ExecuteInternal(Action action)
+        private StateBuilder<TState, TEvent> ExecuteInternal(Action action)
         {
             this.currentTransition.ActionsModifiable.Add(new ArgumentLessActionHolder(action));
 
@@ -270,7 +270,7 @@ namespace Appccelerate.StateMachine.Machine
             return this;
         }
 
-        private StateBuilderNew<TState, TEvent> ExecuteInternal<T>(Action<T> action)
+        private StateBuilder<TState, TEvent> ExecuteInternal<T>(Action<T> action)
         {
             this.currentTransition.ActionsModifiable.Add( new ArgumentActionHolder<T>(action));
 
