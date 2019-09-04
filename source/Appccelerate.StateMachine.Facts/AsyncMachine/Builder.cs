@@ -16,11 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System;
-    using Appccelerate.StateMachine.AsyncMachine.GuardHolders;
     using FakeItEasy;
+    using StateMachine.AsyncMachine;
+    using StateMachine.AsyncMachine.GuardHolders;
 
     public static class Builder<TState, TEvent>
             where TState : IComparable

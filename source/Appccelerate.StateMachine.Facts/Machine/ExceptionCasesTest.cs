@@ -34,10 +34,10 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void ExceptionIfNotInitialized()
         {
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>().Build();
+            var stateContainer = new StateContainer<States, Events>();
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>().Build();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
@@ -48,7 +48,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void ExceptionIfNotInitialized_WhenAccessingCurrentState()
         {
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
             Action action = () => { var state = stateContainer.CurrentStateId; };
 
@@ -61,15 +61,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void ExceptionIfInitializeIsCalledTwice()
         {
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
+            testee.Initialize(States.A, stateContainer, stateContainer);
 
-            Action action = () => testee.Initialize(StateMachine.States.B, stateContainer, stateContainer);
+            Action action = () => testee.Initialize(States.B, stateContainer, stateContainer);
 
             action.Should().Throw<InvalidOperationException>();
         }
@@ -83,22 +83,22 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var eventArguments = new object[] { 1, 2, "test" };
             var exception = new Exception();
-            StateMachine.States? recordedStateId = null;
+            States? recordedStateId = null;
             Events? recordedEventId = null;
             object recordedEventArgument = null;
             Exception recordedException = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
+                    x.In(States.A)
                         .On(Events.B)
                         .If(() => throw exception)
-                        .Goto(StateMachine.States.B))
+                        .Goto(States.B))
                 .Build();
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
@@ -112,16 +112,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
+            testee.Initialize(States.A, stateContainer, stateContainer);
             testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
 
-            recordedStateId.Should().Be(StateMachine.States.A);
+            recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateId.Should().Be(StateMachine.States.A);
+            stateContainer.CurrentStateId.Should().Be(States.A);
             transitionDeclined.Should().BeTrue("transition was not declined.");
         }
 
@@ -134,22 +134,22 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var eventArguments = new object[] { 1, 2, "test" };
             var exception = new Exception();
-            StateMachine.States? recordedStateId = null;
+            States? recordedStateId = null;
             Events? recordedEventId = null;
             object recordedEventArgument = null;
             Exception recordedException = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
+                    x.In(States.A)
                         .On(Events.B)
-                        .Goto(StateMachine.States.B)
+                        .Goto(States.B)
                         .Execute(() => throw exception))
                 .Build();
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
@@ -161,16 +161,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
+            testee.Initialize(States.A, stateContainer, stateContainer);
             testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
 
-            recordedStateId.Should().Be(StateMachine.States.A);
+            recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateId.Should().Be(StateMachine.States.B);
+            stateContainer.CurrentStateId.Should().Be(States.B);
         }
 
         [Fact]
@@ -178,24 +178,24 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var eventArguments = new object[] { 1, 2, "test" };
             var exception = new Exception();
-            StateMachine.States? recordedStateId = null;
+            States? recordedStateId = null;
             Events? recordedEventId = null;
             object recordedEventArgument = null;
             Exception recordedException = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
+                    x.In(States.A)
                         .On(Events.B)
-                        .Goto(StateMachine.States.B))
+                        .Goto(States.B))
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.B)
+                    x.In(States.B)
                         .ExecuteOnEntry(() => throw exception))
                 .Build();
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
@@ -207,16 +207,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
+            testee.Initialize(States.A, stateContainer, stateContainer);
             testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
 
-            recordedStateId.Should().Be(StateMachine.States.A);
+            recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateId.Should().Be(StateMachine.States.B);
+            stateContainer.CurrentStateId.Should().Be(States.B);
         }
 
         [Fact]
@@ -224,22 +224,22 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var eventArguments = new object[] { 1, 2, "test" };
             var exception = new Exception();
-            StateMachine.States? recordedStateId = null;
+            States? recordedStateId = null;
             Events? recordedEventId = null;
             object recordedEventArgument = null;
             Exception recordedException = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
+                    x.In(States.A)
                         .ExecuteOnExit(() => throw exception)
                         .On(Events.B)
-                        .Goto(StateMachine.States.B))
+                        .Goto(States.B))
                 .Build();
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
@@ -251,15 +251,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
+            testee.Initialize(States.A, stateContainer, stateContainer);
             testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
-            recordedStateId.Should().Be(StateMachine.States.A);
+            recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateId.Should().Be(StateMachine.States.B);
+            stateContainer.CurrentStateId.Should().Be(States.B);
         }
 
         /// <summary>
@@ -268,12 +268,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void NotInitialized()
         {
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
                 .Build();
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
@@ -287,18 +287,18 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void DefineNonTreeHierarchy()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.DefineHierarchyOn(StateMachine.States.A)
+                    x.DefineHierarchyOn(States.A)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(StateMachine.States.B));
+                        .WithInitialSubState(States.B));
 
-            Func<StateMachineDefinition<StateMachine.States, Events>> func =
+            Func<StateMachineDefinition<States, Events>> func =
                 () => stateMachineDefinitionBuilder
                     .WithConfiguration(x =>
-                        x.DefineHierarchyOn(StateMachine.States.C)
+                        x.DefineHierarchyOn(States.C)
                             .WithHistoryType(HistoryType.None)
-                            .WithInitialSubState(StateMachine.States.B))
+                            .WithInitialSubState(States.B))
                     .Build();
 
             func.Should().Throw<InvalidOperationException>();
@@ -307,18 +307,18 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void MultipleTransitionsWithoutGuardsWhenDefiningAGotoThenInvalidOperationException()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
-                        .On(Events.B).If(() => false).Goto(StateMachine.States.C)
-                        .On(Events.B).Goto(StateMachine.States.B));
+                    x.In(States.A)
+                        .On(Events.B).If(() => false).Goto(States.C)
+                        .On(Events.B).Goto(States.B));
 
-            Func<StateMachineDefinition<StateMachine.States, Events>> func =
+            Func<StateMachineDefinition<States, Events>> func =
                 () => stateMachineDefinitionBuilder
                     .WithConfiguration(x =>
-                        x.In(StateMachine.States.A)
+                        x.In(States.A)
                             .On(Events.B)
-                            .Goto(StateMachine.States.C))
+                            .Goto(States.C))
                     .Build();
 
             func.Should()
@@ -329,15 +329,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void MultipleTransitionsWithoutGuardsWhenDefiningAnActionThenInvalidOperationException()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
-                        .On(Events.B).Goto(StateMachine.States.B));
+                    x.In(States.A)
+                        .On(Events.B).Goto(States.B));
 
-            Func<StateMachineDefinition<StateMachine.States, Events>> func =
+            Func<StateMachineDefinition<States, Events>> func =
                 () => stateMachineDefinitionBuilder
                     .WithConfiguration(x =>
-                        x.In(StateMachine.States.A)
+                        x.In(States.A)
                             .On(Events.B)
                             .Execute(() => { }))
                     .Build();
@@ -350,15 +350,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void TransitionWithoutGuardHasToBeLast()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
-                        .On(Events.B).Goto(StateMachine.States.B));
+                    x.In(States.A)
+                        .On(Events.B).Goto(States.B));
 
-            Func<StateMachineDefinition<StateMachine.States, Events>> func =
+            Func<StateMachineDefinition<States, Events>> func =
                 () => stateMachineDefinitionBuilder
                     .WithConfiguration(x =>
-                        x.In(StateMachine.States.A)
+                        x.In(States.A)
                             .On(Events.B)
                             .If(() => false)
                             .Execute(() => { }))

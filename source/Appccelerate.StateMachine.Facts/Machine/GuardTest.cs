@@ -33,24 +33,24 @@ namespace Appccelerate.StateMachine.Facts.Machine
             const string EventArgument = "test";
             string actualEventArgument = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
+                    x.In(States.A)
                         .On(Events.A)
                         .If<string>(argument =>
                         {
                             actualEventArgument = argument;
                             return true;
                         })
-                        .Goto(StateMachine.States.B))
+                        .Goto(States.B))
                 .Build();
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
+            testee.Initialize(States.A, stateContainer, stateContainer);
             testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             testee.Fire(Events.A, EventArgument, stateContainer, stateContainer, stateDefinitions);
@@ -61,51 +61,51 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void GuardWithoutArguments()
         {
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
+                    x.In(States.A)
                         .On(Events.B)
-                        .If(() => false).Goto(StateMachine.States.C)
-                        .If(() => true).Goto(StateMachine.States.B))
+                        .If(() => false).Goto(States.C)
+                        .If(() => true).Goto(States.B))
                 .Build();
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
+            testee.Initialize(States.A, stateContainer, stateContainer);
             testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(StateMachine.States.B);
+            stateContainer.CurrentStateId.Should().Be(States.B);
         }
 
         [Fact]
         public void GuardWithASingleArgument()
         {
-            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
                 .WithConfiguration(x =>
-                    x.In(StateMachine.States.A)
+                    x.In(States.A)
                         .On(Events.B)
-                        .If<int>(SingleIntArgumentGuardReturningFalse).Goto(StateMachine.States.C)
-                        .If(() => false).Goto(StateMachine.States.D)
-                        .If(() => false).Goto(StateMachine.States.E)
-                        .If<int>(SingleIntArgumentGuardReturningTrue).Goto(StateMachine.States.B))
+                        .If<int>(SingleIntArgumentGuardReturningFalse).Goto(States.C)
+                        .If(() => false).Goto(States.D)
+                        .If(() => false).Goto(States.E)
+                        .If<int>(SingleIntArgumentGuardReturningTrue).Goto(States.B))
                 .Build();
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
+            var stateContainer = new StateContainer<States, Events>();
 
-            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+            var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
+            testee.Initialize(States.A, stateContainer, stateContainer);
             testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             testee.Fire(Events.B, 3, stateContainer, stateContainer, stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(StateMachine.States.B);
+            stateContainer.CurrentStateId.Should().Be(States.B);
         }
 
         private static bool SingleIntArgumentGuardReturningTrue(int i)

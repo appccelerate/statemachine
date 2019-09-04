@@ -16,9 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.Transitions
+namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 {
     using System.Threading.Tasks;
+    using AsyncMachine;
     using FakeItEasy;
     using Xunit;
 

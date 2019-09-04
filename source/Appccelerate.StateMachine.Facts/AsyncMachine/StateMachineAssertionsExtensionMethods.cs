@@ -16,11 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System;
     using FluentAssertions.Execution;
     using FluentAssertions.Primitives;
+    using StateMachine.AsyncMachine;
 
     public static class StateMachineAssertionsExtensionMethods
     {

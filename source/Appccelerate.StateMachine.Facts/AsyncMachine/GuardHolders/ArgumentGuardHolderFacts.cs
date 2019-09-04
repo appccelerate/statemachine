@@ -16,12 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
+namespace Appccelerate.StateMachine.Facts.AsyncMachine.GuardHolders
 {
     using System;
     using System.Threading.Tasks;
     using FakeItEasy;
     using FluentAssertions;
+    using StateMachine.AsyncMachine.GuardHolders;
     using Xunit;
 
     public class ArgumentGuardHolderFacts
@@ -75,7 +76,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
 
             action
                 .Should().Throw<ArgumentException>()
-                .WithMessage(Machine.GuardHolders.GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.testee.Describe()));
+                .WithMessage(StateMachine.Machine.GuardHolders.GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.testee.Describe()));
         }
     }
 }

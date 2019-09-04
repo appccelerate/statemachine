@@ -16,24 +16,25 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using StateMachine.AsyncMachine;
     using Xunit;
 
     public class GuardFacts
     {
         private const string EventArgument = "test";
 
-        private readonly StateMachine<StateMachine.States, StateMachine.Events> testee;
+        private readonly StateMachine<States, Events> testee;
 
         public GuardFacts()
         {
-            this.testee = new StateMachine<StateMachine.States, StateMachine.Events>();
+            this.testee = new StateMachine<States, Events>();
 
-            this.testee.Initialize(StateMachine.States.A);
+            this.testee.Initialize(States.A);
         }
 
         [Fact]
@@ -41,17 +42,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
         {
             string eventArgument = null;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.A)
+            this.testee.In(States.A)
+                .On(Events.A)
                     .If<string>(argument =>
                         {
                             eventArgument = argument;
                             return true;
                         })
-                    .Goto(StateMachine.States.B);
+                    .Goto(States.B);
 
             await this.testee.EnterInitialState();
-            await this.testee.Fire(StateMachine.Events.A, EventArgument);
+            await this.testee.Fire(Events.A, EventArgument);
 
             eventArgument.Should().Be(EventArgument);
         }
@@ -61,17 +62,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
         {
             string eventArgument = null;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.A)
+            this.testee.In(States.A)
+                .On(Events.A)
                 .If((string argument) =>
                 {
                     eventArgument = argument;
                     return Task.FromResult(true);
                 })
-                .Goto(StateMachine.States.B);
+                .Goto(States.B);
 
             await this.testee.EnterInitialState();
-            await this.testee.Fire(StateMachine.Events.A, EventArgument);
+            await this.testee.Fire(Events.A, EventArgument);
 
             eventArgument.Should().Be(EventArgument);
         }
@@ -79,31 +80,31 @@ namespace Appccelerate.StateMachine.AsyncMachine
         [Fact]
         public async Task GuardWithoutArguments()
         {
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B)
-                    .If(() => false).Goto(StateMachine.States.C)
-                    .If(() => true).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B)
+                    .If(() => false).Goto(States.C)
+                    .If(() => true).Goto(States.B);
 
             await this.testee.EnterInitialState();
-            await this.testee.Fire(StateMachine.Events.B, Missing.Value);
+            await this.testee.Fire(Events.B, Missing.Value);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
+            this.testee.CurrentStateId.Should().Be(States.B);
         }
 
         [Fact]
         public async Task GuardWithASingleArgument()
         {
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B)
-                    .If((Func<int, bool>)SingleIntArgumentGuardReturningFalse).Goto(StateMachine.States.C)
-                    .If(() => false).Goto(StateMachine.States.D)
-                    .If(() => false).Goto(StateMachine.States.E)
-                    .If((Func<int, bool>)SingleIntArgumentGuardReturningTrue).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B)
+                    .If((Func<int, bool>)SingleIntArgumentGuardReturningFalse).Goto(States.C)
+                    .If(() => false).Goto(States.D)
+                    .If(() => false).Goto(States.E)
+                    .If((Func<int, bool>)SingleIntArgumentGuardReturningTrue).Goto(States.B);
 
             await this.testee.EnterInitialState();
-            await this.testee.Fire(StateMachine.Events.B, 3);
+            await this.testee.Fire(Events.B, 3);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
+            this.testee.CurrentStateId.Should().Be(States.B);
         }
 
         private static bool SingleIntArgumentGuardReturningTrue(int i)

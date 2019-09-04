@@ -16,12 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Facts.Machine
 {
     using System;
-
     using FluentAssertions;
-
+    using StateMachine.Machine;
     using Xunit;
 
     public class MissableTest

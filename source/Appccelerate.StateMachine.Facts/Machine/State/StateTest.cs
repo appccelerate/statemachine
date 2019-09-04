@@ -16,15 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Facts.Machine.States
+namespace Appccelerate.StateMachine.Facts.Machine.State
 {
     using System;
     using FakeItEasy;
     using FluentAssertions;
     using StateMachine.Machine.States;
     using Xunit;
-    using Events = Events;
-    using States = StateMachine.States;
 
     public class StateTest
     {

@@ -34,14 +34,14 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void AddHierarchicalStatesInitialStateIsSuperStateItself()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
                 .WithConfiguration(sm =>
                     sm
-                        .DefineHierarchyOn(StateMachine.States.B)
+                        .DefineHierarchyOn(States.B)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(StateMachine.States.B)
-                        .WithSubState(StateMachine.States.B1)
-                        .WithSubState(StateMachine.States.B2));
+                        .WithInitialSubState(States.B)
+                        .WithSubState(States.B1)
+                        .WithSubState(States.B2));
 
             Action a = () => stateMachineDefinitionBuilder.Build();
             a.Should().Throw<ArgumentException>();

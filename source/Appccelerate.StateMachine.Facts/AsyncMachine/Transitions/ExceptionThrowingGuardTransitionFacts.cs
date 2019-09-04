@@ -16,13 +16,14 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.Transitions
+namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 {
     using System;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine;
+    using AsyncMachine;
     using FakeItEasy;
     using FluentAssertions;
+    using StateMachine.AsyncMachine;
     using Xunit;
 
     public class ExceptionThrowingGuardTransitionFacts : TransitionFactsBase

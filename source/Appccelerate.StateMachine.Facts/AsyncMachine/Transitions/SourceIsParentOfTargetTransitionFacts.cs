@@ -16,11 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.Transitions
+namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 {
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine;
+    using AsyncMachine;
     using FakeItEasy;
+    using StateMachine.AsyncMachine;
     using Xunit;
 
     public class SourceIsParentOfTargetTransitionFacts : SuccessfulTransitionWithExecutedActionsFactsBase

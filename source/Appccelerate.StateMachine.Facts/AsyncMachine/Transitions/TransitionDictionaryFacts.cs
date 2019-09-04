@@ -24,8 +24,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
     using StateMachine.AsyncMachine;
     using StateMachine.AsyncMachine.Transitions;
     using Xunit;
-    using Events = StateMachine.Events;
-    using States = StateMachine.States;
 
     public class TransitionDictionaryFacts
     {

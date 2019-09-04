@@ -16,12 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
+namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
 {
     using System;
     using System.Threading.Tasks;
     using FakeItEasy;
     using FluentAssertions;
+    using StateMachine.AsyncMachine.ActionHolders;
     using Xunit;
 
     public static class ArgumentActionHolderFacts

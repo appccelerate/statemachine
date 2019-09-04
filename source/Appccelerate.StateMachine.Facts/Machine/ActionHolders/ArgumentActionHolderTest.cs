@@ -16,10 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.ActionHolders
+namespace Appccelerate.StateMachine.Facts.Machine.ActionHolders
 {
     using System;
     using FluentAssertions;
+    using StateMachine.Machine.ActionHolders;
     using Xunit;
 
     public class ArgumentActionHolderTest

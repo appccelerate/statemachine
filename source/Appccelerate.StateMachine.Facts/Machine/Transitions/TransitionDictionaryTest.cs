@@ -27,8 +27,6 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
     using StateMachine.Machine.States;
     using StateMachine.Machine.Transitions;
     using Xunit;
-    using Events = Events;
-    using States = StateMachine.States;
 
     public class TransitionDictionaryTest
     {
