@@ -16,55 +16,26 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Persistence;
-    using FakeItEasy;
     using FluentAssertions;
+    using Infrastructure;
+    using Machine;
     using Specs;
+    using StateMachine.Sync;
     using Xbehave;
 
     public class Initialization
     {
         private const int TestState = 1;
 
-        private readonly CurrentStateExtension testExtension = new CurrentStateExtension();
-
         [Scenario]
         public void Start(
             PassiveStateMachine<int, int> machine,
-            bool entryActionExecuted)
-        {
-            "establish an initialized state machine".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.AddExtension(this.testExtension);
-
-                    machine.In(TestState)
-                        .ExecuteOnEntry(() => entryActionExecuted = true);
-
-                    machine.Initialize(TestState);
-                });
-
-            "when starting the state machine".x(() =>
-                machine.Start());
-
-            "should set current state of state machine to state to which it is initialized".x(() =>
-                this.testExtension.CurrentState.Should().Be(TestState));
-
-            "should execute entry action of state to which state machine is initialized".x(() =>
-                entryActionExecuted.Should().BeTrue());
-        }
-
-        [Scenario]
-        public void StartForStateMachineBuiltByStateMachineDefinitionBuilder(
-            PassiveStateMachine<int, int> machine,
-            bool entryActionExecuted)
+            bool entryActionExecuted,
+            CurrentStateExtension currentStateExtension)
         {
             "establish an initialized state machine".x(() =>
             {
@@ -75,7 +46,8 @@ namespace Appccelerate.StateMachine.Sync
                     .Build()
                     .CreatePassiveStateMachine();
 
-                machine.AddExtension(this.testExtension);
+                currentStateExtension = new CurrentStateExtension();
+                machine.AddExtension(currentStateExtension);
 
                 machine.Initialize(TestState);
             });
@@ -84,7 +56,38 @@ namespace Appccelerate.StateMachine.Sync
                 machine.Start());
 
             "should set current state of state machine to state to which it is initialized".x(() =>
-                this.testExtension.CurrentState.Should().Be(TestState));
+                currentStateExtension.CurrentState.Should().Be(TestState));
+
+            "should execute entry action of state to which state machine is initialized".x(() =>
+                entryActionExecuted.Should().BeTrue());
+        }
+
+        [Scenario]
+        public void StartForStateMachineBuiltByStateMachineDefinitionBuilder(
+            PassiveStateMachine<int, int> machine,
+            bool entryActionExecuted,
+            CurrentStateExtension currentStateExtension)
+        {
+            "establish an initialized state machine".x(() =>
+            {
+                machine = new StateMachineDefinitionBuilder<int, int>()
+                    .WithConfiguration(x =>
+                        x.In(TestState)
+                            .ExecuteOnEntry(() => entryActionExecuted = true))
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                currentStateExtension = new CurrentStateExtension();
+                machine.AddExtension(currentStateExtension);
+
+                machine.Initialize(TestState);
+            });
+
+            "when starting the state machine".x(() =>
+                machine.Start());
+
+            "should set current state of state machine to state to which it is initialized".x(() =>
+                currentStateExtension.CurrentState.Should().Be(TestState));
 
             "should execute entry action of state to which state machine is initialized".x(() =>
                 entryActionExecuted.Should().BeTrue());
@@ -96,14 +99,12 @@ namespace Appccelerate.StateMachine.Sync
             bool entryActionExecuted)
         {
             "establish a state machine".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.AddExtension(this.testExtension);
-
-                    machine.In(TestState)
-                        .ExecuteOnEntry(() => entryActionExecuted = true);
-                });
+                machine = new StateMachineDefinitionBuilder<int, int>()
+                    .WithConfiguration(x =>
+                        x.In(TestState)
+                            .ExecuteOnEntry(() => entryActionExecuted = true))
+                    .Build()
+                    .CreatePassiveStateMachine());
 
             "when state machine is initialized".x(() =>
                 machine.Initialize(TestState));
@@ -118,30 +119,22 @@ namespace Appccelerate.StateMachine.Sync
             Exception receivedException)
         {
             "establish an initialized state machine".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-                    machine.Initialize(TestState);
-                });
+            {
+                machine = new StateMachineDefinitionBuilder<int, int>()
+                    .Build()
+                    .CreatePassiveStateMachine();
+                machine.Initialize(TestState);
+            });
 
             "when state machine is initialized again".x(() =>
-                {
-                    try
-                    {
-                        machine.Initialize(TestState);
-                    }
-                    catch (Exception e)
-                    {
-                        receivedException = e;
-                    }
-                });
+                receivedException = Catch.Exception(() =>
+                    machine.Initialize(TestState)));
 
             "should throw an invalid operation exception".x(() =>
-                {
-                    receivedException
-                        .Should().BeAssignableTo<InvalidOperationException>();
-                    receivedException.Message
-                        .Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized);
-                });
+                receivedException
+                    .Should().BeAssignableTo<InvalidOperationException>()
+                    .Which.Message
+                    .Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized));
         }
 
         [Scenario]
@@ -150,49 +143,50 @@ namespace Appccelerate.StateMachine.Sync
             Exception receivedException)
         {
             "establish an uninitialized state machine".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-                });
+                machine = new StateMachineDefinitionBuilder<int, int>()
+                    .Build()
+                    .CreatePassiveStateMachine());
 
             "when starting the state machine".x(() =>
                 receivedException = Catch.Exception(() =>
                     machine.Start()));
 
             "should throw an invalid operation exception".x(() =>
-                {
-                    receivedException
-                        .Should().BeAssignableTo<InvalidOperationException>();
-                    receivedException.Message
-                        .Should().Be(ExceptionMessages.StateMachineNotInitialized);
-                });
+                receivedException
+                    .Should().BeAssignableTo<InvalidOperationException>()
+                    .Which.Message
+                    .Should().Be(ExceptionMessages.StateMachineNotInitialized));
         }
 
         [Scenario]
         public void InitializeALoadedStateMachine(
             PassiveStateMachine<int, int> machine,
-            Exception receivedException)
+            Exception receivedException,
+            CurrentStateExtension currentStateExtension)
         {
             "establish a loaded initialized state machine".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
+            {
+                machine = new StateMachineDefinitionBuilder<int, int>()
+                    .WithConfiguration(x =>
+                        x.In(1))
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    var loader = new Persisting.StateMachineLoader<int>();
-                    loader.SetCurrentState(new Initializable<int> { Value = 1 });
-                    loader.SetHistoryStates(new Dictionary<int, int>());
-                    machine.Load(loader);
-                });
+                var loader = new Persisting.StateMachineLoader<int>();
+                loader.SetCurrentState(new Initializable<int> { Value = 1 });
+                loader.SetHistoryStates(new Dictionary<int, int>());
+                machine.Load(loader);
+            });
 
             "when initializing the state machine".x(() =>
-                    receivedException = Catch.Exception(() =>
-                        machine.Initialize(0)));
+                receivedException = Catch.Exception(() =>
+                    machine.Initialize(0)));
 
             "should throw an invalid operation exception".x(() =>
-                {
-                    receivedException
-                        .Should().BeAssignableTo<InvalidOperationException>()
-                        .Which.Message
-                        .Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized);
-                });
+                receivedException
+                    .Should().BeAssignableTo<InvalidOperationException>()
+                    .Which.Message
+                    .Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized));
         }
     }
 }
