@@ -16,10 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     //// see http://www.appccelerate.com/statemachinecustomtypes.html for an explanation why states and events have to be IComparable
@@ -32,19 +33,21 @@ namespace Appccelerate.StateMachine.Sync
             bool arrivedInStateB)
         {
             "establish a state machine with custom types for states and events".x(() =>
-                {
-                    machine = new PassiveStateMachine<MyState, MyEvent>();
+            {
+                machine = new StateMachineDefinitionBuilder<MyState, MyEvent>()
+                    .WithConfiguration(x =>
+                        x.In(new MyState("A"))
+                            .On(new MyEvent(1)).Goto(new MyState("B")))
+                    .WithConfiguration(x =>
+                        x.In(new MyState("B"))
+                            .ExecuteOnEntry(() => arrivedInStateB = true))
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    machine.In(new MyState("A"))
-                        .On(new MyEvent(1)).Goto(new MyState("B"));
+                machine.Initialize(new MyState("A"));
 
-                    machine.In(new MyState("B"))
-                        .ExecuteOnEntry(() => arrivedInStateB = true);
-
-                    machine.Initialize(new MyState("A"));
-
-                    machine.Start();
-                });
+                machine.Start();
+            });
 
             "when using the state machine".x(() =>
                 machine.Fire(new MyEvent(1)));
@@ -60,7 +63,7 @@ namespace Appccelerate.StateMachine.Sync
                 this.Name = name;
             }
 
-            private string Name { get; set; }
+            private string Name { get; }
 
             public override bool Equals(object obj)
             {
@@ -105,7 +108,7 @@ namespace Appccelerate.StateMachine.Sync
                 this.Identifier = identifier;
             }
 
-            private int Identifier { get; set; }
+            private int Identifier { get; }
 
             public override bool Equals(object obj)
             {
