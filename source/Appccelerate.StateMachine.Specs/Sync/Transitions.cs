@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Sync
 {
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class Transitions
@@ -39,21 +40,25 @@ namespace Appccelerate.StateMachine.Specs.Sync
             bool entryActionExecuted)
         {
             "establish a state machine with transitions".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
+            {
+                machine = new StateMachineDefinitionBuilder<int, int>()
+                    .WithConfiguration(x =>
+                        x.In(SourceState)
+                            .ExecuteOnExit(() => exitActionExecuted = true)
+                            .On(Event)
+                            .Goto(DestinationState)
+                            .Execute<string>(p => actualParameter = p))
+                    .WithConfiguration(x =>
+                        x.In(DestinationState)
+                            .ExecuteOnEntry(() => entryActionExecuted = true))
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    machine.AddExtension(CurrentStateExtension);
+                machine.AddExtension(CurrentStateExtension);
 
-                    machine.In(SourceState)
-                        .ExecuteOnExit(() => exitActionExecuted = true)
-                        .On(Event).Goto(DestinationState).Execute<string>(p => actualParameter = p);
-
-                    machine.In(DestinationState)
-                        .ExecuteOnEntry(() => entryActionExecuted = true);
-
-                    machine.Initialize(SourceState);
-                    machine.Start();
-                });
+                machine.Initialize(SourceState);
+                machine.Start();
+            });
 
             "when firing an event onto the state machine".x(() =>
                 machine.Fire(Event, Parameter));
