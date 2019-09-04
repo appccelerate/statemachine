@@ -16,9 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using FluentAssertions;
+    using Machine;
+    using StateMachine.Sync;
     using Xbehave;
 
     public class StartStop
@@ -35,16 +37,20 @@ namespace Appccelerate.StateMachine.Sync
         {
             "establish initialized state machine".x(() =>
             {
-                this.machine = new PassiveStateMachine<int, int>();
+                this.machine = new StateMachineDefinitionBuilder<int, int>()
+                    .WithConfiguration(x =>
+                        x.In(A)
+                            .On(Event)
+                            .Goto(B))
+                    .WithConfiguration(x =>
+                        x.In(B)
+                            .On(Event)
+                            .Goto(A))
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 this.extension = new RecordEventsExtension();
                 this.machine.AddExtension(this.extension);
-
-                this.machine.In(A)
-                    .On(Event).Goto(B);
-
-                this.machine.In(B)
-                    .On(Event).Goto(A);
 
                 this.machine.Initialize(A);
             });
@@ -54,11 +60,11 @@ namespace Appccelerate.StateMachine.Sync
         public void Starting()
         {
             "establish some queued events".x(() =>
-                {
-                    this.machine.Fire(Event);
-                    this.machine.Fire(Event);
-                    this.machine.Fire(Event);
-                });
+            {
+                this.machine.Fire(Event);
+                this.machine.Fire(Event);
+                this.machine.Fire(Event);
+            });
 
             "when starting".x(() =>
                 this.machine.Start());
