@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.Async
     using System.Threading.Tasks;
     using AsyncMachine.Events;
     using FluentAssertions;
+    using Specs;
     using Xbehave;
 
     public class ExceptionHandling

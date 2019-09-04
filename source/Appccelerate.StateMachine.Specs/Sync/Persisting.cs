@@ -26,6 +26,7 @@ namespace Appccelerate.StateMachine.Sync
     using Appccelerate.StateMachine.Persistence;
     using FakeItEasy;
     using FluentAssertions;
+    using Specs;
     using Xbehave;
 
     public class Persisting
