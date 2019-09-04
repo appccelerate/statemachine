@@ -60,22 +60,6 @@ namespace Appccelerate.StateMachine
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         bool IsRunning { get; }
 
-        // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
-        /// <summary>
-        /// Define the behavior of a state.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>Syntax to build state behavior.</returns>
-        IEntryActionSyntax<TState, TEvent> In(TState state);
-
-        // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
-        /// <summary>
-        /// Defines a state hierarchy.
-        /// </summary>
-        /// <param name="superStateId">The super state id.</param>
-        /// <returns>Syntax to build hierarchy.</returns>
-        IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId);
-
         /// <summary>
         /// Fires the specified event.
         /// </summary>

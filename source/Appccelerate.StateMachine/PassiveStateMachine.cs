@@ -26,7 +26,6 @@ namespace Appccelerate.StateMachine
     using Machine.Events;
     using Machine.States;
     using Persistence;
-    using Syntax;
 
     /// <summary>
     /// A passive state machine.
@@ -64,14 +63,6 @@ namespace Appccelerate.StateMachine
         private bool executing;
 
         private bool pendingInitialization;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PassiveStateMachine&lt;TState, TEvent&gt;"/> class.
-        /// </summary>
-        public PassiveStateMachine()
-            : this(null, null, null)
-        {
-        }
 
         public PassiveStateMachine(
             StateMachine<TState, TEvent> stateMachine,
@@ -127,28 +118,6 @@ namespace Appccelerate.StateMachine
         public bool IsRunning
         {
             get; private set;
-        }
-
-        /// <summary>
-        /// Define the behavior of a state.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>Syntax to build state behavior.</returns>
-        public IEntryActionSyntax<TState, TEvent> In(TState state)
-        {
-            // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
-            return null;
-        }
-
-        /// <summary>
-        /// Defines the hierarchy on.
-        /// </summary>
-        /// <param name="superStateId">The super state id.</param>
-        /// /// <returns>Syntax to build a state hierarchy.</returns>
-        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
-        {
-            // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
-            return null;
         }
 
         /// <summary>

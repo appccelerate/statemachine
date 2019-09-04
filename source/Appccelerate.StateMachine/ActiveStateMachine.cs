@@ -26,7 +26,6 @@ namespace Appccelerate.StateMachine
     using Machine.Events;
     using Machine.States;
     using Persistence;
-    using Syntax;
 
     /// <summary>
     /// An active state machine.
@@ -50,14 +49,6 @@ namespace Appccelerate.StateMachine
 
         private Task worker;
         private CancellationTokenSource stopToken;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ActiveStateMachine{TState, TEvent}"/> class.
-        /// </summary>
-        public ActiveStateMachine()
-            : this(null, null, null)
-        {
-        }
 
         public ActiveStateMachine(
             StateMachine<TState, TEvent> stateMachine,
@@ -112,28 +103,6 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         public bool IsRunning => this.worker != null && !this.worker.IsCompleted;
-
-        /// <summary>
-        /// Define the behavior of a state.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>Syntax to build state behavior.</returns>
-        public IEntryActionSyntax<TState, TEvent> In(TState state)
-        {
-            // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
-            return null;
-        }
-
-        /// <summary>
-        /// Defines the hierarchy on.
-        /// </summary>
-        /// <param name="superStateId">The super state id.</param>
-        /// <returns>Syntax to build a state hierarchy.</returns>
-        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
-        {
-            // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
-            return null;
-        }
 
         /// <summary>
         /// Fires the specified event.
