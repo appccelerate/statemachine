@@ -37,9 +37,9 @@ namespace Appccelerate.StateMachine.Machine
             var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
-            var stateMachine = new StateMachine<TState, TEvent>(factory, stateLogic, this.stateDefinitions);
+            var stateMachine = new StateMachine<TState, TEvent>(factory, stateLogic);
 
-            return new PassiveStateMachine<TState, TEvent>(stateMachine, stateContainer);
+            return new PassiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
         }
 
         public ActiveStateMachine<TState, TEvent> CreateActiveStateMachine()
@@ -61,26 +61,9 @@ namespace Appccelerate.StateMachine.Machine
             var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
-            var stateMachine = new StateMachine<TState, TEvent>(factory, stateLogic, this.stateDefinitions);
+            var stateMachine = new StateMachine<TState, TEvent>(factory, stateLogic);
 
-            return new ActiveStateMachine<TState, TEvent>(stateMachine, stateContainer);
-        }
-
-        // todo wtjerry: should this be removed? It is only used by tests
-        public StateMachine<TState, TEvent> CreateStateMachine(StateContainer<TState, TEvent> stateContainer)
-        {
-            foreach (var stateIdAndLastActiveState in this.initiallyLastActiveStates)
-            {
-                stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
-            }
-
-            var factory = new StandardFactory<TState, TEvent>();
-
-            var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
-            transitionLogic.SetStateLogic(stateLogic);
-
-            return new StateMachine<TState, TEvent>(factory, stateLogic, this.stateDefinitions);
+            return new ActiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
         }
     }
 }

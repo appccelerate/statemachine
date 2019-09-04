@@ -32,18 +32,20 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var entered = false;
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
-
-            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
                 .WithConfiguration(x =>
                     x.In(StateMachine.States.A)
                         .ExecuteOnEntry(() => entered = true))
-                .Build()
-                .CreateStateMachine(stateContainer);
+                .Build();
+            var stateContainer = new StateContainer<StateMachine.States, Events>();
+
+            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
             testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
 
-            testee.EnterInitialState(stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             entered.Should().BeTrue("entry action was not executed.");
         }
@@ -54,19 +56,21 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var entered1 = false;
             var entered2 = false;
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
-
-            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
                 .WithConfiguration(x =>
                     x.In(StateMachine.States.A)
                         .ExecuteOnEntry(() => entered1 = true)
                         .ExecuteOnEntry(() => entered2 = true))
-                .Build()
-                .CreateStateMachine(stateContainer);
+                .Build();
+            var stateContainer = new StateContainer<StateMachine.States, Events>();
+
+            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
             testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
 
-            testee.EnterInitialState(stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             entered1.Should().BeTrue("entry action was not executed.");
             entered2.Should().BeTrue("entry action was not executed.");
@@ -79,18 +83,20 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             var receivedValue = 0;
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
-
-            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
                 .WithConfiguration(x =>
                     x.In(StateMachine.States.A)
                         .ExecuteOnEntryParametrized(parameter => receivedValue = parameter, Parameter))
-                .Build()
-                .CreateStateMachine(stateContainer);
+                .Build();
+            var stateContainer = new StateContainer<StateMachine.States, Events>();
+
+            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
             testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
 
-            testee.EnterInitialState(stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             receivedValue.Should().Be(Parameter);
         }
@@ -100,20 +106,22 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var exit = false;
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
-
-            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
                 .WithConfiguration(x =>
                     x.In(StateMachine.States.A)
                         .ExecuteOnExit(() => exit = true)
                         .On(Events.B).Goto(StateMachine.States.B))
-                .Build()
-                .CreateStateMachine(stateContainer);
+                .Build();
+            var stateContainer = new StateContainer<StateMachine.States, Events>();
+
+            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
             testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
-            testee.Fire(Events.B, stateContainer, stateContainer);
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
             exit.Should().BeTrue("exit action was not executed.");
         }
@@ -124,21 +132,23 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var exit1 = false;
             var exit2 = false;
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
-
-            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
                 .WithConfiguration(x =>
                     x.In(StateMachine.States.A)
                         .ExecuteOnExit(() => exit1 = true)
                         .ExecuteOnExit(() => exit2 = true)
                         .On(Events.B).Goto(StateMachine.States.B))
-                .Build()
-                .CreateStateMachine(stateContainer);
+                .Build();
+            var stateContainer = new StateContainer<StateMachine.States, Events>();
+
+            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
             testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
-            testee.Fire(Events.B, stateContainer, stateContainer);
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
             exit1.Should().BeTrue("exit action was not executed.");
             exit2.Should().BeTrue("exit action was not executed.");
@@ -151,20 +161,22 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             var receivedValue = 0;
 
-            var stateContainer = new StateContainer<StateMachine.States, Events>();
-
-            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
+            var stateDefinitions = new StateDefinitionsBuilder<StateMachine.States, Events>()
                 .WithConfiguration(x =>
                     x.In(StateMachine.States.A)
                         .ExecuteOnExitParametrized(value => receivedValue = value, Parameter)
                         .On(Events.B).Goto(StateMachine.States.B))
-                .Build()
-                .CreateStateMachine(stateContainer);
+                .Build();
+            var stateContainer = new StateContainer<StateMachine.States, Events>();
+
+            var testee = new StateMachineBuilder<StateMachine.States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
             testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
-            testee.Fire(Events.B, stateContainer, stateContainer);
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
             receivedValue.Should().Be(Parameter);
         }

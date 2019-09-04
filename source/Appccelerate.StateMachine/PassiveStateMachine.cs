@@ -20,9 +20,9 @@ namespace Appccelerate.StateMachine
 {
     using System;
     using System.Collections.Generic;
-
     using Machine;
     using Machine.Events;
+    using Machine.States;
     using Persistence;
     using Syntax;
 
@@ -48,6 +48,8 @@ namespace Appccelerate.StateMachine
         private readonly LinkedList<EventInformation<TEvent>> events;
 
         private readonly StateContainer<TState, TEvent> stateContainer;
+
+        private readonly IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions;
 
         /// <summary>
         /// Whether the state machine is initialized.
@@ -88,10 +90,14 @@ namespace Appccelerate.StateMachine
             this.events = new LinkedList<EventInformation<TEvent>>();
         }
 
-        public PassiveStateMachine(StateMachine<TState, TEvent> stateMachine, StateContainer<TState, TEvent> stateContainer)
+        public PassiveStateMachine(
+            StateMachine<TState, TEvent> stateMachine,
+            StateContainer<TState, TEvent> stateContainer,
+            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions)
         {
             this.stateMachine = stateMachine;
             this.stateContainer = stateContainer;
+            this.stateDefinitions = stateDefinitions;
             this.events = new LinkedList<EventInformation<TEvent>>();
         }
 
@@ -147,7 +153,8 @@ namespace Appccelerate.StateMachine
         /// <returns>Syntax to build state behavior.</returns>
         public IEntryActionSyntax<TState, TEvent> In(TState state)
         {
-            return this.stateMachine.In(state);
+            // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
+            return null;
         }
 
         /// <summary>
@@ -157,7 +164,8 @@ namespace Appccelerate.StateMachine
         /// /// <returns>Syntax to build a state hierarchy.</returns>
         public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
         {
-            return this.stateMachine.DefineHierarchyOn(superStateId);
+            // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
+            return null;
         }
 
         /// <summary>
@@ -242,7 +250,7 @@ namespace Appccelerate.StateMachine
         /// <param name="reportGenerator">The report generator.</param>
         public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
         {
-            this.stateMachine.Report(reportGenerator, this.ToString(), this.stateContainer.InitialStateId);
+            reportGenerator.Report(this.ToString(), this.stateDefinitions.Values, this.stateContainer.InitialStateId);
         }
 
         /// <summary>
@@ -368,7 +376,7 @@ namespace Appccelerate.StateMachine
                 return;
             }
 
-            this.stateMachine.EnterInitialState(this.stateContainer, this.stateContainer);
+            this.stateMachine.EnterInitialState(this.stateContainer, this.stateContainer, this.stateDefinitions);
 
             this.pendingInitialization = false;
         }
@@ -390,7 +398,7 @@ namespace Appccelerate.StateMachine
         /// <param name="e">The event to fire.</param>
         private void FireEventOnStateMachine(EventInformation<TEvent> e)
         {
-            this.stateMachine.Fire(e.EventId, e.EventArgument, this.stateContainer, this.stateContainer);
+            this.stateMachine.Fire(e.EventId, e.EventArgument, this.stateContainer, this.stateContainer, this.stateDefinitions);
         }
     }
 }
