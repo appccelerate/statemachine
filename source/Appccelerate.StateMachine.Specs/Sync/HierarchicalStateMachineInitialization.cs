@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Sync
 {
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class HierarchicalStateMachineInitialization
@@ -26,7 +27,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         private const int LeafState = 1;
         private const int SuperState = 0;
 
-        private CurrentStateExtension testExtension;
+        private readonly CurrentStateExtension testExtension = new CurrentStateExtension();
         private PassiveStateMachine<int, int> machine;
 
         private bool entryActionOfLeafStateExecuted;
@@ -36,22 +37,23 @@ namespace Appccelerate.StateMachine.Specs.Sync
         public void Background()
         {
             "establish a hierarchical state machine".x(() =>
-                {
-                    this.testExtension = new CurrentStateExtension();
+            {
+                this.machine = new StateMachineDefinitionBuilder<int, int>()
+                    .WithConfiguration(x =>
+                        x.DefineHierarchyOn(SuperState)
+                            .WithHistoryType(HistoryType.None)
+                            .WithInitialSubState(LeafState))
+                    .WithConfiguration(x =>
+                        x.In(SuperState)
+                            .ExecuteOnEntry(() => this.entryActionOfSuperStateExecuted = true))
+                    .WithConfiguration(x =>
+                        x.In(LeafState)
+                            .ExecuteOnEntry(() => this.entryActionOfLeafStateExecuted = true))
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    this.machine = new PassiveStateMachine<int, int>();
-
-                    this.machine.AddExtension(this.testExtension);
-
-                    this.machine.DefineHierarchyOn(SuperState)
-                        .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(LeafState);
-
-                    this.machine.In(SuperState)
-                        .ExecuteOnEntry(() => this.entryActionOfSuperStateExecuted = true);
-                    this.machine.In(LeafState)
-                        .ExecuteOnEntry(() => this.entryActionOfLeafStateExecuted = true);
-                });
+                this.machine.AddExtension(this.testExtension);
+            });
         }
 
         [Scenario]
