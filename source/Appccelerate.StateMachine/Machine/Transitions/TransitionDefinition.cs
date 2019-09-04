@@ -22,11 +22,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using System.Collections.Generic;
     using System.Globalization;
 
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.GuardHolders;
+    using ActionHolders;
+    using GuardHolders;
     using States;
 
-    public class Transition<TState, TEvent> : ITransitionDefinition<TState, TEvent>
+    public class TransitionDefinition<TState, TEvent> : ITransitionDefinition<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {

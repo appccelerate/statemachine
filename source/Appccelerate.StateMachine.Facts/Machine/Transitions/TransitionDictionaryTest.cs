@@ -35,7 +35,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         {
             var testee = new TransitionDictionary<States, Events>(A.Fake<StateDefinition<States, Events>>());
 
-            var transition = A.Fake<Transition<States, Events>>();
+            var transition = A.Fake<TransitionDefinition<States, Events>>();
             transition.Source = null;
 
             testee.Add(Events.A, transition);
@@ -57,7 +57,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
             var fakeSource = A.Fake<StateDefinition<States, Events>>();
             var fakeTarget = A.Fake<StateDefinition<States, Events>>();
 
-            var transition = new Transition<States, Events>();
+            var transition = new TransitionDefinition<States, Events>();
             testee.Add(Events.A, transition);
 
             transition.ActionsModifiable.Add(fakeAction);
@@ -81,9 +81,9 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         {
             var testee = new TransitionDictionary<States, Events>(A.Fake<StateDefinition<States, Events>>());
 
-            var transitionA = A.Fake<Transition<States, Events>>();
-            var transitionB = A.Fake<Transition<States, Events>>();
-            var transitionC = A.Fake<Transition<States, Events>>();
+            var transitionA = A.Fake<TransitionDefinition<States, Events>>();
+            var transitionB = A.Fake<TransitionDefinition<States, Events>>();
+            var transitionC = A.Fake<TransitionDefinition<States, Events>>();
             testee.Add(Events.A, transitionA);
             testee.Add(Events.B, transitionB);
             testee.Add(Events.C, transitionC);

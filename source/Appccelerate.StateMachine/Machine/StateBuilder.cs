@@ -46,7 +46,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private readonly IStateDictionary<TState, TEvent> stateDefinitionDictionary;
 
-        private Transition<TState, TEvent> currentTransition;
+        private TransitionDefinition<TState, TEvent> currentTransitionDefinition;
 
         private TEvent currentEventId;
 
@@ -146,8 +146,8 @@ namespace Appccelerate.StateMachine.Machine
 
         private void CreateTransition()
         {
-            this.currentTransition = new Transition<TState, TEvent>();
-            this.stateDefinition.TransitionsModifiable.Add(this.currentEventId, this.currentTransition);
+            this.currentTransitionDefinition = new TransitionDefinition<TState, TEvent>();
+            this.stateDefinition.TransitionsModifiable.Add(this.currentEventId, this.currentTransitionDefinition);
         }
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private StateBuilder<TState, TEvent> ExecuteInternal(Action action)
         {
-            this.currentTransition.ActionsModifiable.Add(new ArgumentLessActionHolder(action));
+            this.currentTransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(action));
 
             this.CheckGuards();
 
@@ -272,7 +272,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private StateBuilder<TState, TEvent> ExecuteInternal<T>(Action<T> action)
         {
-            this.currentTransition.ActionsModifiable.Add( new ArgumentActionHolder<T>(action));
+            this.currentTransitionDefinition.ActionsModifiable.Add( new ArgumentActionHolder<T>(action));
 
             this.CheckGuards();
 
@@ -320,17 +320,17 @@ namespace Appccelerate.StateMachine.Machine
 
         private void SetGuard<T>(Func<T, bool> guard)
         {
-            this.currentTransition.Guard = new ArgumentGuardHolder<T>(guard);
+            this.currentTransitionDefinition.Guard = new ArgumentGuardHolder<T>(guard);
         }
 
         private void SetGuard(Func<bool> guard)
         {
-            this.currentTransition.Guard = new ArgumentLessGuardHolder(guard);
+            this.currentTransitionDefinition.Guard = new ArgumentLessGuardHolder(guard);
         }
 
         private void SetTargetState(TState target)
         {
-            this.currentTransition.Target = this.stateDefinitionDictionary[target];
+            this.currentTransitionDefinition.Target = this.stateDefinitionDictionary[target];
 
             this.CheckGuards();
         }

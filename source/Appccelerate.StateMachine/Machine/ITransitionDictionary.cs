@@ -30,8 +30,8 @@ namespace Appccelerate.StateMachine.Machine
         /// Adds the specified event id.
         /// </summary>
         /// <param name="eventId">The event id.</param>
-        /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, Transition<TState, TEvent> transition);
+        /// <param name="transitionDefinition">The transition.</param>
+        void Add(TEvent eventId, TransitionDefinition<TState, TEvent> transitionDefinition);
 
         /// <summary>
         /// Gets all transitions.
@@ -45,6 +45,6 @@ namespace Appccelerate.StateMachine.Machine
         /// <value>transitions for the event id.</value>
         /// <param name="eventId">Id of the event.</param>
         /// <returns>The transitions for the event id.</returns>
-        ICollection<Transition<TState, TEvent>> this[TEvent eventId] { get; }
+        ICollection<TransitionDefinition<TState, TEvent>> this[TEvent eventId] { get; }
     }
 }
