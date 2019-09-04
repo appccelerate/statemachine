@@ -16,15 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine.Specs.Async
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Persistence;
-    using FakeItEasy;
     using FluentAssertions;
+    using Infrastructure;
+    using Machine;
     using Specs;
     using Xbehave;
 

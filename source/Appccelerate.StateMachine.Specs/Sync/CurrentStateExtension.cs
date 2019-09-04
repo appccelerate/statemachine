@@ -16,9 +16,9 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
-    using Appccelerate.StateMachine.Extensions;
+    using Extensions;
     using Machine.States;
 
     public class CurrentStateExtension : ExtensionBase<int, int>

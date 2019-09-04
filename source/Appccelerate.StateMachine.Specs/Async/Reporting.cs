@@ -16,12 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.AsyncMachine;
-    using Appccelerate.StateMachine.Infrastructure;
+    using AsyncMachine;
     using FakeItEasy;
+    using Infrastructure;
     using Xbehave;
 
     public class Reporting

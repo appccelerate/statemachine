@@ -20,7 +20,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
 {
     using FluentAssertions;
     using Machine;
-    using StateMachine.Sync;
     using Xbehave;
 
     public class Guards

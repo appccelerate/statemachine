@@ -16,10 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine;
+    using AsyncMachine;
 
     public class CurrentStateExtension : AsyncExtensionBase<int, int>
     {

@@ -24,7 +24,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
     using Infrastructure;
     using Machine;
     using Specs;
-    using StateMachine.Sync;
     using Xbehave;
 
     public class Initialization

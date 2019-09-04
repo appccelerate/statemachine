@@ -16,16 +16,16 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Extensions;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Persistence;
+    using Extensions;
     using FakeItEasy;
     using FluentAssertions;
+    using Infrastructure;
+    using Machine;
+    using Persistence;
     using Specs;
     using Xbehave;
 

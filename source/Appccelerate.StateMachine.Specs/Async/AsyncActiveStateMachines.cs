@@ -16,10 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Threading;
-    using Appccelerate.StateMachine.AsyncMachine;
+    using AsyncMachine;
     using FakeItEasy;
     using FluentAssertions;
     using Xbehave;

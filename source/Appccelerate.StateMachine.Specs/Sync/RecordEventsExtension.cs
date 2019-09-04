@@ -16,32 +16,32 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Extensions;
-    using Appccelerate.StateMachine.Machine;
+    using Extensions;
+    using Machine;
 
     public class RecordEventsExtension : ExtensionBase<int, int>
+    {
+        public RecordEventsExtension()
         {
-            public RecordEventsExtension()
-            {
-                this.RecordedFiredEvents = new List<int>();
-                this.RecordedQueuedEvents = new List<int>();
-            }
-
-            public IList<int> RecordedFiredEvents { get; private set; }
-
-            public IList<int> RecordedQueuedEvents { get; private set; }
-
-            public override void FiredEvent(IStateMachineInformation<int, int> stateMachine, ITransitionContext<int, int> context)
-            {
-                this.RecordedFiredEvents.Add(context.EventId.Value);
-            }
-
-            public override void EventQueued(IStateMachineInformation<int, int> stateMachine, int eventId, object eventArgument)
-            {
-                this.RecordedQueuedEvents.Add(eventId);
-            }
+            this.RecordedFiredEvents = new List<int>();
+            this.RecordedQueuedEvents = new List<int>();
         }
+
+        public IList<int> RecordedFiredEvents { get; private set; }
+
+        public IList<int> RecordedQueuedEvents { get; private set; }
+
+        public override void FiredEvent(IStateMachineInformation<int, int> stateMachine, ITransitionContext<int, int> context)
+        {
+            this.RecordedFiredEvents.Add(context.EventId.Value);
+        }
+
+        public override void EventQueued(IStateMachineInformation<int, int> stateMachine, int eventId, object eventArgument)
+        {
+            this.RecordedQueuedEvents.Add(eventId);
+        }
+    }
 }

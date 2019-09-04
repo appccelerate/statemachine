@@ -16,19 +16,19 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine.Specs.Async
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Persistence;
+    using AsyncMachine;
     using FakeItEasy;
     using FluentAssertions;
+    using Infrastructure;
+    using Persistence;
     using Specs;
     using Xbehave;
-    using ExceptionMessages = Appccelerate.StateMachine.Machine.ExceptionMessages;
+    using ExceptionMessages = Machine.ExceptionMessages;
 
     public class Persisting
     {

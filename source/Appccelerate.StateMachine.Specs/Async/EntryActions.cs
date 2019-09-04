@@ -16,13 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine.Specs.Async
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
-
     using Xbehave;
 
     public class EntryActions

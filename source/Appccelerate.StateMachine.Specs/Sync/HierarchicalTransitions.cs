@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Globalization;
