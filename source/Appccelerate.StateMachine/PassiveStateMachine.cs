@@ -20,6 +20,8 @@ namespace Appccelerate.StateMachine
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using Infrastructure;
     using Machine;
     using Machine.Events;
     using Machine.States;
@@ -297,10 +299,19 @@ namespace Appccelerate.StateMachine
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
         public void Save(IStateMachineSaver<TState> stateMachineSaver)
         {
-            Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
+            Guard.AgainstNullArgument(nameof(stateMachineSaver), stateMachineSaver);
 
-            // todo wtjerry: fix once save works again
-            //            this.stateMachine.Save(stateMachineSaver);
+            stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentState != null ?
+                new Initializable<TState> { Value = this.stateContainer.CurrentState.Id } :
+                new Initializable<TState>());
+
+            var historyStates = this.stateContainer
+                .LastActiveStates
+                .ToDictionary(
+                    pair => pair.Key,
+                    pair => pair.Value.Id);
+
+            stateMachineSaver.SaveHistoryStates(historyStates);
         }
 
         /// <summary>
@@ -310,12 +321,56 @@ namespace Appccelerate.StateMachine
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
         public void Load(IStateMachineLoader<TState> stateMachineLoader)
         {
-            Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
+            Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
 
             this.CheckThatNotAlreadyInitialized();
+            this.CheckThatStateMachineIsNotAlreadyInitialized();
 
-            // todo wtjerry: fix once load works again
-            //            this.initialized = this.stateMachine.Load(stateMachineLoader);
+            var loadedCurrentState = stateMachineLoader.LoadCurrentState();
+            var historyStates = stateMachineLoader.LoadHistoryStates();
+
+            var wasSuccessful = SetCurrentState();
+            LoadHistoryStates();
+            NotifyExtensions();
+
+            this.initialized = wasSuccessful;
+
+            bool SetCurrentState()
+            {
+                if (loadedCurrentState.IsInitialized)
+                {
+                    this.stateContainer.CurrentState = this.stateDefinitions[loadedCurrentState.Value];
+                    return true;
+                }
+
+                this.stateContainer.CurrentState = null;
+                return false;
+            }
+
+            void LoadHistoryStates()
+            {
+                foreach (var historyState in historyStates)
+                {
+                    var superState = this.stateDefinitions[historyState.Key];
+                    var lastActiveState = this.stateDefinitions[historyState.Value];
+
+                    if (!superState.SubStates.Contains(lastActiveState))
+                    {
+                        throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
+                    }
+
+                    this.stateContainer.SetLastActiveStateFor(superState.Id, lastActiveState);
+                }
+            }
+
+            void NotifyExtensions()
+            {
+                this.stateContainer.Extensions.ForEach(
+                    extension => extension.Loaded(
+                        this.stateContainer,
+                        loadedCurrentState,
+                        historyStates));
+            }
         }
 
         private void CheckThatNotAlreadyInitialized()
@@ -331,6 +386,14 @@ namespace Appccelerate.StateMachine
             if (!this.initialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineNotInitialized);
+            }
+        }
+
+        private void CheckThatStateMachineIsNotAlreadyInitialized()
+        {
+            if (this.stateContainer.CurrentState != null || this.stateContainer.InitialStateId.IsInitialized)
+            {
+                throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
             }
         }
 

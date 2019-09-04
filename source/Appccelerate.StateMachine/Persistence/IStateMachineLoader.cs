@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.Persistence
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
+    using Infrastructure;
 
     public interface IStateMachineLoader<TState>
         where TState : IComparable
@@ -35,6 +35,6 @@ namespace Appccelerate.StateMachine.Persistence
         /// Returns the last active state of all super states that have a last active state (i.e. they count as visited).
         /// </summary>
         /// <returns>Key = id of super state, Value = id of last active state.</returns>
-        IDictionary<TState, TState> LoadHistoryStates();
+        IReadOnlyDictionary<TState, TState> LoadHistoryStates();
     }
 }

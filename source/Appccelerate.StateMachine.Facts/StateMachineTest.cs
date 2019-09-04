@@ -22,7 +22,10 @@ namespace Appccelerate.StateMachine.Facts
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using FakeItEasy;
     using FluentAssertions;
+    using Infrastructure;
+    using Persistence;
     using StateMachine.Machine;
     using StateMachine.Machine.Events;
     using Xunit;
@@ -350,6 +353,126 @@ namespace Appccelerate.StateMachine.Facts
             testee.Start();
 
             testee.IsRunning.Should().BeTrue();
+        }
+
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void SetsCurrentStateOnLoadingFromPersistedState(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
+        {
+            var loader = A.Fake<IStateMachineLoader<States>>();
+            var extension = A.Fake<IExtension<States, Events>>();
+
+            A.CallTo(() => loader.LoadCurrentState())
+                .Returns(new Initializable<States> { Value = States.C });
+
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+                .WithConfiguration(x => x.In(States.A))
+                .WithConfiguration(x => x.In(States.C))
+                .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
+            testee.AddExtension(extension);
+
+            testee.Load(loader);
+
+            A.CallTo(() =>
+                    extension.Loaded(
+                        A<IStateMachineInformation<States, Events>>.Ignored,
+                        A<Initializable<States>>
+                            .That
+                            .Matches(x => x.Value == States.C),
+                        A<IReadOnlyDictionary<States, States>>.Ignored))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public void SetsHistoryStatesOnLoadingFromPersistedState()
+        {
+            var exitedD2 = false;
+
+            var testee = new StateMachineDefinitionBuilder<States, Events>()
+                .WithConfiguration(x =>
+                    x.DefineHierarchyOn(States.D)
+                        .WithHistoryType(HistoryType.Deep)
+                        .WithInitialSubState(States.D1)
+                        .WithSubState(States.D2))
+                .WithConfiguration(x =>
+                    x.In(States.A)
+                        .On(Events.D).Goto(States.D)
+                        .On(Events.A))
+                .WithConfiguration(x =>
+                    x.In(States.D2)
+                        .ExecuteOnExit(() => exitedD2 = true)
+                        .On(Events.A).Goto(States.A))
+                .Build()
+                .CreatePassiveStateMachine();
+
+            var loader = A.Fake<IStateMachineLoader<States>>();
+
+            A.CallTo(() => loader.LoadHistoryStates())
+                .Returns(new Dictionary<States, States>
+                {
+                    { States.D, States.D2 }
+                });
+
+            testee.Load(loader);
+            testee.Initialize(States.A);
+            testee.Start();
+            testee.Fire(Events.D); // should go to loaded last active state D2, not initial state D1
+            exitedD2 = false;
+            testee.Fire(Events.A);
+
+            testee.Stop();
+
+            exitedD2.Should().BeTrue();
+        }
+
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void ThrowsExceptionOnLoading_WhenAlreadyInitialized(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
+        {
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+               .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
+            testee.Initialize(States.A);
+
+            Action action = () => testee.Load(A.Fake<IStateMachineLoader<States>>());
+
+            action
+                .Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
+        }
+
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void ThrowsExceptionOnLoading_WhenSettingALastActiveStateThatIsNotASubState(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
+        {
+            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
+               .WithConfiguration(x =>
+                   x.In(States.A))
+               .WithConfiguration(x =>
+                   x.DefineHierarchyOn(States.B)
+                       .WithHistoryType(HistoryType.Deep)
+                       .WithInitialSubState(States.B1)
+                       .WithSubState(States.B2))
+               .Build();
+
+            var testee = createStateMachine(stateMachineDefinition);
+
+            var loader = A.Fake<IStateMachineLoader<States>>();
+
+            A.CallTo(() => loader.LoadHistoryStates())
+                .Returns(new Dictionary<States, States>
+                            {
+                                { States.B, States.A }
+                            });
+
+            Action action = () => testee.Load(loader);
+
+            action.Should().Throw<InvalidOperationException>()
+               .WithMessage(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
         }
 
         /// <summary>

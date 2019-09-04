@@ -55,5 +55,22 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             stateContainer.GetLastActiveStateOrNullFor("A").Should().Be(lastActiveState);
         }
+
+        [Fact]
+        public void ExtensionsWhenExtensionsAreClearedThenNoExtensionIsRegistered()
+        {
+            var executed = false;
+            var extension = A.Fake<IExtension<string, int>>();
+
+            var testee = new StateContainer<string, int>();
+
+            testee.Extensions.Add(extension);
+            testee.Extensions.Clear();
+
+            testee.ForEach(e => executed = true);
+
+            executed
+                .Should().BeFalse();
+        }
     }
 }

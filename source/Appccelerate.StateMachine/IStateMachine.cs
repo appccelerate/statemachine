@@ -20,10 +20,10 @@ namespace Appccelerate.StateMachine
 {
     using System;
 
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Persistence;
-    using Appccelerate.StateMachine.Syntax;
+    using Machine;
+    using Machine.Events;
+    using Persistence;
+    using Syntax;
 
     /// <summary>
     /// A state machine.
@@ -60,6 +60,7 @@ namespace Appccelerate.StateMachine
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         bool IsRunning { get; }
 
+        // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
         /// <summary>
         /// Define the behavior of a state.
         /// </summary>
@@ -67,6 +68,7 @@ namespace Appccelerate.StateMachine
         /// <returns>Syntax to build state behavior.</returns>
         IEntryActionSyntax<TState, TEvent> In(TState state);
 
+        // todo wtjerry: remove method once all tests are moved to StateDefinitionBuilder
         /// <summary>
         /// Defines a state hierarchy.
         /// </summary>

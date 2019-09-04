@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.Persistence
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
+    using Infrastructure;
 
     public interface IStateMachineSaver<TState>
         where TState : IComparable
@@ -35,6 +35,6 @@ namespace Appccelerate.StateMachine.Persistence
         /// Saves the last active states of all super states.
         /// </summary>
         /// <param name="historyStates">Key = id of the super state; Value = if of last active state of super state.</param>
-        void SaveHistoryStates(IDictionary<TState, TState> historyStates);
+        void SaveHistoryStates(IReadOnlyDictionary<TState, TState> historyStates);
     }
 }

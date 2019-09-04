@@ -34,6 +34,8 @@
 
         public TState CurrentStateId => this.CurrentState.Id;
 
+        public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> LastActiveStates => this.lastActiveStates;
+
         public void ForEach(Action<IExtension<TState, TEvent>> action)
         {
             this.Extensions.ForEach(action);

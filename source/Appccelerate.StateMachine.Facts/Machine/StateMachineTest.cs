@@ -230,42 +230,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
             this.CheckNoRemainingRecords();
         }
 
-        // todo wtjerry: fix once Load works again
-//        [Fact]
-//        public void SetsCurrentStateOnLoadingFromPersistedState()
-//        {
-//            var loader = A.Fake<IStateMachineLoader<StateMachine.States>>();
-//
-//            A.CallTo(() => loader.LoadCurrentState())
-//                .Returns(new Initializable<StateMachine.States> { Value = StateMachine.States.C });
-//
-//            testee.Load(loader);
-//
-//            stateContainer.CurrentStateId
-//                .Should().Be(StateMachine.States.C);
-//        }
-//
-//        [Fact]
-//        public void SetsHistoryStatesOnLoadingFromPersistedState()
-//        {
-//            var loader = A.Fake<IStateMachineLoader<StateMachine.States>>();
-//
-//            A.CallTo(() => loader.LoadHistoryStates())
-//                .Returns(new Dictionary<StateMachine.States, StateMachine.States>
-//                             {
-//                                 { StateMachine.States.D, StateMachine.States.D2 }
-//                             });
-//
-//            testee.Load(loader);
-//            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
-//            testee.EnterInitialState(stateContainer, stateContainer);
-//            testee.Fire(StateMachine.Events.D, stateContainer, stateContainer); // should go to loaded last active state D2, not initial state D1
-//            this.ClearRecords();
-//            testee.Fire(StateMachine.Events.A, stateContainer, stateContainer);
-//
-//            this.CheckRecord<ExitRecord>(StateMachine.States.D2);
-//        }
-
         /// <summary>
         /// When a transition between two states at the top level then the
         /// exit action of the source state is executed, then the action is performed
@@ -580,22 +544,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
             this.CheckRecord<EntryRecord>(StateMachine.States.C1B);
             this.CheckNoRemainingRecords();
         }
-
-        // todo wtjerry: move test to either ASM & PSM or StateContainer
-//        [Fact]
-//        public void ExtensionsWhenExtensionsAreClearedThenNoExtensionIsRegistered()
-//        {
-//            bool executed = false;
-//            var extension = A.Fake<IExtension<StateMachine.States, Events>>();
-//
-//            testee.AddExtension(extension);
-//            testee.ClearExtensions();
-//
-//            testee.ForEach(e => executed = true);
-//
-//            executed
-//                .Should().BeFalse();
-//        }
 
         /// <summary>
         /// Records the entry into a state.

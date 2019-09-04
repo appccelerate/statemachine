@@ -168,7 +168,7 @@ namespace Appccelerate.StateMachine.Sync
             public override void Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
                 Initializable<State> loadedCurrentState,
-                IDictionary<State, State> loadedHistoryStates)
+                IReadOnlyDictionary<State, State> loadedHistoryStates)
             {
                 this.LoadedCurrentState.Add(loadedCurrentState.Value);
             }
@@ -179,14 +179,14 @@ namespace Appccelerate.StateMachine.Sync
         {
             public Initializable<TState> CurrentStateId { get; private set; }
 
-            public IDictionary<TState, TState> HistoryStates { get; private set; }
+            public IReadOnlyDictionary<TState, TState> HistoryStates { get; private set; }
 
             public void SaveCurrentState(Initializable<TState> currentState)
             {
                 this.CurrentStateId = currentState;
             }
 
-            public void SaveHistoryStates(IDictionary<TState, TState> historyStates)
+            public void SaveHistoryStates(IReadOnlyDictionary<TState, TState> historyStates)
             {
                 this.HistoryStates = historyStates;
             }
@@ -196,19 +196,19 @@ namespace Appccelerate.StateMachine.Sync
             where TState : IComparable
         {
             private Initializable<TState> currentState;
-            private IDictionary<TState, TState> historyStates;
+            private IReadOnlyDictionary<TState, TState> historyStates;
 
             public void SetCurrentState(Initializable<TState> state)
             {
                 this.currentState = state;
             }
 
-            public void SetHistoryStates(IDictionary<TState, TState> states)
+            public void SetHistoryStates(IReadOnlyDictionary<TState, TState> states)
             {
                 this.historyStates = states;
             }
 
-            public IDictionary<TState, TState> LoadHistoryStates()
+            public IReadOnlyDictionary<TState, TState> LoadHistoryStates()
             {
                 return this.historyStates;
             }

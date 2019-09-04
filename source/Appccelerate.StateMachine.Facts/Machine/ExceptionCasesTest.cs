@@ -368,50 +368,5 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .Throw<InvalidOperationException>()
                 .WithMessage(ExceptionMessages.TransitionWithoutGuardHasToBeLast);
         }
-
-        // todo wtjerry: fix once Load works again
-//        [Fact]
-//        public void ThrowsExceptionOnLoading_WhenAlreadyInitialized()
-//        {
-//            var stateContainer = new StateContainer<StateMachine.States, Events>();
-//
-//            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
-//                .Build()
-//                .CreateStateMachine(stateContainer);
-//
-//            testee.Initialize(StateMachine.States.A, stateContainer, stateContainer);
-//            Action action = () => testee.Load(A.Fake<IStateMachineLoader<StateMachine.States>>());
-//
-//            action.Should().Throw<InvalidOperationException>().WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
-//        }
-//
-//        [Fact]
-//        public void ThrowsExceptionOnLoading_WhenSettingALastActiveStateThatIsNotASubState()
-//        {
-//
-//            var stateContainer = new StateContainer<StateMachine.States, Events>();
-//
-//            var testee = new StateMachineDefinitionBuilder<StateMachine.States, Events>()
-//                .WithConfiguration(x =>
-//                    x.DefineHierarchyOn(StateMachine.States.B)
-//                        .WithHistoryType(HistoryType.Deep)
-//                        .WithInitialSubState(StateMachine.States.B1)
-//                        .WithSubState(StateMachine.States.B2))
-//                .Build()
-//                .CreateStateMachine(stateContainer);
-//
-//            var loader = A.Fake<IStateMachineLoader<StateMachine.States>>();
-//
-//            A.CallTo(() => loader.LoadHistoryStates())
-//                .Returns(new Dictionary<StateMachine.States, StateMachine.States>
-//                             {
-//                                 { StateMachine.States.B, StateMachine.States.A }
-//                             });
-//
-//            Action action = () => testee.Load(loader);
-//
-//            action.Should().Throw<InvalidOperationException>()
-//                .WithMessage(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
-//        }
     }
 }

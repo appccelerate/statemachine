@@ -182,79 +182,6 @@ namespace Appccelerate.StateMachine.Machine
             this.RaiseEvent(this.TransitionBegin, new TransitionEventArgs<TState, TEvent>(transitionContext), transitionContext, true);
         }
 
-        // todo wtjerry: fix save and load
-        //        public void Save(IStateMachineSaver<TState> stateMachineSaver)
-        //        {
-        //            Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
-        //
-        //            stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentState != null ?
-        //                new Initializable<TState> { Value = this.stateContainer.CurrentState.Id } :
-        //                new Initializable<TState>());
-        //
-        //            IEnumerable<IState<TState, TEvent>> superStatesWithLastActiveState = this.stateContainer.States.GetStates()
-        //                .Where(s => s.SubStates.Any())
-        //                .Where(s => s.LastActiveState != null)
-        //                .ToList();
-        //
-        //            var historyStates = superStatesWithLastActiveState.ToDictionary(
-        //                s => s.Id,
-        //                s => s.LastActiveState.Id);
-        //
-        //            stateMachineSaver.SaveHistoryStates(historyStates);
-        //        }
-        //
-        //        public bool Load(IStateMachineLoader<TState> stateMachineLoader)
-        //        {
-        //            Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
-        //            this.CheckThatStateMachineIsNotAlreadyInitialized();
-        //
-        //            Initializable<TState> loadedCurrentState = stateMachineLoader.LoadCurrentState();
-        //            IDictionary<TState, TState> historyStates = stateMachineLoader.LoadHistoryStates();
-        //
-        //            var initialized = SetCurrentState();
-        //            LoadHistoryStates();
-        //            NotifyExtensions();
-        //
-        //            return initialized;
-        //
-        //            bool SetCurrentState()
-        //            {
-        //                if (loadedCurrentState.IsInitialized)
-        //                {
-        //                    this.stateContainer.CurrentState = this.stateContainer.States[loadedCurrentState.Value];
-        //                    return true;
-        //                }
-        //
-        //                this.stateContainer.CurrentState = null;
-        //                return false;
-        //            }
-        //
-        //            void LoadHistoryStates()
-        //            {
-        //                foreach (KeyValuePair<TState, TState> historyState in historyStates)
-        //                {
-        //                    IState<TState, TEvent> superState = this.stateContainer.States[historyState.Key];
-        //                    IState<TState, TEvent> lastActiveState = this.stateContainer.States[historyState.Value];
-        //
-        //                    if (!superState.SubStates.Contains(lastActiveState))
-        //                    {
-        //                        throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
-        //                    }
-        //
-        //                    superState.LastActiveState = lastActiveState;
-        //                }
-        //            }
-        //
-        //            void NotifyExtensions()
-        //            {
-        //                this.stateContainer.Extensions.ForEach(
-        //                    extension => extension.Loaded(
-        //                        this,
-        //                        loadedCurrentState,
-        //                        historyStates));
-        //            }
-        //        }
-
         // ReSharper disable once UnusedParameter.Local
         private static void RethrowExceptionIfNoHandlerRegistered<T>(Exception exception, EventHandler<T> exceptionHandler)
             where T : EventArgs
@@ -348,15 +275,6 @@ namespace Appccelerate.StateMachine.Machine
                 throw new InvalidOperationException(ExceptionMessages.StateMachineNotInitialized);
             }
         }
-
-        // todo wtjerry: fix once Load works again
-        //        private void CheckThatStateMachineIsNotAlreadyInitialized()
-        //        {
-        //            if (this.stateContainer.CurrentState != null || this.stateContainer.InitialStateId.IsInitialized)
-        //            {
-        //                throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
-        //            }
-        //        }
 
         private static void CheckThatStateMachineHasEnteredInitialState(StateContainer<TState, TEvent> stateContainer)
         {
