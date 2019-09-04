@@ -55,27 +55,8 @@ namespace Appccelerate.StateMachine
         /// Initializes a new instance of the <see cref="ActiveStateMachine{TState, TEvent}"/> class.
         /// </summary>
         public ActiveStateMachine()
-            : this(null)
+            : this(null, null, null)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ActiveStateMachine{TState, TEvent}"/> class.
-        /// </summary>
-        /// <param name="name">The name of the state machine. Used in log messages.</param>
-        public ActiveStateMachine(string name)
-            : this(name, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ActiveStateMachine{TState, TEvent}"/> class.
-        /// </summary>
-        /// <param name="name">The name of the state machine.</param>
-        /// <param name="factory">The factory uses to build up internals. Pass your own factory to change the behavior of the state machine.</param>
-        public ActiveStateMachine(string name, IFactory<TState, TEvent> factory)
-        {
-            this.queue = new LinkedList<EventInformation<TEvent>>();
         }
 
         public ActiveStateMachine(

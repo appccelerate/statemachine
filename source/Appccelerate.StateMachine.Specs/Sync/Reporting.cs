@@ -33,7 +33,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
             IStateMachineReport<string, int> report)
         {
             "establish a state machine".x(() =>
-                machine = new PassiveStateMachine<string, int>());
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine());
 
             "establish a state machine reporter".x(() =>
                 report = A.Fake<IStateMachineReport<string, int>>());

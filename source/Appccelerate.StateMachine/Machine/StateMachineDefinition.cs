@@ -20,7 +20,8 @@ namespace Appccelerate.StateMachine.Machine
 
         public PassiveStateMachine<TState, TEvent> CreatePassiveStateMachine()
         {
-            return this.CreatePassiveStateMachine(default(string));
+            var name = typeof(PassiveStateMachine<TState, TEvent>).FullNameToString();
+            return this.CreatePassiveStateMachine(name);
         }
 
         public PassiveStateMachine<TState, TEvent> CreatePassiveStateMachine(string name)
@@ -44,7 +45,8 @@ namespace Appccelerate.StateMachine.Machine
 
         public ActiveStateMachine<TState, TEvent> CreateActiveStateMachine()
         {
-            return this.CreateActiveStateMachine(default(string));
+            var name = typeof(ActiveStateMachine<TState, TEvent>).FullNameToString();
+            return this.CreateActiveStateMachine(name);
         }
 
         public ActiveStateMachine<TState, TEvent> CreateActiveStateMachine(string name)

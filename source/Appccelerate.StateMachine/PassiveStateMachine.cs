@@ -69,27 +69,8 @@ namespace Appccelerate.StateMachine
         /// Initializes a new instance of the <see cref="PassiveStateMachine&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         public PassiveStateMachine()
-            : this(default(string))
+            : this(null, null, null)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PassiveStateMachine{TState, TEvent}"/> class.
-        /// </summary>
-        /// <param name="name">The name of the state machine. Used in log messages.</param>
-        public PassiveStateMachine(string name)
-            : this(name, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PassiveStateMachine{TState, TEvent}"/> class.
-        /// </summary>
-        /// <param name="name">The name of the state machine. Used in log messages.</param>
-        /// <param name="factory">The factory.</param>
-        public PassiveStateMachine(string name, IFactory<TState, TEvent> factory)
-        {
-            this.events = new LinkedList<EventInformation<TEvent>>();
         }
 
         public PassiveStateMachine(
