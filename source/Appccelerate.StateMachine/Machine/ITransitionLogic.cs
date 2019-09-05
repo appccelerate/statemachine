@@ -33,8 +33,13 @@ namespace Appccelerate.StateMachine.Machine
         /// <summary>
         /// Fires the transition.
         /// </summary>
+        /// <param name="transitionDefinition">The definition of the transition which should happen.</param>
         /// <param name="context">The event context.</param>
         /// <returns>The result of the transition.</returns>
-        ITransitionResult<TState> Fire(ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
+        /// <param name="lastActiveStateModifier">The last active state modifier.</param>
+        ITransitionResult<TState> Fire(
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
     }
 }

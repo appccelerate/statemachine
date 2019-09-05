@@ -33,15 +33,15 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="ITransitionResult{TState, TEvent}"/> is fired.
+        /// Gets a value indicating whether this <see cref="ITransitionResult{TState}"/> is fired.
         /// </summary>
         /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
-        public bool Fired { get; private set; }
+        public bool Fired { get; }
 
         /// <summary>
         /// Gets the new state the state machine is in.
         /// </summary>
         /// <value>The new state.</value>
-        public TState NewState { get; private set; }
+        public TState NewState { get; }
     }
 }

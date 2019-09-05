@@ -33,7 +33,9 @@ namespace Appccelerate.StateMachine.Machine
         /// <summary>
         /// Fires the specified event id on this state.
         /// </summary>
+        /// <param name="stateDefinition">The definition of the state onto which the event should be fired.</param>
         /// <param name="context">The event context.</param>
+        /// <param name="lastActiveStateModifier">The last active state modifier.</param>
         /// <returns>The result of the transition.</returns>
         ITransitionResult<TState> Fire(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
 
