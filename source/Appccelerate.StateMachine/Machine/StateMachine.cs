@@ -101,7 +101,7 @@ namespace Appccelerate.StateMachine.Machine
         public void EnterInitialState(
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions)
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions)
         {
             CheckThatStateMachineIsInitialized(stateContainer);
 
@@ -124,7 +124,7 @@ namespace Appccelerate.StateMachine.Machine
             TEvent eventId,
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions)
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions)
         {
             this.Fire(eventId, Missing.Value, stateContainer, stateMachineInformation, stateDefinitions);
         }
@@ -142,7 +142,7 @@ namespace Appccelerate.StateMachine.Machine
             object eventArgument,
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions)
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions)
         {
             CheckThatStateMachineIsInitialized(stateContainer);
             CheckThatStateMachineHasEnteredInitialState(stateContainer);
@@ -236,7 +236,7 @@ namespace Appccelerate.StateMachine.Machine
             ITransitionContext<TState, TEvent> context,
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions)
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions)
         {
             var initialState = stateDefinitions[stateContainer.InitialStateId.Value];
             var initializer = this.factory.CreateStateMachineInitializer(initialState, context);

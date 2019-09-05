@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
-
+    using System.Linq;
     using States;
 
     public class StateDictionary<TState, TEvent> : IStateDictionary<TState, TEvent>
@@ -42,6 +42,10 @@ namespace Appccelerate.StateMachine.Machine
             }
         }
 
-        public IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> ReadOnlyDictionary => this.dictionary;
+        public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> ReadOnlyDictionary =>
+            this.dictionary
+                .ToDictionary(
+                    pair => pair.Key,
+                    pair => (IStateDefinition<TState, TEvent>)pair.Value);
     }
 }

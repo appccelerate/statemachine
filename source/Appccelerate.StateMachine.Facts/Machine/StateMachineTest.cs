@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
     /// </summary>
     public class StateMachineTest
     {
-        private readonly IReadOnlyDictionary<States, StateDefinition<States, Events>> stateDefinitions;
+        private readonly IReadOnlyDictionary<States, IStateDefinition<States, Events>> stateDefinitions;
 
         /// <summary>
         /// The list of recorded actions.

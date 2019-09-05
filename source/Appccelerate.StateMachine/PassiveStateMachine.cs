@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine
 
         private readonly StateContainer<TState, TEvent> stateContainer;
 
-        private readonly IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions;
+        private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions;
 
         /// <summary>
         /// Whether the state machine is initialized.
@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine
         public PassiveStateMachine(
             StateMachine<TState, TEvent> stateMachine,
             StateContainer<TState, TEvent> stateContainer,
-            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions)
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions)
         {
             this.stateMachine = stateMachine;
             this.stateContainer = stateContainer;

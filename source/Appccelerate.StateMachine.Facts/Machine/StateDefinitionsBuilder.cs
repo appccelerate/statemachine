@@ -19,7 +19,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             return this;
         }
 
-        public IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> Build()
+        public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> Build()
         {
             var stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
             var initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();

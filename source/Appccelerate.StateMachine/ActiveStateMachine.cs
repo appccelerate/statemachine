@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine
         private readonly StateMachine<TState, TEvent> stateMachine;
         private readonly LinkedList<EventInformation<TEvent>> queue;
         private readonly StateContainer<TState, TEvent> stateContainer;
-        private readonly IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions;
+        private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions;
 
         private bool initialized;
         private bool pendingInitialization;
@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine
         public ActiveStateMachine(
             StateMachine<TState, TEvent> stateMachine,
             StateContainer<TState, TEvent> stateContainer,
-            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions)
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions)
         {
             this.stateMachine = stateMachine;
             this.stateContainer = stateContainer;

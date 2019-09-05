@@ -11,12 +11,12 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly IFactory<TState, TEvent> factory;
-        private readonly IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions;
+        private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions;
         private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
         public StateMachineDefinition(
             IFactory<TState, TEvent> factory,
-            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions,
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions,
             Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             this.factory = factory;
