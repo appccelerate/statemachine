@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
     using FakeItEasy;
     using FluentAssertions;
     using Machine;
+    using Machine.Events;
     using Xbehave;
 
     public class ActiveStateMachines
@@ -77,19 +78,21 @@ namespace Appccelerate.StateMachine.Specs.Sync
         [Scenario]
         public void CustomFactory(
             ActiveStateMachine<string, int> machine,
-            StandardFactory<string, int> factory)
+            IFactory<string, int> factory)
         {
             "establish a custom factory".x(() =>
             {
-                factory = A.Fake<StandardFactory<string, int>>();
+                factory = A.Fake<IFactory<string, int>>();
             });
 
             "when creating an active state machine".x(() =>
                 machine = new StateMachineDefinitionBuilder<string, int>()
+                    .WithCustomFactory(factory)
                     .WithConfiguration(x =>
                         x.In("Initial")
                             .On(42)
-                            .Goto("answer"))
+                            .Goto("answer")
+                            .Execute(() => { }))
                     .Build()
                     .CreateActiveStateMachine());
 
