@@ -20,8 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Linq;
-    using ActionHolders;
-    using GuardHolders;
+    using Events;
     using States;
     using Syntax;
     using Transitions;
@@ -43,16 +42,20 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly StateDefinition<TState, TEvent> stateDefinition;
-
         private readonly IStateDictionary<TState, TEvent> stateDefinitionDictionary;
+        private readonly IFactory<TState, TEvent> factory;
 
         private TransitionDefinition<TState, TEvent> currentTransitionDefinition;
 
         private TEvent currentEventId;
 
-        public StateBuilder(TState stateId, IStateDictionary<TState, TEvent> stateDefinitionDictionary)
+        public StateBuilder(
+            TState stateId,
+            IStateDictionary<TState, TEvent> stateDefinitionDictionary,
+            IFactory<TState, TEvent> factory)
         {
             this.stateDefinitionDictionary = stateDefinitionDictionary;
+            this.factory = factory;
             this.stateDefinition = this.stateDefinitionDictionary[stateId];
         }
 
@@ -65,7 +68,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.stateDefinition.EntryActionsModifiable.Add(new ArgumentLessActionHolder(action));
+            this.stateDefinition.EntryActionsModifiable.Add(this.factory.CreateActionHolder(action));
 
             return this;
         }
@@ -74,7 +77,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.stateDefinition.EntryActionsModifiable.Add(new ArgumentActionHolder<T>(action));
+            this.stateDefinition.EntryActionsModifiable.Add(this.factory.CreateActionHolder(action));
 
             return this;
         }
@@ -88,7 +91,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <returns>Exit action syntax.</returns>
         IEntryActionSyntax<TState, TEvent> IEntryActionSyntax<TState, TEvent>.ExecuteOnEntryParametrized<T>(Action<T> action, T parameter)
         {
-            this.stateDefinition.EntryActionsModifiable.Add(new ParametrizedActionHolder<T>(action, parameter));
+            this.stateDefinition.EntryActionsModifiable.Add(this.factory.CreateActionHolder(action, parameter));
 
             return this;
         }
@@ -102,7 +105,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.stateDefinition.ExitActionsModifiable.Add(new ArgumentLessActionHolder(action));
+            this.stateDefinition.ExitActionsModifiable.Add(this.factory.CreateActionHolder(action));
 
             return this;
         }
@@ -111,7 +114,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.stateDefinition.ExitActionsModifiable.Add(new ArgumentActionHolder<T>(action));
+            this.stateDefinition.ExitActionsModifiable.Add(this.factory.CreateActionHolder(action));
 
             return this;
         }
@@ -125,7 +128,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <returns>Exit action syntax.</returns>
         IExitActionSyntax<TState, TEvent> IExitActionSyntax<TState, TEvent>.ExecuteOnExitParametrized<T>(Action<T> action, T parameter)
         {
-            this.stateDefinition.ExitActionsModifiable.Add(new ParametrizedActionHolder<T>(action, parameter));
+            this.stateDefinition.ExitActionsModifiable.Add(this.factory.CreateActionHolder(action, parameter));
 
             return this;
         }
@@ -263,7 +266,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private StateBuilder<TState, TEvent> ExecuteInternal(Action action)
         {
-            this.currentTransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(action));
+            this.currentTransitionDefinition.ActionsModifiable.Add(this.factory.CreateTransitionActionHolder(action));
 
             this.CheckGuards();
 
@@ -272,7 +275,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private StateBuilder<TState, TEvent> ExecuteInternal<T>(Action<T> action)
         {
-            this.currentTransitionDefinition.ActionsModifiable.Add( new ArgumentActionHolder<T>(action));
+            this.currentTransitionDefinition.ActionsModifiable.Add(this.factory.CreateTransitionActionHolder(action));
 
             this.CheckGuards();
 
@@ -320,12 +323,12 @@ namespace Appccelerate.StateMachine.Machine
 
         private void SetGuard<T>(Func<T, bool> guard)
         {
-            this.currentTransitionDefinition.Guard = new ArgumentGuardHolder<T>(guard);
+            this.currentTransitionDefinition.Guard = this.factory.CreateGuardHolder(guard);
         }
 
         private void SetGuard(Func<bool> guard)
         {
-            this.currentTransitionDefinition.Guard = new ArgumentLessGuardHolder(guard);
+            this.currentTransitionDefinition.Guard = this.factory.CreateGuardHolder(guard);
         }
 
         private void SetTargetState(TState target)

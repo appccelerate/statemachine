@@ -2,6 +2,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
+    using Events;
     using States;
     using Syntax;
 
@@ -10,6 +11,13 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly List<Func<ISyntaxStart<TState, TEvent>, object>> setupFunctions = new List<Func<ISyntaxStart<TState, TEvent>, object>>();
+        private IFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
+
+        public StateMachineDefinitionBuilder<TState, TEvent> WithCustomFactory(IFactory<TState, TEvent> customFactory)
+        {
+            this.factory = customFactory;
+            return this;
+        }
 
         public StateMachineDefinitionBuilder<TState, TEvent> WithConfiguration(
             Func<ISyntaxStart<TState, TEvent>, object> setupFunction)
@@ -22,11 +30,11 @@ namespace Appccelerate.StateMachine.Machine
         {
             var stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
             var initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
-            var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionary, initiallyLastActiveStates);
+            var syntaxStart = new SyntaxStart<TState, TEvent>(this.factory, stateDefinitionDictionary, initiallyLastActiveStates);
 
             this.setupFunctions.ForEach(f => f(syntaxStart));
 
-            return new StateMachineDefinition<TState, TEvent>(stateDefinitionDictionary.ReadOnlyDictionary, initiallyLastActiveStates);
+            return new StateMachineDefinition<TState, TEvent>(this.factory, stateDefinitionDictionary.ReadOnlyDictionary, initiallyLastActiveStates);
         }
     }
 }

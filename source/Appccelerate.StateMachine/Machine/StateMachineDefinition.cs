@@ -2,6 +2,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
+    using Events;
     using States;
     using Transitions;
 
@@ -9,11 +10,16 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
+        private readonly IFactory<TState, TEvent> factory;
         private readonly IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions;
         private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
-        public StateMachineDefinition(IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions, Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
+        public StateMachineDefinition(
+            IFactory<TState, TEvent> factory,
+            IReadOnlyDictionary<TState, StateDefinition<TState, TEvent>> stateDefinitions,
+            Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
+            this.factory = factory;
             this.stateDefinitions = stateDefinitions;
             this.initiallyLastActiveStates = initiallyLastActiveStates;
         }
@@ -32,13 +38,11 @@ namespace Appccelerate.StateMachine.Machine
                 stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
             }
 
-            var factory = new StandardFactory<TState, TEvent>();
-
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
             var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
-            var stateMachine = new StateMachine<TState, TEvent>(factory, stateLogic);
+            var stateMachine = new StateMachine<TState, TEvent>(this.factory, stateLogic);
 
             return new PassiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
         }
@@ -57,13 +61,11 @@ namespace Appccelerate.StateMachine.Machine
                 stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
             }
 
-            var factory = new StandardFactory<TState, TEvent>();
-
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
             var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
-            var stateMachine = new StateMachine<TState, TEvent>(factory, stateLogic);
+            var stateMachine = new StateMachine<TState, TEvent>(this.factory, stateLogic);
 
             return new ActiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
         }

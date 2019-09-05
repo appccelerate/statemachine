@@ -19,8 +19,10 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using ActionHolders;
     using Contexts;
     using Events;
+    using GuardHolders;
     using States;
 
     /// <summary>
@@ -34,6 +36,41 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
+        public virtual IActionHolder CreateActionHolder(Action action)
+        {
+            return new ArgumentLessActionHolder(action);
+        }
+
+        public virtual IActionHolder CreateActionHolder<T>(Action<T> action)
+        {
+            return new ArgumentActionHolder<T>(action);
+        }
+
+        public virtual IActionHolder CreateActionHolder<T>(Action<T> action, T parameter)
+        {
+            return new ParametrizedActionHolder<T>(action, parameter);
+        }
+
+        public virtual IActionHolder CreateTransitionActionHolder(Action action)
+        {
+            return new ArgumentLessActionHolder(action);
+        }
+
+        public virtual IActionHolder CreateTransitionActionHolder<T>(Action<T> action)
+        {
+            return new ArgumentActionHolder<T>(action);
+        }
+
+        public virtual IGuardHolder CreateGuardHolder(Func<bool> guard)
+        {
+            return new ArgumentLessGuardHolder(guard);
+        }
+
+        public virtual IGuardHolder CreateGuardHolder<T>(Func<T, bool> guard)
+        {
+            return new ArgumentGuardHolder<T>(guard);
+        }
+
         public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(IStateDefinition<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
         {
             return new TransitionContext<TState, TEvent>(stateDefinition, eventId, eventArgument, notifier);

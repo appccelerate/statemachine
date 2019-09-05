@@ -22,14 +22,14 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     using FluentAssertions;
     using StateMachine.AsyncMachine;
     using Xunit;
-    
+
     public class StateActionFacts
     {
-        private readonly StateMachine<Facts.States, Events> testee;
+        private readonly StateMachine<States, Events> testee;
 
         public StateActionFacts()
         {
-            this.testee = new StateMachine<Facts.States, Events>();
+            this.testee = new StateMachine<States, Events>();
         }
 
         [Fact]
