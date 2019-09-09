@@ -85,6 +85,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <PropertyGroup>
+    <MinVerAutoIncrement>Minor</MinVerAutoIncrement>
+  </PropertyGroup>
 
   <!-- license -->
   <ItemGroup>
