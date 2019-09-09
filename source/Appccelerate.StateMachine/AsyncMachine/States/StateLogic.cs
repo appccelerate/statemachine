@@ -1,4 +1,4 @@
-//-------------------------------------------------------------------------------
+﻿//-------------------------------------------------------------------------------
 // <copyright file="StateLogic.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
@@ -16,9 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.States
+namespace Appccelerate.StateMachine.AsyncMachine.States
 {
     using System;
+    using System.Threading.Tasks;
     using ActionHolders;
     using Transitions;
 
@@ -48,20 +49,20 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <param name="context">The event context.</param>
         /// <param name="lastActiveStateModifier">The last active state modifier.</param>
         /// <returns>The result of the transition.</returns>
-        public ITransitionResult<TState> Fire(
+        public async Task<ITransitionResultNew<TState>> Fire(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             Guard.AgainstNullArgument("context", context);
 
-            var result = TransitionResult<TState>.NotFired;
+            var result = TransitionResultNew<TState>.NotFired;
 
             if (stateDefinition.Transitions.TryGetValue(context.EventId.Value, out var transitionsForEvent))
             {
                 foreach (var transitionDefinition in transitionsForEvent)
                 {
-                    result = this.transitionLogic.Fire(transitionDefinition, context, lastActiveStateModifier);
+                    result = await this.transitionLogic.Fire(transitionDefinition, context, lastActiveStateModifier).ConfigureAwait(false);
                     if (result.Fired)
                     {
                         return result;
@@ -71,13 +72,13 @@ namespace Appccelerate.StateMachine.Machine.States
 
             if (stateDefinition.SuperState != null)
             {
-                result = this.Fire(stateDefinition.SuperState, context, lastActiveStateModifier);
+                result = await this.Fire(stateDefinition.SuperState, context, lastActiveStateModifier).ConfigureAwait(false);
             }
 
             return result;
         }
 
-        public void Entry(
+        public async Task Entry(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
@@ -85,15 +86,10 @@ namespace Appccelerate.StateMachine.Machine.States
 
             context.AddRecord(stateDefinition.Id, RecordType.Enter);
 
-            this.extensionHost.ForEach(
-                extension =>
-                    extension.EnteringState(
-                        this.stateMachineInformation, stateDefinition, context));
-
-            this.ExecuteEntryActions(stateDefinition, context);
+            await this.ExecuteEntryActions(stateDefinition, context).ConfigureAwait(false);
         }
 
-        public void Exit(
+        public async Task Exit(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
@@ -102,11 +98,11 @@ namespace Appccelerate.StateMachine.Machine.States
 
             context.AddRecord(stateDefinition.Id, RecordType.Exit);
 
-            this.ExecuteExitActions(stateDefinition, context);
-            SetThisStateAsLastStateOfSuperState(stateDefinition, lastActiveStateModifier);
+            await this.ExecuteExitActions(stateDefinition, context).ConfigureAwait(false);
+            this.SetThisStateAsLastStateOfSuperState(stateDefinition, lastActiveStateModifier);
         }
 
-        public TState EnterByHistory(
+        public async Task<TState> EnterByHistory(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
@@ -116,26 +112,26 @@ namespace Appccelerate.StateMachine.Machine.States
             switch (stateDefinition.HistoryType)
             {
                 case HistoryType.None:
-                    result = this.EnterHistoryNone(stateDefinition, context);
+                    result = await this.EnterHistoryNone(stateDefinition, context).ConfigureAwait(false);
                     break;
 
                 case HistoryType.Shallow:
-                    result = this.EnterHistoryShallow(stateDefinition, context, lastActiveStateModifier);
+                    result = await this.EnterHistoryShallow(stateDefinition, context, lastActiveStateModifier).ConfigureAwait(false);
                     break;
 
                 case HistoryType.Deep:
-                    result = this.EnterHistoryDeep(stateDefinition, context, lastActiveStateModifier);
+                    result = await this.EnterHistoryDeep(stateDefinition, context, lastActiveStateModifier).ConfigureAwait(false);
                     break;
             }
 
             return result;
         }
 
-        public TState EnterShallow(
+        public async Task<TState> EnterShallow(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
-            this.Entry(stateDefinition, context);
+            await this.Entry(stateDefinition, context).ConfigureAwait(false);
 
             var initialState = stateDefinition.InitialState;
             if (initialState == null)
@@ -143,15 +139,15 @@ namespace Appccelerate.StateMachine.Machine.States
                 return stateDefinition.Id;
             }
 
-            return this.EnterShallow(initialState, context);
+            return await this.EnterShallow(initialState, context).ConfigureAwait(false);
         }
 
-        private TState EnterDeep(
+        public async Task<TState> EnterDeep(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
-            this.Entry(stateDefinition, context);
+            await this.Entry(stateDefinition, context).ConfigureAwait(false);
 
             var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
             if (lastActiveState == null)
@@ -159,7 +155,7 @@ namespace Appccelerate.StateMachine.Machine.States
                 return stateDefinition.Id;
             }
 
-            return this.EnterDeep(lastActiveState, context, lastActiveStateModifier);
+            return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier).ConfigureAwait(false);
         }
 
         private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
@@ -167,96 +163,112 @@ namespace Appccelerate.StateMachine.Machine.States
             context.OnExceptionThrown(exception);
         }
 
-        private void ExecuteEntryActions(
+        private async Task ExecuteEntryActions(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in stateDefinition.EntryActions)
             {
-                this.ExecuteEntryAction(stateDefinition, actionHolder, context);
+                await this.ExecuteEntryAction(stateDefinition, actionHolder, context)
+                    .ConfigureAwait(false);
             }
         }
 
-        private void ExecuteEntryAction(
+        private async Task ExecuteEntryAction(
             IStateDefinition<TState, TEvent> stateDefinition,
             IActionHolder actionHolder,
             ITransitionContext<TState, TEvent> context)
         {
             try
             {
-                actionHolder.Execute(context.EventArgument);
+                await actionHolder
+                    .Execute(context.EventArgument)
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                this.HandleEntryActionException(stateDefinition, context, exception);
+                await this.HandleEntryActionException(stateDefinition, context, exception)
+                    .ConfigureAwait(false);
             }
         }
 
-        private void HandleEntryActionException(
+        private async Task HandleEntryActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             Exception exception)
         {
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandlingEntryActionException(
-                    this.stateMachineInformation, stateDefinition, context, ref exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandlingEntryActionException(
+                        this.stateMachineInformation, stateDefinition, context, ref exception))
+                .ConfigureAwait(false);
 
             HandleException(exception, context);
 
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandledEntryActionException(
-                    this.stateMachineInformation, stateDefinition, context, exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandledEntryActionException(
+                        this.stateMachineInformation, stateDefinition, context, exception))
+                .ConfigureAwait(false);
         }
 
-        private void ExecuteExitActions(
+        private async Task ExecuteExitActions(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in stateDefinition.ExitActions)
             {
-                this.ExecuteExitAction(stateDefinition, actionHolder, context);
+                await this.ExecuteExitAction(stateDefinition, actionHolder, context)
+                    .ConfigureAwait(false);
             }
         }
 
-        private void ExecuteExitAction(
+        private async Task ExecuteExitAction(
             IStateDefinition<TState, TEvent> stateDefinition,
             IActionHolder actionHolder,
             ITransitionContext<TState, TEvent> context)
         {
             try
             {
-                actionHolder.Execute(context.EventArgument);
+                await actionHolder
+                    .Execute(context.EventArgument)
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                this.HandleExitActionException(stateDefinition, context, exception);
+                await this.HandleExitActionException(stateDefinition, context, exception)
+                    .ConfigureAwait(false);
             }
         }
 
-        private void HandleExitActionException(
+        private async Task HandleExitActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             Exception exception)
         {
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandlingExitActionException(
-                    this.stateMachineInformation, stateDefinition, context, ref exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandlingExitActionException(
+                        this.stateMachineInformation, stateDefinition, context, ref exception))
+                .ConfigureAwait(false);
 
             HandleException(exception, context);
 
-            this.extensionHost.ForEach(
-                extension =>
-                extension.HandledExitActionException(
-                    this.stateMachineInformation, stateDefinition, context, exception));
+            await this.extensionHost
+                .ForEach(
+                    extension =>
+                    extension.HandledExitActionException(
+                        this.stateMachineInformation, stateDefinition, context, exception))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
         /// Sets this instance as the last state of this instance's super state.
         /// </summary>
-        private static void SetThisStateAsLastStateOfSuperState(IStateDefinition<TState, TEvent> stateDefinition, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+        private void SetThisStateAsLastStateOfSuperState(IStateDefinition<TState, TEvent> stateDefinition, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             if (stateDefinition.SuperState != null)
             {
@@ -264,7 +276,7 @@ namespace Appccelerate.StateMachine.Machine.States
             }
         }
 
-        private TState EnterHistoryDeep(
+        private async Task<TState> EnterHistoryDeep(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
@@ -275,10 +287,11 @@ namespace Appccelerate.StateMachine.Machine.States
                 return stateDefinition.Id;
             }
 
-            return this.EnterDeep(lastActiveState, context, lastActiveStateModifier);
+            return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier)
+                .ConfigureAwait(false);
         }
 
-        private TState EnterHistoryShallow(
+        private async Task<TState> EnterHistoryShallow(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
@@ -289,16 +302,18 @@ namespace Appccelerate.StateMachine.Machine.States
                 return stateDefinition.Id;
             }
 
-            return this.EnterShallow(lastActiveState, context);
+            return await this.EnterShallow(lastActiveState, context)
+                .ConfigureAwait(false);
         }
 
-        private TState EnterHistoryNone(
+        private async Task<TState> EnterHistoryNone(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context)
         {
             if (stateDefinition.InitialState != null)
             {
-                return this.EnterShallow(stateDefinition.InitialState, context);
+                return await this.EnterShallow(stateDefinition.InitialState, context)
+                    .ConfigureAwait(false);
             }
 
             return stateDefinition.Id;

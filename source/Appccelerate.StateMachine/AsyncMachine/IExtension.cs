@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Appccelerate.StateMachine.Infrastructure;
+    using States;
 
     /// <summary>
     /// Extensions for a state machine have to implement this interface.
@@ -145,6 +146,20 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task HandlingEntryActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
+            IStateDefinition<TState, TEvent> state,
+            ITransitionContext<TState, TEvent> context,
+            ref Exception exception);
+
+        /// <summary>
+        /// Called before an entry action exception is handled.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="state">The state.</param>
+        /// <param name="context">The context.</param>
+        /// <param name="exception">The exception. Can be replaced by the extension.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task HandlingEntryActionException(
+            IStateMachineInformation<TState, TEvent> stateMachine,
             IState<TState, TEvent> state,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception);
@@ -164,6 +179,20 @@ namespace Appccelerate.StateMachine.AsyncMachine
             Exception exception);
 
         /// <summary>
+        /// Called after an entry action exception was handled.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="state">The state.</param>
+        /// <param name="context">The context.</param>
+        /// <param name="exception">The exception.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task HandledEntryActionException(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            IStateDefinition<TState, TEvent> state,
+            ITransitionContext<TState, TEvent> context,
+            Exception exception);
+
+        /// <summary>
         /// Called before an exit action exception is handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -178,6 +207,20 @@ namespace Appccelerate.StateMachine.AsyncMachine
             ref Exception exception);
 
         /// <summary>
+        /// Called before an exit action exception is handled.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="state">The state.</param>
+        /// <param name="context">The context.</param>
+        /// <param name="exception">The exception. Can be replaced by the extension.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task HandlingExitActionException(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            IStateDefinition<TState, TEvent> state,
+            ITransitionContext<TState, TEvent> context,
+            ref Exception exception);
+
+        /// <summary>
         /// Called after an exit action exception was handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -188,6 +231,20 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandledExitActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             IState<TState, TEvent> state,
+            ITransitionContext<TState, TEvent> context,
+            Exception exception);
+
+        /// <summary>
+        /// Called after an exit action exception was handled.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="state">The state.</param>
+        /// <param name="context">The context.</param>
+        /// <param name="exception">The exception.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task HandledExitActionException(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            IStateDefinition<TState, TEvent> state,
             ITransitionContext<TState, TEvent> context,
             Exception exception);
 

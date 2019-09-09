@@ -73,9 +73,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.State
         {
             const int Level = 2;
             var testee = new StateDefinition<States, Events>(States.A);
-
             var subState = A.Fake<StateDefinition<States, Events>>();
-
             testee.SubStatesModifiable.Add(subState);
 
             testee.Level = Level;

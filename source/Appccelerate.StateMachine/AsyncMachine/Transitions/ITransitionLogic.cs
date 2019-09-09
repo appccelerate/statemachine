@@ -1,4 +1,4 @@
-//-------------------------------------------------------------------------------
+﻿//-------------------------------------------------------------------------------
 // <copyright file="ITransitionLogic.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
@@ -16,9 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
     using System;
+    using System.Threading.Tasks;
 
     public interface ITransitionLogic<TState, TEvent>
         where TState : IComparable
@@ -31,7 +32,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <param name="context">The event context.</param>
         /// <returns>The result of the transition.</returns>
         /// <param name="lastActiveStateModifier">The last active state modifier.</param>
-        ITransitionResult<TState> Fire(
+        Task<ITransitionResultNew<TState>> Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
