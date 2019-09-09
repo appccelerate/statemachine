@@ -23,8 +23,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
             var initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
-            var standardFactory = new StandardFactory<TState, TEvent>();
-            var syntaxStart = new SyntaxStart<TState, TEvent>(standardFactory, stateDefinitionDictionary, initiallyLastActiveStates);
+            var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionary, initiallyLastActiveStates);
 
             this.setupFunctions.ForEach(f => f(syntaxStart));
 

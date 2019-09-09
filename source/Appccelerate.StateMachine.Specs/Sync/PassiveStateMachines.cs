@@ -18,10 +18,8 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
-    using FakeItEasy;
     using FluentAssertions;
     using Machine;
-    using Machine.Events;
     using Xbehave;
 
     public class PassiveStateMachines
@@ -72,31 +70,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "it should use custom name for state machine".x(() =>
                 reporter.StateMachineName
                     .Should().Be(Name));
-        }
-
-        [Scenario]
-        public void CustomFactory(
-            PassiveStateMachine<string, int> machine,
-            IFactory<string, int> factory)
-        {
-            "establish a custom factory".x(() =>
-            {
-                factory = A.Fake<IFactory<string, int>>();
-            });
-
-            "when creating a passive state machine".x(() =>
-                machine = new StateMachineDefinitionBuilder<string, int>()
-                    .WithCustomFactory(factory)
-                    .WithConfiguration(x =>
-                        x.In("initial")
-                            .On(42)
-                            .Goto("answer")
-                            .Execute(() => { }))
-                    .Build()
-                    .CreatePassiveStateMachine());
-
-            "it should use custom factory to create internal instances".x(() =>
-                A.CallTo(factory).MustHaveHappened());
         }
 
         [Scenario]

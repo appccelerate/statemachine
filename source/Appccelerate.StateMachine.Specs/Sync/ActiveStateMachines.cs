@@ -19,10 +19,8 @@
 namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System.Threading;
-    using FakeItEasy;
     using FluentAssertions;
     using Machine;
-    using Machine.Events;
     using Xbehave;
 
     public class ActiveStateMachines
@@ -73,31 +71,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "it should use custom name for state machine".x(() =>
                 reporter.StateMachineName
                     .Should().Be(Name));
-        }
-
-        [Scenario]
-        public void CustomFactory(
-            ActiveStateMachine<string, int> machine,
-            IFactory<string, int> factory)
-        {
-            "establish a custom factory".x(() =>
-            {
-                factory = A.Fake<IFactory<string, int>>();
-            });
-
-            "when creating an active state machine".x(() =>
-                machine = new StateMachineDefinitionBuilder<string, int>()
-                    .WithCustomFactory(factory)
-                    .WithConfiguration(x =>
-                        x.In("Initial")
-                            .On(42)
-                            .Goto("answer")
-                            .Execute(() => { }))
-                    .Build()
-                    .CreateActiveStateMachine());
-
-            "it should use custom factory to create internal instances".x(() =>
-                A.CallTo(factory).MustHaveHappened());
         }
 
         [Scenario]
