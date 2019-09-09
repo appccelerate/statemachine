@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="ITransitionDictionary.cs" company="Appccelerate">
+// <copyright file="IStateDefinition.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,35 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine.AsyncMachine.States
 {
     using System;
     using System.Collections.Generic;
+    using ActionHolders;
     using Transitions;
 
-    public interface ITransitionDictionary<TState, TEvent>
+    public interface IStateDefinition<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        /// <summary>
-        /// Adds the specified event id.
-        /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, ITransition<TState, TEvent> transition);
+        TState Id { get; }
 
-        /// <summary>
-        /// Gets all transitions.
-        /// </summary>
-        /// <returns>All transitions.</returns>
-        IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions();
+        IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions { get; }
+
+        IEnumerable<TransitionInfoNew<TState, TEvent>> TransitionInfos { get; }
+
+        int Level { get; }
+
+        IStateDefinition<TState, TEvent> InitialState { get; }
+
+        HistoryType HistoryType { get; }
+
+        IStateDefinition<TState, TEvent> SuperState { get; }
+
+        IEnumerable<IStateDefinition<TState, TEvent>> SubStates { get; }
+
+        IEnumerable<IActionHolder> EntryActions { get; }
+
+        IEnumerable<IActionHolder> ExitActions { get; }
     }
 }

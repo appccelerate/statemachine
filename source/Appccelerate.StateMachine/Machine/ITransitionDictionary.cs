@@ -38,13 +38,5 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <returns>All transitions.</returns>
         IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions();
-
-        /// <summary>
-        /// Gets the transitions for the specified event id.
-        /// </summary>
-        /// <value>transitions for the event id.</value>
-        /// <param name="eventId">Id of the event.</param>
-        /// <returns>The transitions for the event id.</returns>
-        ICollection<TransitionDefinition<TState, TEvent>> this[TEvent eventId] { get; }
     }
 }

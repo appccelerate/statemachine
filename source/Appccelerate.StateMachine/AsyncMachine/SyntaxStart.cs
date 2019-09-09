@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="ITransitionDictionary.cs" company="Appccelerate">
+// <copyright file="SyntaxStart.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,20 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using System.Collections.Generic;
-    using Transitions;
+    using AsyncSyntaxNew;
 
-    public interface ITransitionDictionary<TState, TEvent>
+    public class SyntaxStart<TState, TEvent> : ISyntaxStart<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        /// <summary>
-        /// Adds the specified event id.
-        /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, ITransition<TState, TEvent> transition);
+        public IEntryActionSyntax<TState, TEvent> In(TState stateId)
+        {
+            return new StateBuilderNew<TState, TEvent>(default(TState), null, null);
+        }
 
-        /// <summary>
-        /// Gets all transitions.
-        /// </summary>
-        /// <returns>All transitions.</returns>
-        IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions();
+        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
+        {
+            return new HierarchyBuilderNew<TState, TEvent>(null, default(TState), null);
+        }
     }
 }

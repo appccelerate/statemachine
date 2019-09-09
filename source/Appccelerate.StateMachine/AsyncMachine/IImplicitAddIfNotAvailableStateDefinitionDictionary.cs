@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="ITransitionDictionary.cs" company="Appccelerate">
+// <copyright file="IImplicitAddIfNotAvailableStateDefinitionDictionary.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,22 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using System.Collections.Generic;
-    using Transitions;
+    using States;
 
-    public interface ITransitionDictionary<TState, TEvent>
+    public interface IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
         /// <summary>
-        /// Adds the specified event id.
+        /// Gets the <see cref="StateDefinition{TState,TEvent}"/> with the specified state id.
+        /// If there exists no StateDefinition for the stateId, a new one is implicitly created, added and returned.
         /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, ITransition<TState, TEvent> transition);
-
-        /// <summary>
-        /// Gets all transitions.
-        /// </summary>
-        /// <returns>All transitions.</returns>
-        IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions();
+        /// <value>State with the specified id.</value>
+        /// <param name="stateId">The State id.</param>
+        /// <returns>The State with the specified id.</returns>
+        StateDefinition<TState, TEvent> this[TState stateId]
+        {
+            get;
+        }
     }
 }

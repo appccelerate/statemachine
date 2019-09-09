@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Globalization;
+    using States;
 
     /// <summary>
     /// Holds all exception messages.
@@ -74,6 +75,20 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IState<TState, TEvent> stateAlreadyHavingASuperState)
+            where TState : IComparable
+            where TEvent : IComparable
+        {
+            Guard.AgainstNullArgument("stateAlreadyHavingASuperState", stateAlreadyHavingASuperState);
+
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Cannot set state {0} as a super state because the state {1} has already a super state {2}.",
+                newSuperStateId,
+                stateAlreadyHavingASuperState.Id,
+                stateAlreadyHavingASuperState.SuperState.Id);
+        }
+
+        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
             where TState : IComparable
             where TEvent : IComparable
         {

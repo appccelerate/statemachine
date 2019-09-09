@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="ITransitionDictionary.cs" company="Appccelerate">
+// <copyright file="ITransitionDefinition.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,26 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
     using System;
     using System.Collections.Generic;
-    using Transitions;
+    using ActionHolders;
+    using GuardHolders;
+    using States;
 
-    public interface ITransitionDictionary<TState, TEvent>
+    public interface ITransitionDefinition<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        /// <summary>
-        /// Adds the specified event id.
-        /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, ITransition<TState, TEvent> transition);
+        IStateDefinition<TState, TEvent> Source { get; }
 
-        /// <summary>
-        /// Gets all transitions.
-        /// </summary>
-        /// <returns>All transitions.</returns>
-        IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions();
+        IStateDefinition<TState, TEvent> Target { get; }
+
+        IGuardHolder Guard { get; }
+
+        IEnumerable<IActionHolder> Actions { get; }
+
+        bool IsInternalTransition { get; }
     }
 }

@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="ITransitionDictionary.cs" company="Appccelerate">
+// <copyright file="ITransitionDictionaryNew.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System.Collections.Generic;
     using Transitions;
 
-    public interface ITransitionDictionary<TState, TEvent>
+    public interface ITransitionDictionaryNew<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
@@ -31,12 +31,12 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// </summary>
         /// <param name="eventId">The event id.</param>
         /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, ITransition<TState, TEvent> transition);
+        void Add(TEvent eventId, TransitionDefinition<TState, TEvent> transition);
 
         /// <summary>
         /// Gets all transitions.
         /// </summary>
         /// <returns>All transitions.</returns>
-        IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions();
+        IEnumerable<TransitionInfoNew<TState, TEvent>> GetTransitions();
     }
 }
