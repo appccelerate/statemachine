@@ -37,15 +37,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
             return this;
         }
 
-        public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> Build()
+        public IStateDefinitionDictionary<TState, TEvent> Build()
         {
-            var stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
+            var stateDefinitionDictionaryForConfigurationPhase = new StateDictionary<TState, TEvent>();
             var initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
-            var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionary, initiallyLastActiveStates);
+            var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionaryForConfigurationPhase, initiallyLastActiveStates);
 
             this.setupFunctions.ForEach(f => f(syntaxStart));
 
-            return stateDefinitionDictionary.ReadOnlyDictionary;
+            return new StateDefinitionDictionary<TState, TEvent>(stateDefinitionDictionaryForConfigurationPhase.ReadOnlyDictionary);
         }
     }
 }

@@ -27,12 +27,12 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions;
-        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
+        private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
+        private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
         public StateMachineDefinition(
-            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions,
-            Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions,
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             this.stateDefinitions = stateDefinitions;
             this.initiallyLastActiveStates = initiallyLastActiveStates;

@@ -64,16 +64,6 @@ namespace Appccelerate.StateMachine.Machine
 
         public const string CannotSetALastActiveStateThatIsNotASubState = "The state that is set as the last active state of a super state has to be a sub state";
 
-        /// <summary>
-        /// State cannot be its own super-state..
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>error message.</returns>
-        public static string StateCannotBeItsOwnSuperState(string state)
-        {
-            return string.Format(CultureInfo.InvariantCulture, "State {0} cannot be its own super-state.", state);
-        }
-
         public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
             where TState : IComparable
             where TEvent : IComparable
@@ -86,6 +76,15 @@ namespace Appccelerate.StateMachine.Machine
                 newSuperStateId,
                 stateAlreadyHavingASuperState.Id,
                 stateAlreadyHavingASuperState.SuperState.Id);
+        }
+
+        public static string CannotFindStateDefinition<TState>(TState state)
+            where TState : IComparable
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Cannot find StateDefinition for state {0}. Are you sure you have configured this state via myStateDefinitionBuilder.WithConfiguration(..)?",
+                state);
         }
     }
 }

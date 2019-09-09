@@ -44,7 +44,8 @@ namespace Appccelerate.StateMachine.Machine
 
             this.setupFunctions.ForEach(f => f(syntaxStart));
 
-            return new StateMachineDefinition<TState, TEvent>(stateDefinitionDictionary.ReadOnlyDictionary, initiallyLastActiveStates);
+            var stateDefinitions = new StateDefinitionDictionary<TState, TEvent>(stateDefinitionDictionary.ReadOnlyDictionary);
+            return new StateMachineDefinition<TState, TEvent>(stateDefinitions, initiallyLastActiveStates);
         }
     }
 }

@@ -24,7 +24,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System.Text;
     using FluentAssertions;
     using StateMachine.Machine;
-    using StateMachine.Machine.States;
     using Xunit;
 
     /// <summary>
@@ -32,7 +31,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
     /// </summary>
     public class StateMachineTest
     {
-        private readonly IReadOnlyDictionary<States, IStateDefinition<States, Events>> stateDefinitions;
+        private readonly IStateDefinitionDictionary<States, Events> stateDefinitions;
 
         /// <summary>
         /// The list of recorded actions.
