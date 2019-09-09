@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System;
     using System.Globalization;
     using States;
+    using Transitions;
 
     /// <summary>
     /// Holds all exception messages.
@@ -110,7 +111,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="transition">The transition.</param>
         /// <param name="state">The state.</param>
         /// <returns>error message.</returns>
-        public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransition<TState, TEvent> transition, IState<TState, TEvent> state)
+        public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransitionDefinition<TState, TEvent> transition, IStateDefinition<TState, TEvent> state)
             where TState : IComparable
             where TEvent : IComparable
         {

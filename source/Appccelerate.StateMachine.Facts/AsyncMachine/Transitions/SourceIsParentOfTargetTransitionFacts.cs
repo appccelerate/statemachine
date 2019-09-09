@@ -21,31 +21,31 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
     using System.Threading.Tasks;
     using AsyncMachine;
     using FakeItEasy;
-    using StateMachine.AsyncMachine;
+    using StateMachine.AsyncMachine.States;
     using Xunit;
 
     public class SourceIsParentOfTargetTransitionFacts : SuccessfulTransitionWithExecutedActionsFactsBase
     {
-        private readonly IState<States, Events> intermediate;
+        private readonly IStateDefinition<States, Events> intermediate;
 
         public SourceIsParentOfTargetTransitionFacts()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
-            this.intermediate = Builder<States, Events>.CreateState().WithSuperState(this.Source).Build();
-            this.Target = Builder<States, Events>.CreateState().WithSuperState(this.intermediate).Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
+            this.intermediate = Builder<States, Events>.CreateStateDefinition().WithSuperState(this.Source).Build();
+            this.Target = Builder<States, Events>.CreateStateDefinition().WithSuperState(this.intermediate).Build();
             this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Target;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Target;
         }
 
         [Fact]
         public async Task EntersAllStatesBelowSourceDownToTarget()
         {
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.intermediate.Entry(this.TransitionContext)).MustHaveHappened()
-                .Then(A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened());
+            A.CallTo(() => this.StateLogic.Entry(this.intermediate, this.TransitionContext)).MustHaveHappened()
+                .Then(A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappened());
         }
     }
 }

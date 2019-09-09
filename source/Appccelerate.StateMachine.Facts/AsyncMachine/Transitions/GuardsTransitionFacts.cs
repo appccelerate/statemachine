@@ -23,52 +23,52 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
     using FakeItEasy;
     using FluentAssertions;
     using StateMachine.AsyncMachine;
-    using StateMachine.AsyncMachine.GuardHolders;
+    using StateMachine.AsyncMachine.Transitions;
     using Xunit;
 
     public class GuardsTransitionFacts : TransitionFactsBase
     {
         public GuardsTransitionFacts()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
-            this.Target = Builder<States, Events>.CreateState().Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
+            this.Target = Builder<States, Events>.CreateStateDefinition().Build();
             this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Target;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Target;
         }
 
         [Fact]
         public async Task Executes_WhenGuardIsMet()
         {
             var guard = Builder<States, Events>.CreateGuardHolder().ReturningTrue().Build();
-            this.Testee.Guard = guard;
+            this.TransitionDefinition.Guard = guard;
 
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
         public async Task DoesNotExecute_WhenGuardIsNotMet()
         {
             var guard = Builder<States, Events>.CreateGuardHolder().ReturningFalse().Build();
-            this.Testee.Guard = guard;
+            this.TransitionDefinition.Guard = guard;
 
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustNotHaveHappened();
+            A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustNotHaveHappened();
         }
 
         [Fact]
         public async Task ReturnsNotFiredTransitionResult_WhenGuardIsNotMet()
         {
             var guard = Builder<States, Events>.CreateGuardHolder().ReturningFalse().Build();
-            this.Testee.Guard = guard;
+            this.TransitionDefinition.Guard = guard;
 
-            ITransitionResult<States, Events> result = await this.Testee.Fire(this.TransitionContext);
+            var result = await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            result.Should().BeNotFiredTransitionResult<States, Events>();
+            result.Should().BeNotFiredTransitionResult<States>();
         }
 
         [Fact]
@@ -77,14 +77,14 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
             var extension = A.Fake<IExtension<States, Events>>();
             this.ExtensionHost.Extension = extension;
 
-            IGuardHolder guard = Builder<States, Events>.CreateGuardHolder().ReturningFalse().Build();
-            this.Testee.Guard = guard;
+            var guard = Builder<States, Events>.CreateGuardHolder().ReturningFalse().Build();
+            this.TransitionDefinition.Guard = guard;
 
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             A.CallTo(() => extension.SkippedTransition(
                 this.StateMachineInformation,
-                A<ITransition<States, Events>>.That.Matches(t => t.Source == this.Source && t.Target == this.Target),
+                A<ITransitionDefinition<States, Events>>.That.Matches(t => t.Source == this.Source && t.Target == this.Target),
                 this.TransitionContext)).MustHaveHappened();
         }
     }

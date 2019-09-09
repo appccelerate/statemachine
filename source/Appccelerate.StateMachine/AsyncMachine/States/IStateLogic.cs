@@ -19,10 +19,26 @@
 namespace Appccelerate.StateMachine.AsyncMachine.States
 {
     using System;
+    using System.Threading.Tasks;
+    using Transitions;
 
     public interface IStateLogic<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
+        /// <summary>
+        /// Fires the specified event id on this state.
+        /// </summary>
+        /// <param name="stateDefinition">The definition of the state onto which the event should be fired.</param>
+        /// <param name="context">The event context.</param>
+        /// <param name="lastActiveStateModifier">The last active state modifier.</param>
+        /// <returns>The result of the transition.</returns>
+        Task<ITransitionResultNew<TState>> Fire(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContextNew<TState, TEvent> context, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
+
+        Task Entry(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContextNew<TState, TEvent> context);
+
+        Task Exit(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContextNew<TState, TEvent> context, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
+
+        Task<TState> EnterByHistory(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContextNew<TState, TEvent> context, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
     }
 }

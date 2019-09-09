@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         /// <param name="lastActiveStateModifier">The last active state modifier.</param>
         Task<ITransitionResultNew<TState>> Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContext<TState, TEvent> context,
+            ITransitionContextNew<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
     }
 }

@@ -23,6 +23,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System.Threading.Tasks;
     using Infrastructure;
     using States;
+    using Transitions;
 
     /// <summary>
     /// Base class for state machine extensions with empty implementation.
@@ -178,7 +179,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public virtual Task HandlingEntryActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ref Exception exception)
+        public virtual Task HandlingEntryActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContextNew<TState, TEvent> context, ref Exception exception)
         {
             return TaskEx.Completed;
         }
@@ -204,7 +205,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public virtual Task HandledEntryActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, Exception exception)
+        public virtual Task HandledEntryActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContextNew<TState, TEvent> context, Exception exception)
         {
             return TaskEx.Completed;
         }
@@ -230,7 +231,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception. Can be replaced by the extension.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public virtual Task HandlingExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ref Exception exception)
+        public virtual Task HandlingExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContextNew<TState, TEvent> context, ref Exception exception)
         {
             return TaskEx.Completed;
         }
@@ -256,7 +257,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="context">The context.</param>
         /// <param name="exception">The exception.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public virtual Task HandledExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, Exception exception)
+        public virtual Task HandledExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContextNew<TState, TEvent> context, Exception exception)
         {
             return TaskEx.Completed;
         }
@@ -275,6 +276,19 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         /// <summary>
+        /// Called before a guard exception is handled.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="transitionDefinition">The transition.</param>
+        /// <param name="transitionContext">The transition context.</param>
+        /// <param name="exception">The exception. Can be replaced by the extension.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task HandlingGuardException(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContextNew<TState, TEvent> transitionContext, ref Exception exception)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
         /// Called after a guard exception was handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -283,6 +297,19 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="exception">The exception.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public virtual Task HandledGuardException(IStateMachineInformation<TState, TEvent> stateMachine, ITransition<TState, TEvent> transition, ITransitionContext<TState, TEvent> transitionContext, Exception exception)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
+        /// Called after a guard exception was handled.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="transitionDefinition">The transition.</param>
+        /// <param name="transitionContext">The transition context.</param>
+        /// <param name="exception">The exception.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task HandledGuardException(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContextNew<TState, TEvent> transitionContext, Exception exception)
         {
             return TaskEx.Completed;
         }
@@ -301,6 +328,19 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         /// <summary>
+        /// Called before a transition exception is handled.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="transitionDefinition">The transition.</param>
+        /// <param name="context">The context.</param>
+        /// <param name="exception">The exception. Can be replaced by the extension.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task HandlingTransitionException(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContextNew<TState, TEvent> context, ref Exception exception)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
         /// Called after a transition exception is handled.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -309,6 +349,19 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="exception">The exception.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public virtual Task HandledTransitionException(IStateMachineInformation<TState, TEvent> stateMachine, ITransition<TState, TEvent> transition, ITransitionContext<TState, TEvent> transitionContext, Exception exception)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
+        /// Called after a transition exception is handled.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="transitionDefinition">The transition.</param>
+        /// <param name="transitionContext">The transition context.</param>
+        /// <param name="exception">The exception.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task HandledTransitionException(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContextNew<TState, TEvent> transitionContext, Exception exception)
         {
             return TaskEx.Completed;
         }
@@ -329,6 +382,21 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         /// <summary>
+        /// Called when a transition is skipped because its guard returned false.
+        /// </summary>
+        /// <param name="stateMachineInformation">The state machine.</param>
+        /// <param name="transitionDefinition">The transition.</param>
+        /// <param name="context">The transition context.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task SkippedTransition(
+            IStateMachineInformation<TState, TEvent> stateMachineInformation,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            ITransitionContextNew<TState, TEvent> context)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
         /// Called when a transition is going to be executed. After the guard of the transition evaluated to true.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -344,6 +412,21 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         /// <summary>
+        /// Called when a transition is going to be executed. After the guard of the transition evaluated to true.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="transitionDefinition">The transition.</param>
+        /// <param name="transitionContext">The transition context.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task ExecutingTransition(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            ITransitionContextNew<TState, TEvent> transitionContext)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
         /// Called when a transition was executed.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -354,6 +437,21 @@ namespace Appccelerate.StateMachine.AsyncMachine
             IStateMachineInformation<TState, TEvent> stateMachine,
             ITransition<TState, TEvent> transition,
             ITransitionContext<TState, TEvent> transitionContext)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
+        /// Called when a transition was executed.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="transitionDefinition">The transition.</param>
+        /// <param name="transitionContext">The transition context.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task ExecutedTransition(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            ITransitionContextNew<TState, TEvent> transitionContext)
         {
             return TaskEx.Completed;
         }
