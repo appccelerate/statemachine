@@ -35,7 +35,7 @@ namespace Appccelerate.StateMachine.Async
         [Background]
         public void Background()
         {
-            "establish a hierarchical state machine"._(() =>
+            "establish a hierarchical state machine".x(() =>
                 {
                     this.testExtension = new CurrentStateExtension();
 
@@ -57,21 +57,21 @@ namespace Appccelerate.StateMachine.Async
         [Scenario]
         public void InitializationInLeafState()
         {
-            "when initializing to a leaf state and starting the state machine"._(async () =>
+            "when initializing to a leaf state and starting the state machine".x(async () =>
             {
                 await this.machine.Initialize(LeafState);
                 await this.machine.Start();
             });
 
-            "it should set current state of state machine to state to which it is initialized"._(() =>
+            "it should set current state of state machine to state to which it is initialized".x(() =>
                 this.testExtension.CurrentState
                     .Should().Be(LeafState));
 
-            "it should execute entry action of state to which state machine is initialized"._(() =>
+            "it should execute entry action of state to which state machine is initialized".x(() =>
                 this.entryActionOfLeafStateExecuted
                     .Should().BeTrue());
 
-            "it should execute entry action of super states of the state to which state machine is initialized"._(() =>
+            "it should execute entry action of super states of the state to which state machine is initialized".x(() =>
                 this.entryActionOfSuperStateExecuted
                     .Should().BeTrue());
         }
@@ -79,21 +79,21 @@ namespace Appccelerate.StateMachine.Async
         [Scenario]
         public void InitializationInSuperState()
         {
-            "when initializing to a super state and starting the state machine"._(async () =>
+            "when initializing to a super state and starting the state machine".x(async () =>
             {
                 await this.machine.Initialize(SuperState);
                 await this.machine.Start();
             });
 
-            "it should_set_current_state_of_state_machine_to_initial_leaf_state_of_the_state_to_which_it_is_initialized"._(() =>
+            "it should_set_current_state_of_state_machine_to_initial_leaf_state_of_the_state_to_which_it_is_initialized".x(() =>
                 this.testExtension.CurrentState
                     .Should().Be(LeafState));
 
-            "it should_execute_entry_action_of_super_state_to_which_state_machine_is_initialized"._(() =>
+            "it should_execute_entry_action_of_super_state_to_which_state_machine_is_initialized".x(() =>
                 this.entryActionOfSuperStateExecuted
                     .Should().BeTrue());
 
-            "it should_execute_entry_actions_of_initial_sub_states_until_a_leaf_state_is_reached"._(() =>
+            "it should_execute_entry_actions_of_initial_sub_states_until_a_leaf_state_is_reached".x(() =>
                 this.entryActionOfLeafStateExecuted
                     .Should().BeTrue());
         }

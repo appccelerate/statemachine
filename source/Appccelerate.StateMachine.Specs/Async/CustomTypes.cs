@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.Async
             AsyncPassiveStateMachine<MyState, MyEvent> machine,
             bool arrivedInStateB)
         {
-            "establish a state machine with custom types for states and events"._(async () =>
+            "establish a state machine with custom types for states and events".x(async () =>
                 {
                     machine = new AsyncPassiveStateMachine<MyState, MyEvent>();
 
@@ -46,10 +46,10 @@ namespace Appccelerate.StateMachine.Async
                     await machine.Start();
                 });
 
-            "when using the state machine"._(() =>
+            "when using the state machine".x(() =>
                 machine.Fire(new MyEvent(1)));
 
-            "it should use equals to compare states and events"._(() =>
+            "it should use equals to compare states and events".x(() =>
                 arrivedInStateB.Should().BeTrue("state B should be current state"));
         }
 

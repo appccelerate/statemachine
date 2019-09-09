@@ -61,7 +61,7 @@ namespace Appccelerate.StateMachine.Machine
             // ReSharper disable once UnusedVariable
             Action action = () => { string v = testee.Value; };
 
-            action.ShouldThrow<InvalidOperationException>()
+            action.Should().Throw<InvalidOperationException>()
                 .WithMessage("*missing*");
         }
     }

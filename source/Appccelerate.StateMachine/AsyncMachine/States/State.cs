@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         private readonly IExtensionHost<TState, TEvent> extensionHost;
 
         /// <summary>
-        /// The level of this state within the state hierarchy [1..maxLevel]
+        /// The level of this state within the state hierarchy [1..maxLevel].
         /// </summary>
         private int level;
 

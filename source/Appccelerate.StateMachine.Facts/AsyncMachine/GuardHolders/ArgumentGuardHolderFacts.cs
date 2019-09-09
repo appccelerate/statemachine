@@ -74,7 +74,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
             Func<Task> action = async () => await this.testee.Execute(argument);
 
             action
-                .ShouldThrow<ArgumentException>()
+                .Should().Throw<ArgumentException>()
                 .WithMessage(Machine.GuardHolders.GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.testee.Describe()));
         }
     }

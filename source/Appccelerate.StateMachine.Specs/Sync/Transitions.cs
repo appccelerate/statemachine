@@ -38,7 +38,7 @@ namespace Appccelerate.StateMachine.Sync
             bool exitActionExecuted,
             bool entryActionExecuted)
         {
-            "establish a state machine with transitions"._(() =>
+            "establish a state machine with transitions".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -55,22 +55,22 @@ namespace Appccelerate.StateMachine.Sync
                     machine.Start();
                 });
 
-            "when firing an event onto the state machine"._(() =>
+            "when firing an event onto the state machine".x(() =>
                 machine.Fire(Event, Parameter));
 
-            "it should_execute_transition_by_switching_state"._(() =>
+            "it should_execute_transition_by_switching_state".x(() =>
                  CurrentStateExtension.CurrentState.Should().Be(DestinationState));
 
-            "it should_execute_transition_actions"._(() =>
+            "it should_execute_transition_actions".x(() =>
                  actualParameter.Should().NotBeNull());
 
-            "it should_pass_parameters_to_transition_action"._(() =>
+            "it should_pass_parameters_to_transition_action".x(() =>
                  actualParameter.Should().Be(Parameter));
 
-            "it should_execute_exit_action_of_source_state"._(() =>
+            "it should_execute_exit_action_of_source_state".x(() =>
                  exitActionExecuted.Should().BeTrue());
 
-            "it should_execute_entry_action_of_destination_state"._(() =>
+            "it should_execute_entry_action_of_destination_state".x(() =>
                 entryActionExecuted.Should().BeTrue());
         }
     }

@@ -37,7 +37,7 @@ namespace Appccelerate.StateMachine.Async
             bool exitActionExecuted,
             bool asyncExitActionExecuted)
         {
-            "establish a state machine with exit action on a state"._(() =>
+            "establish a state machine with exit action on a state".x(() =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -51,17 +51,17 @@ namespace Appccelerate.StateMachine.Async
                         .On(Event).Goto(AnotherState);
                 });
 
-            "when leaving the state"._(async () =>
+            "when leaving the state".x(async () =>
                 {
                     await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event);
                 });
 
-            "it should execute the synchronous exit action"._(()
+            "it should execute the synchronous exit action".x(()
                 => exitActionExecuted.Should().BeTrue());
 
-            "it should execute the asynchronous exit action"._(()
+            "it should execute the asynchronous exit action".x(()
                 => asyncExitActionExecuted.Should().BeTrue());
         }
 
@@ -73,7 +73,7 @@ namespace Appccelerate.StateMachine.Async
         {
             const string parameter = "parameter";
 
-            "establish a state machine with exit action with parameter on a state"._(() =>
+            "establish a state machine with exit action with parameter on a state".x(() =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -89,23 +89,23 @@ namespace Appccelerate.StateMachine.Async
                         .On(Event).Goto(AnotherState);
                 });
 
-            "when leaving the state"._(async () =>
+            "when leaving the state".x(async () =>
                 {
                     await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event);
                 });
 
-            "it should execute the synchronous exit action"._(() =>
+            "it should execute the synchronous exit action".x(() =>
                 receivedParameter.Should().NotBeNull());
 
-            "it should pass parameter to the synchronous exit action"._(() =>
+            "it should pass parameter to the synchronous exit action".x(() =>
                 receivedParameter.Should().Be(parameter));
 
-            "it should execute the asynchronous exit action"._(() =>
+            "it should execute the asynchronous exit action".x(() =>
                 asyncReceivedParameter.Should().NotBeNull());
 
-            "it should pass parameter to the asynchronous exit action"._(() =>
+            "it should pass parameter to the asynchronous exit action".x(() =>
                 asyncReceivedParameter.Should().Be(parameter));
         }
 
@@ -117,7 +117,7 @@ namespace Appccelerate.StateMachine.Async
             bool asyncExitAction1Executed,
             bool asyncExitAction2Executed)
         {
-            "establish a state machine with several exit actions on a state"._(() =>
+            "establish a state machine with several exit actions on a state".x(() =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -137,14 +137,14 @@ namespace Appccelerate.StateMachine.Async
                         .On(Event).Goto(AnotherState);
                 });
 
-            "when leaving the state"._(async () =>
+            "when leaving the state".x(async () =>
                 {
                     await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event);
                 });
 
-            "it should execute all exit actions"._(()
+            "it should execute all exit actions".x(()
                 => new[]
                 {
                     exitAction1Executed,
@@ -167,7 +167,7 @@ namespace Appccelerate.StateMachine.Async
             var exception4 = new Exception();
             var receivedException = new List<Exception>();
 
-            "establish a state machine with several exit actions on a state and some of them throw an exception"._(() =>
+            "establish a state machine with several exit actions on a state and some of them throw an exception".x(() =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -194,14 +194,14 @@ namespace Appccelerate.StateMachine.Async
                     machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
                 });
 
-            "when entering the state"._(async () =>
+            "when entering the state".x(async () =>
                 {
                     await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event);
                 });
 
-            "it should execute all entry actions on entry"._(()
+            "it should execute all entry actions on entry".x(()
                 => new[]
                 {
                     exitAction1Executed,
@@ -210,7 +210,7 @@ namespace Appccelerate.StateMachine.Async
                     exitAction4Executed
                 }.Should().Equal(true, true, true, true));
 
-            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event"._(() =>
+            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
                 receivedException
                     .Should().BeEquivalentTo(exception2, exception3, exception4));
         }
@@ -222,7 +222,7 @@ namespace Appccelerate.StateMachine.Async
         {
             const int argument = 17;
 
-            "establish a state machine with an exit action taking an event argument"._(() =>
+            "establish a state machine with an exit action taking an event argument".x(() =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -234,14 +234,14 @@ namespace Appccelerate.StateMachine.Async
                         .ExecuteOnEntry((int a) => passedArgument = a);
                 });
 
-            "when leaving the state"._(async () =>
+            "when leaving the state".x(async () =>
                 {
                     await machine.Initialize(State);
                     await machine.Start();
                     await machine.Fire(Event, argument);
                 });
 
-            "it should pass event argument to exit action"._(() =>
+            "it should pass event argument to exit action".x(() =>
                 passedArgument.Should().Be(argument));
         }
     }

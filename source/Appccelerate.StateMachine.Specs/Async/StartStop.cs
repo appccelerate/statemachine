@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.Async
         [Background]
         public void Background()
         {
-            "establish initialized state machine"._(() =>
+            "establish initialized state machine".x(() =>
             {
                 this.machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -53,33 +53,33 @@ namespace Appccelerate.StateMachine.Async
         [Scenario]
         public void Starting()
         {
-            "establish some queued events"._(async () =>
+            "establish some queued events".x(async () =>
                 {
                     await this.machine.Fire(Event);
                     await this.machine.Fire(Event);
                     await this.machine.Fire(Event);
                 });
 
-            "when starting"._(async ()
+            "when starting".x(async ()
                 => await this.machine.Start());
 
-            "it should execute queued events"._(()
+            "it should execute queued events".x(()
                 => this.extension.RecordedFiredEvents.Should().HaveCount(3));
         }
 
         [Scenario]
         public void Stopping()
         {
-            "establish started state machine"._(async ()
+            "establish started state machine".x(async ()
                 => await this.machine.Start());
 
-            "when stopping a state machine"._(()
+            "when stopping a state machine".x(()
                 => this.machine.Stop());
 
-            "when firing events onto the state machine"._(async ()
+            "when firing events onto the state machine".x(async ()
                 => await this.machine.Fire(Event));
 
-            "it should queue events"._(()
+            "it should queue events".x(()
                 => this.extension.RecordedQueuedEvents.Should().HaveCount(1));
         }
     }

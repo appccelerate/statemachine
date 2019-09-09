@@ -30,20 +30,20 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<string, int> machine,
             StateMachineNameReporter reporter)
         {
-            "establish an instantiated passive state machine"._(() =>
+            "establish an instantiated passive state machine".x(() =>
             {
                 machine = new PassiveStateMachine<string, int>();
             });
 
-            "establish a state machine reporter"._(() =>
+            "establish a state machine reporter".x(() =>
             {
                 reporter = new StateMachineNameReporter();
             });
 
-            "when the state machine report is generated"._(() =>
+            "when the state machine report is generated".x(() =>
                 machine.Report(reporter));
 
-            "it should use the type of the state machine as name for state machine"._(() =>
+            "it should use the type of the state machine as name for state machine".x(() =>
                 reporter.StateMachineName
                     .Should().Be("Appccelerate.StateMachine.PassiveStateMachine<System.String,System.Int32>"));
         }
@@ -55,20 +55,20 @@ namespace Appccelerate.StateMachine.Sync
         {
             const string Name = "custom name";
 
-            "establish an instantiated passive state machine with custom name"._(() =>
+            "establish an instantiated passive state machine with custom name".x(() =>
             {
                 machine = new PassiveStateMachine<string, int>(Name);
             });
 
-            "establish a state machine reporter"._(() =>
+            "establish a state machine reporter".x(() =>
             {
                 reporter = new StateMachineNameReporter();
             });
 
-            "when the state machine report is generated"._(() =>
+            "when the state machine report is generated".x(() =>
                 machine.Report(reporter));
 
-            "it should use custom name for state machine"._(() =>
+            "it should use custom name for state machine".x(() =>
                 reporter.StateMachineName
                     .Should().Be(Name));
         }
@@ -78,19 +78,19 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<string, int> machine,
             StandardFactory<string, int> factory)
         {
-            "establish a custom factory"._(() =>
+            "establish a custom factory".x(() =>
             {
                 factory = A.Fake<StandardFactory<string, int>>();
             });
 
-            "when creating a passive state machine"._(() =>
+            "when creating a passive state machine".x(() =>
             {
                 machine = new PassiveStateMachine<string, int>("_", factory);
 
                 machine.In("initial").On(42).Goto("answer");
             });
 
-            "it should use custom factory to create internal instances"._(() =>
+            "it should use custom factory to create internal instances".x(() =>
                 A.CallTo(factory).MustHaveHappened());
         }
 
@@ -103,7 +103,7 @@ namespace Appccelerate.StateMachine.Sync
 
             bool arrived = false;
 
-            "establish a passive state machine with transitions"._(() =>
+            "establish a passive state machine with transitions".x(() =>
             {
                 machine = new PassiveStateMachine<string, int>();
 
@@ -114,14 +114,14 @@ namespace Appccelerate.StateMachine.Sync
                 machine.Initialize("A");
             });
 
-            "when firing an event onto the state machine"._(() =>
+            "when firing an event onto the state machine".x(() =>
             {
                 machine.Fire(FirstEvent);
                 machine.Fire(SecondEvent);
                 machine.Start();
             });
 
-            "it should queue event at the end"._(() =>
+            "it should queue event at the end".x(() =>
                 arrived.Should().BeTrue("state machine should arrive at destination state"));
         }
 
@@ -134,7 +134,7 @@ namespace Appccelerate.StateMachine.Sync
 
             bool arrived = false;
 
-            "establish a passive state machine with transitions"._(() =>
+            "establish a passive state machine with transitions".x(() =>
             {
                 machine = new PassiveStateMachine<string, int>();
 
@@ -145,14 +145,14 @@ namespace Appccelerate.StateMachine.Sync
                 machine.Initialize("A");
             });
 
-            "when firing a priority event onto the state machine"._(() =>
+            "when firing a priority event onto the state machine".x(() =>
             {
                 machine.Fire(FirstEvent);
                 machine.FirePriority(SecondEvent);
                 machine.Start();
             });
 
-            "it should queue event at the front"._(() =>
+            "it should queue event at the front".x(() =>
                 arrived.Should().BeTrue("state machine should arrive at destination state"));
         }
     }

@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
     using System.Globalization;
 
     /// <summary>
-    /// Holds all exception messages
+    /// Holds all exception messages.
     /// </summary>
     public static class GuardHoldersExceptionMessages
     {
@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
         /// </summary>
         /// <param name="argument">The argument.</param>
         /// <param name="guard">The guard.</param>
-        /// <returns>error message</returns>
+        /// <returns>error message.</returns>
         public static string CannotCastArgumentToGuardArgument(object argument, string guard)
         {
             return string.Format(

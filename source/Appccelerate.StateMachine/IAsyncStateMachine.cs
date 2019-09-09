@@ -114,7 +114,7 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Starts the state machine. Events will be processed.
         /// If the state machine is not started then the events will be queued until the state machine is started.
-        /// Already queued events are processed
+        /// Already queued events are processed.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task Start();

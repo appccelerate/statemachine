@@ -29,20 +29,20 @@ namespace Appccelerate.StateMachine.Sync
             IStateMachine<string, int> machine,
             IExtension<string, int> extension)
         {
-            "establish a state machine"._(() =>
+            "establish a state machine".x(() =>
                 {
                     machine = new PassiveStateMachine<string, int>();
 
                     extension = A.Fake<IExtension<string, int>>();
                 });
 
-            "when adding an extension"._(() =>
+            "when adding an extension".x(() =>
                 {
                     machine.AddExtension(extension);
                     machine.Initialize("initial");
                 });
 
-            "it should notify extension about internal events"._(() =>
+            "it should notify extension about internal events".x(() =>
                 A.CallTo(extension).MustHaveHappened());
         }
 
@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Sync
             IStateMachine<string, int> machine,
             IExtension<string, int> extension)
         {
-            "establish a state machine with an extension"._(() =>
+            "establish a state machine with an extension".x(() =>
                 {
                     machine = new PassiveStateMachine<string, int>();
 
@@ -59,13 +59,13 @@ namespace Appccelerate.StateMachine.Sync
                     machine.AddExtension(extension);
                 });
 
-            "when clearing all extensions from the state machine"._(() =>
+            "when clearing all extensions from the state machine".x(() =>
                 {
                     machine.ClearExtensions();
                     machine.Initialize("initial");
                 });
 
-            "it should not anymore notify extension about internal events"._(() =>
+            "it should not anymore notify extension about internal events".x(() =>
                 A.CallTo(extension)
                     .MustNotHaveHappened());
         }

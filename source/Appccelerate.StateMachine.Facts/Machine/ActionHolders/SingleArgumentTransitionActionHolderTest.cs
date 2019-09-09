@@ -60,7 +60,7 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
 
             Action action = () => testee.Execute(3);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
 
             Action action = () => testee.Execute(new object[] { 3, 4 });
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
 
             Action action = () => testee.Execute(new object[] { });
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         private static void BaseAction(IBase b)

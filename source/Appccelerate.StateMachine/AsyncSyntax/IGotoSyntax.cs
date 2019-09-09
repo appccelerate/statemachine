@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// Defines the transition actions.
         /// </summary>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IGotoSyntax<TState, TEvent> Execute(Action action);
 
         /// <summary>
@@ -40,14 +40,14 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// </summary>
         /// <typeparam name="T">The type of the action argument.</typeparam>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IGotoSyntax<TState, TEvent> Execute<T>(Action<T> action);
 
         /// <summary>
         /// Defines the transition actions.
         /// </summary>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IGotoSyntax<TState, TEvent> Execute(Func<Task> action);
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Appccelerate.StateMachine.AsyncSyntax
         /// </summary>
         /// <typeparam name="T">The type of the action argument.</typeparam>
         /// <param name="action">The action to execute when the transition is taken.</param>
-        /// <returns>Event syntax</returns>
+        /// <returns>Event syntax.</returns>
         IGotoSyntax<TState, TEvent> Execute<T>(Func<T, Task> action);
     }
 }

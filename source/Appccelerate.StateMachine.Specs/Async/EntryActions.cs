@@ -35,7 +35,7 @@ namespace Appccelerate.StateMachine.Async
             bool entryActionExecuted,
             bool asyncEntryActionExecuted)
         {
-            "establish a state machine with entry action on a state"._(() =>
+            "establish a state machine with entry action on a state".x(() =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -48,16 +48,16 @@ namespace Appccelerate.StateMachine.Async
                         });
                 });
 
-            "when entering the state"._(async () =>
+            "when entering the state".x(async () =>
                 {
                     await machine.Initialize(State);
                     await machine.Start();
                 });
 
-            "it should execute the synchronous entry action"._(()
+            "it should execute the synchronous entry action".x(()
                 => entryActionExecuted.Should().BeTrue());
 
-            "it should execute the asynchronous entry action"._(()
+            "it should execute the asynchronous entry action".x(()
                 => asyncEntryActionExecuted.Should().BeTrue());
         }
 
@@ -69,7 +69,7 @@ namespace Appccelerate.StateMachine.Async
         {
             const string parameter = "parameter";
 
-            "establish a state machine with entry action with parameter on a state"._(() =>
+            "establish a state machine with entry action with parameter on a state".x(() =>
             {
                 machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -84,22 +84,22 @@ namespace Appccelerate.StateMachine.Async
                         parameter);
             });
 
-            "when entering the state"._(async () =>
+            "when entering the state".x(async () =>
             {
                 await machine.Initialize(State);
                 await machine.Start();
             });
 
-            "it should execute the entry synchronous action"._(()
+            "it should execute the entry synchronous action".x(()
                 => receivedParameter.Should().NotBeNull());
 
-            "it should pass parameter to the synchronous entry action"._(()
+            "it should pass parameter to the synchronous entry action".x(()
                 => receivedParameter.Should().Be(parameter));
 
-            "it should execute the asynchronous entry action"._(()
+            "it should execute the asynchronous entry action".x(()
                 => asyncReceivedParameter.Should().NotBeNull());
 
-            "it should pass parameter to the asynchronous entry action"._(()
+            "it should pass parameter to the asynchronous entry action".x(()
                 => asyncReceivedParameter.Should().Be(parameter));
         }
 
@@ -111,7 +111,7 @@ namespace Appccelerate.StateMachine.Async
             bool entryAction2Executed,
             bool asyncEntryAction2Executed)
         {
-            "establish a state machine with several entry actions on a state"._(() =>
+            "establish a state machine with several entry actions on a state".x(() =>
             {
                 machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -130,13 +130,13 @@ namespace Appccelerate.StateMachine.Async
                     });
             });
 
-            "when entering the state"._(async () =>
+            "when entering the state".x(async () =>
             {
                 await machine.Initialize(State);
                 await machine.Start();
             });
 
-            "it should execute all entry actions"._(()
+            "it should execute all entry actions".x(()
                 => new[]
                     {
                         entryAction1Executed,
@@ -159,7 +159,7 @@ namespace Appccelerate.StateMachine.Async
             var exception4 = new Exception();
             var receivedException = new List<Exception>();
 
-            "establish a state machine with several entry actions on a state and some of them throw an exception"._(() =>
+            "establish a state machine with several entry actions on a state and some of them throw an exception".x(() =>
             {
                 machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -185,13 +185,13 @@ namespace Appccelerate.StateMachine.Async
                 machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
             });
 
-            "when entering the state"._(async () =>
+            "when entering the state".x(async () =>
             {
                 await machine.Initialize(State);
                 await machine.Start();
             });
 
-            "it should execute all entry actions on entry"._(()
+            "it should execute all entry actions on entry".x(()
                 => new[]
                 {
                     entryAction1Executed,
@@ -200,7 +200,7 @@ namespace Appccelerate.StateMachine.Async
                     entryAction4Executed
                 }.Should().Equal(true, true, true, true));
 
-            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event"._(()
+            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(()
                 => receivedException
                     .Should().BeEquivalentTo(exception2, exception3, exception4));
         }
@@ -215,7 +215,7 @@ namespace Appccelerate.StateMachine.Async
             const int anotherState = 3;
             const int argument = 17;
 
-            "establish a state machine with an entry action taking an event argument"._(() =>
+            "establish a state machine with an entry action taking an event argument".x(() =>
             {
                 machine = new PassiveStateMachine<int, int>();
 
@@ -231,17 +231,17 @@ namespace Appccelerate.StateMachine.Async
                     });
             });
 
-            "when entering the state"._(() =>
+            "when entering the state".x(() =>
             {
                 machine.Initialize(State);
                 machine.Start();
                 machine.Fire(Event, argument);
             });
 
-            "it should pass event argument to synchronousentry action"._(()
+            "it should pass event argument to synchronousentry action".x(()
                 => passedArgument.Should().Be(argument));
 
-            "it should pass event argument to asynchronous entry action"._(()
+            "it should pass event argument to asynchronous entry action".x(()
                 => asyncPassedArgument.Should().Be(argument));
         }
     }

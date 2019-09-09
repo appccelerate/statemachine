@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             CurrentStateExtension currentStateExtension)
         {
-            "establish a state machine with guarded transitions"._(() =>
+            "establish a state machine with guarded transitions".x(() =>
             {
                 machine = new PassiveStateMachine<int, int>();
 
@@ -52,10 +52,10 @@ namespace Appccelerate.StateMachine.Sync
                 machine.Start();
             });
 
-            "when an event is fired"._(() =>
+            "when an event is fired".x(() =>
                 machine.Fire(Event));
 
-            "it should take transition guarded with first matching guard"._(() =>
+            "it should take transition guarded with first matching guard".x(() =>
                 currentStateExtension.CurrentState.Should().Be(DestinationState));
         }
 
@@ -64,7 +64,7 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             CurrentStateExtension currentStateExtension)
         {
-            "establish a state machine with otherwise guard and no machting other guard"._(() =>
+            "establish a state machine with otherwise guard and no machting other guard".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -80,10 +80,10 @@ namespace Appccelerate.StateMachine.Sync
                     machine.Start();
                 });
 
-            "when an event is fired"._(() =>
+            "when an event is fired".x(() =>
                 machine.Fire(Event));
 
-            "it should_take_transition_guarded_with_otherwise"._(() =>
+            "it should_take_transition_guarded_with_otherwise".x(() =>
                 currentStateExtension.CurrentState.Should().Be(DestinationState));
         }
 
@@ -94,7 +94,7 @@ namespace Appccelerate.StateMachine.Sync
         {
             bool declined = false;
 
-            "establish state machine with no matching guard"._(() =>
+            "establish state machine with no matching guard".x(() =>
                 {
                     machine = new PassiveStateMachine<int, int>();
 
@@ -111,10 +111,10 @@ namespace Appccelerate.StateMachine.Sync
                     machine.Start();
                 });
 
-            "when an event is fired"._(() =>
+            "when an event is fired".x(() =>
                 machine.Fire(Event));
 
-            "it should notify about declined transition"._(() =>
+            "it should notify about declined transition".x(() =>
                 declined.Should().BeTrue("TransitionDeclined event should be fired"));
         }
     }

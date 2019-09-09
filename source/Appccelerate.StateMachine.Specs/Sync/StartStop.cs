@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.Sync
         [Background]
         public void Background()
         {
-            "establish initialized state machine"._(() =>
+            "establish initialized state machine".x(() =>
             {
                 this.machine = new PassiveStateMachine<int, int>();
 
@@ -53,33 +53,33 @@ namespace Appccelerate.StateMachine.Sync
         [Scenario]
         public void Starting()
         {
-            "establish some queued events"._(() =>
+            "establish some queued events".x(() =>
                 {
                     this.machine.Fire(Event);
                     this.machine.Fire(Event);
                     this.machine.Fire(Event);
                 });
 
-            "when starting"._(() =>
+            "when starting".x(() =>
                 this.machine.Start());
 
-            "it should execute queued events"._(() =>
+            "it should execute queued events".x(() =>
                 this.extension.RecordedFiredEvents.Should().HaveCount(3));
         }
 
         [Scenario]
         public void Stopping()
         {
-            "establish started state machine"._(() =>
+            "establish started state machine".x(() =>
                 this.machine.Start());
 
-            "when stopping a state machine"._(() =>
+            "when stopping a state machine".x(() =>
                 this.machine.Stop());
 
-            "when firing events onto the state machine"._(() =>
+            "when firing events onto the state machine".x(() =>
                  this.machine.Fire(Event));
 
-            "it should queue events"._(() =>
+            "it should queue events".x(() =>
                 this.extension.RecordedQueuedEvents.Should().HaveCount(1));
         }
     }
