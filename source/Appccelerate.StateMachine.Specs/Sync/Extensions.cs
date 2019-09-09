@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.Sync
             "establish an extension".x(()
                 => extension = A.Fake<IExtension<string, int>>());
 
-            "establish a state machine using the extension"._(() =>
+            "establish a state machine using the extension".x(() =>
             {
                 machine = new PassiveStateMachine<string, int>(Name);
 
@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.Sync
                 machine.Start();
             });
 
-            "when firing an event onto the state machine"._(()
+            "when firing an event onto the state machine".x(()
                 => machine.Fire(1));
 
             "it should call EnteringState on registered extensions for target state".x(()
@@ -64,7 +64,7 @@ namespace Appccelerate.StateMachine.Sync
             "establish an extension".x(()
                 => extension = A.Fake<IExtension<string, string>>());
 
-            "establish a hierarchical state machine using the extension"._(() =>
+            "establish a hierarchical state machine using the extension".x(() =>
             {
                 machine = new PassiveStateMachine<string, string>(Name);
 
@@ -81,7 +81,7 @@ namespace Appccelerate.StateMachine.Sync
                 machine.Start();
             });
 
-            "when firing an event onto the state machine"._(()
+            "when firing an event onto the state machine".x(()
                 => machine.Fire("A0"));
 
             "it should call EnteringState on registered extensions for entered super states of target state".x(()
