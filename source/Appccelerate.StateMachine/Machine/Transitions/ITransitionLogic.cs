@@ -16,10 +16,9 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
-    using Transitions;
 
     /// <summary>
     /// Represents a transition in the state machine.

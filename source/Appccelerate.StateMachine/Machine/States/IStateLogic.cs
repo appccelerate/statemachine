@@ -16,10 +16,9 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Machine.States
 {
     using System;
-    using States;
 
     /// <summary>
     /// Represents a state of the state machine.
