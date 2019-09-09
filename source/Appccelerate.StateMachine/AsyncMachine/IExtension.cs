@@ -283,6 +283,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
             ITransition<TState, TEvent> transition,
             ITransitionContext<TState, TEvent> context);
 
+        Task EnteringState(
+            IStateMachineInformation<TState, TEvent> stateMachineInformation,
+            IState<TState, TEvent> state,
+            ITransitionContext<TState, TEvent> context);
+
         void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             Initializable<TState> loadedCurrentState,

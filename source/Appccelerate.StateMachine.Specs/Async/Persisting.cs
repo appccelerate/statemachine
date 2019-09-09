@@ -129,7 +129,7 @@ namespace Appccelerate.StateMachine.Async
             "it should not be initialized already".x(
                 () =>
                 {
-                    Action act = () => loadedMachine.Initialize(State.S);
+                    Func<Task> act = () => loadedMachine.Initialize(State.S);
                     act.Should().NotThrow();
                 });
         }
