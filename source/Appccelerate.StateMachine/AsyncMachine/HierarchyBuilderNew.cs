@@ -36,8 +36,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
         private readonly IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
         public HierarchyBuilderNew(
-            IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions,
             TState superStateId,
+            IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions,
             IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             Guard.AgainstNullArgument("states", stateDefinitions);

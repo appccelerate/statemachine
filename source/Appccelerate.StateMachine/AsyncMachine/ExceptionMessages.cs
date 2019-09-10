@@ -124,5 +124,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
                         state,
                         transition.Source);
         }
+
+        public static string CannotFindStateDefinition<TState>(TState state)
+            where TState : IComparable
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Cannot find StateDefinition for state {0}. Are you sure you have configured this state via myStateDefinitionBuilder.WithConfiguration(..)?",
+                state);
+        }
     }
 }

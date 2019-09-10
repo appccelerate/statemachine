@@ -91,6 +91,18 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         /// <summary>
+        /// Called after the state machine switched states.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="oldState">The old state.</param>
+        /// <param name="newState">The new state.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task SwitchedState(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
         /// Called when the state machine is initializing.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -136,6 +148,18 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         /// <summary>
+        /// Called when the state machine entered the initial state.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="state">The state.</param>
+        /// <param name="context">The context.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task EnteredInitialState(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContextNew<TState, TEvent> context)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
         /// Called when an event is firing on the state machine.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -154,6 +178,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="context">The transition context.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public virtual Task FiredEvent(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionContext<TState, TEvent> context)
+        {
+            return TaskEx.Completed;
+        }
+
+        /// <summary>
+        /// Called when an event was fired on the state machine.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="context">The transition context.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public virtual Task FiredEvent(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionContextNew<TState, TEvent> context)
         {
             return TaskEx.Completed;
         }

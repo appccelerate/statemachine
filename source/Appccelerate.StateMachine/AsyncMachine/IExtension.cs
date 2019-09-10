@@ -79,6 +79,18 @@ namespace Appccelerate.StateMachine.AsyncMachine
             IState<TState, TEvent> newState);
 
         /// <summary>
+        /// Called after the state machine switched states.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="oldStateDefinition">The old state.</param>
+        /// <param name="newStateDefinition">The new state.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task SwitchedState(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            IStateDefinition<TState, TEvent> oldStateDefinition,
+            IStateDefinition<TState, TEvent> newStateDefinition);
+
+        /// <summary>
         /// Called when the state machine is initializing.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -116,6 +128,15 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task EnteredInitialState(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContext<TState, TEvent> context);
 
         /// <summary>
+        /// Called when the state machine entered the initial state.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="state">The state.</param>
+        /// <param name="context">The context.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task EnteredInitialState(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContextNew<TState, TEvent> context);
+
+        /// <summary>
         /// Called when an event is firing on the state machine.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -136,6 +157,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task FiredEvent(
             IStateMachineInformation<TState, TEvent> stateMachine,
             ITransitionContext<TState, TEvent> context);
+
+        /// <summary>
+        /// Called when an event was fired on the state machine.
+        /// </summary>
+        /// <param name="stateMachine">The state machine.</param>
+        /// <param name="context">The transition context.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task FiredEvent(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            ITransitionContextNew<TState, TEvent> context);
 
         /// <summary>
         /// Called before an entry action exception is handled.

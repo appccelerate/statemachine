@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     {
         private readonly StateDefinition<TState, TEvent> stateDefinition;
         private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary;
-        private readonly IFactory<TState, TEvent> factory;
+        private readonly IFactoryNew<TState, TEvent> factory;
 
         private TransitionDefinition<TState, TEvent> currentTransitionDefinition;
 
@@ -53,7 +53,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public StateBuilderNew(
             TState stateId,
             IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary,
-            IFactory<TState, TEvent> factory)
+            IFactoryNew<TState, TEvent> factory)
         {
             this.stateDefinitionDictionary = stateDefinitionDictionary;
             this.factory = factory;

@@ -41,7 +41,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             A.CallTo(() => this.states[SuperState]).Returns(this.superState);
             this.initiallyLastActiveStates = A.Fake<IDictionary<string, IStateDefinition<string, int>>>();
 
-            this.testee = new HierarchyBuilderNew<string, int>(this.states, SuperState, this.initiallyLastActiveStates);
+            this.testee = new HierarchyBuilderNew<string, int>(SuperState, this.states, this.initiallyLastActiveStates);
         }
 
         [Theory]

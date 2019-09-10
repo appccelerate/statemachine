@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="ISyntaxStart.cs" company="Appccelerate">
+// <copyright file="IStateDefinitionDictionary.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +16,18 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncSyntaxNew
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
+    using System.Collections.Generic;
+    using States;
 
-    public interface ISyntaxStart<TState, TEvent>
+    public interface IStateDefinitionDictionary<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        IEntryActionSyntax<TState, TEvent> In(TState state);
+        IStateDefinition<TState, TEvent> this[TState key] { get; }
 
-        IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId);
+        IEnumerable<IStateDefinition<TState, TEvent>> Values { get; }
     }
 }

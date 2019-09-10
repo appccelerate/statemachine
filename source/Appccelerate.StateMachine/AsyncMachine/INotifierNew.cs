@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="SyntaxStart.cs" company="Appccelerate">
+// <copyright file="INotifierNew.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,20 +19,27 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using AsyncSyntaxNew;
 
-    public class SyntaxStart<TState, TEvent> : ISyntaxStart<TState, TEvent>
+    /// <summary>
+    /// Provides functionalities to notify events.
+    /// </summary>
+    /// <typeparam name="TState">The type of the state.</typeparam>
+    /// <typeparam name="TEvent">The type of the event.</typeparam>
+    public interface INotifierNew<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        public IEntryActionSyntax<TState, TEvent> In(TState stateId)
-        {
-            return new StateBuilderNew<TState, TEvent>(default(TState), null, null);
-        }
+        /// <summary>
+        /// Called when an exception was thrown.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="exception">The exception.</param>
+        void OnExceptionThrown(ITransitionContextNew<TState, TEvent> context, Exception exception);
 
-        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
-        {
-            return new HierarchyBuilderNew<TState, TEvent>(null, default(TState), null);
-        }
+        /// <summary>
+        /// Called before a transition is executed.
+        /// </summary>
+        /// <param name="transitionContext">The context.</param>
+        void OnTransitionBegin(ITransitionContextNew<TState, TEvent> transitionContext);
     }
 }
