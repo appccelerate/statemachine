@@ -88,13 +88,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
             object recordedEventArgument = null;
             Exception recordedException = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .If(() => throw exception)
-                        .Goto(States.B))
-                .Build();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder.In(States.A)
+                .On(Events.B)
+                .If(() => throw exception)
+                .Goto(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
             var stateContainer = new StateContainer<States, Events>();
 
@@ -139,13 +138,13 @@ namespace Appccelerate.StateMachine.Facts.Machine
             object recordedEventArgument = null;
             Exception recordedException = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Goto(States.B)
-                        .Execute(() => throw exception))
-                .Build();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B)
+                    .Execute(() => throw exception);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
             var stateContainer = new StateContainer<States, Events>();
 
@@ -183,15 +182,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
             object recordedEventArgument = null;
             Exception recordedException = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Goto(States.B))
-                .WithConfiguration(x =>
-                    x.In(States.B)
-                        .ExecuteOnEntry(() => throw exception))
-                .Build();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B);
+            stateDefinitionsBuilder
+                .In(States.B)
+                    .ExecuteOnEntry(() => throw exception);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
             var stateContainer = new StateContainer<States, Events>();
 
@@ -229,13 +228,13 @@ namespace Appccelerate.StateMachine.Facts.Machine
             object recordedEventArgument = null;
             Exception recordedException = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnExit(() => throw exception)
-                        .On(Events.B)
-                        .Goto(States.B))
-                .Build();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
+                    .ExecuteOnExit(() => throw exception)
+                    .On(Events.B)
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
             var stateContainer = new StateContainer<States, Events>();
 
@@ -287,41 +286,39 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void DefineNonTreeHierarchy()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.A)
-                        .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(States.B));
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.A)
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(States.B);
 
-            Func<StateMachineDefinition<States, Events>> func =
-                () => stateMachineDefinitionBuilder
-                    .WithConfiguration(x =>
-                        x.DefineHierarchyOn(States.C)
+            Action action =
+                () =>
+                    stateMachineDefinitionBuilder
+                        .DefineHierarchyOn(States.C)
                             .WithHistoryType(HistoryType.None)
-                            .WithInitialSubState(States.B))
-                    .Build();
+                            .WithInitialSubState(States.B);
 
-            func.Should().Throw<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
         public void MultipleTransitionsWithoutGuardsWhenDefiningAGotoThenInvalidOperationException()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B).If(() => false).Goto(States.C)
-                        .On(Events.B).Goto(States.B));
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B).If(() => false).Goto(States.C)
+                    .On(Events.B).Goto(States.B);
 
-            Func<StateMachineDefinition<States, Events>> func =
-                () => stateMachineDefinitionBuilder
-                    .WithConfiguration(x =>
-                        x.In(States.A)
+            Action action =
+                () =>
+                    stateMachineDefinitionBuilder
+                        .In(States.A)
                             .On(Events.B)
-                            .Goto(States.C))
-                    .Build();
+                            .Goto(States.C);
 
-            func.Should()
+            action.Should()
                 .Throw<InvalidOperationException>()
                 .WithMessage(ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
         }
@@ -329,20 +326,19 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void MultipleTransitionsWithoutGuardsWhenDefiningAnActionThenInvalidOperationException()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B).Goto(States.B));
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B).Goto(States.B);
 
-            Func<StateMachineDefinition<States, Events>> func =
-                () => stateMachineDefinitionBuilder
-                    .WithConfiguration(x =>
-                        x.In(States.A)
+            Action action =
+                () =>
+                    stateMachineDefinitionBuilder
+                        .In(States.A)
                             .On(Events.B)
-                            .Execute(() => { }))
-                    .Build();
+                            .Execute(() => { });
 
-            func.Should()
+            action.Should()
                 .Throw<InvalidOperationException>()
                 .WithMessage(ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
         }
@@ -350,21 +346,20 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void TransitionWithoutGuardHasToBeLast()
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B).Goto(States.B));
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B).Goto(States.B);
 
-            Func<StateMachineDefinition<States, Events>> func =
-                () => stateMachineDefinitionBuilder
-                    .WithConfiguration(x =>
-                        x.In(States.A)
+            Action action =
+                () =>
+                    stateMachineDefinitionBuilder
+                        .In(States.A)
                             .On(Events.B)
                             .If(() => false)
-                            .Execute(() => { }))
-                    .Build();
+                            .Execute(() => { });
 
-            func.Should()
+            action.Should()
                 .Throw<InvalidOperationException>()
                 .WithMessage(ExceptionMessages.TransitionWithoutGuardHasToBeLast);
         }

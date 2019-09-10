@@ -38,17 +38,18 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a hierarchical state machine".x(() =>
             {
-                this.machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.DefineHierarchyOn(SuperState)
-                            .WithHistoryType(HistoryType.None)
-                            .WithInitialSubState(LeafState))
-                    .WithConfiguration(x =>
-                        x.In(SuperState)
-                            .ExecuteOnEntry(() => this.entryActionOfSuperStateExecuted = true))
-                    .WithConfiguration(x =>
-                        x.In(LeafState)
-                            .ExecuteOnEntry(() => this.entryActionOfLeafStateExecuted = true))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .DefineHierarchyOn(SuperState)
+                        .WithHistoryType(HistoryType.None)
+                        .WithInitialSubState(LeafState);
+                stateMachineDefinitionBuilder
+                    .In(SuperState)
+                        .ExecuteOnEntry(() => this.entryActionOfSuperStateExecuted = true);
+                stateMachineDefinitionBuilder
+                    .In(LeafState)
+                        .ExecuteOnEntry(() => this.entryActionOfLeafStateExecuted = true);
+                this.machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 

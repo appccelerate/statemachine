@@ -33,12 +33,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a transition action throwing an exception".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(Values.Source)
-                            .On(Values.Event)
-                            .Goto(Values.Destination)
-                            .Execute(() => throw Values.Exception))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .On(Values.Event)
+                        .Goto(Values.Destination)
+                        .Execute(() => throw Values.Exception);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -60,14 +61,15 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish an entry action throwing an exception".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(Values.Source)
-                            .On(Values.Event)
-                            .Goto(Values.Destination))
-                    .WithConfiguration(x =>
-                        x.In(Values.Destination)
-                            .ExecuteOnEntry(() => throw Values.Exception))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .On(Values.Event)
+                        .Goto(Values.Destination);
+                stateMachineDefinitionBuilder
+                    .In(Values.Destination)
+                        .ExecuteOnEntry(() => throw Values.Exception);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -89,12 +91,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish an exit action throwing an exception".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(Values.Source)
-                            .ExecuteOnExit(() => throw Values.Exception)
-                            .On(Values.Event)
-                            .Goto(Values.Destination))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .ExecuteOnExit(() => throw Values.Exception)
+                        .On(Values.Event)
+                        .Goto(Values.Destination);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -116,12 +119,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a guard throwing an exception".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(Values.Source)
-                            .On(Values.Event)
-                            .If(() => throw Values.Exception)
-                            .Goto(Values.Destination))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .On(Values.Event)
+                        .If(() => throw Values.Exception)
+                        .Goto(Values.Destination);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -145,10 +149,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a entry action for the initial state that throws an exception".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(State)
-                            .ExecuteOnEntry(() => throw Values.Exception))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnEntry(() => throw Values.Exception);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -175,11 +180,12 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish an exception throwing state machine without a registered exception handler".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(Values.Source)
-                            .On(Values.Event)
-                            .Execute(() => throw Values.Exception))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .On(Values.Event)
+                        .Execute(() => throw Values.Exception);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 

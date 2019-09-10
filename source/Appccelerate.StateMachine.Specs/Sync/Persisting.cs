@@ -157,22 +157,21 @@ namespace Appccelerate.StateMachine.Specs.Sync
         private static void SetupStates(StateMachineDefinitionBuilder<State, Event> builder)
         {
             builder
-                .WithConfiguration(x =>
-                    x.In(State.A)
-                        .On(Event.S2).Goto(State.S2)
-                        .On(Event.X))
-                .WithConfiguration(x =>
-                    x.In(State.B)
-                        .On(Event.S).Goto(State.S)
-                        .On(Event.X))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(State.S)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(State.S1)
-                        .WithSubState(State.S2))
-                .WithConfiguration(x =>
-                    x.In(State.S)
-                        .On(Event.B).Goto(State.B));
+                .In(State.A)
+                    .On(Event.S2).Goto(State.S2)
+                    .On(Event.X);
+            builder
+                .In(State.B)
+                    .On(Event.S).Goto(State.S)
+                    .On(Event.X);
+            builder
+                .DefineHierarchyOn(State.S)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(State.S1)
+                    .WithSubState(State.S2);
+            builder
+                .In(State.S)
+                    .On(Event.B).Goto(State.B);
         }
 
         public class FakeExtension : ExtensionBase<State, Event>

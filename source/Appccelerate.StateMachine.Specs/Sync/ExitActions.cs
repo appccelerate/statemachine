@@ -36,13 +36,16 @@ namespace Appccelerate.StateMachine.Specs.Sync
             bool exitActionExecuted)
         {
             "establish a state machine with exit action on a state".x(() =>
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(State)
-                            .ExecuteOnExit(() => exitActionExecuted = true)
-                            .On(Event).Goto(AnotherState))
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnExit(() => exitActionExecuted = true)
+                        .On(Event).Goto(AnotherState);
+                machine = stateMachineDefinitionBuilder
                     .Build()
-                    .CreatePassiveStateMachine());
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(() =>
             {
@@ -63,13 +66,16 @@ namespace Appccelerate.StateMachine.Specs.Sync
             const string Parameter = "parameter";
 
             "establish a state machine with exit action with parameter on a state".x(() =>
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(State)
-                            .ExecuteOnExitParametrized(p => parameter = p, Parameter)
-                            .On(Event).Goto(AnotherState))
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnExitParametrized(p => parameter = p, Parameter)
+                        .On(Event).Goto(AnotherState);
+                machine = stateMachineDefinitionBuilder
                     .Build()
-                    .CreatePassiveStateMachine());
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(() =>
             {
@@ -92,14 +98,17 @@ namespace Appccelerate.StateMachine.Specs.Sync
             bool exitAction2Executed)
         {
             "establish a state machine with several exit actions on a state".x(() =>
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(State)
-                            .ExecuteOnExit(() => exitAction1Executed = true)
-                            .ExecuteOnExit(() => exitAction2Executed = true)
-                            .On(Event).Goto(AnotherState))
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnExit(() => exitAction1Executed = true)
+                        .ExecuteOnExit(() => exitAction2Executed = true)
+                        .On(Event).Goto(AnotherState);
+                machine = stateMachineDefinitionBuilder
                     .Build()
-                    .CreatePassiveStateMachine());
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(() =>
             {
@@ -131,21 +140,22 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a state machine with several exit actions on a state and some of them throw an exception".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(State)
-                            .ExecuteOnExit(() => exitAction1Executed = true)
-                            .ExecuteOnExit(() =>
-                            {
-                                exitAction2Executed = true;
-                                throw exception2;
-                            })
-                            .ExecuteOnExit(() =>
-                            {
-                                exitAction3Executed = true;
-                                throw exception3;
-                            })
-                            .On(Event).Goto(AnotherState))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnExit(() => exitAction1Executed = true)
+                        .ExecuteOnExit(() =>
+                        {
+                            exitAction2Executed = true;
+                            throw exception2;
+                        })
+                        .ExecuteOnExit(() =>
+                        {
+                            exitAction3Executed = true;
+                            throw exception3;
+                        })
+                        .On(Event).Goto(AnotherState);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -189,16 +199,19 @@ namespace Appccelerate.StateMachine.Specs.Sync
             const int Argument = 17;
 
             "establish a state machine with an exit action taking an event argument".x(() =>
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(State)
-                            .ExecuteOnExit((int argument) => passedArgument = argument)
-                            .On(Event).Goto(AnotherState))
-                    .WithConfiguration(x =>
-                        x.In(AnotherState)
-                            .ExecuteOnEntry((int argument) => passedArgument = argument))
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnExit((int argument) => passedArgument = argument)
+                        .On(Event).Goto(AnotherState);
+                stateMachineDefinitionBuilder
+                    .In(AnotherState)
+                        .ExecuteOnEntry((int argument) => passedArgument = argument);
+                machine = stateMachineDefinitionBuilder
                     .Build()
-                    .CreatePassiveStateMachine());
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(() =>
             {

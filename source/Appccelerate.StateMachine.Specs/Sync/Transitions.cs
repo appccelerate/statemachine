@@ -41,16 +41,17 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with transitions".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(SourceState)
-                            .ExecuteOnExit(() => exitActionExecuted = true)
-                            .On(Event)
-                            .Goto(DestinationState)
-                            .Execute<string>(p => actualParameter = p))
-                    .WithConfiguration(x =>
-                        x.In(DestinationState)
-                            .ExecuteOnEntry(() => entryActionExecuted = true))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                        .ExecuteOnExit(() => exitActionExecuted = true)
+                        .On(Event)
+                        .Goto(DestinationState)
+                        .Execute<string>(p => actualParameter = p);
+                stateMachineDefinitionBuilder
+                    .In(DestinationState)
+                        .ExecuteOnEntry(() => entryActionExecuted = true);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 

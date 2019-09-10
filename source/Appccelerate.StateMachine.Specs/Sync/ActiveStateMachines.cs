@@ -85,13 +85,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
             {
                 signal = new AutoResetEvent(false);
 
-                machine = new StateMachineDefinitionBuilder<string, int>()
-                    .WithConfiguration(x =>
-                        x.In("A").On(FirstEvent).Goto("B"))
-                    .WithConfiguration(x =>
-                        x.In("B").On(SecondEvent).Goto("C"))
-                    .WithConfiguration(x =>
-                        x.In("C").ExecuteOnEntry(() => signal.Set()))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreateActiveStateMachine();
 
@@ -124,13 +122,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
             {
                 signal = new AutoResetEvent(false);
 
-                machine = new StateMachineDefinitionBuilder<string, int>()
-                    .WithConfiguration(x =>
-                        x.In("A").On(SecondEvent).Goto("B"))
-                    .WithConfiguration(x =>
-                        x.In("B").On(FirstEvent).Goto("C"))
-                    .WithConfiguration(x =>
-                        x.In("C").ExecuteOnEntry(() => signal.Set()))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreateActiveStateMachine();
 

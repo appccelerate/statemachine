@@ -38,10 +38,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish an initialized state machine".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(TestState)
-                            .ExecuteOnEntry(() => entryActionExecuted = true))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(TestState)
+                        .ExecuteOnEntry(() => entryActionExecuted = true);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -69,10 +70,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish an initialized state machine".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(TestState)
-                            .ExecuteOnEntry(() => entryActionExecuted = true))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(TestState)
+                        .ExecuteOnEntry(() => entryActionExecuted = true);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -98,12 +100,15 @@ namespace Appccelerate.StateMachine.Specs.Sync
             bool entryActionExecuted)
         {
             "establish a state machine".x(() =>
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(TestState)
-                            .ExecuteOnEntry(() => entryActionExecuted = true))
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(TestState)
+                    .ExecuteOnEntry(() => entryActionExecuted = true);
+                machine = stateMachineDefinitionBuilder
                     .Build()
-                    .CreatePassiveStateMachine());
+                    .CreatePassiveStateMachine();
+            });
 
             "when state machine is initialized".x(() =>
                 machine.Initialize(TestState));
@@ -165,9 +170,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a loaded initialized state machine".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(1))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(1);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 

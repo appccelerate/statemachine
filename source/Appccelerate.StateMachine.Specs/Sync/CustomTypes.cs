@@ -34,13 +34,14 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with custom types for states and events".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<MyState, MyEvent>()
-                    .WithConfiguration(x =>
-                        x.In(new MyState("A"))
-                            .On(new MyEvent(1)).Goto(new MyState("B")))
-                    .WithConfiguration(x =>
-                        x.In(new MyState("B"))
-                            .ExecuteOnEntry(() => arrivedInStateB = true))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<MyState, MyEvent>();
+                stateMachineDefinitionBuilder
+                    .In(new MyState("A"))
+                        .On(new MyEvent(1)).Goto(new MyState("B"));
+                stateMachineDefinitionBuilder
+                    .In(new MyState("B"))
+                        .ExecuteOnEntry(() => arrivedInStateB = true);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 

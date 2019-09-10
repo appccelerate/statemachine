@@ -48,11 +48,11 @@ namespace Appccelerate.StateMachine.Facts
         {
             var enteredState = false;
 
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnEntry(() => enteredState = true))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(() => enteredState = true);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
@@ -68,11 +68,11 @@ namespace Appccelerate.StateMachine.Facts
         {
             var enteredStateSignal = new AutoResetEvent(false);
 
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnEntry(() => enteredStateSignal.Set()))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(() => enteredStateSignal.Set());
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
@@ -124,10 +124,10 @@ namespace Appccelerate.StateMachine.Facts
         [MemberData(nameof(StateMachineInstantiationProvider))]
         public void StartStop(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
@@ -158,36 +158,36 @@ namespace Appccelerate.StateMachine.Facts
             var transitionCompletedMessages = new List<TransitionCompletedEventArgs<States, Events>>();
             var transitionDeclinedMessages = new List<TransitionEventArgs<States, Events>>();
 
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.B)
-                        .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(States.B1)
-                        .WithSubState(States.B2))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.C)
-                        .WithHistoryType(HistoryType.Shallow)
-                        .WithInitialSubState(States.C1)
-                        .WithSubState(States.C2))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.C1)
-                        .WithHistoryType(HistoryType.Shallow)
-                        .WithInitialSubState(States.C1A)
-                        .WithSubState(States.C1B))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.D)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(States.D1)
-                        .WithSubState(States.D2))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.D1)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(States.D1A)
-                        .WithSubState(States.D1B))
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B).Goto(States.B))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.B)
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(States.B1)
+                    .WithSubState(States.B2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.C)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C1)
+                    .WithSubState(States.C2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.C1)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C1A)
+                    .WithSubState(States.C1B);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.D)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1)
+                    .WithSubState(States.D2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.D1)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1A)
+                    .WithSubState(States.D1B);
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B).Goto(States.B);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
@@ -239,21 +239,21 @@ namespace Appccelerate.StateMachine.Facts
             var transitionDeclinedMessages = new List<TransitionEventArgs<States, Events>>();
 
             IStateMachine<States, Events> testee = null;
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B).Goto(States.B).Execute(() =>
-                        {
-                            FireD();
-                            FirePriorityC();
-                        }))
-                .WithConfiguration(x =>
-                    x.In(States.B)
-                        .On(Events.C).Goto(States.C))
-                .WithConfiguration(x =>
-                    x.In(States.C)
-                        .On(Events.D).Goto(States.D))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B).Goto(States.B).Execute(() =>
+                    {
+                        FireD();
+                        FirePriorityC();
+                    });
+            stateMachineDefinitionBuilder
+                .In(States.B)
+                    .On(Events.C).Goto(States.C);
+            stateMachineDefinitionBuilder
+                .In(States.C)
+                    .On(Events.D).Goto(States.D);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             testee = createStateMachine(stateMachineDefinition);
 
@@ -294,14 +294,14 @@ namespace Appccelerate.StateMachine.Facts
             var transitionBeginMessages = new List<TransitionEventArgs<States, Events>>();
             var transitionCompletedMessages = new List<TransitionCompletedEventArgs<States, Events>>();
 
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B).Goto(States.B))
-                .WithConfiguration(x =>
-                    x.In(States.B)
-                        .On(Events.C).Goto(States.C))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B).Goto(States.B);
+            stateMachineDefinitionBuilder
+                .In(States.B)
+                    .On(Events.C).Goto(States.C);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
@@ -340,10 +340,10 @@ namespace Appccelerate.StateMachine.Facts
         [MemberData(nameof(StateMachineInstantiationProvider))]
         public void StartTwice(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
@@ -365,10 +365,12 @@ namespace Appccelerate.StateMachine.Facts
             A.CallTo(() => loader.LoadCurrentState())
                 .Returns(new Initializable<States> { Value = States.C });
 
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x => x.In(States.A))
-                .WithConfiguration(x => x.In(States.C))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A);
+            stateMachineDefinitionBuilder
+                .In(States.C);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var testee = createStateMachine(stateMachineDefinition);
             testee.AddExtension(extension);
@@ -390,20 +392,21 @@ namespace Appccelerate.StateMachine.Facts
         {
             var exitedD2 = false;
 
-            var testee = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.D)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(States.D1)
-                        .WithSubState(States.D2))
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.D).Goto(States.D)
-                        .On(Events.A))
-                .WithConfiguration(x =>
-                    x.In(States.D2)
-                        .ExecuteOnExit(() => exitedD2 = true)
-                        .On(Events.A).Goto(States.A))
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.D)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1)
+                    .WithSubState(States.D2);
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .On(Events.D).Goto(States.D)
+                    .On(Events.A);
+            stateMachineDefinitionBuilder
+                .In(States.D2)
+                    .ExecuteOnExit(() => exitedD2 = true)
+                    .On(Events.A).Goto(States.A);
+            var testee = stateMachineDefinitionBuilder
                 .Build()
                 .CreatePassiveStateMachine();
 
@@ -449,15 +452,15 @@ namespace Appccelerate.StateMachine.Facts
         [MemberData(nameof(StateMachineInstantiationProvider))]
         public void ThrowsExceptionOnLoading_WhenSettingALastActiveStateThatIsNotASubState(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-               .WithConfiguration(x =>
-                   x.In(States.A))
-               .WithConfiguration(x =>
-                   x.DefineHierarchyOn(States.B)
-                       .WithHistoryType(HistoryType.Deep)
-                       .WithInitialSubState(States.B1)
-                       .WithSubState(States.B2))
-               .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.B)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.B1)
+                    .WithSubState(States.B2);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 

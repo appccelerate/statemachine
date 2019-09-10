@@ -32,11 +32,11 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var entered = false;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnEntry(() => entered = true))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(() => entered = true);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -56,12 +56,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var entered1 = false;
             var entered2 = false;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnEntry(() => entered1 = true)
-                        .ExecuteOnEntry(() => entered2 = true))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(() => entered1 = true)
+                    .ExecuteOnEntry(() => entered2 = true);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -83,11 +83,11 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             var receivedValue = 0;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnEntryParametrized(parameter => receivedValue = parameter, Parameter))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntryParametrized(parameter => receivedValue = parameter, Parameter);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -106,12 +106,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var exit = false;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnExit(() => exit = true)
-                        .On(Events.B).Goto(States.B))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnExit(() => exit = true)
+                    .On(Events.B).Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -132,13 +132,13 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var exit1 = false;
             var exit2 = false;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnExit(() => exit1 = true)
-                        .ExecuteOnExit(() => exit2 = true)
-                        .On(Events.B).Goto(States.B))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnExit(() => exit1 = true)
+                    .ExecuteOnExit(() => exit2 = true)
+                    .On(Events.B).Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -161,12 +161,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             var receivedValue = 0;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnExitParametrized(value => receivedValue = value, Parameter)
-                        .On(Events.B).Goto(States.B))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnExitParametrized(value => receivedValue = value, Parameter)
+                    .On(Events.B).Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()

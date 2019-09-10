@@ -101,47 +101,51 @@ namespace Appccelerate.StateMachine.Facts.Reports
 
             var testee = new CsvStateMachineReportGenerator<States, Events>(stateStream, transitionsStream);
 
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.Healthy)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(States.OnFloor)
-                        .WithSubState(States.Moving))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.Moving)
-                        .WithHistoryType(HistoryType.Shallow)
-                        .WithInitialSubState(States.MovingUp)
-                        .WithSubState(States.MovingDown))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.OnFloor)
-                        .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(States.DoorClosed)
-                        .WithSubState(States.DoorOpen))
-                .WithConfiguration(x =>
-                    x.In(States.Healthy)
-                        .On(Events.ErrorOccurred).Goto(States.Error))
-                .WithConfiguration(x =>
-                    x.In(States.Error)
-                        .On(Events.Reset).Goto(States.Healthy)
-                        .On(Events.ErrorOccurred))
-                .WithConfiguration(x =>
-                    x.In(States.OnFloor)
-                        .ExecuteOnEntry(AnnounceFloor)
-                        .ExecuteOnExit(Beep)
-                        .ExecuteOnExit(Beep)
-                        .On(Events.CloseDoor).Goto(States.DoorClosed)
-                        .On(Events.OpenDoor).Goto(States.DoorOpen)
-                        .On(Events.GoUp)
-                            .If(CheckOverload).Goto(States.MovingUp)
-                            .Otherwise()
-                                .Execute(AnnounceOverload)
-                                .Execute(Beep)
-                        .On(Events.GoDown)
-                            .If(CheckOverload).Goto(States.MovingDown)
-                            .Otherwise().Execute(AnnounceOverload))
-                .WithConfiguration(x =>
-                    x.In(States.Moving)
-                        .On(Events.Stop).Goto(States.OnFloor))
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.Healthy)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.OnFloor)
+                    .WithSubState(States.Moving);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.Moving)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.MovingUp)
+                    .WithSubState(States.MovingDown);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.OnFloor)
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(States.DoorClosed)
+                    .WithSubState(States.DoorOpen);
+            stateMachineDefinitionBuilder
+                .In(States.Healthy)
+                    .On(Events.ErrorOccurred).Goto(States.Error);
+            stateMachineDefinitionBuilder
+                .In(States.Error)
+                    .On(Events.Reset).Goto(States.Healthy)
+                    .On(Events.ErrorOccurred);
+            stateMachineDefinitionBuilder
+                .In(States.OnFloor)
+                    .ExecuteOnEntry(AnnounceFloor)
+                    .ExecuteOnExit(Beep)
+                    .ExecuteOnExit(Beep)
+                    .On(Events.CloseDoor).Goto(States.DoorClosed)
+                    .On(Events.OpenDoor).Goto(States.DoorOpen)
+                    .On(Events.GoUp)
+                        .If(CheckOverload)
+                            .Goto(States.MovingUp)
+                        .Otherwise()
+                            .Execute(AnnounceOverload)
+                            .Execute(Beep)
+                    .On(Events.GoDown)
+                        .If(CheckOverload)
+                            .Goto(States.MovingDown)
+                        .Otherwise()
+                            .Execute(AnnounceOverload);
+            stateMachineDefinitionBuilder
+                .In(States.Moving)
+                    .On(Events.Stop).Goto(States.OnFloor);
+            var stateMachineDefinition = stateMachineDefinitionBuilder
                 .Build();
 
             var elevator = createStateMachine("Elevator", stateMachineDefinition);

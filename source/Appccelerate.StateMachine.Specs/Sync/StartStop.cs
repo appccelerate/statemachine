@@ -36,15 +36,16 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish initialized state machine".x(() =>
             {
-                this.machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(A)
-                            .On(Event)
-                            .Goto(B))
-                    .WithConfiguration(x =>
-                        x.In(B)
-                            .On(Event)
-                            .Goto(A))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(A)
+                        .On(Event)
+                        .Goto(B);
+                stateMachineDefinitionBuilder
+                    .In(B)
+                        .On(Event)
+                        .Goto(A);
+                this.machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 

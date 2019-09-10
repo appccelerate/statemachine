@@ -33,16 +33,17 @@ namespace Appccelerate.StateMachine.Facts.Machine
             const string EventArgument = "test";
             string actualEventArgument = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.A)
-                        .If<string>(argument =>
-                        {
-                            actualEventArgument = argument;
-                            return true;
-                        })
-                        .Goto(States.B))
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.A)
+                    .If<string>(argument =>
+                    {
+                        actualEventArgument = argument;
+                        return true;
+                    })
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder
                 .Build();
             var stateContainer = new StateContainer<States, Events>();
 
@@ -61,13 +62,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void GuardWithoutArguments()
         {
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .If(() => false).Goto(States.C)
-                        .If(() => true).Goto(States.B))
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .If(() => false).Goto(States.C)
+                    .If(() => true).Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder
                 .Build();
+
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -85,15 +88,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void GuardWithASingleArgument()
         {
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .If<int>(SingleIntArgumentGuardReturningFalse).Goto(States.C)
-                        .If(() => false).Goto(States.D)
-                        .If(() => false).Goto(States.E)
-                        .If<int>(SingleIntArgumentGuardReturningTrue).Goto(States.B))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .If<int>(SingleIntArgumentGuardReturningFalse).Goto(States.C)
+                    .If(() => false).Goto(States.D)
+                    .If(() => false).Goto(States.E)
+                    .If<int>(SingleIntArgumentGuardReturningTrue).Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder
+                    .Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()

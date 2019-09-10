@@ -28,24 +28,23 @@ namespace Appccelerate.StateMachine.Facts.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly List<Func<ISyntaxStart<TState, TEvent>, object>> setupFunctions = new List<Func<ISyntaxStart<TState, TEvent>, object>>();
+        private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
+        private readonly StateDictionary<TState, TEvent> stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
+        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
 
-        public StateDefinitionsBuilder<TState, TEvent> WithConfiguration(
-            Func<ISyntaxStart<TState, TEvent>, object> setupFunction)
+        public IEntryActionSyntax<TState, TEvent> In(TState state)
         {
-            this.setupFunctions.Add(setupFunction);
-            return this;
+            return new StateBuilder<TState, TEvent>(state, this.stateDefinitionDictionary, this.factory);
+        }
+
+        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
+        {
+            return new HierarchyBuilder<TState, TEvent>(superStateId, this.stateDefinitionDictionary, this.initiallyLastActiveStates);
         }
 
         public IStateDefinitionDictionary<TState, TEvent> Build()
         {
-            var stateDefinitionDictionaryForConfigurationPhase = new StateDictionary<TState, TEvent>();
-            var initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
-            var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionaryForConfigurationPhase, initiallyLastActiveStates);
-
-            this.setupFunctions.ForEach(f => f(syntaxStart));
-
-            return new StateDefinitionDictionary<TState, TEvent>(stateDefinitionDictionaryForConfigurationPhase.ReadOnlyDictionary);
+            return new StateDefinitionDictionary<TState, TEvent>(this.stateDefinitionDictionary.ReadOnlyDictionary);
         }
     }
 }

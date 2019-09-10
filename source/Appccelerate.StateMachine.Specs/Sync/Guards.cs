@@ -37,14 +37,15 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with guarded transitions".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(SourceState)
-                            .On(Event)
-                            .If(() => false).Goto(ErrorState)
-                            .If(() => true).Goto(DestinationState)
-                            .If(() => true).Goto(ErrorState)
-                            .Otherwise().Goto(ErrorState))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                        .On(Event)
+                        .If(() => false).Goto(ErrorState)
+                        .If(() => true).Goto(DestinationState)
+                        .If(() => true).Goto(ErrorState)
+                        .Otherwise().Goto(ErrorState);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -69,12 +70,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with otherwise guard and no matching other guard".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(SourceState)
-                            .On(Event)
-                            .If(() => false).Goto(ErrorState)
-                            .Otherwise().Goto(DestinationState))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                        .On(Event)
+                        .If(() => false).Goto(ErrorState)
+                        .Otherwise().Goto(DestinationState);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -100,11 +102,12 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish state machine with no matching guard".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .WithConfiguration(x =>
-                        x.In(SourceState)
-                            .On(Event)
-                            .If(() => false).Goto(ErrorState))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                        .On(Event)
+                        .If(() => false).Goto(ErrorState);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 

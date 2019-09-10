@@ -69,10 +69,9 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(InitialState))
-                .Build();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder.In(InitialState);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -101,12 +100,10 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(overrideExtension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A))
-                .WithConfiguration(x =>
-                    x.In(States.B))
-                .Build();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder.In(States.A);
+            stateDefinitionsBuilder.In(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -135,12 +132,12 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Goto(States.B))
-                .Build();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
+                .On(Events.B)
+                .Goto(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -179,12 +176,12 @@ namespace Appccelerate.StateMachine.Facts
             stateContainer.Extensions.Add(extension);
             stateContainer.Extensions.Add(overrideExtension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B).Goto(States.C)
-                        .On(Events.C).Goto(States.C))
-                .Build();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
+                    .On(Events.B).Goto(States.C)
+                    .On(Events.C).Goto(States.C);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -219,11 +216,11 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(Source)
-                        .On(Event).Goto(Target))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(Source)
+                    .On(Event).Goto(Target);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -263,13 +260,13 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .If(() => throw exception)
-                        .Execute(() => { }))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .If(() => throw exception)
+                    .Execute(() => { });
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -312,13 +309,13 @@ namespace Appccelerate.StateMachine.Facts
             stateContainer.Extensions.Add(extension);
             stateContainer.Extensions.Add(overrideExtension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .If(() => throw exception)
-                        .Execute(() => { }))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .If(() => throw exception)
+                    .Execute(() => { });
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -353,12 +350,12 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Execute(() => throw exception))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Execute(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -401,12 +398,12 @@ namespace Appccelerate.StateMachine.Facts
             stateContainer.Extensions.Add(extension);
             stateContainer.Extensions.Add(overrideExtension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Execute(() => throw exception))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Execute(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -441,15 +438,15 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Goto(States.B))
-                .WithConfiguration(x =>
-                    x.In(States.B)
-                        .ExecuteOnEntry(() => throw exception))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B);
+            stateDefinitionBuilder
+                .In(States.B)
+                    .ExecuteOnEntry(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -492,15 +489,15 @@ namespace Appccelerate.StateMachine.Facts
             stateContainer.Extensions.Add(extension);
             stateContainer.Extensions.Add(overrideExtension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Goto(States.B))
-                .WithConfiguration(x =>
-                    x.In(States.B)
-                        .ExecuteOnEntry(() => throw exception))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B);
+            stateDefinitionBuilder
+                .In(States.B)
+                    .ExecuteOnEntry(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -535,13 +532,13 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnExit(() => throw exception)
-                        .On(Events.B)
-                        .Goto(States.B))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnExit(() => throw exception)
+                    .On(Events.B)
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -584,13 +581,13 @@ namespace Appccelerate.StateMachine.Facts
             stateContainer.Extensions.Add(extension);
             stateContainer.Extensions.Add(overrideExtension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnExit(() => throw exception)
-                        .On(Events.B)
-                        .Goto(States.B))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnExit(() => throw exception)
+                    .On(Events.B)
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
@@ -625,11 +622,11 @@ namespace Appccelerate.StateMachine.Facts
             var stateContainer = new StateContainer<States, Events>();
             stateContainer.Extensions.Add(extension);
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnEntry(() => throw exception))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)

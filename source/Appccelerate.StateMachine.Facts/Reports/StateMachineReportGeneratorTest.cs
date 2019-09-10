@@ -37,50 +37,50 @@ namespace Appccelerate.StateMachine.Facts.Reports
         [MemberData(nameof(StateMachineInstantiationProvider))]
         public void Report(string dummyName, Func<string, StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.B)
-                        .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(States.B1)
-                        .WithSubState(States.B2))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.C)
-                        .WithHistoryType(HistoryType.Shallow)
-                        .WithInitialSubState(States.C1)
-                        .WithSubState(States.C2))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.C1)
-                        .WithHistoryType(HistoryType.Shallow)
-                        .WithInitialSubState(States.C1A)
-                        .WithSubState(States.C1B))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.D)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(States.D1)
-                        .WithSubState(States.D2))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.D1)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(States.D1A)
-                        .WithSubState(States.D1B))
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnEntry(EnterA)
-                        .ExecuteOnExit(ExitA)
-                        .On(Events.A)
-                        .On(Events.B).Goto(States.B)
-                        .On(Events.C).If(AlwaysTrue).Goto(States.C1)
-                        .On(Events.C).If(AlwaysFalse).Goto(States.C2))
-                .WithConfiguration(x =>
-                    x.In(States.B)
-                        .On(Events.A).Goto(States.A).Execute(Action))
-                .WithConfiguration(x =>
-                    x.In(States.B1)
-                        .On(Events.B2).Goto(States.B1))
-                .WithConfiguration(x =>
-                    x.In(States.B2)
-                        .On(Events.B1).Goto(States.B2))
-                .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.B)
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(States.B1)
+                    .WithSubState(States.B2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.C)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C1)
+                    .WithSubState(States.C2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.C1)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C1A)
+                    .WithSubState(States.C1B);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.D)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1)
+                    .WithSubState(States.D2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.D1)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1A)
+                    .WithSubState(States.D1B);
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(EnterA)
+                    .ExecuteOnExit(ExitA)
+                    .On(Events.A)
+                    .On(Events.B).Goto(States.B)
+                    .On(Events.C).If(AlwaysTrue).Goto(States.C1)
+                    .On(Events.C).If(AlwaysFalse).Goto(States.C2);
+            stateMachineDefinitionBuilder
+                .In(States.B)
+                    .On(Events.A).Goto(States.A).Execute(Action);
+            stateMachineDefinitionBuilder
+                .In(States.B1)
+                    .On(Events.B2).Goto(States.B1);
+            stateMachineDefinitionBuilder
+                .In(States.B2)
+                    .On(Events.B1).Goto(States.B2);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
             var stateMachine = createStateMachine("Test Machine", stateMachineDefinition);
 

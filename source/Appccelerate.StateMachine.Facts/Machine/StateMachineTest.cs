@@ -43,108 +43,108 @@ namespace Appccelerate.StateMachine.Facts.Machine
         /// </summary>
         public StateMachineTest()
         {
-            this.stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.B)
-                        .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(States.B1)
-                        .WithSubState(States.B2))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.C)
-                        .WithHistoryType(HistoryType.Shallow)
-                        .WithInitialSubState(States.C2)
-                        .WithSubState(States.C1))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.C1)
-                        .WithHistoryType(HistoryType.Shallow)
-                        .WithInitialSubState(States.C1A)
-                        .WithSubState(States.C1B))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.D)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(States.D1)
-                        .WithSubState(States.D2))
-                .WithConfiguration(x =>
-                    x.DefineHierarchyOn(States.D1)
-                        .WithHistoryType(HistoryType.Deep)
-                        .WithInitialSubState(States.D1A)
-                        .WithSubState(States.D1B))
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.A))
-                        .ExecuteOnExit(() => this.RecordExit(States.A))
-                        .On(Events.B).Goto(States.B)
-                        .On(Events.C).Goto(States.C)
-                        .On(Events.D).Goto(States.D)
-                        .On(Events.A))
-                .WithConfiguration(x =>
-                    x.In(States.B)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.B))
-                        .ExecuteOnExit(() => this.RecordExit(States.B))
-                        .On(Events.D).Goto(States.D))
-                .WithConfiguration(x =>
-                    x.In(States.B1)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.B1))
-                        .ExecuteOnExit(() => this.RecordExit(States.B1))
-                        .On(Events.B2).Goto(States.B2))
-                .WithConfiguration(x =>
-                    x.In(States.B2)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.B2))
-                        .ExecuteOnExit(() => this.RecordExit(States.B2))
-                        .On(Events.A).Goto(States.A)
-                        .On(Events.C1B).Goto(States.C1B))
-                .WithConfiguration(x =>
-                    x.In(States.C)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.C))
-                        .ExecuteOnExit(() => this.RecordExit(States.C))
-                        .On(Events.A).Goto(States.A))
-                .WithConfiguration(x =>
-                    x.In(States.C1)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.C1))
-                        .ExecuteOnExit(() => this.RecordExit(States.C1))
-                        .On(Events.C1B).Goto(States.C1B))
-                .WithConfiguration(x =>
-                    x.In(States.C2)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.C2))
-                        .ExecuteOnExit(() => this.RecordExit(States.C2)))
-                .WithConfiguration(x =>
-                    x.In(States.C1A)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.C1A))
-                        .ExecuteOnExit(() => this.RecordExit(States.C1A)))
-                .WithConfiguration(x =>
-                    x.In(States.C1B)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.C1B))
-                        .ExecuteOnExit(() => this.RecordExit(States.C1B)))
-                .WithConfiguration(x =>
-                    x.In(States.D)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.D))
-                        .ExecuteOnExit(() => this.RecordExit(States.D)))
-                .WithConfiguration(x =>
-                    x.In(States.D1)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.D1))
-                        .ExecuteOnExit(() => this.RecordExit(States.D1)))
-                .WithConfiguration(x =>
-                    x.In(States.D1A)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.D1A))
-                        .ExecuteOnExit(() => this.RecordExit(States.D1A)))
-                .WithConfiguration(x =>
-                    x.In(States.D1B)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.D1B))
-                        .ExecuteOnExit(() => this.RecordExit(States.D1B))
-                        .On(Events.A).Goto(States.A)
-                        .On(Events.B1).Goto(States.B1))
-                .WithConfiguration(x =>
-                    x.In(States.D2)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.D2))
-                        .ExecuteOnExit(() => this.RecordExit(States.D2))
-                        .On(Events.A).Goto(States.A))
-                .WithConfiguration(x =>
-                    x.In(States.E)
-                        .ExecuteOnEntry(() => this.RecordEntry(States.E))
-                        .ExecuteOnExit(() => this.RecordExit(States.E))
-                        .On(Events.A).Goto(States.A)
-                        .On(Events.E).Goto(States.E))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.B)
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(States.B1)
+                    .WithSubState(States.B2);
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.C)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C2)
+                    .WithSubState(States.C1);
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.C1)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C1A)
+                    .WithSubState(States.C1B);
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.D)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1)
+                    .WithSubState(States.D2);
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.D1)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1A)
+                    .WithSubState(States.D1B);
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.A))
+                    .ExecuteOnExit(() => this.RecordExit(States.A))
+                    .On(Events.B).Goto(States.B)
+                    .On(Events.C).Goto(States.C)
+                    .On(Events.D).Goto(States.D)
+                    .On(Events.A);
+            stateDefinitionBuilder
+                .In(States.B)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.B))
+                    .ExecuteOnExit(() => this.RecordExit(States.B))
+                    .On(Events.D).Goto(States.D);
+            stateDefinitionBuilder
+                .In(States.B1)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.B1))
+                    .ExecuteOnExit(() => this.RecordExit(States.B1))
+                    .On(Events.B2).Goto(States.B2);
+            stateDefinitionBuilder
+                .In(States.B2)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.B2))
+                    .ExecuteOnExit(() => this.RecordExit(States.B2))
+                    .On(Events.A).Goto(States.A)
+                    .On(Events.C1B).Goto(States.C1B);
+            stateDefinitionBuilder
+                .In(States.C)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C))
+                    .ExecuteOnExit(() => this.RecordExit(States.C))
+                    .On(Events.A).Goto(States.A);
+            stateDefinitionBuilder
+                .In(States.C1)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C1))
+                    .ExecuteOnExit(() => this.RecordExit(States.C1))
+                    .On(Events.C1B).Goto(States.C1B);
+            stateDefinitionBuilder
+                .In(States.C2)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C2))
+                    .ExecuteOnExit(() => this.RecordExit(States.C2));
+            stateDefinitionBuilder
+                .In(States.C1A)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C1A))
+                    .ExecuteOnExit(() => this.RecordExit(States.C1A));
+            stateDefinitionBuilder
+                .In(States.C1B)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C1B))
+                    .ExecuteOnExit(() => this.RecordExit(States.C1B));
+            stateDefinitionBuilder
+                .In(States.D)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D))
+                    .ExecuteOnExit(() => this.RecordExit(States.D));
+            stateDefinitionBuilder
+                .In(States.D1)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D1))
+                    .ExecuteOnExit(() => this.RecordExit(States.D1));
+            stateDefinitionBuilder
+                .In(States.D1A)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D1A))
+                    .ExecuteOnExit(() => this.RecordExit(States.D1A));
+            stateDefinitionBuilder
+                .In(States.D1B)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D1B))
+                    .ExecuteOnExit(() => this.RecordExit(States.D1B))
+                    .On(Events.A).Goto(States.A)
+                    .On(Events.B1).Goto(States.B1);
+            stateDefinitionBuilder
+                .In(States.D2)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D2))
+                    .ExecuteOnExit(() => this.RecordExit(States.D2))
+                    .On(Events.A).Goto(States.A);
+            stateDefinitionBuilder
+                .In(States.E)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.E))
+                    .ExecuteOnExit(() => this.RecordExit(States.E))
+                    .On(Events.A).Goto(States.A)
+                    .On(Events.E).Goto(States.E);
+            this.stateDefinitions = stateDefinitionBuilder.Build();
         }
 
         [Fact]
@@ -346,7 +346,8 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
         /// <summary>
         /// When a transition targets a super-state then the initial-state of this super-state is entered recursively
-        /// down to the most nested state. No history here!
+        /// down to the most nested state.
+        /// No history here.
         /// </summary>
         [Fact]
         public void ExecuteTransitionWithInitialSubState()

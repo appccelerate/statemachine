@@ -35,12 +35,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void MissingTransition()
         {
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Goto(States.B))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -71,14 +71,14 @@ namespace Appccelerate.StateMachine.Facts.Machine
             int? action1Argument = null;
             int? action2Argument = null;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Goto(States.B)
-                        .Execute<int>(argument => { action1Argument = argument; })
-                        .Execute((int argument) => { action2Argument = argument; }))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B)
+                    .Execute<int>(argument => { action1Argument = argument; })
+                    .Execute((int argument) => { action2Argument = argument; });
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -102,14 +102,14 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var action1Executed = false;
             var action2Executed = false;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Goto(States.B)
-                        .Execute<int>(argument => { action1Executed = true; })
-                        .Execute((int argument) => { action2Executed = true; }))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B)
+                    .Execute<int>(argument => { action1Executed = true; })
+                    .Execute((int argument) => { action2Executed = true; });
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -135,12 +135,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var executed = false;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.A)
-                        .Execute(() => executed = true))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.A)
+                    .Execute(() => executed = true);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -161,12 +161,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var executed = false;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Execute(() => executed = true))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Execute(() => executed = true);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()
@@ -187,12 +187,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
             const int ExpectedValue = 1;
             var value = 0;
 
-            var stateDefinitions = new StateDefinitionsBuilder<States, Events>()
-                .WithConfiguration(x =>
-                    x.In(States.A)
-                        .On(Events.B)
-                        .Execute<int>(v => value = v))
-                .Build();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Execute<int>(v => value = v);
+            var stateDefinitions = stateDefinitionBuilder.Build();
             var stateContainer = new StateContainer<States, Events>();
 
             var testee = new StateMachineBuilder<States, Events>()

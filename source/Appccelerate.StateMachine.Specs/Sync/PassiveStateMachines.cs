@@ -83,13 +83,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a passive state machine with transitions".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<string, int>()
-                    .WithConfiguration(x =>
-                        x.In("A").On(FirstEvent).Goto("B"))
-                    .WithConfiguration(x =>
-                        x.In("B").On(SecondEvent).Goto("C"))
-                    .WithConfiguration(x =>
-                        x.In("C").ExecuteOnEntry(() => arrived = true))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -120,13 +118,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a passive state machine with transitions".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<string, int>()
-                    .WithConfiguration(x =>
-                        x.In("A").On(SecondEvent).Goto("B"))
-                    .WithConfiguration(x =>
-                        x.In("B").On(FirstEvent).Goto("C"))
-                    .WithConfiguration(x =>
-                        x.In("C").ExecuteOnEntry(() => arrived = true))
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
+                machine = stateMachineDefinitionBuilder
                     .Build()
                     .CreatePassiveStateMachine();
 

@@ -27,25 +27,24 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly List<Func<ISyntaxStart<TState, TEvent>, object>> setupFunctions = new List<Func<ISyntaxStart<TState, TEvent>, object>>();
+        private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
+        private readonly StateDictionary<TState, TEvent> stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
+        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
 
-        public StateMachineDefinitionBuilder<TState, TEvent> WithConfiguration(
-            Func<ISyntaxStart<TState, TEvent>, object> setupFunction)
+        public IEntryActionSyntax<TState, TEvent> In(TState state)
         {
-            this.setupFunctions.Add(setupFunction);
-            return this;
+            return new StateBuilder<TState, TEvent>(state, this.stateDefinitionDictionary, this.factory);
+        }
+
+        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
+        {
+            return new HierarchyBuilder<TState, TEvent>(superStateId, this.stateDefinitionDictionary, this.initiallyLastActiveStates);
         }
 
         public StateMachineDefinition<TState, TEvent> Build()
         {
-            var stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
-            var initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
-            var syntaxStart = new SyntaxStart<TState, TEvent>(stateDefinitionDictionary, initiallyLastActiveStates);
-
-            this.setupFunctions.ForEach(f => f(syntaxStart));
-
-            var stateDefinitions = new StateDefinitionDictionary<TState, TEvent>(stateDefinitionDictionary.ReadOnlyDictionary);
-            return new StateMachineDefinition<TState, TEvent>(stateDefinitions, initiallyLastActiveStates);
+            var stateDefinitions = new StateDefinitionDictionary<TState, TEvent>(this.stateDefinitionDictionary.ReadOnlyDictionary);
+            return new StateMachineDefinition<TState, TEvent>(stateDefinitions, this.initiallyLastActiveStates);
         }
     }
 }
