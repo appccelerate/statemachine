@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             public IList<int> RecordedQueuedEvents { get; }
 
-            public override Task FiredEvent(IStateMachineInformation<int, int> stateMachine, ITransitionContext<int, int> context)
+            public override Task FiredEvent(IStateMachineInformation<int, int> stateMachine, ITransitionContextNew<int, int> context)
             {
                 this.RecordedFiredEvents.Add(context.EventId.Value);
 

@@ -250,9 +250,10 @@ namespace Appccelerate.StateMachine
         {
             Guard.AgainstNullArgument(nameof(stateMachineSaver), stateMachineSaver);
 
-            stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentState != null ?
-                new Initializable<TState> { Value = this.stateContainer.CurrentState.Id } :
-                new Initializable<TState>());
+            stateMachineSaver.SaveCurrentState(
+                this.stateContainer.CurrentState != null
+                    ? new Initializable<TState> { Value = this.stateContainer.CurrentState.Id }
+                    : new Initializable<TState>());
 
             var historyStates = this.stateContainer
                 .LastActiveStates
@@ -278,11 +279,11 @@ namespace Appccelerate.StateMachine
             var loadedCurrentState = stateMachineLoader.LoadCurrentState();
             var historyStates = stateMachineLoader.LoadHistoryStates();
 
-            var wasSuccessful = SetCurrentState();
+            var loadedStateMachineWasInitialized = SetCurrentState();
             LoadHistoryStates();
             NotifyExtensions();
 
-            this.initialized = wasSuccessful;
+            this.initialized = loadedStateMachineWasInitialized;
 
             bool SetCurrentState()
             {

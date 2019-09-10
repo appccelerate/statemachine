@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Threading.Tasks;
+    using AsyncMachine;
     using FluentAssertions;
     using Xbehave;
 
@@ -37,18 +38,21 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a state machine with guarded transitions".x(async () =>
             {
-                machine = new AsyncPassiveStateMachine<int, int>();
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                        .On(Event)
+                            .If(() => false).Goto(ErrorState)
+                            .If(async () => await Task.FromResult(false)).Goto(ErrorState)
+                            .If(async () => await Task.FromResult(true)).Goto(DestinationState)
+                            .If(() => true).Goto(ErrorState)
+                            .Otherwise().Goto(ErrorState);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 currentStateExtension = new CurrentStateExtension();
                 machine.AddExtension(currentStateExtension);
-
-                machine.In(SourceState)
-                    .On(Event)
-                        .If(() => false).Goto(ErrorState)
-                        .If(async () => await Task.FromResult(false)).Goto(ErrorState)
-                        .If(async () => await Task.FromResult(true)).Goto(DestinationState)
-                        .If(() => true).Goto(ErrorState)
-                        .Otherwise().Goto(ErrorState);
 
                 await machine.Initialize(SourceState);
                 await machine.Start();
@@ -65,19 +69,21 @@ namespace Appccelerate.StateMachine.Specs.Async
         public void NoMatchingGuard(
             AsyncPassiveStateMachine<int, int> machine)
         {
-            bool declined = false;
+            var declined = false;
 
             "establish state machine with no matching guard".x(async () =>
             {
-                machine = new AsyncPassiveStateMachine<int, int>();
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                        .On(Event)
+                        .If(() => Task.FromResult(false)).Goto(ErrorState);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 var currentStateExtension = new CurrentStateExtension();
                 machine.AddExtension(currentStateExtension);
-
-                machine.In(SourceState)
-                    .On(Event)
-                    .If(() => Task.FromResult(false)).Goto(ErrorState);
-
                 machine.TransitionDeclined += (sender, e) => declined = true;
 
                 await machine.Initialize(SourceState);
@@ -97,20 +103,23 @@ namespace Appccelerate.StateMachine.Specs.Async
             CurrentStateExtension currentStateExtension)
         {
             "establish a state machine with otherwise guard and no machting other guard".x(async () =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    currentStateExtension = new CurrentStateExtension();
-                    machine.AddExtension(currentStateExtension);
-
-                    machine.In(SourceState)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
                         .On(Event)
                             .If(() => Task.FromResult(false)).Goto(ErrorState)
                             .Otherwise().Goto(DestinationState);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    await machine.Initialize(SourceState);
-                    await machine.Start();
-                });
+                currentStateExtension = new CurrentStateExtension();
+                machine.AddExtension(currentStateExtension);
+
+                await machine.Initialize(SourceState);
+                await machine.Start();
+            });
 
             "when an event is fired".x(()
                 => machine.Fire(Event));

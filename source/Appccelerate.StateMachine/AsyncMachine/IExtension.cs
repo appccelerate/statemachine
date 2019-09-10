@@ -466,8 +466,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         Task EnteringState(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IState<TState, TEvent> state,
-            ITransitionContext<TState, TEvent> context);
+            IStateDefinition<TState, TEvent> state,
+            ITransitionContextNew<TState, TEvent> context);
 
         void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,

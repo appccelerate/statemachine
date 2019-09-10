@@ -223,8 +223,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
                 .ForEach(extension =>
                     extension.EnteringState(
                         this.stateMachineInformation,
-                        this,
-                        context))
+                        null,
+                        null))
                 .ConfigureAwait(false);
 
             await this.ExecuteEntryActions(context).ConfigureAwait(false);

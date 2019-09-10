@@ -493,8 +493,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public virtual Task EnteringState(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            IState<TState, TEvent> state,
-            ITransitionContext<TState, TEvent> context)
+            IStateDefinition<TState, TEvent> state,
+            ITransitionContextNew<TState, TEvent> context)
         {
             return TaskEx.Completed;
         }

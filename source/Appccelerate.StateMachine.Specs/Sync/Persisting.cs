@@ -31,6 +31,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
     public class Persisting
     {
+#pragma warning disable SA1602 // Enumeration items should be documented
         public enum State
         {
             A, B, S, S1, S2
@@ -40,6 +41,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             B, X, S2, S
         }
+#pragma warning restore SA1602 // Enumeration items should be documented
 
         [Scenario]
         public void Loading(
