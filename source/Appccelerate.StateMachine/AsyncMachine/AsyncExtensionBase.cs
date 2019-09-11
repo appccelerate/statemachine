@@ -318,7 +318,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public virtual void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             Initializable<TState> loadedCurrentState,
-            IDictionary<TState, TState> loadedHistoryStates)
+            IReadOnlyDictionary<TState, TState> loadedHistoryStates)
         {
         }
     }

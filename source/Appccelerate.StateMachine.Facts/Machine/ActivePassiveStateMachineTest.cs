@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="StateMachineTest.cs" company="Appccelerate">
+// <copyright file="ActivePassiveStateMachineTest.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Facts
+namespace Appccelerate.StateMachine.Facts.Machine
 {
     using System;
     using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.Facts
     /// <summary>
     /// Tests the <see cref="PassiveStateMachine{TState,TEvent}"/> and <see cref="ActiveStateMachine{TState,TEvent}"/> class.
     /// </summary>
-    public class StateMachineTest
+    public class ActivePassiveStateMachineTest
     {
         public static IEnumerable<object[]> StateMachineInstantiationProvider =>
             new List<object[]>

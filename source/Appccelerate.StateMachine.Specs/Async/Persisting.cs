@@ -189,7 +189,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             public override void Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
                 Initializable<State> loadedCurrentState,
-                IDictionary<State, State> loadedHistoryStates)
+                IReadOnlyDictionary<State, State> loadedHistoryStates)
             {
                 this.LoadedCurrentState.Add(loadedCurrentState.Value);
             }
@@ -200,7 +200,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             public Initializable<TState> CurrentStateId { get; private set; }
 
-            public IDictionary<TState, TState> HistoryStates { get; private set; }
+            public IReadOnlyDictionary<TState, TState> HistoryStates { get; private set; }
 
             public Task SaveCurrentState(Initializable<TState> currentState)
             {
@@ -209,7 +209,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                 return Task.CompletedTask;
             }
 
-            public Task SaveHistoryStates(IDictionary<TState, TState> historyStates)
+            public Task SaveHistoryStates(IReadOnlyDictionary<TState, TState> historyStates)
             {
                 this.HistoryStates = historyStates;
 
@@ -221,19 +221,19 @@ namespace Appccelerate.StateMachine.Specs.Async
             where TState : IComparable
         {
             private Initializable<TState> currentState;
-            private IDictionary<TState, TState> historyStates;
+            private IReadOnlyDictionary<TState, TState> historyStates;
 
             public void SetCurrentState(Initializable<TState> state)
             {
                 this.currentState = state;
             }
 
-            public void SetHistoryStates(IDictionary<TState, TState> states)
+            public void SetHistoryStates(IReadOnlyDictionary<TState, TState> states)
             {
                 this.historyStates = states;
             }
 
-            public Task<IDictionary<TState, TState>> LoadHistoryStates()
+            public Task<IReadOnlyDictionary<TState, TState>> LoadHistoryStates()
             {
                 return Task.FromResult(this.historyStates);
             }
