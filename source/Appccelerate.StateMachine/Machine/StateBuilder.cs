@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly StateDefinition<TState, TEvent> stateDefinition;
-        private readonly IStateDictionary<TState, TEvent> stateDefinitionDictionary;
+        private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary;
         private readonly IFactory<TState, TEvent> factory;
 
         private TransitionDefinition<TState, TEvent> currentTransitionDefinition;
@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public StateBuilder(
             TState stateId,
-            IStateDictionary<TState, TEvent> stateDefinitionDictionary,
+            IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary,
             IFactory<TState, TEvent> factory)
         {
             this.stateDefinitionDictionary = stateDefinitionDictionary;

@@ -30,14 +30,14 @@ namespace Appccelerate.StateMachine.Facts.Machine
     {
         private const string SuperState = "SuperState";
         private readonly HierarchyBuilder<string, int> testee;
-        private readonly IStateDictionary<string, int> states;
+        private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<string, int> states;
         private readonly StateDefinition<string, int> superState;
         private readonly IDictionary<string, IStateDefinition<string, int>> initiallyLastActiveStates;
 
         public HierarchyBuilderTest()
         {
             this.superState = new StateDefinition<string, int>(SuperState);
-            this.states = A.Fake<IStateDictionary<string, int>>();
+            this.states = A.Fake<IImplicitAddIfNotAvailableStateDefinitionDictionary<string, int>>();
             A.CallTo(() => this.states[SuperState]).Returns(this.superState);
             this.initiallyLastActiveStates = A.Fake<IDictionary<string, IStateDefinition<string, int>>>();
 

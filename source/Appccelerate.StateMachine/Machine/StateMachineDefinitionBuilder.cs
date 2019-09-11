@@ -28,7 +28,7 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
-        private readonly StateDictionary<TState, TEvent> stateDefinitionDictionary = new StateDictionary<TState, TEvent>();
+        private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary = new ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>();
         private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
 
         public IEntryActionSyntax<TState, TEvent> In(TState state)

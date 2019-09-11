@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="StateDictionary.cs" company="Appccelerate">
+// <copyright file="ImplicitAddIfNotAvailableStateDefinitionDictionary.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ namespace Appccelerate.StateMachine.Machine
     using System.Linq;
     using States;
 
-    public class StateDictionary<TState, TEvent> : IStateDictionary<TState, TEvent>
+    public class ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> : IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
