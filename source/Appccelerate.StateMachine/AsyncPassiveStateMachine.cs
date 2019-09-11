@@ -262,7 +262,7 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
         {
-            Guard.AgainstNullArgument("stateMachineLoader", stateMachineLoader);
+            Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
 
             this.CheckThatNotAlreadyInitialized();
             this.CheckThatStateMachineIsNotAlreadyInitialized();

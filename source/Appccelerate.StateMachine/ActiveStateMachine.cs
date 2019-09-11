@@ -39,9 +39,9 @@ namespace Appccelerate.StateMachine
         where TEvent : IComparable
     {
         private readonly StateMachine<TState, TEvent> stateMachine;
-        private readonly LinkedList<EventInformation<TEvent>> queue;
         private readonly StateContainer<TState, TEvent> stateContainer;
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
+        private readonly LinkedList<EventInformation<TEvent>> queue;
 
         private bool initialized;
         private bool pendingInitialization;

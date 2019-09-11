@@ -61,5 +61,29 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             return new AsyncPassiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
         }
+
+        public AsyncActiveStateMachine<TState, TEvent> CreateActiveStateMachine()
+        {
+            var name = typeof(AsyncActiveStateMachine<TState, TEvent>).FullNameToString();
+            return this.CreateActiveStateMachine(name);
+        }
+
+        public AsyncActiveStateMachine<TState, TEvent> CreateActiveStateMachine(string name)
+        {
+            var stateContainer = new StateContainer<TState, TEvent>(name);
+            foreach (var stateIdAndLastActiveState in this.initiallyLastActiveStates)
+            {
+                stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
+            }
+
+            var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
+            transitionLogic.SetStateLogic(stateLogic);
+
+            var standardFactory = new StandardFactoryNew<TState, TEvent>();
+            var stateMachine = new StateMachineNew<TState, TEvent>(standardFactory, stateLogic);
+
+            return new AsyncActiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
+        }
     }
 }
