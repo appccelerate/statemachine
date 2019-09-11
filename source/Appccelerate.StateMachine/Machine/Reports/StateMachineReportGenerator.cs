@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Reports
+namespace Appccelerate.StateMachine.Machine.Reports
 {
     using System;
     using System.Collections.Generic;
@@ -25,8 +25,8 @@ namespace Appccelerate.StateMachine.Reports
     using System.Text;
     using Infrastructure;
     using Machine;
-    using Machine.States;
-    using Machine.Transitions;
+    using States;
+    using Transitions;
 
     /// <summary>
     /// Creates a textual report of a state machine.

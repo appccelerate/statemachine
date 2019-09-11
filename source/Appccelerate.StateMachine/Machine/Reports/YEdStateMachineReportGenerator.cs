@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Reports
+namespace Appccelerate.StateMachine.Machine.Reports
 {
     using System;
     using System.Collections.Generic;
@@ -26,8 +26,8 @@ namespace Appccelerate.StateMachine.Reports
     using System.Xml.Linq;
     using Infrastructure;
     using Machine;
-    using Machine.States;
-    using Machine.Transitions;
+    using States;
+    using Transitions;
 
     /// <summary>
     /// generates a graph meta language file that can be read by yEd.

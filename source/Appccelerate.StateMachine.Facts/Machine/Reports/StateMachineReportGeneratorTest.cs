@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Reports
     using System.Collections.Generic;
     using FluentAssertions;
     using StateMachine.Machine;
-    using StateMachine.Reports;
+    using StateMachine.Machine.Reports;
     using Xunit;
 
     public class StateMachineReportGeneratorTest
