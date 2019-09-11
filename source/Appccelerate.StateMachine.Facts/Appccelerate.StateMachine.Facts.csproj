@@ -24,10 +24,6 @@
     <ProjectReference Include="..\Appccelerate.StateMachine\Appccelerate.StateMachine.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AsyncMachine\Reports\" />
-  </ItemGroup>
-
   <Import Project="..\Appccelerate.StateMachine.Facts.props" />  
   
 </Project>

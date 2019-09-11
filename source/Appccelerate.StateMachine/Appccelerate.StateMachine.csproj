@@ -94,7 +94,6 @@
     <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="AsyncMachine\Reports\" />
     <Folder Include="Machine\Reports\" />
   </ItemGroup>
 
