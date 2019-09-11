@@ -18,9 +18,8 @@
 namespace Appccelerate.StateMachine.Machine.GuardHolders
 {
     using System;
-    using System.Linq;
     using System.Reflection;
-    using System.Runtime.CompilerServices;
+    using static MethodNameExtractor;
 
     /// <summary>
     /// Holds a single argument guard.
@@ -60,7 +59,7 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
         /// <returns>Description of the guard.</returns>
         public string Describe()
         {
-            return this.guard.GetMethodInfo().Name;
+            return ExtractMethodNameOrAnonymous(this.guard.GetMethodInfo());
         }
     }
 }
