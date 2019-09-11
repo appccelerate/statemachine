@@ -100,5 +100,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.Contexts
                 return this.RecordType + " " + this.StateId;
             }
         }
+
+        public override string ToString()
+        {
+            var eventText = this.eventId.IsMissing ? "-" : this.eventId.Value.ToString();
+            return $"State = {this.state} Event = {eventText} EventArgument = {this.eventArgument}";
+        }
     }
 }

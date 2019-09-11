@@ -305,6 +305,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return TaskEx.Completed;
         }
 
+        public virtual Task EnteringState(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            IState<TState, TEvent> state,
+            ITransitionContext<TState, TEvent> context)
+        {
+            return TaskEx.Completed;
+        }
+
         public virtual void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             Initializable<TState> loadedCurrentState,

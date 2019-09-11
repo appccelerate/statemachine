@@ -20,13 +20,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Collections.Generic;
-    using Extensions;
     using FakeItEasy;
     using FluentAssertions;
     using Infrastructure;
     using Machine;
     using Persistence;
     using Specs;
+    using StateMachine.Extensions;
     using Xbehave;
 
     public class Persisting

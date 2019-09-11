@@ -37,7 +37,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             AsyncPassiveStateMachine<int, int> machine,
             bool entryActionExecuted)
         {
-            "establish an initialized state machine".x(() =>
+            "establish an initialized state machine".x(async () =>
                 {
                     machine = new AsyncPassiveStateMachine<int, int>();
 
@@ -46,7 +46,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                     machine.In(TestState)
                         .ExecuteOnEntry(() => entryActionExecuted = true);
 
-                    machine.Initialize(TestState);
+                    await machine.Initialize(TestState);
                 });
 
             "when starting the state machine".x(() =>

@@ -263,6 +263,13 @@ namespace Appccelerate.StateMachine.Extensions
         {
         }
 
+        public virtual void EnteringState(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            IStateDefinition<TState, TEvent> state,
+            ITransitionContext<TState, TEvent> context)
+        {
+        }
+
         public virtual void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             Initializable<TState> loadedCurrentState,

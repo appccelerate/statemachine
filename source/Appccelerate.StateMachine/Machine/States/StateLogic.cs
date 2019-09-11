@@ -91,6 +91,11 @@ namespace Appccelerate.StateMachine.Machine.States
 
             context.AddRecord(stateDefinition.Id, RecordType.Enter);
 
+            this.extensionHost.ForEach(
+                extension =>
+                    extension.EnteringState(
+                        this.stateMachineInformation, stateDefinition, context));
+
             this.ExecuteEntryActions(stateDefinition, context);
         }
 

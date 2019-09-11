@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -79,12 +79,15 @@
   </PropertyGroup>
 
   <!-- versioning -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PackageReference Include="MinVer" Version="1.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <PropertyGroup>
+    <MinVerAutoIncrement>Minor</MinVerAutoIncrement>
+  </PropertyGroup>
 
   <!-- license -->
   <ItemGroup>

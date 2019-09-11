@@ -18,8 +18,8 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
-    using Extensions;
     using Machine.States;
+    using StateMachine.Extensions;
 
     public class CurrentStateExtension : ExtensionBase<int, int>
     {
