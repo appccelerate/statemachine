@@ -16,7 +16,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
+namespace Appccelerate.StateMachine
 {
     using System.Linq;
     using System.Reflection;
