@@ -29,7 +29,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     public class HierarchyBuilderFacts
     {
         private const string SuperState = "SuperState";
-        private readonly HierarchyBuilderNew<string, int> testee;
+        private readonly HierarchyBuilder<string, int> testee;
         private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<string, int> states;
         private readonly StateDefinition<string, int> superState;
         private readonly IDictionary<string, IStateDefinition<string, int>> initiallyLastActiveStates;
@@ -41,7 +41,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             A.CallTo(() => this.states[SuperState]).Returns(this.superState);
             this.initiallyLastActiveStates = A.Fake<IDictionary<string, IStateDefinition<string, int>>>();
 
-            this.testee = new HierarchyBuilderNew<string, int>(SuperState, this.states, this.initiallyLastActiveStates);
+            this.testee = new HierarchyBuilder<string, int>(SuperState, this.states, this.initiallyLastActiveStates);
         }
 
         [Theory]

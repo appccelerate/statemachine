@@ -40,14 +40,14 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             return this;
         }
 
-        public StateMachineNew<TState, TEvent> Build()
+        public StateMachine<TState, TEvent> Build()
         {
-            var factory = new StandardFactoryNew<TState, TEvent>();
+            var factory = new StandardFactory<TState, TEvent>();
             var transitionLogic = new TransitionLogic<TState, TEvent>(this.stateContainer, this.stateContainer);
             var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, this.stateContainer, this.stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
-            return new StateMachineNew<TState, TEvent>(factory, stateLogic);
+            return new StateMachine<TState, TEvent>(factory, stateLogic);
         }
     }
 }

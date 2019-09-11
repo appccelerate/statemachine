@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="Reporting.cs" company="Appccelerate">
+// <copyright file="StateMachineNameReporter.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,32 +21,15 @@ namespace Appccelerate.StateMachine.Specs.Async
     using System.Collections.Generic;
     using AsyncMachine;
     using AsyncMachine.States;
-    using FakeItEasy;
     using Infrastructure;
-    using Xbehave;
 
-    public class Reporting
+    public class StateMachineNameReporter : IStateMachineReport<string, int>
     {
-        [Scenario]
-        public void Report(
-            IAsyncStateMachine<string, int> machine,
-            IStateMachineReport<string, int> report)
+        public string StateMachineName { get; private set; }
+
+        public void Report(string name, IEnumerable<IStateDefinition<string, int>> states, Initializable<string> initialStateId)
         {
-            "establish a state machine".x(()
-                => machine = new StateMachineDefinitionBuilder<string, int>()
-                    .Build()
-                    .CreatePassiveStateMachine());
-
-            "establish a state machine reporter".x(()
-                => report = A.Fake<IStateMachineReport<string, int>>());
-
-            "when creating a report".x(()
-                => machine.Report(report));
-
-            "it should call the passed reporter".x(()
-                => A.CallTo(() =>
-                        report.Report(A<string>._, A<IEnumerable<IStateDefinition<string, int>>>._, A<Initializable<string>>._))
-                    .MustHaveHappened());
+            this.StateMachineName = name;
         }
     }
 }

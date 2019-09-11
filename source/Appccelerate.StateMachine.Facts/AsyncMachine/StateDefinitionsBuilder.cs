@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
-    using AsyncSyntaxNew;
+    using AsyncSyntax;
     using StateMachine.AsyncMachine;
     using StateMachine.AsyncMachine.States;
 
@@ -28,18 +28,18 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly StandardFactoryNew<TState, TEvent> factory = new StandardFactoryNew<TState, TEvent>();
+        private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
         private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary = new ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>();
         private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
 
         public IEntryActionSyntax<TState, TEvent> In(TState state)
         {
-            return new StateBuilderNew<TState, TEvent>(state, this.stateDefinitionDictionary, this.factory);
+            return new StateBuilder<TState, TEvent>(state, this.stateDefinitionDictionary, this.factory);
         }
 
         public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
         {
-            return new HierarchyBuilderNew<TState, TEvent>(superStateId, this.stateDefinitionDictionary, this.initiallyLastActiveStates);
+            return new HierarchyBuilder<TState, TEvent>(superStateId, this.stateDefinitionDictionary, this.initiallyLastActiveStates);
         }
 
         public IStateDefinitionDictionary<TState, TEvent> Build()

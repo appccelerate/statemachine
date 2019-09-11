@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="IStateDefinition.cs" company="Appccelerate">
+// <copyright file="ContextEventArgs.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,35 +16,25 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.States
+namespace Appccelerate.StateMachine.AsyncMachine.Events
 {
     using System;
-    using System.Collections.Generic;
-    using ActionHolders;
-    using Transitions;
 
-    public interface IStateDefinition<TState, TEvent>
+    /// <summary>
+    /// Event arguments holding context information.
+    /// </summary>
+    /// <typeparam name="TState">The type of the state.</typeparam>
+    /// <typeparam name="TEvent">The type of the event.</typeparam>
+    public class ContextEventArgs<TState, TEvent>
+        : EventArgs
         where TState : IComparable
         where TEvent : IComparable
     {
-        TState Id { get; }
+        protected ContextEventArgs(ITransitionContext<TState, TEvent> context)
+        {
+            this.Context = context;
+        }
 
-        IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions { get; }
-
-        IEnumerable<TransitionInfo<TState, TEvent>> TransitionInfos { get; }
-
-        int Level { get; }
-
-        IStateDefinition<TState, TEvent> InitialState { get; }
-
-        HistoryType HistoryType { get; }
-
-        IStateDefinition<TState, TEvent> SuperState { get; }
-
-        IEnumerable<IStateDefinition<TState, TEvent>> SubStates { get; }
-
-        IEnumerable<IActionHolder> EntryActions { get; }
-
-        IEnumerable<IActionHolder> ExitActions { get; }
+        protected ITransitionContext<TState, TEvent> Context { get; }
     }
 }

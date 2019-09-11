@@ -49,14 +49,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// <param name="context">The event context.</param>
         /// <param name="lastActiveStateModifier">The last active state modifier.</param>
         /// <returns>The result of the transition.</returns>
-        public async Task<ITransitionResultNew<TState>> Fire(
+        public async Task<ITransitionResult<TState>> Fire(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             Guard.AgainstNullArgument("context", context);
 
-            var result = TransitionResultNew<TState>.NotFired;
+            var result = TransitionResult<TState>.NotFired;
 
             if (stateDefinition.Transitions.TryGetValue(context.EventId.Value, out var transitionsForEvent))
             {
@@ -80,7 +80,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         public async Task Entry(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context)
         {
             Guard.AgainstNullArgument("context", context);
 
@@ -96,7 +96,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         public async Task Exit(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             Guard.AgainstNullArgument("context", context);
@@ -109,7 +109,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         public async Task<TState> EnterByHistory(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             var result = stateDefinition.Id;
@@ -134,7 +134,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         public async Task<TState> EnterShallow(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context)
         {
             await this.Entry(stateDefinition, context).ConfigureAwait(false);
 
@@ -149,7 +149,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         public async Task<TState> EnterDeep(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             await this.Entry(stateDefinition, context).ConfigureAwait(false);
@@ -163,14 +163,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier).ConfigureAwait(false);
         }
 
-        private static void HandleException(Exception exception, ITransitionContextNew<TState, TEvent> context)
+        private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
         {
             context.OnExceptionThrown(exception);
         }
 
         private async Task ExecuteEntryActions(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in stateDefinition.EntryActions)
             {
@@ -182,7 +182,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         private async Task ExecuteEntryAction(
             IStateDefinition<TState, TEvent> stateDefinition,
             IActionHolder actionHolder,
-            ITransitionContextNew<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context)
         {
             try
             {
@@ -199,7 +199,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         private async Task HandleEntryActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             Exception exception)
         {
             await this.extensionHost
@@ -221,7 +221,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         private async Task ExecuteExitActions(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context)
         {
             foreach (var actionHolder in stateDefinition.ExitActions)
             {
@@ -233,7 +233,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         private async Task ExecuteExitAction(
             IStateDefinition<TState, TEvent> stateDefinition,
             IActionHolder actionHolder,
-            ITransitionContextNew<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         private async Task HandleExitActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             Exception exception)
         {
             await this.extensionHost
@@ -283,7 +283,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         private async Task<TState> EnterHistoryDeep(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
@@ -298,7 +298,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         private async Task<TState> EnterHistoryShallow(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
@@ -313,7 +313,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         private async Task<TState> EnterHistoryNone(
             IStateDefinition<TState, TEvent> stateDefinition,
-            ITransitionContextNew<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context)
         {
             if (stateDefinition.InitialState != null)
             {

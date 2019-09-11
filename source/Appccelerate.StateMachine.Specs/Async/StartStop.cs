@@ -28,7 +28,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         private const int B = 1;
         private const int Event = 0;
 
-        private IAsyncStateMachineNew<int, int> machine;
+        private IAsyncStateMachine<int, int> machine;
         private RecordEventsExtension extension;
 
         [Background]

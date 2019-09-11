@@ -28,7 +28,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
     public class ExceptionHandling
     {
-        private TransitionExceptionEventArgsNew<int, int> receivedTransitionExceptionEventArgs;
+        private TransitionExceptionEventArgs<int, int> receivedTransitionExceptionEventArgs;
 
         [Scenario]
         public void TransitionActionException(AsyncPassiveStateMachine<int, int> machine)

@@ -45,9 +45,9 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             this.stateLogic = stateLogicToSet;
         }
 
-        public async Task<ITransitionResultNew<TState>> Fire(
+        public async Task<ITransitionResult<TState>> Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             Guard.AgainstNullArgument("context", context);
@@ -62,7 +62,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                         context))
                     .ConfigureAwait(false);
 
-                return TransitionResultNew<TState>.NotFired;
+                return TransitionResult<TState>.NotFired;
             }
 
             context.OnTransitionBegin();
@@ -98,10 +98,10 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                     context))
                 .ConfigureAwait(false);
 
-            return new TransitionResultNew<TState>(true, newState);
+            return new TransitionResult<TState>(true, newState);
         }
 
-        private static void HandleException(Exception exception, ITransitionContextNew<TState, TEvent> context)
+        private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
         {
             context.OnExceptionThrown(exception);
         }
@@ -147,7 +147,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             IStateDefinition<TState, TEvent> source,
             IStateDefinition<TState, TEvent> target,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             if (source == transitionDefinition.Target)
@@ -201,7 +201,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 
         private async Task<bool> ShouldFire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> context)
+            ITransitionContext<TState, TEvent> context)
         {
             try
             {
@@ -226,7 +226,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             }
         }
 
-        private async Task PerformActions(ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContextNew<TState, TEvent> context)
+        private async Task PerformActions(ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context)
         {
             foreach (var action in transitionDefinition.Actions)
             {
@@ -251,7 +251,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 
         private async Task UnwindSubStates(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             var o = context.StateDefinition;

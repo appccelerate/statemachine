@@ -25,11 +25,11 @@ namespace Appccelerate.StateMachine
     using Infrastructure;
     using Persistence;
 
-    public class AsyncPassiveStateMachine<TState, TEvent> : IAsyncStateMachineNew<TState, TEvent>
+    public class AsyncPassiveStateMachine<TState, TEvent> : IAsyncStateMachine<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly StateMachineNew<TState, TEvent> stateMachine;
+        private readonly StateMachine<TState, TEvent> stateMachine;
 
         private readonly ConcurrentQueue<EventInformation<TEvent>> events;
         private readonly ConcurrentStack<EventInformation<TEvent>> priorityEvents;
@@ -43,7 +43,7 @@ namespace Appccelerate.StateMachine
         private bool pendingInitialization;
 
         public AsyncPassiveStateMachine(
-            StateMachineNew<TState, TEvent> stateMachine,
+            StateMachine<TState, TEvent> stateMachine,
             StateContainer<TState, TEvent> stateContainer,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
@@ -57,7 +57,7 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Occurs when no transition could be executed.
         /// </summary>
-        public event EventHandler<TransitionEventArgsNew<TState, TEvent>> TransitionDeclined
+        public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionDeclined
         {
             add => this.stateMachine.TransitionDeclined += value;
             remove => this.stateMachine.TransitionDeclined -= value;
@@ -66,7 +66,7 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Occurs when an exception was thrown inside a transition of the state machine.
         /// </summary>
-        public event EventHandler<TransitionExceptionEventArgsNew<TState, TEvent>> TransitionExceptionThrown
+        public event EventHandler<TransitionExceptionEventArgs<TState, TEvent>> TransitionExceptionThrown
         {
             add => this.stateMachine.TransitionExceptionThrown += value;
             remove => this.stateMachine.TransitionExceptionThrown -= value;
@@ -75,7 +75,7 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Occurs when a transition begins.
         /// </summary>
-        public event EventHandler<TransitionEventArgsNew<TState, TEvent>> TransitionBegin
+        public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionBegin
         {
             add => this.stateMachine.TransitionBegin += value;
             remove => this.stateMachine.TransitionBegin -= value;
@@ -84,7 +84,7 @@ namespace Appccelerate.StateMachine
         /// <summary>
         /// Occurs when a transition completed.
         /// </summary>
-        public event EventHandler<TransitionCompletedEventArgsNew<TState, TEvent>> TransitionCompleted
+        public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>> TransitionCompleted
         {
             add => this.stateMachine.TransitionCompleted += value;
             remove => this.stateMachine.TransitionCompleted -= value;
@@ -191,7 +191,7 @@ namespace Appccelerate.StateMachine
         /// Creates a state machine report with the specified generator.
         /// </summary>
         /// <param name="reportGenerator">The report generator.</param>
-        public void Report(IStateMachineReportNew<TState, TEvent> reportGenerator)
+        public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
         {
             reportGenerator.Report(this.ToString(), this.stateDefinitions.Values, this.stateContainer.InitialStateId);
         }

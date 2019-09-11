@@ -136,7 +136,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
         [Scenario]
         public void LoadingAnInitializedStateMachine(
-            IAsyncStateMachineNew<string, int> machine,
+            IAsyncStateMachine<string, int> machine,
             Exception receivedException)
         {
             "establish an initialized state machine".x(() =>

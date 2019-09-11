@@ -27,7 +27,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         [Scenario]
         public void DefaultStateMachineName(
             AsyncPassiveStateMachine<string, int> machine,
-            StateMachineNameReporterNew reporter)
+            StateMachineNameReporter reporter)
         {
             "establish an instantiated passive state machine".x(()
                 => machine = new StateMachineDefinitionBuilder<string, int>()
@@ -35,7 +35,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .CreatePassiveStateMachine());
 
             "establish a state machine reporter".x(()
-                => reporter = new StateMachineNameReporterNew());
+                => reporter = new StateMachineNameReporter());
 
             "when the state machine report is generated".x(()
                 => machine.Report(reporter));
@@ -48,7 +48,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         [Scenario]
         public void CustomStateMachineName(
             AsyncPassiveStateMachine<string, int> machine,
-            StateMachineNameReporterNew reporter)
+            StateMachineNameReporter reporter)
         {
             const string name = "custom name";
 
@@ -58,7 +58,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .CreatePassiveStateMachine(name));
 
             "establish a state machine reporter".x(()
-                => reporter = new StateMachineNameReporterNew());
+                => reporter = new StateMachineNameReporter());
 
             "when the state machine report is generated".x(()
                 => machine.Report(reporter));
@@ -70,7 +70,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
         [Scenario]
         public void EventsQueueing(
-            IAsyncStateMachineNew<string, int> machine)
+            IAsyncStateMachine<string, int> machine)
         {
             const int FirstEvent = 0;
             const int SecondEvent = 1;
@@ -103,7 +103,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
         [Scenario]
         public void PriorityEventsQueueing(
-            IAsyncStateMachineNew<string, int> machine)
+            IAsyncStateMachine<string, int> machine)
         {
             const int FirstEvent = 0;
             const int SecondEvent = 1;

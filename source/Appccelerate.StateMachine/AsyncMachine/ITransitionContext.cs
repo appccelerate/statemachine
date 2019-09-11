@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="IStateDefinition.cs" company="Appccelerate">
+// <copyright file="ITransitionContext.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,35 +16,32 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.States
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using System.Collections.Generic;
-    using ActionHolders;
-    using Transitions;
+    using States;
 
-    public interface IStateDefinition<TState, TEvent>
+    /// <summary>
+    /// Provides information about the current transition.
+    /// </summary>
+    /// <typeparam name="TState">The type of the state.</typeparam>
+    /// <typeparam name="TEvent">The type of the event.</typeparam>
+    public interface ITransitionContext<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        TState Id { get; }
+        IStateDefinition<TState, TEvent> StateDefinition { get; }
 
-        IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions { get; }
+        Missable<TEvent> EventId { get; }
 
-        IEnumerable<TransitionInfo<TState, TEvent>> TransitionInfos { get; }
+        object EventArgument { get; }
 
-        int Level { get; }
+        void AddRecord(TState stateId, RecordType recordType);
 
-        IStateDefinition<TState, TEvent> InitialState { get; }
+        string GetRecords();
 
-        HistoryType HistoryType { get; }
+        void OnExceptionThrown(Exception exception);
 
-        IStateDefinition<TState, TEvent> SuperState { get; }
-
-        IEnumerable<IStateDefinition<TState, TEvent>> SubStates { get; }
-
-        IEnumerable<IActionHolder> EntryActions { get; }
-
-        IEnumerable<IActionHolder> ExitActions { get; }
+        void OnTransitionBegin();
     }
 }

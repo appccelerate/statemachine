@@ -113,7 +113,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="state">The state.</param>
         /// <param name="context">The context.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task EnteredInitialState(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContextNew<TState, TEvent> context);
+        Task EnteredInitialState(IStateMachineInformation<TState, TEvent> stateMachine, TState state, ITransitionContext<TState, TEvent> context);
 
         /// <summary>
         /// Called when an event is firing on the state machine.
@@ -135,7 +135,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task FiredEvent(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            ITransitionContextNew<TState, TEvent> context);
+            ITransitionContext<TState, TEvent> context);
 
         /// <summary>
         /// Called before an entry action exception is handled.
@@ -148,7 +148,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandlingEntryActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             IStateDefinition<TState, TEvent> state,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandledEntryActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             IStateDefinition<TState, TEvent> state,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             Exception exception);
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandlingExitActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             IStateDefinition<TState, TEvent> state,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandledExitActionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             IStateDefinition<TState, TEvent> state,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             Exception exception);
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandlingGuardException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> transitionContext,
+            ITransitionContext<TState, TEvent> transitionContext,
             ref Exception exception);
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandledGuardException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> transitionContext,
+            ITransitionContext<TState, TEvent> transitionContext,
             Exception exception);
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandlingTransitionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> context,
+            ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task HandledTransitionException(
             IStateMachineInformation<TState, TEvent> stateMachine,
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> transitionContext,
+            ITransitionContext<TState, TEvent> transitionContext,
             Exception exception);
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task SkippedTransition(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> context);
+            ITransitionContext<TState, TEvent> context);
 
         /// <summary>
         /// Called when a transition is going to be executed. After the guard of the transition evaluated to true.
@@ -271,7 +271,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task ExecutingTransition(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> context);
+            ITransitionContext<TState, TEvent> context);
 
         /// <summary>
         /// Called when a transition was executed.
@@ -283,12 +283,12 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task ExecutedTransition(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             ITransitionDefinition<TState, TEvent> transitionDefinition,
-            ITransitionContextNew<TState, TEvent> context);
+            ITransitionContext<TState, TEvent> context);
 
         Task EnteringState(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             IStateDefinition<TState, TEvent> state,
-            ITransitionContextNew<TState, TEvent> context);
+            ITransitionContext<TState, TEvent> context);
 
         void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,

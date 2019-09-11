@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public void TransitionWhenTransitionIsAlreadyUsedForAnotherStateThenThrowException()
         {
-            var testee = new TransitionDictionaryNew<States, Events>(A.Fake<StateDefinition<States, Events>>());
+            var testee = new TransitionDictionary<States, Events>(A.Fake<StateDefinition<States, Events>>());
 
             var transition = A.Fake<TransitionDefinition<States, Events>>();
             transition.Source = null;
@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public void GetTransitionsReturnsOneAddedTransition()
         {
-            var testee = new TransitionDictionaryNew<States, Events>(A.Fake<StateDefinition<States, Events>>());
+            var testee = new TransitionDictionary<States, Events>(A.Fake<StateDefinition<States, Events>>());
 
             var fakeAction = A.Fake<IActionHolder>();
             var fakeGuard = A.Fake<IGuardHolder>();
@@ -80,7 +80,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public void GetTransitionsReturnsAllAddedTransitions()
         {
-            var testee = new TransitionDictionaryNew<States, Events>(A.Fake<StateDefinition<States, Events>>());
+            var testee = new TransitionDictionary<States, Events>(A.Fake<StateDefinition<States, Events>>());
 
             var transitionA = A.Fake<TransitionDefinition<States, Events>>();
             var transitionB = A.Fake<TransitionDefinition<States, Events>>();

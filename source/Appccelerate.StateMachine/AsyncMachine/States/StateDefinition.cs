@@ -37,7 +37,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// <summary>
         /// Collection of transitions that start in this state (<see cref="ITransitionDefinition{TState,TEvent}.Source"/> is equal to this state).
         /// </summary>
-        private readonly TransitionDictionaryNew<TState, TEvent> transitions;
+        private readonly TransitionDictionary<TState, TEvent> transitions;
 
         /// <summary>
         /// The level of this state within the state hierarchy [1..maxLevel].
@@ -63,7 +63,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             this.Id = id;
             this.level = 1;
 
-            this.transitions = new TransitionDictionaryNew<TState, TEvent>(this);
+            this.transitions = new TransitionDictionary<TState, TEvent>(this);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// Gets the transitions that start in this state.
         /// </summary>
         /// <value>The transitions.</value>
-        public ITransitionDictionaryNew<TState, TEvent> TransitionsModifiable => this.transitions;
+        public ITransitionDictionary<TState, TEvent> TransitionsModifiable => this.transitions;
 
         public override string ToString()
         {
@@ -218,7 +218,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         public IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions => this.transitions.Transitions;
 
-        public IEnumerable<TransitionInfoNew<TState, TEvent>> TransitionInfos => this.transitions.GetTransitions();
+        public IEnumerable<TransitionInfo<TState, TEvent>> TransitionInfos => this.transitions.GetTransitions();
 
         public IStateDefinition<TState, TEvent> InitialState => this.InitialStateModifiable;
 

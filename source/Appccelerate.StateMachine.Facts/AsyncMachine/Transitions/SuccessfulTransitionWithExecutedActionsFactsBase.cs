@@ -72,7 +72,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
             public override Task ExecutedTransition(
                 IStateMachineInformation<States, Events> stateMachine,
                 ITransitionDefinition<States, Events> transition,
-                ITransitionContextNew<States, Events> transitionContext)
+                ITransitionContext<States, Events> transitionContext)
             {
                 this.items.Add(new Item(stateMachine, transition.Source, transition.Target, transitionContext));
 
@@ -128,7 +128,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
                     IStateMachineInformation<States, Events> stateMachine,
                     IStateDefinition<States, Events> source,
                     IStateDefinition<States, Events> target,
-                    ITransitionContextNew<States, Events> transitionContext)
+                    ITransitionContext<States, Events> transitionContext)
                 {
                     this.StateMachine = stateMachine;
                     this.Source = source;
@@ -142,7 +142,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
                 public IStateDefinition<States, Events> Target { get; }
 
-                public ITransitionContextNew<States, Events> TransitionContext { get; }
+                public ITransitionContext<States, Events> TransitionContext { get; }
             }
         }
     }

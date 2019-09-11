@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="IStateDefinition.cs" company="Appccelerate">
+// <copyright file="IStateMachineReport.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,35 +16,28 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.States
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
-    using ActionHolders;
-    using Transitions;
+    using Infrastructure;
+    using States;
 
-    public interface IStateDefinition<TState, TEvent>
+    /// <summary>
+    /// Generates a report of the state machine.
+    /// </summary>
+    /// <typeparam name="TState">The type of the state.</typeparam>
+    /// <typeparam name="TEvent">The type of the event.</typeparam>
+    public interface IStateMachineReport<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        TState Id { get; }
-
-        IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions { get; }
-
-        IEnumerable<TransitionInfo<TState, TEvent>> TransitionInfos { get; }
-
-        int Level { get; }
-
-        IStateDefinition<TState, TEvent> InitialState { get; }
-
-        HistoryType HistoryType { get; }
-
-        IStateDefinition<TState, TEvent> SuperState { get; }
-
-        IEnumerable<IStateDefinition<TState, TEvent>> SubStates { get; }
-
-        IEnumerable<IActionHolder> EntryActions { get; }
-
-        IEnumerable<IActionHolder> ExitActions { get; }
+        /// <summary>
+        /// Generates a report of the state machine.
+        /// </summary>
+        /// <param name="name">The name of the state machine.</param>
+        /// <param name="stateDefinitions">The states.</param>
+        /// <param name="initialStateId">The initial state id.</param>
+        void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> stateDefinitions, Initializable<TState> initialStateId);
     }
 }

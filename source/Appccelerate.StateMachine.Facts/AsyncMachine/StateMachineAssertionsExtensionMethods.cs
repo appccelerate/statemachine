@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             where TStates : IComparable
             where TEvents : IComparable
         {
-            var transitionResult = (ITransitionResultNew<TStates>)assertions.Subject;
+            var transitionResult = (ITransitionResult<TStates>)assertions.Subject;
 
             Execute.Assertion
                    .ForCondition(transitionResult.Fired)
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
         public static void BeNotFiredTransitionResult<TStates>(this ObjectAssertions assertions)
             where TStates : IComparable
         {
-            var transitionResult = (ITransitionResultNew<TStates>)assertions.Subject;
+            var transitionResult = (ITransitionResult<TStates>)assertions.Subject;
 
             Execute.Assertion
                    .ForCondition(!transitionResult.Fired)

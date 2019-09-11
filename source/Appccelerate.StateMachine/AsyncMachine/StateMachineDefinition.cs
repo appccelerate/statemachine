@@ -56,8 +56,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
-            var standardFactory = new StandardFactoryNew<TState, TEvent>();
-            var stateMachine = new StateMachineNew<TState, TEvent>(standardFactory, stateLogic);
+            var standardFactory = new StandardFactory<TState, TEvent>();
+            var stateMachine = new StateMachine<TState, TEvent>(standardFactory, stateLogic);
 
             return new AsyncPassiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
         }
@@ -80,8 +80,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
-            var standardFactory = new StandardFactoryNew<TState, TEvent>();
-            var stateMachine = new StateMachineNew<TState, TEvent>(standardFactory, stateLogic);
+            var standardFactory = new StandardFactory<TState, TEvent>();
+            var stateMachine = new StateMachine<TState, TEvent>(standardFactory, stateLogic);
 
             return new AsyncActiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
         }

@@ -111,11 +111,11 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
         public class TransitionContextBuilder
         {
-            private readonly ITransitionContextNew<TState, TEvent> transitionContext;
+            private readonly ITransitionContext<TState, TEvent> transitionContext;
 
             public TransitionContextBuilder()
             {
-                this.transitionContext = A.Fake<ITransitionContextNew<TState, TEvent>>();
+                this.transitionContext = A.Fake<ITransitionContext<TState, TEvent>>();
             }
 
             public TransitionContextBuilder WithState(IStateDefinition<TState, TEvent> state)
@@ -125,7 +125,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 return this;
             }
 
-            public ITransitionContextNew<TState, TEvent> Build()
+            public ITransitionContext<TState, TEvent> Build()
             {
                 return this.transitionContext;
             }

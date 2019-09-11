@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
         protected IStateDefinition<States, Events> Target { get; set; }
 
-        protected ITransitionContextNew<States, Events> TransitionContext { get; set; }
+        protected ITransitionContext<States, Events> TransitionContext { get; set; }
 
         protected TransitionFactsBase()
         {

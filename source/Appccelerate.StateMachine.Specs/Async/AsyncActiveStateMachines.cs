@@ -28,7 +28,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         [Scenario]
         public void DefaultStateMachineName(
             AsyncActiveStateMachine<string, int> machine,
-            StateMachineNameReporterNew reporter)
+            StateMachineNameReporter reporter)
         {
             "establish an instantiated active state machine".x(()
                 => machine = new StateMachineDefinitionBuilder<string, int>()
@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .CreateActiveStateMachine());
 
             "establish a state machine reporter".x(()
-                => reporter = new StateMachineNameReporterNew());
+                => reporter = new StateMachineNameReporter());
 
             "when the state machine report is generated".x(()
                 => machine.Report(reporter));
@@ -49,7 +49,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         [Scenario]
         public void CustomStateMachineName(
             AsyncActiveStateMachine<string, int> machine,
-            StateMachineNameReporterNew reporter)
+            StateMachineNameReporter reporter)
         {
             const string name = "custom name";
 
@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .CreateActiveStateMachine(name));
 
             "establish a state machine reporter".x(()
-                => reporter = new StateMachineNameReporterNew());
+                => reporter = new StateMachineNameReporter());
 
             "when the state machine report is generated".x(()
                 => machine.Report(reporter));
@@ -71,7 +71,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
         [Scenario]
         public void EventsQueueing(
-            IAsyncStateMachineNew<string, int> machine,
+            IAsyncStateMachine<string, int> machine,
             AutoResetEvent signal)
         {
             const int firstEvent = 0;
@@ -108,7 +108,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
         [Scenario]
         public void PriorityEventsQueueing(
-            IAsyncStateMachineNew<string, int> machine,
+            IAsyncStateMachine<string, int> machine,
             AutoResetEvent signal)
         {
             const int firstEvent = 0;
@@ -142,7 +142,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
         [Scenario]
         public void PriorityEventsWhileExecutingNormalEvents(
-            IAsyncStateMachineNew<string, int> machine,
+            IAsyncStateMachine<string, int> machine,
             AutoResetEvent signal)
         {
             const int firstEvent = 0;
