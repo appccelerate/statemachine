@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Facts.Reports
+namespace Appccelerate.StateMachine.Facts.Machine.Reports
 {
     using System;
     using System.Collections.Generic;
