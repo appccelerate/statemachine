@@ -52,7 +52,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
             testee.Invoking(t => t[ThisKeyDoesNotExist])
                 .Should().Throw<InvalidOperationException>()
-                .WithMessage($"Cannot find StateDefinition for state {ThisKeyDoesNotExist}. Are you sure you have configured this state via myStateDefinitionBuilder.WithConfiguration(..)?");
+                .WithMessage($"Cannot find StateDefinition for state {ThisKeyDoesNotExist}. Are you sure you have configured this state via myStateDefinitionBuilder.In(..) or myStateDefinitionBuilder.DefineHierarchyOn(..)?");
         }
 
         [Fact]
