@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="ArgumentActionHolderFacts.cs" company="Appccelerate">
+// <copyright file="ParameterizedActionHolderFacts.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,33 +18,33 @@
 
 namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
 {
-    using System;
     using System.Threading.Tasks;
-    using FakeItEasy;
     using FluentAssertions;
     using StateMachine.AsyncMachine.ActionHolders;
     using Xunit;
 
-    public class ArgumentActionHolderFacts
+    public class ParameterizedActionHolderFacts
     {
         [Fact]
-        public async Task SyncActionIsInvokedWithSameArgumentThatIsPassedToActionHolderExecuted()
+        public async Task SyncActionIsInvokedWithSameArgumentThatIsPassedToConstructor()
         {
             var expected = new MyArgument();
+            var wrong = new MyArgument();
             MyArgument value = null;
             void SyncAction(MyArgument x) => value = x;
 
-            var testee = new ArgumentActionHolder<MyArgument>(SyncAction);
+            var testee = new ParametrizedActionHolder<MyArgument>(SyncAction, expected);
 
-            await testee.Execute(expected);
+            await testee.Execute(wrong);
 
             value.Should().Be(expected);
         }
 
         [Fact]
-        public async Task AsyncActionIsInvokedWithSameArgumentThatIsPassedToActionHolderExecuted()
+        public async Task AsyncActionIsInvokedWithSameArgumentThatIsPassedToConstructor()
         {
             var expected = new MyArgument();
+            var wrong = new MyArgument();
             MyArgument value = null;
             Task AsyncAction(MyArgument x)
             {
@@ -52,9 +52,9 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
                 return Task.CompletedTask;
             }
 
-            var testee = new ArgumentActionHolder<MyArgument>(AsyncAction);
+            var testee = new ParametrizedActionHolder<MyArgument>(AsyncAction, expected);
 
-            await testee.Execute(expected);
+            await testee.Execute(wrong);
 
             value.Should().Be(expected);
         }
@@ -62,7 +62,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
         [Fact]
         public void ReturnsFunctionNameForNonAnonymousSyncActionWhenDescribing()
         {
-            var testee = new ArgumentActionHolder<MyArgument>(SyncAction);
+            var testee = new ParametrizedActionHolder<MyArgument>(SyncAction, new MyArgument());
 
             var description = testee.Describe();
 
@@ -74,7 +74,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
         [Fact]
         public void ReturnsFunctionNameForNonAnonymousAsyncActionWhenDescribing()
         {
-            var testee = new ArgumentActionHolder<MyArgument>(AsyncAction);
+            var testee = new ParametrizedActionHolder<MyArgument>(AsyncAction, new MyArgument());
 
             var description = testee.Describe();
 
@@ -86,7 +86,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
         [Fact]
         public void ReturnsAnonymousForAnonymousSyncActionWhenDescribing()
         {
-            var testee = new ArgumentActionHolder<MyArgument>(a => { });
+            var testee = new ParametrizedActionHolder<MyArgument>(a => { }, new MyArgument());
 
             var description = testee.Describe();
 
@@ -98,59 +98,13 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
         [Fact]
         public void ReturnsAnonymousForAnonymousAsyncActionWhenDescribing()
         {
-            var testee = new ArgumentActionHolder<MyArgument>(a => Task.CompletedTask);
+            var testee = new ParametrizedActionHolder<MyArgument>(a => Task.CompletedTask, new MyArgument());
 
             var description = testee.Describe();
 
             description
                 .Should()
                 .Be("anonymous");
-        }
-
-        [Fact]
-        public async Task MatchingType()
-        {
-            var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-            await testee.Execute(A.Fake<IBase>());
-        }
-
-        [Fact]
-        public async Task DerivedType()
-        {
-            var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-            await testee.Execute(A.Fake<IDerived>());
-        }
-
-        [Fact]
-        public void NonMatchingType()
-        {
-            var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-            Func<Task> action = async () => await testee.Execute(3);
-
-            action.Should().Throw<ArgumentException>();
-        }
-
-        [Fact]
-        public void TooManyArguments()
-        {
-            var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-            Func<Task> action = async () => await testee.Execute(new object[] { 3, 4 });
-
-            action.Should().Throw<ArgumentException>();
-        }
-
-        [Fact]
-        public void TooFewArguments()
-        {
-            var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-            Func<Task> action = async () => await testee.Execute(new object[] { });
-
-            action.Should().Throw<ArgumentException>();
         }
 
         private static void SyncAction(MyArgument a)
@@ -162,20 +116,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
             return Task.CompletedTask;
         }
 
-        private static Task BaseAction(IBase b)
-        {
-            return Task.CompletedTask;
-        }
-
         private class MyArgument
-        {
-        }
-
-        public interface IBase
-        {
-        }
-
-        public interface IDerived : IBase
         {
         }
     }

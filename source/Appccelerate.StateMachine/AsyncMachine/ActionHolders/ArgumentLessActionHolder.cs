@@ -19,22 +19,24 @@
 namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
 {
     using System;
-    using System.Linq;
     using System.Reflection;
-    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using static MethodNameExtractor;
 
     public class ArgumentLessActionHolder : IActionHolder
     {
+        private readonly MethodInfo originalActionMethodInfo;
         private readonly Func<Task> action;
 
         public ArgumentLessActionHolder(Func<Task> action)
         {
+            this.originalActionMethodInfo = action.GetMethodInfo();
             this.action = action;
         }
 
         public ArgumentLessActionHolder(Action action)
         {
+            this.originalActionMethodInfo = action.GetMethodInfo();
             this.action = () =>
             {
                 action();
@@ -49,7 +51,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
 
         public string Describe()
         {
-            return this.action.GetMethodInfo().GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any() ? "anonymous" : this.action.GetMethodInfo().Name;
+            return ExtractMethodNameOrAnonymous(this.originalActionMethodInfo);
         }
     }
 }
