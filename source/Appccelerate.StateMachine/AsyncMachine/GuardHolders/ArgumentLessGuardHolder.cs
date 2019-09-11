@@ -21,12 +21,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
     using System;
     using System.Reflection;
     using System.Threading.Tasks;
+    using static MethodNameExtractor;
 
     /// <summary>
     /// Holds an argument less guard.
     /// </summary>
     public class ArgumentLessGuardHolder : IGuardHolder
     {
+        private readonly MethodInfo originalGuardMethodInfo;
         private readonly Func<Task<bool>> guard;
 
         /// <summary>
@@ -35,6 +37,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <param name="guard">The guard.</param>
         public ArgumentLessGuardHolder(Func<bool> guard)
         {
+            this.originalGuardMethodInfo = guard.GetMethodInfo();
             this.guard = () => Task.FromResult(guard());
         }
 
@@ -44,6 +47,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <param name="guard">The guard.</param>
         public ArgumentLessGuardHolder(Func<Task<bool>> guard)
         {
+            this.originalGuardMethodInfo = guard.GetMethodInfo();
             this.guard = guard;
         }
 
@@ -63,7 +67,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <returns>Description of the guard.</returns>
         public string Describe()
         {
-            return this.guard.GetMethodInfo().Name;
+            return ExtractMethodNameOrAnonymous(this.originalGuardMethodInfo);
         }
     }
 }
