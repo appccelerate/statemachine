@@ -48,13 +48,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                             .If(() => true).Goto(ErrorState)
                             .Otherwise().Goto(ErrorState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
                 currentStateExtension = new CurrentStateExtension();
                 machine.AddExtension(currentStateExtension);
 
-                await machine.Initialize(SourceState);
                 await machine.Start();
             });
 
@@ -79,6 +79,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .On(Event)
                         .If(() => Task.FromResult(false)).Goto(ErrorState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -86,7 +87,6 @@ namespace Appccelerate.StateMachine.Specs.Async
                 machine.AddExtension(currentStateExtension);
                 machine.TransitionDeclined += (sender, e) => declined = true;
 
-                await machine.Initialize(SourceState);
                 await machine.Start();
             });
 
@@ -111,13 +111,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                             .If(() => Task.FromResult(false)).Goto(ErrorState)
                             .Otherwise().Goto(DestinationState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
                 currentStateExtension = new CurrentStateExtension();
                 machine.AddExtension(currentStateExtension);
 
-                await machine.Initialize(SourceState);
                 await machine.Start();
             });
 

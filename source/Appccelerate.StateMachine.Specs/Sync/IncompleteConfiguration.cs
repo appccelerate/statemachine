@@ -40,9 +40,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             });
 
             "when the state machine is started".x(() =>
-            {
-                receivedException = Catch.Exception(() => machine.Start());
-            });
+                receivedException = Catch.Exception(() => machine.Start()));
 
             "it should throw an exception, indicating the missing configuration".x(() =>
                 receivedException

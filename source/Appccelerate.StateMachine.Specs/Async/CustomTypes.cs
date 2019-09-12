@@ -43,10 +43,9 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .ExecuteOnEntry(() => arrivedInStateB = true);
 
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(new MyState("A"))
                     .Build()
                     .CreatePassiveStateMachine();
-
-                await machine.Initialize(new MyState("A"));
 
                 await machine.Start();
             });

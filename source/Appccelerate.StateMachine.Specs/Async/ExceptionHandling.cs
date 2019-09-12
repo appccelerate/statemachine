@@ -42,6 +42,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .Goto(Values.Destination)
                         .Execute(() => throw Values.Exception);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(Values.Source)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -50,7 +51,6 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when executing the transition".x(async () =>
             {
-                await machine.Initialize(Values.Source);
                 await machine.Start();
                 await machine.Fire(Values.Event, Values.Parameter);
             });
@@ -72,6 +72,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .In(Values.Destination)
                     .ExecuteOnEntry(() => throw Values.Exception);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(Values.Source)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -80,7 +81,6 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when executing the transition".x(async () =>
             {
-                await machine.Initialize(Values.Source);
                 await machine.Start();
                 await machine.Fire(Values.Event, Values.Parameter);
             });
@@ -99,6 +99,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .ExecuteOnExit(() => throw Values.Exception)
                         .On(Values.Event).Goto(Values.Destination);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(Values.Source)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -107,7 +108,6 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when executing the transition".x(async () =>
             {
-                await machine.Initialize(Values.Source);
                 await machine.Start();
                 await machine.Fire(Values.Event, Values.Parameter);
             });
@@ -127,6 +127,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                             .If((Func<Task<bool>>)(() => throw Values.Exception))
                             .Goto(Values.Destination);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(Values.Source)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -135,7 +136,6 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when executing the transition".x(async () =>
             {
-                await machine.Initialize(Values.Source);
                 await machine.Start();
                 await machine.Fire(Values.Event, Values.Parameter);
             });
@@ -144,7 +144,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         }
 
         [Scenario]
-        public void InitializationException(AsyncPassiveStateMachine<int, int> machine)
+        public void StartingException(AsyncPassiveStateMachine<int, int> machine)
         {
             const int state = 1;
 
@@ -155,15 +155,15 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .In(state)
                     .ExecuteOnEntry(() => throw Values.Exception);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(Values.Source)
                     .Build()
                     .CreatePassiveStateMachine();
 
                 machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
             });
 
-            "when initializing the state machine".x(async () =>
+            "when starting the state machine".x(async () =>
             {
-                await machine.Initialize(state);
                 await machine.Start();
             });
 
@@ -186,10 +186,10 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .In(Values.Source)
                         .On(Values.Event).Execute(() => throw Values.Exception);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(Values.Source)
                     .Build()
                     .CreatePassiveStateMachine();
 
-                await machine.Initialize(Values.Source);
                 await machine.Start();
             });
 

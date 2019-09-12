@@ -78,7 +78,7 @@ namespace Appccelerate.StateMachine.Machine
         }
 
         /// <summary>
-        /// Enters the initial state as specified with <see cref="initialState"/>.
+        /// Enters the initial state as specified with <paramref name="initialState"/>.
         /// </summary>
         /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
         /// <param name="stateMachineInformation">The state machine information.</param>

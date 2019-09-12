@@ -46,7 +46,6 @@ namespace Appccelerate.StateMachine.Specs.Async
 
                 machine.AddExtension(extension);
 
-                await machine.Initialize("0");
                 await machine.Start();
             });
 
@@ -55,7 +54,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "it should call EnteringState on registered extensions for target state".x(()
                 => A.CallTo(() => extension.EnteringState(
-                        A<IStateMachineInformation<string, int>>.That.Matches(x => x.Name == Name && x.CurrentStateId == "1"),
+                        A<IStateMachineInformation<string, int>>.That.Matches(x => x.Name == Name && x.CurrentStateId.ExtractOrThrow() == "1"),
                         A<IStateDefinition<string, int>>.That.Matches(x => x.Id == "1"),
                         A<ITransitionContext<string, int>>.That.Matches(x => x.EventId.Value == 1)))
                     .MustHaveHappened());
@@ -86,7 +85,6 @@ namespace Appccelerate.StateMachine.Specs.Async
 
                 machine.AddExtension(extension);
 
-                await machine.Initialize("0");
                 await machine.Start();
             });
 
@@ -95,14 +93,14 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "it should call EnteringState on registered extensions for entered super states of target state".x(()
                 => A.CallTo(() => extension.EnteringState(
-                        A<IStateMachineInformation<string, string>>.That.Matches(x => x.Name == Name && x.CurrentStateId == "A0"),
+                        A<IStateMachineInformation<string, string>>.That.Matches(x => x.Name == Name && x.CurrentStateId.ExtractOrThrow() == "A0"),
                         A<IStateDefinition<string, string>>.That.Matches(x => x.Id == "A"),
                         A<ITransitionContext<string, string>>.That.Matches(x => x.EventId.Value == "A0")))
                     .MustHaveHappened());
 
             "it should call EnteringState on registered extensions for entered leaf target state".x(()
                 => A.CallTo(() => extension.EnteringState(
-                        A<IStateMachineInformation<string, string>>.That.Matches(x => x.Name == Name && x.CurrentStateId == "A0"),
+                        A<IStateMachineInformation<string, string>>.That.Matches(x => x.Name == Name && x.CurrentStateId.ExtractOrThrow() == "A0"),
                         A<IStateDefinition<string, string>>.That.Matches(x => x.Id == "A0"),
                         A<ITransitionContext<string, string>>.That.Matches(x => x.EventId.Value == "A0")))
                     .MustHaveHappened());

@@ -86,8 +86,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
 
             var stateMachine = createStateMachine("Test Machine", stateMachineDefinition);
 
-            stateMachine.Initialize(States.A);
-
             var testee = new StateMachineReportGenerator<States, Events>();
             stateMachine.Report(testee);
 

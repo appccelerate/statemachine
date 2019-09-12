@@ -48,15 +48,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                         });
 
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(async () =>
-            {
-                await machine.Initialize(State);
-                await machine.Start();
-            });
+                await machine.Start());
 
             "it should execute the synchronous entry action".x(()
                 => entryActionExecuted.Should().BeTrue());
@@ -87,15 +85,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                             },
                             parameter);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(async () =>
-            {
-                await machine.Initialize(State);
-                await machine.Start();
-            });
+                await machine.Start());
 
             "it should execute the entry synchronous action".x(()
                 => receivedParameter.Should().NotBeNull());
@@ -136,15 +132,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                             await Task.Yield();
                         });
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(async () =>
-            {
-                await machine.Initialize(State);
-                await machine.Start();
-            });
+                await machine.Start());
 
             "it should execute all entry actions".x(()
                 => new[]
@@ -192,6 +186,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                             throw exception4;
                         });
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -199,10 +194,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             });
 
             "when entering the state".x(async () =>
-            {
-                await machine.Initialize(State);
-                await machine.Start();
-            });
+                await machine.Start());
 
             "it should execute all entry actions on entry".x(()
                 => new[]
@@ -246,13 +238,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                         });
 
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(async () =>
             {
-                await machine.Initialize(State);
                 await machine.Start();
                 await machine.Fire(Event, argument);
             });

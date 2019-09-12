@@ -32,6 +32,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish an instantiated active state machine".x(()
                 => machine = new StateMachineDefinitionBuilder<string, int>()
+                    .WithInitialState("initial")
                     .Build()
                     .CreateActiveStateMachine());
 
@@ -55,6 +56,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish an instantiated active state machine with custom name".x(()
                 => machine = new StateMachineDefinitionBuilder<string, int>()
+                    .WithInitialState("initial")
                     .Build()
                     .CreateActiveStateMachine(name));
 
@@ -86,10 +88,9 @@ namespace Appccelerate.StateMachine.Specs.Async
                 stateMachineDefinitionBuilder.In("B").On(secondEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
                     .Build()
                     .CreateActiveStateMachine();
-
-                machine.Initialize("A");
             });
 
             "when firing an event onto the state machine".x(async () =>
@@ -123,10 +124,9 @@ namespace Appccelerate.StateMachine.Specs.Async
                 stateMachineDefinitionBuilder.In("B").On(firstEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
                     .Build()
                     .CreateActiveStateMachine();
-
-                machine.Initialize("A");
             });
 
             "when firing a priority event onto the state machine".x(async () =>
@@ -171,10 +171,9 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .In("D")
                     .ExecuteOnEntry(() => signal.Set());
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
                     .Build()
                     .CreateActiveStateMachine();
-
-                machine.Initialize("A");
             });
 
             "when firing a priority event onto the state machine".x(async () =>

@@ -50,13 +50,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                         })
                         .On(Event).Goto(AnotherState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when leaving the state".x(async () =>
             {
-                await machine.Initialize(State);
                 await machine.Start();
                 await machine.Fire(Event);
             });
@@ -91,13 +91,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                             parameter)
                         .On(Event).Goto(AnotherState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when leaving the state".x(async () =>
             {
-                await machine.Initialize(State);
                 await machine.Start();
                 await machine.Fire(Event);
             });
@@ -142,13 +142,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                         })
                         .On(Event).Goto(AnotherState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when leaving the state".x(async () =>
             {
-                await machine.Initialize(State);
                 await machine.Start();
                 await machine.Fire(Event);
             });
@@ -201,6 +201,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .On(Event).Goto(AnotherState);
 
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -209,7 +210,6 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when entering the state".x(async () =>
             {
-                await machine.Initialize(State);
                 await machine.Start();
                 await machine.Fire(Event);
             });
@@ -248,13 +248,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .ExecuteOnEntry((int a) => passedArgument = a);
 
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when leaving the state".x(async () =>
             {
-                await machine.Initialize(State);
                 await machine.Start();
                 await machine.Fire(Event, argument);
             });

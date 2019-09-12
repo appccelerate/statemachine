@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         [Background]
         public void Background()
         {
-            "establish initialized state machine".x(() =>
+            "establish a state machine".x(() =>
             {
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
                 stateMachineDefinitionBuilder
@@ -44,13 +44,12 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .In(B)
                         .On(Event).Goto(A);
                 this.machine = stateMachineDefinitionBuilder
+                    .WithInitialState(A)
                     .Build()
                     .CreatePassiveStateMachine();
 
                 this.extension = new RecordEventsExtension();
                 this.machine.AddExtension(this.extension);
-
-                this.machine.Initialize(A);
             });
         }
 

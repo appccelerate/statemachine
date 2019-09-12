@@ -144,8 +144,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
 
             var elevator = createStateMachine("Elevator", stateMachineDefinition);
 
-            elevator.Initialize(States.OnFloor);
-
             var stream = new MemoryStream();
             var textWriter = new StreamWriter(stream);
             var testee = new YEdStateMachineReportGenerator<States, Events>(textWriter);

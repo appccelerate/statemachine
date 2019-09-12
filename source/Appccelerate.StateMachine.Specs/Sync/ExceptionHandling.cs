@@ -143,7 +143,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         }
 
         [Scenario]
-        public void InitializationException(PassiveStateMachine<int, int> machine)
+        public void StartingException(PassiveStateMachine<int, int> machine)
         {
             const int State = 1;
 
@@ -161,7 +161,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
             });
 
-            "when initializing the state machine".x(() =>
+            "when starting the state machine".x(() =>
                 machine.Start());
 
             "should catch exception and fire transition exception event".x(() =>

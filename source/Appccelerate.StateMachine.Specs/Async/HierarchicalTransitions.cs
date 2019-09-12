@@ -95,10 +95,10 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .ExecuteOnEntry(() => log += "enter" + grandParentOfDestinationState);
 
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(sourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
-                await machine.Initialize(sourceState);
                 await machine.Start();
             });
 
@@ -186,10 +186,10 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .ExecuteOnExit(() => commonAncestorStateLeft = true);
 
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(sourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
-                await machine.Initialize(sourceState);
                 await machine.Start();
             });
 

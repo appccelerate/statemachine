@@ -151,8 +151,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
 
             var elevator = createStateMachine("Elevator", stateMachineDefinition);
 
-            elevator.Initialize(States.OnFloor);
-
             elevator.Report(testee);
 
             string statesReport;

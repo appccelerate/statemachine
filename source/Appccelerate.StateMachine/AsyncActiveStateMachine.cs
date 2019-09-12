@@ -152,15 +152,6 @@ namespace Appccelerate.StateMachine
         }
 
         /// <summary>
-        /// Initializes the state machine to the specified initial state.
-        /// </summary>
-        /// <param name="initialState">The state to which the state machine is initialized.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Initialize(TState initialState)
-        {
-        }
-
-        /// <summary>
         /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load"/>.
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
