@@ -33,6 +33,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine".x(() =>
                 machine = new StateMachineDefinitionBuilder<string, int>()
+                    .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine());
 

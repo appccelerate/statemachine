@@ -40,13 +40,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(State)
                         .ExecuteOnEntry(() => entryActionExecuted = true);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
             });
 
@@ -68,13 +68,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(State)
                         .ExecuteOnEntryParametrized(p => parameter = p, Parameter);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
             });
 
@@ -99,13 +99,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                         .ExecuteOnEntry(() => entryAction1Executed = true)
                         .ExecuteOnEntry(() => entryAction2Executed = true);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
             });
 
@@ -147,6 +147,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                             throw exception3;
                         });
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -155,7 +156,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "when entering the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
             });
 
@@ -200,13 +200,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(AnotherState)
                         .ExecuteOnEntry((int argument) => passedArgument = argument);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
                 machine.Fire(Event, Argument);
             });

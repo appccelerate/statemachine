@@ -31,7 +31,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<string, int>()
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("initial");
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -41,7 +44,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "when adding an extension".x(() =>
             {
                 machine.AddExtension(extension);
-                machine.Initialize("initial");
+                machine.Start();
             });
 
             "it should notify extension about internal events".x(() =>
@@ -56,7 +59,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with an extension".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<string, int>()
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("initial");
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -67,7 +73,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "when clearing all extensions from the state machine".x(() =>
             {
                 machine.ClearExtensions();
-                machine.Initialize("initial");
+                machine.Start();
             });
 
             "it should not anymore notify extension about internal events".x(() =>

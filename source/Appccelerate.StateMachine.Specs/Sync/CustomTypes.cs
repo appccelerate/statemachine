@@ -42,10 +42,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(new MyState("B"))
                         .ExecuteOnEntry(() => arrivedInStateB = true);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(new MyState("A"))
                     .Build()
                     .CreatePassiveStateMachine();
-
-                machine.Initialize(new MyState("A"));
 
                 machine.Start();
             });

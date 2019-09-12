@@ -32,6 +32,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish an instantiated active state machine".x(() =>
                 machine = new StateMachineDefinitionBuilder<string, int>()
+                    .WithInitialState("initial")
                     .Build()
                     .CreateActiveStateMachine());
 
@@ -57,6 +58,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish an instantiated active state machine with custom name".x(() =>
                 machine = new StateMachineDefinitionBuilder<string, int>()
+                    .WithInitialState("initial")
                     .Build()
                     .CreateActiveStateMachine(Name));
 
@@ -90,10 +92,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
                     .Build()
                     .CreateActiveStateMachine();
-
-                machine.Initialize("A");
             });
 
             "when firing an event onto the state machine".x(() =>
@@ -127,10 +128,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
                     .Build()
                     .CreateActiveStateMachine();
-
-                machine.Initialize("A");
             });
 
             "when firing a priority event onto the state machine".x(() =>

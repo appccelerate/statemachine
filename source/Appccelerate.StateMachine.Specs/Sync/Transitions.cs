@@ -52,12 +52,12 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(DestinationState)
                         .ExecuteOnEntry(() => entryActionExecuted = true);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
                 machine.AddExtension(CurrentStateExtension);
 
-                machine.Initialize(SourceState);
                 machine.Start();
             });
 

@@ -43,13 +43,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                         .ExecuteOnExit(() => exitActionExecuted = true)
                         .On(Event).Goto(AnotherState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when leaving the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
                 machine.Fire(Event);
             });
@@ -73,13 +73,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                         .ExecuteOnExitParametrized(p => parameter = p, Parameter)
                         .On(Event).Goto(AnotherState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when leaving the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
                 machine.Fire(Event);
             });
@@ -106,13 +106,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                         .ExecuteOnExit(() => exitAction2Executed = true)
                         .On(Event).Goto(AnotherState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when leaving the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
                 machine.Fire(Event);
             });
@@ -156,6 +156,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                         })
                         .On(Event).Goto(AnotherState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -164,7 +165,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "when entering the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
                 machine.Fire(Event);
             });
@@ -209,13 +209,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(AnotherState)
                         .ExecuteOnEntry((int argument) => passedArgument = argument);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
             });
 
             "when leaving the state".x(() =>
             {
-                machine.Initialize(State);
                 machine.Start();
                 machine.Fire(Event, Argument);
             });

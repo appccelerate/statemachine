@@ -207,8 +207,10 @@ namespace Appccelerate.StateMachine
                         Initializable<IStateDefinition<TState, TEvent>>.Initialized(
                             this.stateDefinitions[loadedCurrentState.Value]);
                 }
-
-                this.stateContainer.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.UnInitialized();
+                else
+                {
+                    this.stateContainer.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.UnInitialized();
+                }
             }
 
             void LoadHistoryStates()

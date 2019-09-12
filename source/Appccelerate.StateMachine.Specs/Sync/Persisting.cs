@@ -56,10 +56,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
                 SetupStates(stateMachineDefinitionBuilder);
                 var machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State.A)
                     .Build()
                     .CreatePassiveStateMachine();
 
-                machine.Initialize(State.A);
                 machine.Start();
                 machine.Fire(Event.S2); // set history of super state S
                 machine.Fire(Event.B);  // set current state to B
@@ -78,6 +78,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
                 SetupStates(stateMachineDefinitionBuilder);
                 var loadedMachine = stateMachineDefinitionBuilder
+                    .WithInitialState(State.A)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -97,10 +98,14 @@ namespace Appccelerate.StateMachine.Specs.Sync
             });
 
             "it should reset current state".x(() =>
-                sourceState.Should().Be(State.B));
+                sourceState
+                    .Should()
+                    .Be(State.B));
 
             "it should reset all history states of super states".x(() =>
-                targetState.Should().Be(State.S2));
+                targetState
+                    .Should()
+                    .Be(State.S2));
 
             "it should notify extensions".x(()
                 => extension
@@ -113,7 +118,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         public void LoadingNonInitializedStateMachine(
             PassiveStateMachine<State, Event> loadedMachine)
         {
-            "when a non-initialized state machine is loaded".x(() =>
+            "when a not started state machine is loaded".x(() =>
             {
                 var loader = new StateMachineLoader<State>();
                 loader.SetCurrentState(new Initializable<State>());
@@ -122,6 +127,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
                 SetupStates(stateMachineDefinitionBuilder);
                 loadedMachine = stateMachineDefinitionBuilder
+                    .WithInitialState(State.A)
                     .Build()
                     .CreatePassiveStateMachine();
                 loadedMachine.Load(loader);
@@ -129,9 +135,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "it should not be initialized already".x(() =>
             {
-                loadedMachine.Invoking(t => t.Initialize(State.S))
+                var stateMachineSaver = new StateMachineSaver<State>();
+                loadedMachine.Save(stateMachineSaver);
+                stateMachineSaver
+                    .CurrentStateId
+                    .IsInitialized
                     .Should()
-                    .NotThrow();
+                    .BeFalse();
             });
         }
 
@@ -140,12 +150,15 @@ namespace Appccelerate.StateMachine.Specs.Sync
             PassiveStateMachine<string, int> machine,
             Exception receivedException)
         {
-            "establish an initialized state machine".x(() =>
+            "establish a started state machine".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<string, int>()
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("initial");
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine();
-                machine.Initialize("initial");
+                machine.Start();
             });
 
             "when state machine is loaded".x(() =>

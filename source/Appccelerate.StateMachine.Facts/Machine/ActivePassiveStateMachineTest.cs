@@ -64,19 +64,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .Should().BeTrue();
         }
 
-        [Fact]
-        public void BuildingAStateMachineWithoutInitialStateThenInvalidOperationException()
-        {
-            var testee = new StateMachineDefinitionBuilder<States, Events>();
-
-            Action action = () => testee.Build();
-
-            action
-                .Should()
-                .Throw<InvalidOperationException>()
-                .WithMessage("Initial state is not configured.");
-        }
-
         /// <summary>
         /// The <see cref="IStateMachine{TState,TEvent}.IsRunning"/> reflects the state of the state machine.
         /// </summary>
