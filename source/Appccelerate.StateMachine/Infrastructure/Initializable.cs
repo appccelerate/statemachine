@@ -19,15 +19,29 @@
 namespace Appccelerate.StateMachine.Infrastructure
 {
     using System;
-    using Appccelerate.StateMachine.Machine;
+    using Machine;
 
     /// <summary>
     /// A value which can be initialized.
     /// </summary>
     /// <typeparam name="T">Type of the value.</typeparam>
-    public class Initializable<T>
+    public class Initializable<T> : IInitializable<T>
     {
         private T value;
+
+        public static Initializable<T> UnInitialized()
+        {
+            return new Initializable<T>();
+        }
+
+        public static Initializable<T> Initialized(T t)
+        {
+            return new Initializable<T>
+            {
+                value = t,
+                IsInitialized = true
+            };
+        }
 
         /// <summary>
         /// Gets or sets the value.

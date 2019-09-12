@@ -53,6 +53,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public TState CurrentStateId => this.CurrentState.Id;
 
+        public IInitializable<TState> CurrentStateIdNew => throw new InvalidOperationException();
+
         public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> LastActiveStates => this.lastActiveStates;
 
         public async Task ForEach(Func<IExtension<TState, TEvent>, Task> action)

@@ -23,6 +23,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System.Linq;
     using System.Text;
     using FluentAssertions;
+    using Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 
@@ -148,14 +149,17 @@ namespace Appccelerate.StateMachine.Facts.Machine
         }
 
         [Fact]
-        public void InitializationWhenInitialStateIsNotYetEnteredThenNoActionIsPerformed()
+        public void CurrentStateShouldBeUninitializedWhenInitialStateWasNotYetEntered()
         {
             var stateContainer = new StateContainer<States, Events>();
-            var testee = new StateMachineBuilder<States, Events>()
+            new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .Match<Initializable<States>>(x => x.IsInitialized == false);
 
             this.CheckNoRemainingRecords();
         }
@@ -171,10 +175,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
 
-            stateContainer.CurrentStateId.Should().Be(States.A);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.A));
 
             this.CheckRecord<EntryRecord>(States.A);
             this.CheckNoRemainingRecords();
@@ -192,10 +198,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.D1B, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
 
-            stateContainer.CurrentStateId.Should().Be(States.D1B);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.D1B));
 
             this.CheckRecord<EntryRecord>(States.D);
             this.CheckRecord<EntryRecord>(States.D1);
@@ -218,10 +226,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
             stateContainer.SetLastActiveStateFor(States.D, this.stateDefinitions[States.D1]);
             stateContainer.SetLastActiveStateFor(States.D1, this.stateDefinitions[States.D1A]);
 
-            testee.Initialize(States.D, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D);
 
-            stateContainer.CurrentStateId.Should().Be(States.D1A);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.D1A));
 
             this.CheckRecord<EntryRecord>(States.D);
             this.CheckRecord<EntryRecord>(States.D1);
@@ -243,14 +253,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.E, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.E);
 
             this.ClearRecords();
 
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.A);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.A));
 
             this.CheckRecord<ExitRecord>(States.E);
             this.CheckRecord<EntryRecord>(States.A);
@@ -270,14 +282,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.B1, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B1);
 
             this.ClearRecords();
 
             testee.Fire(Events.B2, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.B2);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B2));
 
             this.CheckRecord<ExitRecord>(States.B1);
             this.CheckRecord<EntryRecord>(States.B2);
@@ -297,14 +311,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.B2, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B2);
 
             this.ClearRecords();
 
             testee.Fire(Events.C1B, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.C1B);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.C1B));
 
             this.CheckRecord<ExitRecord>(States.B2);
             this.CheckRecord<ExitRecord>(States.B);
@@ -327,14 +343,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.D1B, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
 
             this.ClearRecords();
 
             testee.Fire(Events.B1, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.B1);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B1));
 
             this.CheckRecord<ExitRecord>(States.D1B);
             this.CheckRecord<ExitRecord>(States.D1);
@@ -357,14 +375,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
 
             this.ClearRecords();
 
             testee.Fire(Events.B, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.B1);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B1));
 
             this.CheckRecord<ExitRecord>(States.A);
             this.CheckRecord<EntryRecord>(States.B);
@@ -384,8 +404,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.B2, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B2);
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
@@ -410,15 +429,17 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.C1B, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1B);
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
             testee.Fire(Events.C, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.C1A);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.C1A));
 
             this.CheckRecord<ExitRecord>(States.A);
             this.CheckRecord<EntryRecord>(States.C);
@@ -439,15 +460,17 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.D1B, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
             testee.Fire(Events.D, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.D1B);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.D1B));
 
             this.CheckRecord<ExitRecord>(States.A);
             this.CheckRecord<EntryRecord>(States.D);
@@ -467,14 +490,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.C1B, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1B);
 
             this.ClearRecords();
 
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.A);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.A));
 
             this.CheckRecord<ExitRecord>(States.C1B);
             this.CheckRecord<ExitRecord>(States.C1);
@@ -494,13 +519,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
             this.ClearRecords();
 
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.A);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.A));
         }
 
         [Fact]
@@ -511,13 +538,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.E, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.E);
             this.ClearRecords();
 
             testee.Fire(Events.E, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.E);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.E));
 
             this.CheckRecord<ExitRecord>(States.E);
             this.CheckRecord<EntryRecord>(States.E);
@@ -532,13 +561,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.C1A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1A);
             this.ClearRecords();
 
             testee.Fire(Events.C1B, stateContainer, stateContainer, this.stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.C1B);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.C1B));
 
             this.CheckRecord<ExitRecord>(States.C1A);
             this.CheckRecord<EntryRecord>(States.C1B);

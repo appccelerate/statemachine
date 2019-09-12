@@ -29,13 +29,16 @@ namespace Appccelerate.StateMachine.Machine
     {
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
         private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
+        private readonly TState initialState;
 
         public StateMachineDefinition(
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions,
-            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates,
+            TState initialState)
         {
             this.stateDefinitions = stateDefinitions;
             this.initiallyLastActiveStates = initiallyLastActiveStates;
+            this.initialState = initialState;
         }
 
         public PassiveStateMachine<TState, TEvent> CreatePassiveStateMachine()
@@ -59,7 +62,7 @@ namespace Appccelerate.StateMachine.Machine
             var standardFactory = new StandardFactory<TState, TEvent>();
             var stateMachine = new StateMachine<TState, TEvent>(standardFactory, stateLogic);
 
-            return new PassiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
+            return new PassiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions, this.initialState);
         }
 
         public ActiveStateMachine<TState, TEvent> CreateActiveStateMachine()
@@ -83,7 +86,7 @@ namespace Appccelerate.StateMachine.Machine
             var standardFactory = new StandardFactory<TState, TEvent>();
             var stateMachine = new StateMachine<TState, TEvent>(standardFactory, stateLogic);
 
-            return new ActiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions);
+            return new ActiveStateMachine<TState, TEvent>(stateMachine, stateContainer, this.stateDefinitions, this.initialState);
         }
     }
 }

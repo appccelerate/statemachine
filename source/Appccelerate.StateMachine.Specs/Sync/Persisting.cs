@@ -103,8 +103,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 targetState.Should().Be(State.S2));
 
             "it should notify extensions".x(()
-                => extension.LoadedCurrentState
-                    .Should().BeEquivalentTo(State.B));
+                => extension
+                    .LoadedCurrentState
+                    .Should()
+                    .BeEquivalentTo(Initializable<State>.Initialized(State.B)));
         }
 
         [Scenario]
@@ -156,6 +158,38 @@ namespace Appccelerate.StateMachine.Specs.Sync
             });
         }
 
+        [Scenario]
+        public void InitialStateSetViaDefinitionBuilder()
+        {
+            var stateMachineSaver = new StateMachineSaver<string>();
+
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+            stateMachineDefinitionBuilder
+                .In("A")
+                .On(1)
+                .Goto("B");
+            stateMachineDefinitionBuilder
+                .In("B")
+                .On(2)
+                .Goto("C");
+            stateMachineDefinitionBuilder
+                .WithInitialState("A");
+            var machine = stateMachineDefinitionBuilder
+                .Build()
+                .CreatePassiveStateMachine();
+
+            machine.Start();
+
+            machine.Fire(1);
+
+            machine.Save(stateMachineSaver);
+
+            stateMachineSaver
+                .CurrentStateId
+                .Should()
+                .Match<Initializable<string>>(actual => actual.IsInitialized && actual.Value == "B");
+        }
+
         private static void SetupStates(StateMachineDefinitionBuilder<State, Event> builder)
         {
             builder
@@ -178,25 +212,25 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
         public class FakeExtension : ExtensionBase<State, Event>
         {
-            public List<State> LoadedCurrentState { get; } = new List<State>();
+            public List<IInitializable<State>> LoadedCurrentState { get; } = new List<IInitializable<State>>();
 
             public override void Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
-                Initializable<State> loadedCurrentState,
+                IInitializable<State> loadedCurrentState,
                 IReadOnlyDictionary<State, State> loadedHistoryStates)
             {
-                this.LoadedCurrentState.Add(loadedCurrentState.Value);
+                this.LoadedCurrentState.Add(loadedCurrentState);
             }
         }
 
         public class StateMachineSaver<TState> : IStateMachineSaver<TState>
             where TState : IComparable
         {
-            public Initializable<TState> CurrentStateId { get; private set; }
+            public IInitializable<TState> CurrentStateId { get; private set; }
 
             public IReadOnlyDictionary<TState, TState> HistoryStates { get; private set; }
 
-            public void SaveCurrentState(Initializable<TState> currentState)
+            public void SaveCurrentState(IInitializable<TState> currentState)
             {
                 this.CurrentStateId = currentState;
             }
@@ -210,10 +244,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
         public class StateMachineLoader<TState> : IStateMachineLoader<TState>
             where TState : IComparable
         {
-            private Initializable<TState> currentState;
+            private IInitializable<TState> currentState;
             private IReadOnlyDictionary<TState, TState> historyStates;
 
-            public void SetCurrentState(Initializable<TState> state)
+            public void SetCurrentState(IInitializable<TState> state)
             {
                 this.currentState = state;
             }
@@ -228,7 +262,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 return this.historyStates;
             }
 
-            public Initializable<TState> LoadCurrentState()
+            public IInitializable<TState> LoadCurrentState()
             {
                 return this.currentState;
             }

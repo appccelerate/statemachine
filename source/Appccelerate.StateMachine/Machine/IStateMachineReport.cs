@@ -38,6 +38,6 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
         /// <param name="initialStateId">The initial state id.</param>
-        void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialStateId);
+        void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, TState initialStateId);
     }
 }

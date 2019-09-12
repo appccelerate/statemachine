@@ -22,7 +22,6 @@ namespace Appccelerate.StateMachine.Machine.Reports
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using Infrastructure;
     using Machine;
     using States;
 
@@ -56,7 +55,7 @@ namespace Appccelerate.StateMachine.Machine.Reports
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
         /// <param name="initialStateId">The initial state id.</param>
-        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialStateId)
+        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, TState initialStateId)
         {
             states = states.ToList();
 

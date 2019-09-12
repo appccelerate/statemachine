@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FluentAssertions;
+    using Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 
@@ -51,13 +52,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             testee.TransitionDeclined += (sender, e) => { declined = true; };
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.C, stateContainer, stateContainer, stateDefinitions);
 
             declined.Should().BeTrue("Declined event was not fired");
-            stateContainer.CurrentStateId.Should().Be(States.A);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.A));
         }
 
         /// <summary>
@@ -85,8 +88,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, EventArgument, stateContainer, stateContainer, stateDefinitions);
 
@@ -116,8 +118,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, EventArgument, stateContainer, stateContainer, stateDefinitions);
 
@@ -147,13 +148,15 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.A, stateContainer, stateContainer, stateDefinitions);
 
             executed.Should().BeTrue("internal transition was not executed.");
-            stateContainer.CurrentStateId.Should().Be(States.A);
+            stateContainer
+                .CurrentStateIdNew
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.A));
         }
 
         [Fact]
@@ -173,8 +176,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
@@ -199,8 +201,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, ExpectedValue, stateContainer, stateContainer, stateDefinitions);
 

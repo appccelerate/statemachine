@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System;
     using Appccelerate.StateMachine.Machine;
     using FluentAssertions;
+    using Infrastructure;
     using Xunit;
 
     /// <summary>
@@ -50,28 +51,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var stateContainer = new StateContainer<States, Events>();
 
-            Action action = () => { var state = stateContainer.CurrentStateId; };
+            Action action = () => { var state = stateContainer.CurrentStateIdNew.Value; };
 
-            action.Should().Throw<NullReferenceException>();
-        }
-
-        /// <summary>
-        /// When the state machine is initialized twice then an exception is thrown.
-        /// </summary>
-        [Fact]
-        public void ExceptionIfInitializeIsCalledTwice()
-        {
-            var stateContainer = new StateContainer<States, Events>();
-
-            var testee = new StateMachineBuilder<States, Events>()
-                .WithStateContainer(stateContainer)
-                .Build();
-
-            testee.Initialize(States.A, stateContainer, stateContainer);
-
-            Action action = () => testee.Initialize(States.B, stateContainer, stateContainer);
-
-            action.Should().Throw<InvalidOperationException>();
+            action
+                .Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage(ExceptionMessages.ValueNotInitialized);
         }
 
         /// <summary>
@@ -111,8 +96,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
 
@@ -120,7 +104,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateId.Should().Be(States.A);
+            stateContainer.CurrentStateIdNew.Should().BeEquivalentTo(Initializable<States>.Initialized(States.A));
             transitionDeclined.Should().BeTrue("transition was not declined.");
         }
 
@@ -160,8 +144,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
 
@@ -169,7 +152,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateId.Should().Be(States.B);
+            stateContainer.CurrentStateIdNew.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
@@ -206,8 +189,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
 
@@ -215,7 +197,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateId.Should().Be(States.B);
+            stateContainer.CurrentStateIdNew.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
@@ -250,15 +232,14 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
             recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateId.Should().Be(States.B);
+            stateContainer.CurrentStateIdNew.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         /// <summary>

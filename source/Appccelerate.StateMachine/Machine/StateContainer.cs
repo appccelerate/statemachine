@@ -40,17 +40,20 @@ namespace Appccelerate.StateMachine.Machine
         public StateContainer(string name)
         {
             this.Name = name;
+            this.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.UnInitialized();
         }
 
         public string Name { get; }
 
         public List<IExtension<TState, TEvent>> Extensions { get; } = new List<IExtension<TState, TEvent>>();
 
-        public Initializable<TState> InitialStateId { get; } = new Initializable<TState>();
+        public IInitializable<TState> CurrentStateIdNew => this.CurrentState.IsInitialized
+            ? new Initializable<TState> { Value = this.CurrentState.Value.Id }
+            : new Initializable<TState>();
 
-        public IStateDefinition<TState, TEvent> CurrentState { get; set; }
+        public Initializable<IStateDefinition<TState, TEvent>> CurrentState { get; set; }
 
-        public TState CurrentStateId => this.CurrentState.Id;
+        public TState CurrentStateId => throw new InvalidOperationException();
 
         public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> LastActiveStates => this.lastActiveStates;
 
