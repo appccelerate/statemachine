@@ -164,14 +164,6 @@ namespace Appccelerate.StateMachine
         }
 
         /// <summary>
-        /// Initializes the state machine to the specified initial state.
-        /// </summary>
-        /// <param name="initialState">The state to which the state machine is initialized.</param>
-        public void Initialize(TState initialState)
-        {
-        }
-
-        /// <summary>
         /// Starts the state machine. Events will be processed.
         /// If the state machine is not started then the events will be queued until the state machine is started.
         /// Already queued events are processed.
