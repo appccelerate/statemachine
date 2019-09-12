@@ -22,8 +22,6 @@ namespace Appccelerate.StateMachine.Infrastructure
 
     public interface IInitializable<out T>
     {
-        T Value { get; }
-
         bool IsInitialized { get; }
 
         Initializable<TResult> Map<TResult>(Func<T, TResult> func);

@@ -374,6 +374,8 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 {
                     { States.D, States.D2 }
                 });
+            A.CallTo(() => loader.LoadCurrentState())
+                .Returns(Initializable<States>.UnInitialized());
 
             testee.Load(loader);
             testee.Start();

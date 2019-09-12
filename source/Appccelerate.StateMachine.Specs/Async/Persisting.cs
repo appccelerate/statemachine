@@ -118,7 +118,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             "when a non-initialized state machine is loaded".x(async () =>
             {
                 var loader = new StateMachineLoader<State>();
-                loader.SetCurrentState(new Initializable<State>());
+                loader.SetCurrentState(Initializable<State>.UnInitialized());
                 loader.SetHistoryStates(new Dictionary<State, State>());
 
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
