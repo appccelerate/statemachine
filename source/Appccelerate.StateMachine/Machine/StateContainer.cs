@@ -47,9 +47,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public List<IExtension<TState, TEvent>> Extensions { get; } = new List<IExtension<TState, TEvent>>();
 
-        public IInitializable<TState> CurrentStateIdNew => this.CurrentState.IsInitialized
-            ? new Initializable<TState> { Value = this.CurrentState.Value.Id }
-            : new Initializable<TState>();
+        public IInitializable<TState> CurrentStateIdNew => this.CurrentState.Map(x => x.Id);
 
         public Initializable<IStateDefinition<TState, TEvent>> CurrentState { get; set; }
 

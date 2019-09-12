@@ -315,7 +315,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var extension = A.Fake<IExtension<States, Events>>();
 
             A.CallTo(() => loader.LoadCurrentState())
-                .Returns(new Initializable<States> { Value = States.C });
+                .Returns(Initializable<States>.Initialized(States.C));
 
             var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
             stateMachineDefinitionBuilder
@@ -336,7 +336,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                         A<IStateMachineInformation<States, Events>>.Ignored,
                         A<Initializable<States>>
                             .That
-                            .Matches(x => x.Value == States.C),
+                            .Matches(currentState =>
+                                currentState.IsInitialized
+                                && currentState.ExtractOrThrow() == States.C),
                         A<IReadOnlyDictionary<States, States>>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }

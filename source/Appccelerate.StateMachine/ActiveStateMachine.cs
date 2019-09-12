@@ -193,16 +193,7 @@ namespace Appccelerate.StateMachine
 
             void SetCurrentState()
             {
-                if (loadedCurrentState.IsInitialized)
-                {
-                    this.stateContainer.CurrentState =
-                        Initializable<IStateDefinition<TState, TEvent>>.Initialized(
-                            this.stateDefinitions[loadedCurrentState.Value]);
-                }
-                else
-                {
-                    this.stateContainer.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.UnInitialized();
-                }
+                this.stateContainer.CurrentState = loadedCurrentState.Map(x => this.stateDefinitions[x]);
             }
 
             void LoadHistoryStates()

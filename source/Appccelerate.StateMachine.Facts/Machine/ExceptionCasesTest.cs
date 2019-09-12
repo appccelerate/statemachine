@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var stateContainer = new StateContainer<States, Events>();
 
-            Action action = () => { var state = stateContainer.CurrentStateIdNew.Value; };
+            Action action = () => { var state = stateContainer.CurrentStateIdNew.ExtractOrThrow(); };
 
             action
                 .Should()

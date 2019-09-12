@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.Infrastructure
     using Machine;
 
     /// <summary>
-    /// A value which can be initialized.
+    /// A value which can either be initialized or not.
     /// </summary>
     /// <typeparam name="T">Type of the value.</typeparam>
     public class Initializable<T> : IInitializable<T>
@@ -41,6 +41,28 @@ namespace Appccelerate.StateMachine.Infrastructure
                 value = t,
                 IsInitialized = true
             };
+        }
+
+        public Initializable<TResult> Map<TResult>(Func<T, TResult> func)
+        {
+            return
+                this.IsInitialized
+                    ? Initializable<TResult>.Initialized(func(this.value))
+                    : Initializable<TResult>.UnInitialized();
+        }
+
+        public T ExtractOr(T valueIfNotInitialized)
+        {
+            return
+                this.IsInitialized
+                    ? this.value
+                    : valueIfNotInitialized;
+        }
+
+        public T ExtractOrThrow()
+        {
+            this.CheckInitialized();
+            return this.value;
         }
 
         /// <summary>

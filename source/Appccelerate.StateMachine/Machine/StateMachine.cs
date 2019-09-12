@@ -69,9 +69,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private static void SwitchStateTo(IStateDefinition<TState, TEvent> newState, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-            var oldState = stateContainer.CurrentState.IsInitialized
-                ? stateContainer.CurrentState.Value
-                : null;
+            var oldState = stateContainer.CurrentState.ExtractOr(null);
 
             stateContainer.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.Initialized(newState);
 
@@ -135,8 +133,9 @@ namespace Appccelerate.StateMachine.Machine
 
             stateContainer.ForEach(extension => extension.FiringEvent(stateMachineInformation, ref eventId, ref eventArgument));
 
-            var context = this.factory.CreateTransitionContext(stateContainer.CurrentState.Value, new Missable<TEvent>(eventId), eventArgument, this);
-            var result = this.stateLogic.Fire(stateContainer.CurrentState.Value, context, stateContainer);
+            var currentState = stateContainer.CurrentState.ExtractOrThrow();
+            var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
+            var result = this.stateLogic.Fire(currentState, context, stateContainer);
 
             if (!result.Fired)
             {
@@ -197,7 +196,7 @@ namespace Appccelerate.StateMachine.Machine
             this.RaiseEvent(
                 this.TransitionCompleted,
                 new TransitionCompletedEventArgs<TState, TEvent>(
-                    stateMachineInformation.CurrentStateIdNew.Value,
+                    stateMachineInformation.CurrentStateIdNew.ExtractOrThrow(),
                     transitionContext),
                 transitionContext,
                 true);

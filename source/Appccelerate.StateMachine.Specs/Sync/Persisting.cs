@@ -121,7 +121,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "when a not started state machine is loaded".x(() =>
             {
                 var loader = new StateMachineLoader<State>();
-                loader.SetCurrentState(new Initializable<State>());
+                loader.SetCurrentState(Initializable<State>.UnInitialized());
                 loader.SetHistoryStates(new Dictionary<State, State>());
 
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
@@ -200,7 +200,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
             stateMachineSaver
                 .CurrentStateId
                 .Should()
-                .Match<Initializable<string>>(actual => actual.IsInitialized && actual.Value == "B");
+                .Match<Initializable<string>>(currentState =>
+                    currentState.IsInitialized
+                    && currentState.ExtractOrThrow() == "B");
         }
 
         private static void SetupStates(StateMachineDefinitionBuilder<State, Event> builder)
