@@ -79,26 +79,6 @@ namespace Appccelerate.StateMachine.AsyncMachine
             IStateDefinition<TState, TEvent> newStateDefinition);
 
         /// <summary>
-        /// Called when the state machine is initializing.
-        /// </summary>
-        /// <param name="stateMachine">The state machine.</param>
-        /// <param name="initialState">The initial state. Can be replaced by the extension.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task InitializingStateMachine(
-            IStateMachineInformation<TState, TEvent> stateMachine,
-            ref TState initialState);
-
-        /// <summary>
-        /// Called when the state machine was initialized.
-        /// </summary>
-        /// <param name="stateMachine">The state machine.</param>
-        /// <param name="initialState">The initial state.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task InitializedStateMachine(
-            IStateMachineInformation<TState, TEvent> stateMachine,
-            TState initialState);
-
-        /// <summary>
         /// Called when the state machine enters the initial state.
         /// </summary>
         /// <param name="stateMachine">The state machine.</param>
@@ -292,7 +272,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            Initializable<TState> loadedCurrentState,
+            IInitializable<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates);
     }
 }

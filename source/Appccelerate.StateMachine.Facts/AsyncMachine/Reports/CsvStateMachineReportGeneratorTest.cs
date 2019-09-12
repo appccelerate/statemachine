@@ -146,6 +146,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
                 .In(States.Moving)
                     .On(Events.Stop).Goto(States.OnFloor);
             var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.OnFloor)
                 .Build();
 
             var elevator = createStateMachine("Elevator", stateMachineDefinition);

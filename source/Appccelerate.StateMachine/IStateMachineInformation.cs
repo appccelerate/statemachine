@@ -41,8 +41,6 @@ namespace Appccelerate.StateMachine
         /// Gets the id of the current state.
         /// </summary>
         /// <value>The id of the current state.</value>
-        IInitializable<TState> CurrentStateIdNew { get; }
-
-        TState CurrentStateId { get; }
+        IInitializable<TState> CurrentStateId { get; }
     }
 }

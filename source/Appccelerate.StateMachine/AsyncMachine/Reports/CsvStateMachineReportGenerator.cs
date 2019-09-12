@@ -23,7 +23,6 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
     using System.IO;
     using System.Linq;
     using AsyncMachine;
-    using Infrastructure;
     using States;
 
     /// <summary>
@@ -56,7 +55,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
         /// <param name="initialStateId">The initial state id.</param>
-        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialStateId)
+        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, TState initialStateId)
         {
             states = states.ToList();
 

@@ -45,11 +45,6 @@ namespace Appccelerate.StateMachine.Machine
         public const string StateMachineIsAlreadyInitialized = "state machine is already initialized";
 
         /// <summary>
-        /// State machine is not initialized.
-        /// </summary>
-        public const string StateMachineNotInitialized = "state machine is not initialized";
-
-        /// <summary>
         /// State machine has not yet entered initial state.
         /// </summary>
         public const string StateMachineHasNotYetEnteredInitialState = "Initial state is not yet entered.";

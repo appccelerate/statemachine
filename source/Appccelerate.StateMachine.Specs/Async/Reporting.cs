@@ -22,7 +22,6 @@ namespace Appccelerate.StateMachine.Specs.Async
     using AsyncMachine;
     using AsyncMachine.States;
     using FakeItEasy;
-    using Infrastructure;
     using Xbehave;
 
     public class Reporting
@@ -45,7 +44,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "it should call the passed reporter".x(()
                 => A.CallTo(() =>
-                        report.Report(A<string>._, A<IEnumerable<IStateDefinition<string, int>>>._, A<Initializable<string>>._))
+                        report.Report(A<string>._, A<IEnumerable<IStateDefinition<string, int>>>._, A<string>._))
                     .MustHaveHappened());
         }
     }

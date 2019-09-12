@@ -80,7 +80,9 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
             stateMachineDefinitionBuilder
                 .In(States.B2)
                     .On(Events.B1).Goto(States.B2);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             var stateMachine = createStateMachine("Test Machine", stateMachineDefinition);
 

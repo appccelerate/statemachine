@@ -21,10 +21,8 @@ namespace Appccelerate.StateMachine
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Infrastructure;
     using Machine;
     using Machine.Events;
-    using Machine.States;
     using Persistence;
 
     /// <summary>
@@ -162,7 +160,7 @@ namespace Appccelerate.StateMachine
         {
             Guard.AgainstNullArgument(nameof(stateMachineSaver), stateMachineSaver);
 
-            stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentStateIdNew);
+            stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentStateId);
 
             var historyStates = this.stateContainer
                 .LastActiveStates

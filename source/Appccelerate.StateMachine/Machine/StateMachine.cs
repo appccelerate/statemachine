@@ -196,7 +196,7 @@ namespace Appccelerate.StateMachine.Machine
             this.RaiseEvent(
                 this.TransitionCompleted,
                 new TransitionCompletedEventArgs<TState, TEvent>(
-                    stateMachineInformation.CurrentStateIdNew.ExtractOrThrow(),
+                    stateMachineInformation.CurrentStateId.ExtractOrThrow(),
                     transitionContext),
                 transitionContext,
                 true);

@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         {
             var stateContainer = new StateContainer<States, Events>();
 
-            Action action = () => { var state = stateContainer.CurrentStateIdNew.ExtractOrThrow(); };
+            Action action = () => { var state = stateContainer.CurrentStateId.ExtractOrThrow(); };
 
             action
                 .Should()
@@ -104,7 +104,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateIdNew.Should().BeEquivalentTo(Initializable<States>.Initialized(States.A));
+            stateContainer.CurrentStateId.Should().BeEquivalentTo(Initializable<States>.Initialized(States.A));
             transitionDeclined.Should().BeTrue("transition was not declined.");
         }
 
@@ -152,7 +152,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateIdNew.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
+            stateContainer.CurrentStateId.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateIdNew.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
+            stateContainer.CurrentStateId.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
@@ -239,7 +239,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);
             recordedException.Should().Be(exception);
-            stateContainer.CurrentStateIdNew.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
+            stateContainer.CurrentStateId.Should().BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         /// <summary>

@@ -58,7 +58,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             declined.Should().BeTrue("Declined event was not fired");
             stateContainer
-                .CurrentStateIdNew
+                .CurrentStateId
                 .Should()
                 .BeEquivalentTo(Initializable<States>.Initialized(States.A));
         }
@@ -154,7 +154,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             executed.Should().BeTrue("internal transition was not executed.");
             stateContainer
-                .CurrentStateIdNew
+                .CurrentStateId
                 .Should()
                 .BeEquivalentTo(Initializable<States>.Initialized(States.A));
         }

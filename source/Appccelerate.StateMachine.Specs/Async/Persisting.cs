@@ -188,7 +188,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             public override void Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
-                Initializable<State> loadedCurrentState,
+                IInitializable<State> loadedCurrentState,
                 IReadOnlyDictionary<State, State> loadedHistoryStates)
             {
                 this.LoadedCurrentState.Add(loadedCurrentState.Value);
@@ -198,11 +198,11 @@ namespace Appccelerate.StateMachine.Specs.Async
         public class StateMachineSaver<TState> : IAsyncStateMachineSaver<TState>
             where TState : IComparable
         {
-            public Initializable<TState> CurrentStateId { get; private set; }
+            public IInitializable<TState> CurrentStateId { get; private set; }
 
             public IReadOnlyDictionary<TState, TState> HistoryStates { get; private set; }
 
-            public Task SaveCurrentState(Initializable<TState> currentState)
+            public Task SaveCurrentState(IInitializable<TState> currentState)
             {
                 this.CurrentStateId = currentState;
 
@@ -220,10 +220,10 @@ namespace Appccelerate.StateMachine.Specs.Async
         public class StateMachineLoader<TState> : IAsyncStateMachineLoader<TState>
             where TState : IComparable
         {
-            private Initializable<TState> currentState;
+            private IInitializable<TState> currentState;
             private IReadOnlyDictionary<TState, TState> historyStates;
 
-            public void SetCurrentState(Initializable<TState> state)
+            public void SetCurrentState(IInitializable<TState> state)
             {
                 this.currentState = state;
             }
@@ -238,7 +238,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                 return Task.FromResult(this.historyStates);
             }
 
-            public Task<Initializable<TState>> LoadCurrentState()
+            public Task<IInitializable<TState>> LoadCurrentState()
             {
                 return Task.FromResult(this.currentState);
             }

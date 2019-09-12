@@ -23,7 +23,6 @@ namespace Appccelerate.StateMachine
     using System.Threading.Tasks;
     using AsyncMachine;
     using AsyncMachine.Events;
-    using Infrastructure;
     using Persistence;
 
     public class AsyncActiveStateMachine<TState, TEvent> : IAsyncStateMachine<TState, TEvent>
@@ -35,9 +34,7 @@ namespace Appccelerate.StateMachine
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
         private readonly ConcurrentQueue<EventInformation<TEvent>> events;
         private readonly ConcurrentStack<EventInformation<TEvent>> priorityEvents;
-
-        private bool initialized;
-        private bool pendingInitialization;
+        private readonly TState initialState;
 
         private Task worker;
         private CancellationTokenSource stopToken;
@@ -46,11 +43,13 @@ namespace Appccelerate.StateMachine
         public AsyncActiveStateMachine(
             StateMachine<TState, TEvent> stateMachine,
             StateContainer<TState, TEvent> stateContainer,
-            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions,
+            TState initialState)
         {
             this.stateMachine = stateMachine;
             this.stateContainer = stateContainer;
             this.stateDefinitions = stateDefinitions;
+            this.initialState = initialState;
 
             this.events = new ConcurrentQueue<EventInformation<TEvent>>();
             this.priorityEvents = new ConcurrentStack<EventInformation<TEvent>>();
@@ -159,13 +158,6 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Initialize(TState initialState)
         {
-            this.CheckThatNotAlreadyInitialized();
-
-            this.initialized = true;
-            this.pendingInitialization = true;
-
-            await this.stateMachine.Initialize(initialState, this.stateContainer, this.stateContainer)
-                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -177,10 +169,7 @@ namespace Appccelerate.StateMachine
         {
             Guard.AgainstNullArgument(nameof(stateMachineSaver), stateMachineSaver);
 
-            await stateMachineSaver.SaveCurrentState(
-                    this.stateContainer.CurrentState != null
-                        ? new Initializable<TState> { Value = this.stateContainer.CurrentStateId }
-                        : new Initializable<TState>())
+            await stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentStateId)
                 .ConfigureAwait(false);
 
             var historyStates = this.stateContainer
@@ -203,27 +192,17 @@ namespace Appccelerate.StateMachine
             Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
 
             this.CheckThatNotAlreadyInitialized();
-            this.CheckThatStateMachineIsNotAlreadyInitialized();
 
             var loadedCurrentState = await stateMachineLoader.LoadCurrentState().ConfigureAwait(false);
             var historyStates = await stateMachineLoader.LoadHistoryStates().ConfigureAwait(false);
 
-            var loadedStateMachineWasInitialized = SetCurrentState();
+            SetCurrentState();
             LoadHistoryStates();
             NotifyExtensions();
 
-            this.initialized = loadedStateMachineWasInitialized;
-
-            bool SetCurrentState()
+            void SetCurrentState()
             {
-                if (loadedCurrentState.IsInitialized)
-                {
-                    this.stateContainer.CurrentState = this.stateDefinitions[loadedCurrentState.Value];
-                    return true;
-                }
-
-                this.stateContainer.CurrentState = null;
-                return false;
+                this.stateContainer.CurrentState = loadedCurrentState.Map(x => this.stateDefinitions[x]);
             }
 
             void LoadHistoryStates()
@@ -260,8 +239,6 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Start()
         {
-            this.CheckThatStateMachineIsInitialized();
-
             if (this.IsRunning)
             {
                 return;
@@ -400,7 +377,7 @@ namespace Appccelerate.StateMachine
         /// <param name="reportGenerator">The report generator.</param>
         public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
         {
-            reportGenerator.Report(this.ToString(), this.stateDefinitions.Values, this.stateContainer.InitialStateId);
+            reportGenerator.Report(this.ToString(), this.stateDefinitions.Values, this.initialState);
         }
 
         /// <summary>
@@ -416,23 +393,7 @@ namespace Appccelerate.StateMachine
 
         private void CheckThatNotAlreadyInitialized()
         {
-            if (this.initialized)
-            {
-                throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
-            }
-        }
-
-        private void CheckThatStateMachineIsInitialized()
-        {
-            if (!this.initialized)
-            {
-                throw new InvalidOperationException(ExceptionMessages.StateMachineNotInitialized);
-            }
-        }
-
-        private void CheckThatStateMachineIsNotAlreadyInitialized()
-        {
-            if (this.stateContainer.CurrentState != null || this.stateContainer.InitialStateId.IsInitialized)
+            if (this.stateContainer.CurrentState.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
             }
@@ -440,16 +401,14 @@ namespace Appccelerate.StateMachine
 
         private async Task InitializeStateMachineIfInitializationIsPending()
         {
-            if (!this.pendingInitialization)
+            if (this.stateContainer.CurrentState.IsInitialized)
             {
                 return;
             }
 
             await this.stateMachine
-                .EnterInitialState(this.stateContainer, this.stateContainer, this.stateDefinitions)
+                .EnterInitialState(this.stateContainer, this.stateContainer, this.stateDefinitions, this.initialState)
                 .ConfigureAwait(false);
-
-            this.pendingInitialization = false;
         }
     }
 }

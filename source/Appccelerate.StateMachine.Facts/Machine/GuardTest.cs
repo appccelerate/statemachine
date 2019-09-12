@@ -82,7 +82,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
             stateContainer
-                .CurrentStateIdNew
+                .CurrentStateId
                 .Should()
                 .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
@@ -111,7 +111,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             testee.Fire(Events.B, 3, stateContainer, stateContainer, stateDefinitions);
 
             stateContainer
-                .CurrentStateIdNew
+                .CurrentStateId
                 .Should()
                 .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }

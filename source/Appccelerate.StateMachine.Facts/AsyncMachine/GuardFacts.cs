@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     using System;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Infrastructure;
     using StateMachine.AsyncMachine;
     using Xunit;
 
@@ -49,9 +50,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.A, ExpectedEventArgument, stateContainer, stateContainer, stateDefinitions)
@@ -85,9 +84,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.A, ExpectedEventArgument, stateContainer, stateContainer, stateDefinitions)
@@ -114,9 +111,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, Missing.Value, stateContainer, stateContainer, stateDefinitions)
@@ -125,7 +120,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             stateContainer
                 .CurrentStateId
                 .Should()
-                .Be(States.B);
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
@@ -146,9 +141,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, 3, stateContainer, stateContainer, stateDefinitions)
@@ -157,7 +150,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             stateContainer
                 .CurrentStateId
                 .Should()
-                .Be(States.B);
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         private static bool SingleIntArgumentGuardReturningTrue(int i)
