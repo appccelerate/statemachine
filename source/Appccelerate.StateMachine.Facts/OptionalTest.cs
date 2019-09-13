@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="ILastActiveStateModifier.cs" company="Appccelerate">
+// <copyright file="OptionalTest.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +16,28 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Facts
 {
-    using System;
+    using FluentAssertions;
+    using StateMachine.Machine;
+    using Xunit;
 
-    public interface ILastActiveStateModifier<TState>
-        where TState : IComparable
+    public class OptionalTest
     {
-        Optional<TState> GetLastActiveStateFor(TState state);
+        [Fact]
+        public void IsInitialized()
+        {
+            Optional<string>
+                .Just("hello world")
+                .HasValue
+                .Should()
+                .BeTrue();
 
-        void SetLastActiveStateFor(TState state, TState newLastActiveState);
+            Optional<string>
+                .Nothing()
+                .HasValue
+                .Should()
+                .BeFalse();
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System.Linq;
     using System.Text;
     using FluentAssertions;
-    using Infrastructure;
+    using StateMachine.Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 
@@ -173,6 +173,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
@@ -196,6 +197,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
@@ -221,10 +223,11 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
-            stateContainer.SetLastActiveStateFor(States.D, this.stateDefinitions[States.D1]);
-            stateContainer.SetLastActiveStateFor(States.D1, this.stateDefinitions[States.D1A]);
+            stateContainer.SetLastActiveStateFor(States.D, States.D1);
+            stateContainer.SetLastActiveStateFor(States.D1, States.D1A);
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D);
 
@@ -251,6 +254,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.E);
@@ -280,6 +284,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B1);
@@ -309,6 +314,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B2);
@@ -341,6 +347,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
@@ -373,6 +380,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
@@ -402,6 +410,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B2);
@@ -427,6 +436,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1B);
@@ -458,6 +468,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
@@ -488,6 +499,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1B);
@@ -517,6 +529,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
@@ -536,6 +549,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.E);
@@ -559,6 +573,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateContainer = new StateContainer<States, Events>();
             var testee = new StateMachineBuilder<States, Events>()
                 .WithStateContainer(stateContainer)
+                .WithStateDefinitions(this.stateDefinitions)
                 .Build();
 
             testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1A);

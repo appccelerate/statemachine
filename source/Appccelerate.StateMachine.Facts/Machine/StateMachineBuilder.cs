@@ -28,6 +28,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         where TEvent : IComparable
     {
         private StateContainer<TState, TEvent> stateContainer;
+        private IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
 
         public StateMachineBuilder()
         {
@@ -40,11 +41,17 @@ namespace Appccelerate.StateMachine.Facts.Machine
             return this;
         }
 
+        public StateMachineBuilder<TState, TEvent> WithStateDefinitions(IStateDefinitionDictionary<TState, TEvent> stateDefinitionsToUse)
+        {
+            this.stateDefinitions = stateDefinitionsToUse;
+            return this;
+        }
+
         public StateMachine<TState, TEvent> Build()
         {
             var factory = new StandardFactory<TState, TEvent>();
             var transitionLogic = new TransitionLogic<TState, TEvent>(this.stateContainer, this.stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, this.stateContainer, this.stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, this.stateContainer, this.stateContainer, this.stateDefinitions);
             transitionLogic.SetStateLogic(stateLogic);
 
             return new StateMachine<TState, TEvent>(factory, stateLogic);

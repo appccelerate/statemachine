@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public TState EnterInitialState(
             IStateLogic<TState, TEvent> stateLogic,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             var stack = this.TraverseUpTheStateHierarchy();
             this.TraverseDownTheStateHierarchyAndEnterStates(stateLogic, stack);

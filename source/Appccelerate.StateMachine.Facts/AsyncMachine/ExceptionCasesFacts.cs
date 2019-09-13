@@ -21,8 +21,8 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     using System;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Infrastructure;
     using StateMachine.AsyncMachine;
+    using StateMachine.Infrastructure;
     using Xunit;
 
     public class ExceptionCasesFacts

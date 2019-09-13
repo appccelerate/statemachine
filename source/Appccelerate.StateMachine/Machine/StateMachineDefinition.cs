@@ -28,12 +28,12 @@ namespace Appccelerate.StateMachine.Machine
         where TEvent : IComparable
     {
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
-        private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
+        private readonly IReadOnlyDictionary<TState, TState> initiallyLastActiveStates;
         private readonly TState initialState;
 
         public StateMachineDefinition(
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions,
-            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates,
+            IReadOnlyDictionary<TState, TState> initiallyLastActiveStates,
             TState initialState)
         {
             this.stateDefinitions = stateDefinitions;
@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Machine
             }
 
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer, this.stateDefinitions);
             transitionLogic.SetStateLogic(stateLogic);
 
             var standardFactory = new StandardFactory<TState, TEvent>();
@@ -80,7 +80,7 @@ namespace Appccelerate.StateMachine.Machine
             }
 
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer, this.stateDefinitions);
             transitionLogic.SetStateLogic(stateLogic);
 
             var standardFactory = new StandardFactory<TState, TEvent>();

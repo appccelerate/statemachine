@@ -21,16 +21,15 @@ namespace Appccelerate.StateMachine.Machine
     using System;
     using System.Collections.Generic;
     using Infrastructure;
-    using States;
 
     public class StateContainer<TState, TEvent> :
         IExtensionHost<TState, TEvent>,
         IStateMachineInformation<TState, TEvent>,
-        ILastActiveStateModifier<TState, TEvent>
+        ILastActiveStateModifier<TState>
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> lastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+        private readonly Dictionary<TState, TState> lastActiveStates = new Dictionary<TState, TState>();
 
         public StateContainer()
             : this(default(string))
@@ -49,20 +48,22 @@ namespace Appccelerate.StateMachine.Machine
 
         public IInitializable<TState> CurrentStateId { get; set; }
 
-        public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> LastActiveStates => this.lastActiveStates;
+        public IReadOnlyDictionary<TState, TState> LastActiveStates => this.lastActiveStates;
 
         public void ForEach(Action<IExtension<TState, TEvent>> action)
         {
             this.Extensions.ForEach(action);
         }
 
-        public IStateDefinition<TState, TEvent> GetLastActiveStateOrNullFor(TState state)
+        public Optional<TState> GetLastActiveStateFor(TState state)
         {
-            this.lastActiveStates.TryGetValue(state, out var lastActiveState);
-            return lastActiveState;
+            return
+                this.lastActiveStates.TryGetValue(state, out var lastActiveState)
+                    ? Optional<TState>.Just(lastActiveState)
+                    : Optional<TState>.Nothing();
         }
 
-        public void SetLastActiveStateFor(TState state, IStateDefinition<TState, TEvent> newLastActiveState)
+        public void SetLastActiveStateFor(TState state, TState newLastActiveState)
         {
             if (this.lastActiveStates.ContainsKey(state))
             {

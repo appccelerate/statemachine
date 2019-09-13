@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="ILastActiveStateModifier.cs" company="Appccelerate">
+// <copyright file="Optional.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,28 @@
 
 namespace Appccelerate.StateMachine.Machine
 {
-    using System;
-
-    public interface ILastActiveStateModifier<TState>
-        where TState : IComparable
+    public class Optional<T>
     {
-        Optional<TState> GetLastActiveStateFor(TState state);
+        private Optional()
+        {
+        }
 
-        void SetLastActiveStateFor(TState state, TState newLastActiveState);
+        public T Value { get; private set; }
+
+        public bool HasValue { get; private set; }
+
+        public static Optional<T> Just(T value)
+        {
+            return new Optional<T>
+            {
+                HasValue = true,
+                Value = value
+            };
+        }
+
+        public static Optional<T> Nothing()
+        {
+            return new Optional<T>();
+        }
     }
 }

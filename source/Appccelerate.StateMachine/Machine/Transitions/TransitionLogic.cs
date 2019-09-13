@@ -47,7 +47,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         public ITransitionResult<TState> Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             Guard.AgainstNullArgument("context", context);
 
@@ -137,7 +137,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             IStateDefinition<TState, TEvent> source,
             IStateDefinition<TState, TEvent> target,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             if (source == transitionDefinition.Target)
             {
@@ -234,7 +234,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         private void UnwindSubStates(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             var o = context.StateDefinition;
             while (o != transitionDefinition.Source)

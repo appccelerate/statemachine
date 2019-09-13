@@ -20,7 +20,6 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
-    using States;
     using Syntax;
 
     public class StateMachineDefinitionBuilder<TState, TEvent>
@@ -29,7 +28,7 @@ namespace Appccelerate.StateMachine.Machine
     {
         private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
         private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary = new ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>();
-        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+        private readonly Dictionary<TState, TState> initiallyLastActiveStates = new Dictionary<TState, TState>();
         private TState initialState;
         private bool isInitialStateConfigured;
 

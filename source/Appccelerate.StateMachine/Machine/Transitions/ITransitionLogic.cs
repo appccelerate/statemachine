@@ -34,6 +34,6 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         ITransitionResult<TState> Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier);
+            ILastActiveStateModifier<TState> lastActiveStateModifier);
     }
 }

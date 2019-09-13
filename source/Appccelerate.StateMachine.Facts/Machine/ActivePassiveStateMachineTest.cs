@@ -24,8 +24,8 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System.Threading;
     using FakeItEasy;
     using FluentAssertions;
-    using Infrastructure;
     using Persistence;
+    using StateMachine.Infrastructure;
     using StateMachine.Machine;
     using StateMachine.Machine.Events;
     using Xunit;

@@ -19,7 +19,7 @@
 namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FluentAssertions;
-    using Infrastructure;
+    using StateMachine.Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 

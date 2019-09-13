@@ -40,7 +40,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 
         protected IStateLogic<States, Events> StateLogic { get; }
 
-        protected ILastActiveStateModifier<States, Events> LastActiveStateModifier { get; }
+        protected ILastActiveStateModifier<States> LastActiveStateModifier { get; }
 
         protected TestableExtensionHost ExtensionHost { get; }
 
@@ -55,7 +55,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         public TransitionTestBase()
         {
             this.StateLogic = A.Fake<IStateLogic<States, Events>>();
-            this.LastActiveStateModifier = A.Fake<ILastActiveStateModifier<States, Events>>();
+            this.LastActiveStateModifier = A.Fake<ILastActiveStateModifier<States>>();
             this.StateMachineInformation = A.Fake<IStateMachineInformation<States, Events>>();
             this.ExtensionHost = new TestableExtensionHost();
             this.TransitionDefinition = new TransitionDefinition<States, Events>();
