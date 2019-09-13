@@ -47,7 +47,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         public ITransitionResult<TState> Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
             Guard.AgainstNullArgument("context", context);
 
@@ -76,7 +77,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
                 this.Fire(transitionDefinition, transitionDefinition.Source, transitionDefinition.Target, context, lastActiveStateModifier);
 
-                newState = this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier);
+                newState = this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier, stateDefinitions);
             }
             else
             {

@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void ExitsStatesUpToBelowCommonSuperState()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened()
                 .Then(A.CallTo(() => this.StateLogic.Exit(this.superStateOfSource, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened());
@@ -54,7 +54,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void EntersStatesBelowCommonSuperStateToTarget()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Entry(this.superStateOfTarget, this.TransitionContext)).MustHaveHappened()
                 .Then(A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappened());
@@ -63,7 +63,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void DoesNotExitCommonSuperState()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Exit(this.root, this.TransitionContext, this.LastActiveStateModifier)).MustNotHaveHappened();
         }
@@ -71,7 +71,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void DoesNotEnterCommonSuperState()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Entry(this.root, this.TransitionContext)).MustNotHaveHappened();
         }

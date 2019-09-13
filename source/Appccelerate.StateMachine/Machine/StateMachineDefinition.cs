@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Machine
             }
 
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer, this.stateDefinitions);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
             var standardFactory = new StandardFactory<TState, TEvent>();
@@ -80,7 +80,7 @@ namespace Appccelerate.StateMachine.Machine
             }
 
             var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer, this.stateDefinitions);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
             var standardFactory = new StandardFactory<TState, TEvent>();

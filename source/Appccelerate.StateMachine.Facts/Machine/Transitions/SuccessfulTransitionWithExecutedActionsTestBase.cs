@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void ReturnsSuccessfulTransitionResult()
         {
-            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             result.Should().BeSuccessfulTransitionResultWithNewState(this.Target);
         }
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 
             this.TransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(() => executed = true));
 
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             executed.Should().BeTrue("actions should be executed");
         }
@@ -55,7 +55,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
             var extension = new FakeExtension();
             this.ExtensionHost.Extension = extension;
 
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             extension.Items.Should().Contain(new FakeExtension.Item(
                 this.StateMachineInformation,

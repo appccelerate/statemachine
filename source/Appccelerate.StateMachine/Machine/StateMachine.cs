@@ -145,7 +145,7 @@ namespace Appccelerate.StateMachine.Machine
                 .Map(x => stateDefinitions[x])
                 .ExtractOrThrow();
             var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
-            var result = this.stateLogic.Fire(currentState, context, stateContainer);
+            var result = this.stateLogic.Fire(currentState, context, stateContainer, stateDefinitions);
 
             if (!result.Fired)
             {
@@ -221,7 +221,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             var initialState = stateDefinitions[initialStateId];
             var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
-            var newStateId = initializer.EnterInitialState(this.stateLogic, stateContainer);
+            var newStateId = initializer.EnterInitialState(this.stateLogic, stateContainer, stateDefinitions);
             var newStateDefinition = stateDefinitions[newStateId];
             SwitchStateTo(newStateDefinition, stateContainer, stateMachineInformation, stateDefinitions);
         }

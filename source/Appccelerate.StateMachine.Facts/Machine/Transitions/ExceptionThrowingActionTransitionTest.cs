@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 
             this.ExtensionHost.Extension = extension;
 
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => extension.HandlingTransitionException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, ref this.exception)).MustHaveHappened();
             A.CallTo(() => extension.HandledTransitionException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, this.exception)).MustHaveHappened();
@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void ReturnsFiredTransitionResult()
         {
-            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             result.Fired.Should().BeTrue();
         }
@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void NotifiesExceptionOnTransitionContext()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.TransitionContext.OnExceptionThrown(this.exception)).MustHaveHappened();
         }
