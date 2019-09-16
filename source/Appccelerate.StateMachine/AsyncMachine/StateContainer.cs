@@ -41,16 +41,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public StateContainer(string name)
         {
             this.Name = name;
-            this.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.UnInitialized();
+            this.CurrentStateId = Initializable<TState>.UnInitialized();
         }
 
         public string Name { get; }
 
         public List<IExtensionInternal<TState, TEvent>> Extensions { get; } = new List<IExtensionInternal<TState, TEvent>>();
 
-        public Initializable<IStateDefinition<TState, TEvent>> CurrentState { get; set; }
-
-        public IInitializable<TState> CurrentStateId => this.CurrentState.Map(x => x.Id);
+        public IInitializable<TState> CurrentStateId { get; set; }
 
         public IReadOnlyDictionary<TState, TState> LastActiveStates => this.lastActiveStates;
 

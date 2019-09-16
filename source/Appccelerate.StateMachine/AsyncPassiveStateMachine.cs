@@ -254,7 +254,7 @@ namespace Appccelerate.StateMachine
 
             void SetCurrentState()
             {
-                this.stateContainer.CurrentState = loadedCurrentState.Map(x => this.stateDefinitions[x]);
+                this.stateContainer.CurrentStateId = loadedCurrentState;
             }
 
             void LoadHistoryStates()
@@ -289,7 +289,7 @@ namespace Appccelerate.StateMachine
 
         private void CheckThatNotAlreadyInitialized()
         {
-            if (this.stateContainer.CurrentState.IsInitialized)
+            if (this.stateContainer.CurrentStateId.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
             }
@@ -341,7 +341,7 @@ namespace Appccelerate.StateMachine
 
         private async Task InitializeStateMachineIfInitializationIsPending()
         {
-            if (this.stateContainer.CurrentState.IsInitialized)
+            if (this.stateContainer.CurrentStateId.IsInitialized)
             {
                 return;
             }

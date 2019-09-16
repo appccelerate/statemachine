@@ -70,11 +70,15 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         private static async Task SwitchStateTo(
             IStateDefinition<TState, TEvent> newState,
-            StateContainer<TState, TEvent> stateContainer)
+            StateContainer<TState, TEvent> stateContainer,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            var oldState = stateContainer.CurrentState.ExtractOr(null);
+            var oldState = stateContainer
+                .CurrentStateId
+                .Map(x => stateDefinitions[x])
+                .ExtractOr(null);
 
-            stateContainer.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.Initialized(newState);
+            stateContainer.CurrentStateId = Initializable<TState>.Initialized(newState.Id);
 
             await stateContainer
                 .ForEach(extension =>
@@ -124,7 +128,10 @@ namespace Appccelerate.StateMachine.AsyncMachine
             await stateContainer.ForEach(extension => extension.FiringEvent(ref eventId, ref eventArgument))
                 .ConfigureAwait(false);
 
-            var currentState = stateContainer.CurrentState.ExtractOrThrow();
+            var currentState = stateContainer
+                .CurrentStateId
+                .Map(x => stateDefinitions[x])
+                .ExtractOrThrow();
             var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
             var result = await this.stateLogic.Fire(currentState, context, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
@@ -136,7 +143,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             }
 
             var newState = stateDefinitions[result.NewState];
-            await SwitchStateTo(newState, stateContainer)
+            await SwitchStateTo(newState, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 
             await stateContainer.ForEach(extension => extension.FiredEvent(context))
@@ -202,7 +209,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var newStateId = await initializer.EnterInitialState(this.stateLogic, stateContainer, stateDefinitions).
                 ConfigureAwait(false);
             var newStateDefinition = stateDefinitions[newStateId];
-            await SwitchStateTo(newStateDefinition, stateContainer)
+            await SwitchStateTo(newStateDefinition, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
         }
 
@@ -231,7 +238,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         private static void CheckThatStateMachineHasEnteredInitialState(StateContainer<TState, TEvent> stateContainer)
         {
-            if (!stateContainer.CurrentState.IsInitialized)
+            if (!stateContainer.CurrentStateId.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineHasNotYetEnteredInitialState);
             }
