@@ -118,7 +118,7 @@ namespace Appccelerate.StateMachine
             this.events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
 
             await this.stateContainer
-                .ForEach(extension => extension.EventQueued(this.stateContainer, eventId, eventArgument))
+                .ForEach(extension => extension.EventQueued(eventId, eventArgument))
                 .ConfigureAwait(false);
 
             this.workerCompletionSource.TrySetResult(true);
@@ -145,7 +145,7 @@ namespace Appccelerate.StateMachine
             this.priorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
 
             await this.stateContainer
-                .ForEach(extension => extension.EventQueuedWithPriority(this.stateContainer, eventId, eventArgument))
+                .ForEach(extension => extension.EventQueuedWithPriority(eventId, eventArgument))
                 .ConfigureAwait(false);
 
             this.workerCompletionSource.TrySetResult(true);
@@ -216,7 +216,6 @@ namespace Appccelerate.StateMachine
             {
                 this.stateContainer.Extensions.ForEach(
                     extension => extension.Loaded(
-                        this.stateContainer,
                         loadedCurrentState,
                         historyStates));
             }
@@ -241,7 +240,7 @@ namespace Appccelerate.StateMachine
                 CancellationToken.None);
 
             await this.stateContainer
-                .ForEach(extension => extension.StartedStateMachine(this.stateContainer))
+                .ForEach(extension => extension.StartedStateMachine())
                 .ConfigureAwait(false);
         }
 
@@ -282,7 +281,6 @@ namespace Appccelerate.StateMachine
                         eventInformation.EventId,
                         eventInformation.EventArgument,
                         this.stateContainer,
-                        this.stateContainer,
                         this.stateDefinitions)
                     .ConfigureAwait(false);
 
@@ -309,7 +307,6 @@ namespace Appccelerate.StateMachine
                 await this.stateMachine.Fire(
                         eventInformation.EventId,
                         eventInformation.EventArgument,
-                        this.stateContainer,
                         this.stateContainer,
                         this.stateDefinitions)
                     .ConfigureAwait(false);
@@ -341,7 +338,7 @@ namespace Appccelerate.StateMachine
             }
 
             await this.stateContainer
-                .ForEach(extension => extension.StoppedStateMachine(this.stateContainer))
+                .ForEach(extension => extension.StoppedStateMachine())
                 .ConfigureAwait(false);
         }
 
@@ -351,7 +348,8 @@ namespace Appccelerate.StateMachine
         /// <param name="extension">The extension.</param>
         public void AddExtension(IExtension<TState, TEvent> extension)
         {
-            this.stateContainer.Extensions.Add(extension);
+            var extensionCompose = new InternalExtension<TState, TEvent>(extension, this.stateContainer);
+            this.stateContainer.Extensions.Add(extensionCompose);
         }
 
         /// <summary>
@@ -398,7 +396,7 @@ namespace Appccelerate.StateMachine
             }
 
             await this.stateMachine
-                .EnterInitialState(this.stateContainer, this.stateContainer, this.stateDefinitions, this.initialState)
+                .EnterInitialState(this.stateContainer, this.stateDefinitions, this.initialState)
                 .ConfigureAwait(false);
         }
     }

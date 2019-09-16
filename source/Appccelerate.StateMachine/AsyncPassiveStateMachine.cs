@@ -121,7 +121,7 @@ namespace Appccelerate.StateMachine
             this.events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
 
             await this.stateContainer
-                .ForEach(extension => extension.EventQueued(this.stateContainer, eventId, eventArgument))
+                .ForEach(extension => extension.EventQueued(eventId, eventArgument))
                 .ConfigureAwait(false);
 
             await this.Execute().ConfigureAwait(false);
@@ -148,7 +148,7 @@ namespace Appccelerate.StateMachine
             this.priorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
 
             await this.stateContainer
-                .ForEach(extension => extension.EventQueuedWithPriority(this.stateContainer, eventId, eventArgument))
+                .ForEach(extension => extension.EventQueuedWithPriority(eventId, eventArgument))
                 .ConfigureAwait(false);
 
             await this.Execute().ConfigureAwait(false);
@@ -164,7 +164,7 @@ namespace Appccelerate.StateMachine
         {
             this.IsRunning = true;
 
-            await this.stateContainer.ForEach(extension => extension.StartedStateMachine(this.stateContainer))
+            await this.stateContainer.ForEach(extension => extension.StartedStateMachine())
                 .ConfigureAwait(false);
 
             await this.Execute().ConfigureAwait(false);
@@ -192,7 +192,7 @@ namespace Appccelerate.StateMachine
         {
             this.IsRunning = false;
 
-            await this.stateContainer.ForEach(extension => extension.StoppedStateMachine(this.stateContainer))
+            await this.stateContainer.ForEach(extension => extension.StoppedStateMachine())
                 .ConfigureAwait(false);
         }
 
@@ -202,7 +202,8 @@ namespace Appccelerate.StateMachine
         /// <param name="extension">The extension.</param>
         public void AddExtension(IExtension<TState, TEvent> extension)
         {
-            this.stateContainer.Extensions.Add(extension);
+            var extensionCompose = new InternalExtension<TState, TEvent>(extension, this.stateContainer);
+            this.stateContainer.Extensions.Add(extensionCompose);
         }
 
         /// <summary>
@@ -278,7 +279,6 @@ namespace Appccelerate.StateMachine
             {
                 this.stateContainer.Extensions.ForEach(
                     extension => extension.Loaded(
-                        this.stateContainer,
                         loadedCurrentState,
                         historyStates));
             }
@@ -321,7 +321,6 @@ namespace Appccelerate.StateMachine
                         eventInformation.EventId,
                         eventInformation.EventArgument,
                         this.stateContainer,
-                        this.stateContainer,
                         this.stateDefinitions)
                     .ConfigureAwait(false);
             }
@@ -331,7 +330,6 @@ namespace Appccelerate.StateMachine
                 await this.stateMachine.Fire(
                         eventInformation.EventId,
                         eventInformation.EventArgument,
-                        this.stateContainer,
                         this.stateContainer,
                         this.stateDefinitions)
                     .ConfigureAwait(false);
@@ -345,7 +343,7 @@ namespace Appccelerate.StateMachine
                 return;
             }
 
-            await this.stateMachine.EnterInitialState(this.stateContainer, this.stateContainer, this.stateDefinitions, this.initialState)
+            await this.stateMachine.EnterInitialState(this.stateContainer, this.stateDefinitions, this.initialState)
                 .ConfigureAwait(false);
         }
     }

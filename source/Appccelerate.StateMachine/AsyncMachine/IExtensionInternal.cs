@@ -16,10 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Infrastructure;
     using States;
     using Transitions;
@@ -28,83 +29,83 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        void StartedStateMachine();
+        Task StartedStateMachine();
 
-        void StoppedStateMachine();
+        Task StoppedStateMachine();
 
-        void EventQueued(TEvent eventId, object eventArgument);
+        Task EventQueued(TEvent eventId, object eventArgument);
 
-        void EventQueuedWithPriority(TEvent eventId, object eventArgument);
+        Task EventQueuedWithPriority(TEvent eventId, object eventArgument);
 
-        void SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState);
+        Task SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState);
 
-        void EnteringInitialState(TState state);
+        Task EnteringInitialState(TState state);
 
-        void EnteredInitialState(TState state, ITransitionContext<TState, TEvent> context);
+        Task EnteredInitialState(TState state, ITransitionContext<TState, TEvent> context);
 
-        void FiringEvent(
+        Task FiringEvent(
             ref TEvent eventId,
             ref object eventArgument);
 
-        void FiredEvent(ITransitionContext<TState, TEvent> context);
+        Task FiredEvent(ITransitionContext<TState, TEvent> context);
 
-        void HandlingEntryActionException(
+        Task HandlingEntryActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
-        void HandledEntryActionException(
+        Task HandledEntryActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             Exception exception);
 
-        void HandlingExitActionException(
+        Task HandlingExitActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
-        void HandledExitActionException(
+        Task HandledExitActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             Exception exception);
 
-        void HandlingGuardException(
+        Task HandlingGuardException(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             ref Exception exception);
 
-        void HandledGuardException(
+        Task HandledGuardException(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             Exception exception);
 
-        void HandlingTransitionException(
+        Task HandlingTransitionException(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception);
 
-        void HandledTransitionException(
+        Task HandledTransitionException(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             Exception exception);
 
-        void SkippedTransition(
+        Task SkippedTransition(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context);
 
-        void ExecutingTransition(
+        Task ExecutingTransition(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context);
 
-        void ExecutedTransition(
+        Task ExecutedTransition(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context);
 
-        void Loaded(
+        Task Loaded(
             IInitializable<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates);
 
-        void EnteringState(
+        Task EnteringState(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context);
     }

@@ -45,8 +45,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
         protected TestableExtensionHost ExtensionHost { get; }
 
-        protected IStateMachineInformation<States, Events> StateMachineInformation { get; }
-
         protected IStateDefinition<States, Events> Source { get; set; }
 
         protected IStateDefinition<States, Events> Target { get; set; }
@@ -57,19 +55,18 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         {
             this.StateLogic = A.Fake<IStateLogic<States, Events>>();
             this.LastActiveStateModifier = A.Fake<ILastActiveStateModifier<States, Events>>();
-            this.StateMachineInformation = A.Fake<IStateMachineInformation<States, Events>>();
             this.ExtensionHost = new TestableExtensionHost();
             this.TransitionDefinition = new TransitionDefinition<States, Events>();
 
-            this.Testee = new TransitionLogic<States, Events>(this.ExtensionHost, this.StateMachineInformation);
+            this.Testee = new TransitionLogic<States, Events>(this.ExtensionHost);
             this.Testee.SetStateLogic(this.StateLogic);
         }
 
         protected class TestableExtensionHost : IExtensionHost<States, Events>
         {
-            public IExtension<States, Events> Extension { private get; set; }
+            public IExtensionInternal<States, Events> Extension { private get; set; }
 
-            public async Task ForEach(Func<IExtension<States, Events>, Task> action)
+            public async Task ForEach(Func<IExtensionInternal<States, Events>, Task> action)
             {
                 if (this.Extension != null)
                 {

@@ -61,7 +61,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
         public async Task ExtensionsWhenExtensionsAreClearedThenNoExtensionIsRegistered()
         {
             var executed = false;
-            var extension = A.Fake<IExtension<string, int>>();
+            var extension = A.Fake<IExtensionInternal<string, int>>();
 
             var testee = new StateContainer<string, int>();
 

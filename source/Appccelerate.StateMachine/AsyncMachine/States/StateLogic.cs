@@ -29,16 +29,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         where TEvent : IComparable
     {
         private readonly IExtensionHost<TState, TEvent> extensionHost;
-        private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;
         private readonly ITransitionLogic<TState, TEvent> transitionLogic;
 
         public StateLogic(
             ITransitionLogic<TState, TEvent> transitionLogic,
-            IExtensionHost<TState, TEvent> extensionHost,
-            IStateMachineInformation<TState, TEvent> stateMachineInformation)
+            IExtensionHost<TState, TEvent> extensionHost)
         {
             this.extensionHost = extensionHost;
-            this.stateMachineInformation = stateMachineInformation;
             this.transitionLogic = transitionLogic;
         }
 
@@ -88,8 +85,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             await this.extensionHost.ForEach(
                 extension =>
-                    extension.EnteringState(
-                        this.stateMachineInformation, stateDefinition, context));
+                    extension.EnteringState(stateDefinition, context));
 
             await this.ExecuteEntryActions(stateDefinition, context).ConfigureAwait(false);
         }
@@ -205,8 +201,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.extensionHost
                 .ForEach(
                     extension =>
-                    extension.HandlingEntryActionException(
-                        this.stateMachineInformation, stateDefinition, context, ref exception))
+                    extension.HandlingEntryActionException(stateDefinition, context, ref exception))
                 .ConfigureAwait(false);
 
             HandleException(exception, context);
@@ -214,8 +209,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.extensionHost
                 .ForEach(
                     extension =>
-                    extension.HandledEntryActionException(
-                        this.stateMachineInformation, stateDefinition, context, exception))
+                    extension.HandledEntryActionException(stateDefinition, context, exception))
                 .ConfigureAwait(false);
         }
 
@@ -256,8 +250,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.extensionHost
                 .ForEach(
                     extension =>
-                    extension.HandlingExitActionException(
-                        this.stateMachineInformation, stateDefinition, context, ref exception))
+                    extension.HandlingExitActionException(stateDefinition, context, ref exception))
                 .ConfigureAwait(false);
 
             HandleException(exception, context);
@@ -265,8 +258,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.extensionHost
                 .ForEach(
                     extension =>
-                    extension.HandledExitActionException(
-                        this.stateMachineInformation, stateDefinition, context, exception))
+                    extension.HandledExitActionException(stateDefinition, context, exception))
                 .ConfigureAwait(false);
         }
 

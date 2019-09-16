@@ -176,5 +176,10 @@ namespace Appccelerate.StateMachine.Extensions
         {
             this.apiExtension.Loaded(this.stateMachineInformation, loadedCurrentState, loadedHistoryStates);
         }
+
+        public void EnteringState(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context)
+        {
+            this.apiExtension.EnteringState(this.stateMachineInformation, stateDefinition, context);
+        }
     }
 }

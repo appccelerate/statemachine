@@ -270,7 +270,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             IStateDefinition<TState, TEvent> state,
             ITransitionContext<TState, TEvent> context);
 
-        void Loaded(
+        Task Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             IInitializable<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates);

@@ -196,12 +196,13 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             public List<IInitializable<State>> LoadedCurrentState { get; } = new List<IInitializable<State>>();
 
-            public override void Loaded(
+            public override Task Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
                 IInitializable<State> loadedCurrentState,
                 IReadOnlyDictionary<State, State> loadedHistoryStates)
             {
                 this.LoadedCurrentState.Add(loadedCurrentState);
+                return Task.CompletedTask;
             }
         }
 

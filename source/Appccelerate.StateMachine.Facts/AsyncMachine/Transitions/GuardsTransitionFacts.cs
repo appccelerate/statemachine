@@ -74,7 +74,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task NotifiesExtensions_WhenGuardIsNotMet()
         {
-            var extension = A.Fake<IExtension<States, Events>>();
+            var extension = A.Fake<IExtensionInternal<States, Events>>();
             this.ExtensionHost.Extension = extension;
 
             var guard = Builder<States, Events>.CreateGuardHolder().ReturningFalse().Build();
@@ -83,7 +83,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
             await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             A.CallTo(() => extension.SkippedTransition(
-                this.StateMachineInformation,
                 A<ITransitionDefinition<States, Events>>.That.Matches(t => t.Source == this.Source && t.Target == this.Target),
                 this.TransitionContext)).MustHaveHappened();
         }

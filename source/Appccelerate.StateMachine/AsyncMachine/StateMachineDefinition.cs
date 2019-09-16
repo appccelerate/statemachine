@@ -55,8 +55,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
             }
 
-            var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
+            var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
             var standardFactory = new StandardFactory<TState, TEvent>();
@@ -79,8 +79,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 stateContainer.SetLastActiveStateFor(stateIdAndLastActiveState.Key, stateIdAndLastActiveState.Value);
             }
 
-            var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer, stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer, stateContainer);
+            var transitionLogic = new TransitionLogic<TState, TEvent>(stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
             var standardFactory = new StandardFactory<TState, TEvent>();

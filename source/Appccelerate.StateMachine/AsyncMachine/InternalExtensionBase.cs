@@ -16,137 +16,159 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Extensions
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Infrastructure;
-    using Machine;
-    using Machine.States;
-    using Machine.Transitions;
+    using States;
+    using Transitions;
 
     public class InternalExtensionBase<TState, TEvent> : IExtensionInternal<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        public virtual void StartedStateMachine()
+        public virtual Task StartedStateMachine()
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void StoppedStateMachine()
+        public virtual Task StoppedStateMachine()
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void EventQueued(TEvent eventId, object eventArgument)
+        public virtual Task EventQueued(TEvent eventId, object eventArgument)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void EventQueuedWithPriority(TEvent eventId, object eventArgument)
+        public virtual Task EventQueuedWithPriority(TEvent eventId, object eventArgument)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState)
+        public virtual Task SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void EnteringInitialState(TState state)
+        public virtual Task EnteringInitialState(TState state)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void EnteredInitialState(TState state, ITransitionContext<TState, TEvent> context)
+        public virtual Task EnteredInitialState(TState state, ITransitionContext<TState, TEvent> context)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void FiringEvent(ref TEvent eventId, ref object eventArgument)
+        public virtual Task FiringEvent(ref TEvent eventId, ref object eventArgument)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void FiredEvent(ITransitionContext<TState, TEvent> context)
+        public virtual Task FiredEvent(ITransitionContext<TState, TEvent> context)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void HandlingEntryActionException(
+        public virtual Task HandlingEntryActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void HandledEntryActionException(
+        public virtual Task HandledEntryActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             Exception exception)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void HandlingExitActionException(
+        public virtual Task HandlingExitActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void HandledExitActionException(
+        public virtual Task HandledExitActionException(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
             Exception exception)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void HandlingGuardException(
+        public virtual Task HandlingGuardException(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             ref Exception exception)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void HandledGuardException(
+        public virtual Task HandledGuardException(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             Exception exception)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void HandlingTransitionException(
+        public virtual Task HandlingTransitionException(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
             ref Exception exception)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void HandledTransitionException(
+        public virtual Task HandledTransitionException(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext,
             Exception exception)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void SkippedTransition(
+        public virtual Task SkippedTransition(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void ExecutingTransition(
+        public virtual Task ExecutingTransition(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void ExecutedTransition(
+        public virtual Task ExecutedTransition(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> transitionContext)
         {
+            return TaskEx.Completed;
         }
 
-        public virtual void Loaded(
+        public virtual Task Loaded(
             IInitializable<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates)
         {
+            return TaskEx.Completed;
         }
 
-        public void EnteringState(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context)
+        public Task EnteringState(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context)
         {
+            return TaskEx.Completed;
         }
     }
 }

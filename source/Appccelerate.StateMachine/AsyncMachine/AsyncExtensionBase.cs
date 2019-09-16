@@ -293,11 +293,12 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return TaskEx.Completed;
         }
 
-        public virtual void Loaded(
+        public virtual Task Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             IInitializable<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates)
         {
+            return TaskEx.Completed;
         }
     }
 }

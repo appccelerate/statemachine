@@ -86,8 +86,7 @@ namespace Appccelerate.StateMachine.Machine.States
 
             this.extensionHost.ForEach(
                 extension =>
-                    extension.EnteringState(
-                        this.stateMachineInformation, stateDefinition, context));
+                    extension.EnteringState(stateDefinition, context));
 
             this.ExecuteEntryActions(stateDefinition, context);
         }

@@ -46,7 +46,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public string Name { get; }
 
-        public List<IExtension<TState, TEvent>> Extensions { get; } = new List<IExtension<TState, TEvent>>();
+        public List<IExtensionInternal<TState, TEvent>> Extensions { get; } = new List<IExtensionInternal<TState, TEvent>>();
 
         public Initializable<IStateDefinition<TState, TEvent>> CurrentState { get; set; }
 
@@ -54,7 +54,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> LastActiveStates => this.lastActiveStates;
 
-        public async Task ForEach(Func<IExtension<TState, TEvent>, Task> action)
+        public async Task ForEach(Func<IExtensionInternal<TState, TEvent>, Task> action)
         {
             foreach (var extension in this.Extensions)
             {

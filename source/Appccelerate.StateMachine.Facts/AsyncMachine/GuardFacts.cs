@@ -50,10 +50,10 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
+            await testee.EnterInitialState(stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
-            await testee.Fire(Events.A, ExpectedEventArgument, stateContainer, stateContainer, stateDefinitions)
+            await testee.Fire(Events.A, ExpectedEventArgument, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 
             actualEventArgument
@@ -84,10 +84,10 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
+            await testee.EnterInitialState(stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
-            await testee.Fire(Events.A, ExpectedEventArgument, stateContainer, stateContainer, stateDefinitions)
+            await testee.Fire(Events.A, ExpectedEventArgument, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 
             actualEventArgument
@@ -111,10 +111,10 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
+            await testee.EnterInitialState(stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
-            await testee.Fire(Events.B, Missing.Value, stateContainer, stateContainer, stateDefinitions)
+            await testee.Fire(Events.B, Missing.Value, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 
             stateContainer
@@ -141,10 +141,10 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
+            await testee.EnterInitialState(stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
-            await testee.Fire(Events.B, 3, stateContainer, stateContainer, stateDefinitions)
+            await testee.Fire(Events.B, 3, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 
             stateContainer
