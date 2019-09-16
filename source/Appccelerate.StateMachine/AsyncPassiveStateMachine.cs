@@ -17,7 +17,6 @@
 namespace Appccelerate.StateMachine
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Linq;
     using System.Threading.Tasks;
     using AsyncMachine;
@@ -29,9 +28,6 @@ namespace Appccelerate.StateMachine
         where TEvent : IComparable
     {
         private readonly StateMachine<TState, TEvent> stateMachine;
-
-        private readonly ConcurrentQueue<EventInformation<TEvent>> events;
-        private readonly ConcurrentStack<EventInformation<TEvent>> priorityEvents;
 
         private readonly StateContainer<TState, TEvent> stateContainer;
 
@@ -51,8 +47,6 @@ namespace Appccelerate.StateMachine
             this.stateContainer = stateContainer;
             this.stateDefinitions = stateDefinitions;
             this.initialState = initialState;
-            this.events = new ConcurrentQueue<EventInformation<TEvent>>();
-            this.priorityEvents = new ConcurrentStack<EventInformation<TEvent>>();
         }
 
         /// <summary>
@@ -118,7 +112,7 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId, object eventArgument)
         {
-            this.events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
+            this.stateContainer.Events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
 
             await this.stateContainer
                 .ForEach(extension => extension.EventQueued(eventId, eventArgument))
@@ -145,7 +139,7 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task FirePriority(TEvent eventId, object eventArgument)
         {
-            this.priorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
+            this.stateContainer.PriorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
 
             await this.stateContainer
                 .ForEach(extension => extension.EventQueuedWithPriority(eventId, eventArgument))
@@ -318,7 +312,7 @@ namespace Appccelerate.StateMachine
             await this.InitializeStateMachineIfInitializationIsPending()
                 .ConfigureAwait(false);
 
-            while (this.priorityEvents.TryPop(out var eventInformation))
+            while (this.stateContainer.PriorityEvents.TryPop(out var eventInformation))
             {
                 await this.stateMachine.Fire(
                         eventInformation.EventId,
@@ -328,7 +322,7 @@ namespace Appccelerate.StateMachine
                     .ConfigureAwait(false);
             }
 
-            while (this.events.TryDequeue(out var eventInformation))
+            while (this.stateContainer.Events.TryDequeue(out var eventInformation))
             {
                 await this.stateMachine.Fire(
                         eventInformation.EventId,

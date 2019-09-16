@@ -19,10 +19,10 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Infrastructure;
-    using States;
 
     public class StateContainer<TState, TEvent> :
         IExtensionHost<TState, TEvent>,
@@ -51,6 +51,10 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public IInitializable<TState> CurrentStateId { get; set; }
 
         public IReadOnlyDictionary<TState, TState> LastActiveStates => this.lastActiveStates;
+
+        public ConcurrentQueue<EventInformation<TEvent>> Events { get; } = new ConcurrentQueue<EventInformation<TEvent>>();
+
+        public ConcurrentStack<EventInformation<TEvent>> PriorityEvents { get; } = new ConcurrentStack<EventInformation<TEvent>>();
 
         public async Task ForEach(Func<IExtensionInternal<TState, TEvent>, Task> action)
         {
