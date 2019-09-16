@@ -19,7 +19,6 @@
 namespace Appccelerate.StateMachine
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Extensions;
     using Machine;
@@ -42,11 +41,6 @@ namespace Appccelerate.StateMachine
         /// </summary>
         private readonly StateMachine<TState, TEvent> stateMachine;
 
-        /// <summary>
-        /// List of all queued events.
-        /// </summary>
-        private readonly LinkedList<EventInformation<TEvent>> events;
-
         private readonly StateContainer<TState, TEvent> stateContainer;
 
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
@@ -68,7 +62,6 @@ namespace Appccelerate.StateMachine
             this.stateContainer = stateContainer;
             this.stateDefinitions = stateDefinitions;
             this.initialState = initialState;
-            this.events = new LinkedList<EventInformation<TEvent>>();
         }
 
         /// <summary>
@@ -132,7 +125,7 @@ namespace Appccelerate.StateMachine
         /// <param name="eventArgument">The event argument.</param>
         public void Fire(TEvent eventId, object eventArgument)
         {
-            this.events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
+            this.stateContainer.Events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
 
             this.stateContainer.ForEach(extension => extension.EventQueued(eventId, eventArgument));
 
@@ -155,7 +148,7 @@ namespace Appccelerate.StateMachine
         /// <param name="eventArgument">The event argument.</param>
         public void FirePriority(TEvent eventId, object eventArgument)
         {
-            this.events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
+            this.stateContainer.Events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
 
             this.stateContainer.ForEach(extension => extension.EventQueuedWithPriority(eventId, eventArgument));
 
@@ -329,7 +322,7 @@ namespace Appccelerate.StateMachine
         {
             this.InitializeStateMachineIfInitializationIsPending();
 
-            while (this.events.Count > 0)
+            while (this.stateContainer.Events.Count > 0)
             {
                 var eventToProcess = this.GetNextEventToProcess();
                 this.FireEventOnStateMachine(eventToProcess);
@@ -352,8 +345,8 @@ namespace Appccelerate.StateMachine
         /// <returns>The next queued event.</returns>
         private EventInformation<TEvent> GetNextEventToProcess()
         {
-            var e = this.events.First.Value;
-            this.events.RemoveFirst();
+            var e = this.stateContainer.Events.First.Value;
+            this.stateContainer.Events.RemoveFirst();
             return e;
         }
 

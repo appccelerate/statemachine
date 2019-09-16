@@ -50,6 +50,8 @@ namespace Appccelerate.StateMachine.Machine
 
         public IReadOnlyDictionary<TState, TState> LastActiveStates => this.lastActiveStates;
 
+        public LinkedList<EventInformation<TEvent>> Events { get; } = new LinkedList<EventInformation<TEvent>>();
+
         public void ForEach(Action<IExtensionInternal<TState, TEvent>> action)
         {
             this.Extensions.ForEach(action);

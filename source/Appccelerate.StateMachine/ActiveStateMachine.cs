@@ -17,7 +17,6 @@
 namespace Appccelerate.StateMachine
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -41,7 +40,6 @@ namespace Appccelerate.StateMachine
         private readonly StateMachine<TState, TEvent> stateMachine;
         private readonly StateContainer<TState, TEvent> stateContainer;
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
-        private readonly LinkedList<EventInformation<TEvent>> queue;
         private readonly TState initialState;
 
         private Task worker;
@@ -57,8 +55,6 @@ namespace Appccelerate.StateMachine
             this.stateContainer = stateContainer;
             this.stateDefinitions = stateDefinitions;
             this.initialState = initialState;
-
-            this.queue = new LinkedList<EventInformation<TEvent>>();
         }
 
         /// <summary>
@@ -119,10 +115,10 @@ namespace Appccelerate.StateMachine
         /// <param name="eventArgument">The event argument.</param>
         public void Fire(TEvent eventId, object eventArgument)
         {
-            lock (this.queue)
+            lock (this.stateContainer.Events)
             {
-                this.queue.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
-                Monitor.Pulse(this.queue);
+                this.stateContainer.Events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
+                Monitor.Pulse(this.stateContainer.Events);
             }
 
             this.stateContainer.ForEach(extension => extension.EventQueued(eventId, eventArgument));
@@ -144,10 +140,10 @@ namespace Appccelerate.StateMachine
         /// <param name="eventArgument">The event argument.</param>
         public void FirePriority(TEvent eventId, object eventArgument)
         {
-            lock (this.queue)
+            lock (this.stateContainer.Events)
             {
-                this.queue.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
-                Monitor.Pulse(this.queue);
+                this.stateContainer.Events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
+                Monitor.Pulse(this.stateContainer.Events);
             }
 
             this.stateContainer.ForEach(extension => extension.EventQueuedWithPriority(eventId, eventArgument));
@@ -254,10 +250,10 @@ namespace Appccelerate.StateMachine
                 return;
             }
 
-            lock (this.queue)
+            lock (this.stateContainer.Events)
             {
                 this.stopToken.Cancel();
-                Monitor.Pulse(this.queue); // wake up task to get a chance to stop
+                Monitor.Pulse(this.stateContainer.Events); // wake up task to get a chance to stop
             }
 
             try
@@ -323,19 +319,19 @@ namespace Appccelerate.StateMachine
                 this.InitializeStateMachineIfInitializationIsPending();
 
                 EventInformation<TEvent> eventInformation;
-                lock (this.queue)
+                lock (this.stateContainer.Events)
                 {
-                    if (this.queue.Count > 0)
+                    if (this.stateContainer.Events.Count > 0)
                     {
-                        eventInformation = this.queue.First.Value;
-                        this.queue.RemoveFirst();
+                        eventInformation = this.stateContainer.Events.First.Value;
+                        this.stateContainer.Events.RemoveFirst();
                     }
                     else
                     {
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse because it is multi-threaded and can change in the mean time
                         if (!cancellationToken.IsCancellationRequested)
                         {
-                            Monitor.Wait(this.queue);
+                            Monitor.Wait(this.stateContainer.Events);
                         }
 
                         continue;

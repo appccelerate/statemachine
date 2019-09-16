@@ -33,8 +33,8 @@ namespace Appccelerate.StateMachine
             this.EventArgument = eventArgument;
         }
 
-        public TEvent EventId { get; private set; }
+        public TEvent EventId { get; }
 
-        public object EventArgument { get; private set; }
+        public object EventArgument { get; }
     }
 }
