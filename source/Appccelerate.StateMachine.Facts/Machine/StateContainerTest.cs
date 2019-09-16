@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         public void ExtensionsWhenExtensionsAreClearedThenNoExtensionIsRegistered()
         {
             var executed = false;
-            var extension = A.Fake<IExtension<string, int>>();
+            var extension = A.Fake<IExtensionInternal<string, int>>();
 
             var testee = new StateContainer<string, int>();
 

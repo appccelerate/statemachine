@@ -27,16 +27,12 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         where TEvent : IComparable
     {
         private readonly IExtensionHost<TState, TEvent> extensionHost;
-        private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;
 
         private IStateLogic<TState, TEvent> stateLogic;
 
-        public TransitionLogic(
-            IExtensionHost<TState, TEvent> extensionHost,
-            IStateMachineInformation<TState, TEvent> stateMachineInformation)
+        public TransitionLogic(IExtensionHost<TState, TEvent> extensionHost)
         {
             this.extensionHost = extensionHost;
-            this.stateMachineInformation = stateMachineInformation;
         }
 
         public void SetStateLogic(IStateLogic<TState, TEvent> stateLogicToSet)
@@ -54,20 +50,16 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             if (!this.ShouldFire(transitionDefinition, context))
             {
-                this.extensionHost.ForEach(extension => extension.SkippedTransition(
-                    this.stateMachineInformation,
-                    transitionDefinition,
-                    context));
+                this.extensionHost.ForEach(extension =>
+                    extension.SkippedTransition(transitionDefinition, context));
 
                 return TransitionResult<TState>.NotFired;
             }
 
             context.OnTransitionBegin();
 
-            this.extensionHost.ForEach(extension => extension.ExecutingTransition(
-                this.stateMachineInformation,
-                transitionDefinition,
-                context));
+            this.extensionHost.ForEach(extension =>
+                extension.ExecutingTransition(transitionDefinition, context));
 
             var newState = context.StateDefinition.Id;
 
@@ -84,10 +76,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 this.PerformActions(transitionDefinition, context);
             }
 
-            this.extensionHost.ForEach(extension => extension.ExecutedTransition(
-                this.stateMachineInformation,
-                transitionDefinition,
-                context));
+            this.extensionHost.ForEach(extension =>
+                extension.ExecutedTransition(transitionDefinition, context));
 
             return new TransitionResult<TState>(true, newState);
         }
@@ -200,12 +190,12 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             catch (Exception exception)
             {
                 this.extensionHost.ForEach(extension =>
-                    extension.HandlingGuardException(this.stateMachineInformation, transitionDefinition, context, ref exception));
+                    extension.HandlingGuardException(transitionDefinition, context, ref exception));
 
                 HandleException(exception, context);
 
                 this.extensionHost.ForEach(extension =>
-                    extension.HandledGuardException(this.stateMachineInformation, transitionDefinition, context, exception));
+                    extension.HandledGuardException(transitionDefinition, context, exception));
 
                 return false;
             }
@@ -222,12 +212,12 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 catch (Exception exception)
                 {
                     this.extensionHost.ForEach(extension =>
-                        extension.HandlingTransitionException(this.stateMachineInformation, transitionDefinition, context, ref exception));
+                        extension.HandlingTransitionException(transitionDefinition, context, ref exception));
 
                     HandleException(exception, context);
 
                     this.extensionHost.ForEach(extension =>
-                        extension.HandledTransitionException(this.stateMachineInformation, transitionDefinition, context, exception));
+                        extension.HandledTransitionException(transitionDefinition, context, exception));
                 }
             }
         }

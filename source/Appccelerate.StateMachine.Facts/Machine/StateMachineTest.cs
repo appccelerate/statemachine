@@ -175,7 +175,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.A);
 
             stateContainer
                 .CurrentStateId
@@ -198,7 +198,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.D1B);
 
             stateContainer
                 .CurrentStateId
@@ -226,7 +226,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             stateContainer.SetLastActiveStateFor(States.D, States.D1);
             stateContainer.SetLastActiveStateFor(States.D1, States.D1A);
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.D);
 
             stateContainer
                 .CurrentStateId
@@ -253,7 +253,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.E);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.E);
 
             this.ClearRecords();
 
@@ -282,7 +282,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B1);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.B1);
 
             this.ClearRecords();
 
@@ -311,7 +311,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B2);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.B2);
 
             this.ClearRecords();
 
@@ -343,7 +343,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.D1B);
 
             this.ClearRecords();
 
@@ -375,7 +375,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.A);
 
             this.ClearRecords();
 
@@ -404,7 +404,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.B2);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.B2);
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
@@ -429,7 +429,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1B);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.C1B);
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
@@ -460,7 +460,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.D1B);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.D1B);
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
@@ -490,7 +490,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1B);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.C1B);
 
             this.ClearRecords();
 
@@ -519,7 +519,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.A);
             this.ClearRecords();
 
             testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
@@ -538,7 +538,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.E);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.E);
             this.ClearRecords();
 
             testee.Fire(Events.E, stateContainer, stateContainer, this.stateDefinitions);
@@ -561,7 +561,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions, States.C1A);
+            testee.EnterInitialState(stateContainer, this.stateDefinitions, States.C1A);
             this.ClearRecords();
 
             testee.Fire(Events.C1B, stateContainer, stateContainer, this.stateDefinitions);

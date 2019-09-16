@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Extensions;
     using Machine;
     using Machine.Events;
     using Persistence;
@@ -133,7 +134,7 @@ namespace Appccelerate.StateMachine
         {
             this.events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
 
-            this.stateContainer.ForEach(extension => extension.EventQueued(this.stateContainer, eventId, eventArgument));
+            this.stateContainer.ForEach(extension => extension.EventQueued(eventId, eventArgument));
 
             this.Execute();
         }
@@ -156,7 +157,7 @@ namespace Appccelerate.StateMachine
         {
             this.events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
 
-            this.stateContainer.ForEach(extension => extension.EventQueuedWithPriority(this.stateContainer, eventId, eventArgument));
+            this.stateContainer.ForEach(extension => extension.EventQueuedWithPriority(eventId, eventArgument));
 
             this.Execute();
         }
@@ -170,7 +171,7 @@ namespace Appccelerate.StateMachine
         {
             this.IsRunning = true;
 
-            this.stateContainer.ForEach(extension => extension.StartedStateMachine(this.stateContainer));
+            this.stateContainer.ForEach(extension => extension.StartedStateMachine());
 
             this.Execute();
         }
@@ -202,7 +203,7 @@ namespace Appccelerate.StateMachine
         {
             this.IsRunning = false;
 
-            this.stateContainer.ForEach(extension => extension.StoppedStateMachine(this.stateContainer));
+            this.stateContainer.ForEach(extension => extension.StoppedStateMachine());
         }
 
         /// <summary>
@@ -211,7 +212,8 @@ namespace Appccelerate.StateMachine
         /// <param name="extension">The extension.</param>
         public void AddExtension(IExtension<TState, TEvent> extension)
         {
-            this.stateContainer.Extensions.Add(extension);
+            var extensionCompose = new InternalExtension<TState, TEvent>(extension, this.stateContainer);
+            this.stateContainer.Extensions.Add(extensionCompose);
         }
 
         /// <summary>
@@ -286,7 +288,6 @@ namespace Appccelerate.StateMachine
             {
                 this.stateContainer.Extensions.ForEach(
                     extension => extension.Loaded(
-                        this.stateContainer,
                         loadedCurrentState,
                         historyStates));
             }
@@ -342,7 +343,7 @@ namespace Appccelerate.StateMachine
                 return;
             }
 
-            this.stateMachine.EnterInitialState(this.stateContainer, this.stateContainer, this.stateDefinitions, this.initialState);
+            this.stateMachine.EnterInitialState(this.stateContainer, this.stateDefinitions, this.initialState);
         }
 
         /// <summary>
@@ -362,7 +363,7 @@ namespace Appccelerate.StateMachine
         /// <param name="e">The event to fire.</param>
         private void FireEventOnStateMachine(EventInformation<TEvent> e)
         {
-            this.stateMachine.Fire(e.EventId, e.EventArgument, this.stateContainer, this.stateContainer, this.stateDefinitions);
+            this.stateMachine.Fire(e.EventId, e.EventArgument, this.stateContainer, this.stateDefinitions);
         }
     }
 }

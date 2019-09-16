@@ -63,15 +63,15 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
             this.ExtensionHost = new TestableExtensionHost();
             this.TransitionDefinition = new TransitionDefinition<States, Events>();
 
-            this.Testee = new TransitionLogic<States, Events>(this.ExtensionHost, this.StateMachineInformation);
+            this.Testee = new TransitionLogic<States, Events>(this.ExtensionHost);
             this.Testee.SetStateLogic(this.StateLogic);
         }
 
         public class TestableExtensionHost : IExtensionHost<States, Events>
         {
-            public IExtension<States, Events> Extension { private get; set; }
+            public IExtensionInternal<States, Events> Extension { private get; set; }
 
-            public void ForEach(Action<IExtension<States, Events>> action)
+            public void ForEach(Action<IExtensionInternal<States, Events>> action)
             {
                 if (this.Extension != null)
                 {

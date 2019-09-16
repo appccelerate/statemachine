@@ -44,13 +44,13 @@ namespace Appccelerate.StateMachine.Machine
 
         public string Name { get; }
 
-        public List<IExtension<TState, TEvent>> Extensions { get; } = new List<IExtension<TState, TEvent>>();
+        public List<IExtensionInternal<TState, TEvent>> Extensions { get; } = new List<IExtensionInternal<TState, TEvent>>();
 
         public IInitializable<TState> CurrentStateId { get; set; }
 
         public IReadOnlyDictionary<TState, TState> LastActiveStates => this.lastActiveStates;
 
-        public void ForEach(Action<IExtension<TState, TEvent>> action)
+        public void ForEach(Action<IExtensionInternal<TState, TEvent>> action)
         {
             this.Extensions.ForEach(action);
         }

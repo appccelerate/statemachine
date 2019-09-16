@@ -33,6 +33,6 @@ namespace Appccelerate.StateMachine.Machine
         /// Executes the specified action for all extensions.
         /// </summary>
         /// <param name="action">The action to execute.</param>
-        void ForEach(Action<IExtension<TState, TEvent>> action);
+        void ForEach(Action<IExtensionInternal<TState, TEvent>> action);
     }
 }

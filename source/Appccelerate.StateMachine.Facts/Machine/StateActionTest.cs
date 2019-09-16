@@ -43,7 +43,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             entered.Should().BeTrue("entry action was not executed.");
         }
@@ -66,7 +66,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             entered1.Should().BeTrue("entry action was not executed.");
             entered2.Should().BeTrue("entry action was not executed.");
@@ -90,7 +90,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             receivedValue.Should().Be(Parameter);
         }
@@ -112,7 +112,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
@@ -138,7 +138,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
@@ -165,7 +165,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
