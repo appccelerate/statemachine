@@ -29,7 +29,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     {
         private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
         private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary = new ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>();
-        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+        private readonly Dictionary<TState, TState> initiallyLastActiveStates = new Dictionary<TState, TState>();
         private TState initialState;
         private bool isInitialStateConfigured;
 

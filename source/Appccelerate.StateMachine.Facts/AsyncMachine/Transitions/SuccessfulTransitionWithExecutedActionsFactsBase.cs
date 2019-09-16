@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task ReturnsSuccessfulTransitionResult()
         {
-            var result = await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            var result = await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             result.Should().BeSuccessfulTransitionResultWithNewState(this.Target);
         }
@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
             this.TransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(() => executed = true));
 
-            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             executed.Should().BeTrue("actions should be executed");
         }
@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
             var extension = new FakeExtension();
             this.ExtensionHost.Extension = extension;
 
-            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             extension.Items.Should().Contain(new FakeExtension.Item(
                 this.Source,

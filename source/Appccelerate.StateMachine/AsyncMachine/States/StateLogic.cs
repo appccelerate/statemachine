@@ -45,11 +45,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// <param name="stateDefinition">The state definition of the state in which the event should be fired.</param>
         /// <param name="context">The event context.</param>
         /// <param name="lastActiveStateModifier">The last active state modifier.</param>
+        /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
         /// <returns>The result of the transition.</returns>
         public async Task<ITransitionResult<TState>> Fire(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
             Guard.AgainstNullArgument("context", context);
 
@@ -59,7 +61,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             {
                 foreach (var transitionDefinition in transitionsForEvent)
                 {
-                    result = await this.transitionLogic.Fire(transitionDefinition, context, lastActiveStateModifier).ConfigureAwait(false);
+                    result = await this.transitionLogic.Fire(transitionDefinition, context, lastActiveStateModifier, stateDefinitions)
+                        .ConfigureAwait(false);
                     if (result.Fired)
                     {
                         return result;
@@ -69,7 +72,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             if (stateDefinition.SuperState != null)
             {
-                result = await this.Fire(stateDefinition.SuperState, context, lastActiveStateModifier).ConfigureAwait(false);
+                result = await this.Fire(stateDefinition.SuperState, context, lastActiveStateModifier, stateDefinitions)
+                    .ConfigureAwait(false);
             }
 
             return result;
@@ -93,7 +97,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         public async Task Exit(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             Guard.AgainstNullArgument("context", context);
 
@@ -106,22 +110,26 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         public async Task<TState> EnterByHistory(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
             var result = stateDefinition.Id;
 
             switch (stateDefinition.HistoryType)
             {
                 case HistoryType.None:
-                    result = await this.EnterHistoryNone(stateDefinition, context).ConfigureAwait(false);
+                    result = await this.EnterHistoryNone(stateDefinition, context)
+                        .ConfigureAwait(false);
                     break;
 
                 case HistoryType.Shallow:
-                    result = await this.EnterHistoryShallow(stateDefinition, context, lastActiveStateModifier).ConfigureAwait(false);
+                    result = await this.EnterHistoryShallow(stateDefinition, context, lastActiveStateModifier, stateDefinitions)
+                        .ConfigureAwait(false);
                     break;
 
                 case HistoryType.Deep:
-                    result = await this.EnterHistoryDeep(stateDefinition, context, lastActiveStateModifier).ConfigureAwait(false);
+                    result = await this.EnterHistoryDeep(stateDefinition, context, lastActiveStateModifier, stateDefinitions)
+                        .ConfigureAwait(false);
                     break;
             }
 
@@ -146,17 +154,20 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         public async Task<TState> EnterDeep(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
             await this.Entry(stateDefinition, context).ConfigureAwait(false);
 
-            var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
-            if (lastActiveState == null)
+            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+            if (!lastActiveStateId.HasValue)
             {
                 return stateDefinition.Id;
             }
 
-            return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier).ConfigureAwait(false);
+            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
+            return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier, stateDefinitions)
+                .ConfigureAwait(false);
         }
 
         private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
@@ -265,40 +276,44 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         /// <summary>
         /// Sets this instance as the last state of this instance's super state.
         /// </summary>
-        private void SetThisStateAsLastStateOfSuperState(IStateDefinition<TState, TEvent> stateDefinition, ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+        private void SetThisStateAsLastStateOfSuperState(IStateDefinition<TState, TEvent> stateDefinition, ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             if (stateDefinition.SuperState != null)
             {
-                lastActiveStateModifier.SetLastActiveStateFor(stateDefinition.SuperState.Id, stateDefinition);
+                lastActiveStateModifier.SetLastActiveStateFor(stateDefinition.SuperState.Id, stateDefinition.Id);
             }
         }
 
         private async Task<TState> EnterHistoryDeep(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
-            if (lastActiveState == null)
+            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+            if (!lastActiveStateId.HasValue)
             {
                 return stateDefinition.Id;
             }
 
-            return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier)
+            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
+            return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier, stateDefinitions)
                 .ConfigureAwait(false);
         }
 
         private async Task<TState> EnterHistoryShallow(
             IStateDefinition<TState, TEvent> stateDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            var lastActiveState = lastActiveStateModifier.GetLastActiveStateOrNullFor(stateDefinition.Id);
-            if (lastActiveState == null)
+            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+            if (!lastActiveStateId.HasValue)
             {
                 return stateDefinition.Id;
             }
 
+            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
             return await this.EnterShallow(lastActiveState, context)
                 .ConfigureAwait(false);
         }

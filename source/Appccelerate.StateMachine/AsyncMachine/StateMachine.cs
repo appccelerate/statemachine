@@ -126,7 +126,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             var currentState = stateContainer.CurrentState.ExtractOrThrow();
             var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
-            var result = await this.stateLogic.Fire(currentState, context, stateContainer)
+            var result = await this.stateLogic.Fire(currentState, context, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 
             if (!result.Fired)
@@ -199,7 +199,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         {
             var initialState = stateDefinitions[initialStateId];
             var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
-            var newStateId = await initializer.EnterInitialState(this.stateLogic, stateContainer).
+            var newStateId = await initializer.EnterInitialState(this.stateLogic, stateContainer, stateDefinitions).
                 ConfigureAwait(false);
             var newStateDefinition = stateDefinitions[newStateId];
             await SwitchStateTo(newStateDefinition, stateContainer)

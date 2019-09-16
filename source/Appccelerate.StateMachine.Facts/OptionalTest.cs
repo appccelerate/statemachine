@@ -19,7 +19,7 @@
 namespace Appccelerate.StateMachine.Facts
 {
     using FluentAssertions;
-    using StateMachine.Machine;
+    using StateMachine.Infrastructure;
     using Xunit;
 
     public class OptionalTest

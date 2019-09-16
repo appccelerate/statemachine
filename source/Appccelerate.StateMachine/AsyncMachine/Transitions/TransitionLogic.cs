@@ -44,7 +44,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         public async Task<ITransitionResult<TState>> Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
             Guard.AgainstNullArgument("context", context);
 
@@ -77,7 +78,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 await this.Fire(transitionDefinition, transitionDefinition.Source, transitionDefinition.Target, context, lastActiveStateModifier)
                     .ConfigureAwait(false);
 
-                newState = await this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier)
+                newState = await this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier, stateDefinitions)
                     .ConfigureAwait(false);
             }
             else
@@ -141,7 +142,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             IStateDefinition<TState, TEvent> source,
             IStateDefinition<TState, TEvent> target,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             if (source == transitionDefinition.Target)
             {
@@ -245,7 +246,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         private async Task UnwindSubStates(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             var o = context.StateDefinition;
             while (o != transitionDefinition.Source)

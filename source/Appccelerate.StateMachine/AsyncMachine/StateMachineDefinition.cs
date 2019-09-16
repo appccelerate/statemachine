@@ -28,12 +28,12 @@ namespace Appccelerate.StateMachine.AsyncMachine
         where TEvent : IComparable
     {
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
-        private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
+        private readonly IReadOnlyDictionary<TState, TState> initiallyLastActiveStates;
         private readonly TState initialState;
 
         public StateMachineDefinition(
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions,
-            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates,
+            IReadOnlyDictionary<TState, TState> initiallyLastActiveStates,
             TState initialState)
         {
             this.stateDefinitions = stateDefinitions;

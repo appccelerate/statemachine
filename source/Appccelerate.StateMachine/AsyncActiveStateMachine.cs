@@ -164,10 +164,8 @@ namespace Appccelerate.StateMachine
                 .ConfigureAwait(false);
 
             var historyStates = this.stateContainer
-                .LastActiveStates
-                .ToDictionary(
-                    pair => pair.Key,
-                    pair => pair.Value.Id);
+                .LastActiveStates;
+
             await stateMachineSaver.SaveHistoryStates(historyStates)
                 .ConfigureAwait(false);
         }
@@ -201,9 +199,14 @@ namespace Appccelerate.StateMachine
                 foreach (var historyState in historyStates)
                 {
                     var superState = this.stateDefinitions[historyState.Key];
-                    var lastActiveState = this.stateDefinitions[historyState.Value];
+                    var lastActiveState = historyState.Value;
 
-                    if (!superState.SubStates.Contains(lastActiveState))
+                    var lastActiveStateIsNotASubStateOfSuperState = superState
+                                                                        .SubStates
+                                                                        .Select(x => x.Id)
+                                                                        .Contains(lastActiveState)
+                                                                    == false;
+                    if (lastActiveStateIsNotASubStateOfSuperState)
                     {
                         throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
                     }
