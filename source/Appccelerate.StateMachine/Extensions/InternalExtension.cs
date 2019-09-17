@@ -172,9 +172,10 @@ namespace Appccelerate.StateMachine.Extensions
 
         public void Loaded(
             IInitializable<TState> loadedCurrentState,
-            IReadOnlyDictionary<TState, TState> loadedHistoryStates)
+            IReadOnlyDictionary<TState, TState> loadedHistoryStates,
+            IReadOnlyCollection<EventInformation<TEvent>> events)
         {
-            this.apiExtension.Loaded(this.stateMachineInformation, loadedCurrentState, loadedHistoryStates);
+            this.apiExtension.Loaded(this.stateMachineInformation, loadedCurrentState, loadedHistoryStates, events);
         }
 
         public void EnteringState(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context)

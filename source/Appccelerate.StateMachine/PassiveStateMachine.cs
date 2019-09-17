@@ -289,7 +289,8 @@ namespace Appccelerate.StateMachine
                 this.stateContainer.Extensions.ForEach(
                     extension => extension.Loaded(
                         loadedCurrentState,
-                        historyStates));
+                        historyStates,
+                        events));
             }
         }
 

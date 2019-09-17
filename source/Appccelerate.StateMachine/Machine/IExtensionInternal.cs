@@ -102,7 +102,8 @@ namespace Appccelerate.StateMachine.Machine
 
         void Loaded(
             IInitializable<TState> loadedCurrentState,
-            IReadOnlyDictionary<TState, TState> loadedHistoryStates);
+            IReadOnlyDictionary<TState, TState> loadedHistoryStates,
+            IReadOnlyCollection<EventInformation<TEvent>> events);
 
         void EnteringState(
             IStateDefinition<TState, TEvent> stateDefinition,

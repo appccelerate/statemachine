@@ -339,7 +339,8 @@ namespace Appccelerate.StateMachine.Facts.Machine
                             .Matches(currentState =>
                                 currentState.IsInitialized
                                 && currentState.ExtractOrThrow() == States.C),
-                        A<IReadOnlyDictionary<States, States>>.Ignored))
+                        A<IReadOnlyDictionary<States, States>>.Ignored,
+                        A<IReadOnlyCollection<EventInformation<Events>>>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -393,6 +394,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         public void SetsEventsOnLoadingFromPersistedState(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             var enteredB = false;
+            var extension = A.Fake<IExtension<States, Events>>();
 
             var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
             stateMachineDefinitionBuilder
@@ -406,18 +408,30 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithInitialState(States.A)
                 .Build();
             var testee = createStateMachine(stateMachineDefinition);
+            testee.AddExtension(extension);
 
             var loader = A.Fake<IStateMachineLoader<States, Events>>();
 
+            var eventInformation = new EventInformation<Events>(Events.E, null);
             A.CallTo(() => loader.LoadEvents())
-                .Returns(new List<EventInformation<Events>> { new EventInformation<Events>(Events.E, null) });
+                .Returns(new List<EventInformation<Events>> { eventInformation });
             A.CallTo(() => loader.LoadCurrentState())
                 .Returns(Initializable<States>.UnInitialized());
 
             testee.Load(loader);
 
+            A.CallTo(() => extension.Loaded(
+                    A<IStateMachineInformation<States, Events>>.Ignored,
+                    A<Initializable<States>>.Ignored,
+                    A<IReadOnlyDictionary<States, States>>.Ignored,
+                    A<IReadOnlyCollection<EventInformation<Events>>>
+                        .That
+                        .Matches(c =>
+                            c.Count == 1
+                            && c.Contains(eventInformation))))
+                .MustHaveHappenedOnceExactly();
+
             var signal = new AutoResetEvent(false);
-            var extension = A.Fake<IExtension<States, Events>>();
             A.CallTo(() =>
                     extension.EnteredInitialState(
                         A<IStateMachineInformation<States, Events>>.Ignored,

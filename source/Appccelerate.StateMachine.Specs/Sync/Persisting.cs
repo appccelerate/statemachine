@@ -353,7 +353,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
             public override void Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
                 IInitializable<State> loadedCurrentState,
-                IReadOnlyDictionary<State, State> loadedHistoryStates)
+                IReadOnlyDictionary<State, State> loadedHistoryStates,
+                IReadOnlyCollection<EventInformation<Event>> events)
             {
                 this.LoadedCurrentState.Add(loadedCurrentState);
             }
