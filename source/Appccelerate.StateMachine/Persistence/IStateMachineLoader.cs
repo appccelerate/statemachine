@@ -22,8 +22,9 @@ namespace Appccelerate.StateMachine.Persistence
     using System.Collections.Generic;
     using Infrastructure;
 
-    public interface IStateMachineLoader<TState>
+    public interface IStateMachineLoader<TState, TEvent>
         where TState : IComparable
+        where TEvent : IComparable
     {
         /// <summary>
         /// Returns the state to be set as the current state of the state machine.
@@ -36,5 +37,11 @@ namespace Appccelerate.StateMachine.Persistence
         /// </summary>
         /// <returns>Key = id of super state, Value = id of last active state.</returns>
         IReadOnlyDictionary<TState, TState> LoadHistoryStates();
+
+        /// <summary>
+        /// Returns the events to be processed by the state machine.
+        /// </summary>
+        /// <returns>The events.</returns>
+        IReadOnlyCollection<EventInformation<TEvent>> LoadEvents();
     }
 }

@@ -45,8 +45,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
         [Scenario]
         public void Loading(
-            StateMachineSaver<State> saver,
-            StateMachineLoader<State> loader,
+            StateMachineSaver<State, Event> saver,
+            StateMachineLoader<State, Event> loader,
             FakeExtension extension,
             State sourceState,
             State targetState)
@@ -64,8 +64,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 machine.Fire(Event.S2); // set history of super state S
                 machine.Fire(Event.B);  // set current state to B
 
-                saver = new StateMachineSaver<State>();
-                loader = new StateMachineLoader<State>();
+                saver = new StateMachineSaver<State, Event>();
+                loader = new StateMachineLoader<State, Event>();
 
                 machine.Save(saver);
             });
@@ -120,7 +120,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "when a not started state machine is loaded".x(() =>
             {
-                var loader = new StateMachineLoader<State>();
+                var loader = new StateMachineLoader<State, Event>();
                 loader.SetCurrentState(Initializable<State>.UnInitialized());
                 loader.SetHistoryStates(new Dictionary<State, State>());
 
@@ -135,7 +135,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "it should not be initialized already".x(() =>
             {
-                var stateMachineSaver = new StateMachineSaver<State>();
+                var stateMachineSaver = new StateMachineSaver<State, Event>();
                 loadedMachine.Save(stateMachineSaver);
                 stateMachineSaver
                     .CurrentStateId
@@ -162,7 +162,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             });
 
             "when state machine is loaded".x(() =>
-                receivedException = Catch.Exception(() => machine.Load(A.Fake<IStateMachineLoader<string>>())));
+                receivedException = Catch.Exception(() => machine.Load(A.Fake<IStateMachineLoader<string, int>>())));
 
             "it should throw invalid operation exception".x(() =>
             {
@@ -174,7 +174,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         [Scenario]
         public void InitialStateSetViaDefinitionBuilder()
         {
-            var stateMachineSaver = new StateMachineSaver<string>();
+            var stateMachineSaver = new StateMachineSaver<string, int>();
 
             var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
             stateMachineDefinitionBuilder
@@ -238,12 +238,15 @@ namespace Appccelerate.StateMachine.Specs.Sync
             }
         }
 
-        public class StateMachineSaver<TState> : IStateMachineSaver<TState>
+        public class StateMachineSaver<TState, TEvent> : IStateMachineSaver<TState, TEvent>
             where TState : IComparable
+            where TEvent : IComparable
         {
             public IInitializable<TState> CurrentStateId { get; private set; }
 
             public IReadOnlyDictionary<TState, TState> HistoryStates { get; private set; }
+
+            public IReadOnlyCollection<EventInformation<TEvent>> Events { get; private set; }
 
             public void SaveCurrentState(IInitializable<TState> currentState)
             {
@@ -254,13 +257,20 @@ namespace Appccelerate.StateMachine.Specs.Sync
             {
                 this.HistoryStates = historyStates;
             }
+
+            public void SaveEvents(IReadOnlyCollection<EventInformation<TEvent>> events)
+            {
+                this.Events = events;
+            }
         }
 
-        public class StateMachineLoader<TState> : IStateMachineLoader<TState>
+        public class StateMachineLoader<TState, TEvent> : IStateMachineLoader<TState, TEvent>
             where TState : IComparable
+            where TEvent : IComparable
         {
             private IInitializable<TState> currentState;
             private IReadOnlyDictionary<TState, TState> historyStates;
+            private IReadOnlyCollection<EventInformation<TEvent>> events = new List<EventInformation<TEvent>>();
 
             public void SetCurrentState(IInitializable<TState> state)
             {
@@ -272,9 +282,19 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 this.historyStates = states;
             }
 
+            public void SetEvents(IReadOnlyCollection<EventInformation<TEvent>> events)
+            {
+                this.events = events;
+            }
+
             public IReadOnlyDictionary<TState, TState> LoadHistoryStates()
             {
                 return this.historyStates;
+            }
+
+            public IReadOnlyCollection<EventInformation<TEvent>> LoadEvents()
+            {
+                return this.events;
             }
 
             public IInitializable<TState> LoadCurrentState()

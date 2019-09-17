@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Extensions;
     using Machine;
@@ -221,16 +222,15 @@ namespace Appccelerate.StateMachine
         /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load"/>.
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
-        public void Save(IStateMachineSaver<TState> stateMachineSaver)
+        public void Save(IStateMachineSaver<TState, TEvent> stateMachineSaver)
         {
             Guard.AgainstNullArgument(nameof(stateMachineSaver), stateMachineSaver);
 
             stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentStateId);
 
-            var historyStates = this.stateContainer
-                .LastActiveStates;
+            stateMachineSaver.SaveHistoryStates(this.stateContainer.LastActiveStates);
 
-            stateMachineSaver.SaveHistoryStates(historyStates);
+            stateMachineSaver.SaveEvents(this.stateContainer.SaveableEvents);
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Appccelerate.StateMachine
         /// The loader should return exactly the data that was passed to the saver.
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
-        public void Load(IStateMachineLoader<TState> stateMachineLoader)
+        public void Load(IStateMachineLoader<TState, TEvent> stateMachineLoader)
         {
             Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
 
@@ -246,9 +246,11 @@ namespace Appccelerate.StateMachine
 
             var loadedCurrentState = stateMachineLoader.LoadCurrentState();
             var historyStates = stateMachineLoader.LoadHistoryStates();
+            var events = stateMachineLoader.LoadEvents();
 
             SetCurrentState();
-            LoadHistoryStates();
+            SetHistoryStates();
+            SetEvents();
             NotifyExtensions();
 
             void SetCurrentState()
@@ -256,7 +258,12 @@ namespace Appccelerate.StateMachine
                 this.stateContainer.CurrentStateId = loadedCurrentState;
             }
 
-            void LoadHistoryStates()
+            void SetEvents()
+            {
+                this.stateContainer.Events = new LinkedList<EventInformation<TEvent>>(events);
+            }
+
+            void SetHistoryStates()
             {
                 foreach (var historyState in historyStates)
                 {

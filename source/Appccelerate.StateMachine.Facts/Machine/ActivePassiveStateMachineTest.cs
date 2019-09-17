@@ -311,7 +311,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [MemberData(nameof(StateMachineInstantiationProvider))]
         public void SetsCurrentStateOnLoadingFromPersistedState(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            var loader = A.Fake<IStateMachineLoader<States>>();
+            var loader = A.Fake<IStateMachineLoader<States, Events>>();
             var extension = A.Fake<IExtension<States, Events>>();
 
             A.CallTo(() => loader.LoadCurrentState())
@@ -367,7 +367,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .Build()
                 .CreatePassiveStateMachine();
 
-            var loader = A.Fake<IStateMachineLoader<States>>();
+            var loader = A.Fake<IStateMachineLoader<States, Events>>();
 
             A.CallTo(() => loader.LoadHistoryStates())
                 .Returns(new Dictionary<States, States>
@@ -388,6 +388,56 @@ namespace Appccelerate.StateMachine.Facts.Machine
             exitedD2.Should().BeTrue();
         }
 
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void SetsEventsOnLoadingFromPersistedState(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
+        {
+            var enteredB = false;
+
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .On(Events.E)
+                    .Goto(States.B);
+            stateMachineDefinitionBuilder
+                .In(States.B)
+                    .ExecuteOnEntry(() => enteredB = true);
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
+            var testee = createStateMachine(stateMachineDefinition);
+
+            var loader = A.Fake<IStateMachineLoader<States, Events>>();
+
+            A.CallTo(() => loader.LoadEvents())
+                .Returns(new List<EventInformation<Events>> { new EventInformation<Events>(Events.E, null) });
+            A.CallTo(() => loader.LoadCurrentState())
+                .Returns(Initializable<States>.UnInitialized());
+
+            testee.Load(loader);
+
+            var signal = new AutoResetEvent(false);
+            var extension = A.Fake<IExtension<States, Events>>();
+            A.CallTo(() =>
+                    extension.EnteredInitialState(
+                        A<IStateMachineInformation<States, Events>>.Ignored,
+                        A<States>.Ignored,
+                        A<ITransitionContext<States, Events>>.Ignored))
+                .Invokes(() => signal.Set());
+            testee.AddExtension(extension);
+
+            testee.Start();
+
+            var stateMachineWasStarted = signal.WaitOne(500);
+            stateMachineWasStarted.Should().BeTrue();
+
+            testee.Stop();
+
+            enteredB
+                .Should()
+                .BeTrue();
+        }
+
         [Fact]
         public void PassiveStateMachineThrowsExceptionOnLoading_WhenAlreadyStarted()
         {
@@ -400,7 +450,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             testee.Start();
 
-            Action action = () => testee.Load(A.Fake<IStateMachineLoader<States>>());
+            Action action = () => testee.Load(A.Fake<IStateMachineLoader<States, Events>>());
 
             action
                 .Should()
@@ -433,7 +483,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateMachineWasStarted = signal.WaitOne(500);
             stateMachineWasStarted.Should().BeTrue();
 
-            Action action = () => testee.Load(A.Fake<IStateMachineLoader<States>>());
+            Action action = () => testee.Load(A.Fake<IStateMachineLoader<States, Events>>());
 
             action
                 .Should()
@@ -459,7 +509,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             var testee = createStateMachine(stateMachineDefinition);
 
-            var loader = A.Fake<IStateMachineLoader<States>>();
+            var loader = A.Fake<IStateMachineLoader<States, Events>>();
 
             A.CallTo(() => loader.LoadHistoryStates())
                 .Returns(new Dictionary<States, States>
