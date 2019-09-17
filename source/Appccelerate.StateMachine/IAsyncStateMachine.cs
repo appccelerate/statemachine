@@ -125,7 +125,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task Save(IAsyncStateMachineSaver<TState> stateMachineSaver);
+        Task Save(IAsyncStateMachineSaver<TState, TEvent> stateMachineSaver);
 
         /// <summary>
         /// Loads the current state and history states from a persisted state (<see cref="Save(Appccelerate.StateMachine.Persistence.IAsyncStateMachineSaver{TState})"/>).
@@ -133,6 +133,6 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader);
+        Task Load(IAsyncStateMachineLoader<TState, TEvent> stateMachineLoader);
     }
 }

@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using FakeItEasy;
     using FluentAssertions;
     using Infrastructure;
@@ -88,10 +89,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 loadedMachine.Load(loader);
 
                 loadedMachine.TransitionCompleted += (sender, args) =>
-                    {
-                        sourceState = args.StateId;
-                        targetState = args.NewStateId;
-                    };
+                {
+                    sourceState = args.StateId;
+                    targetState = args.NewStateId;
+                };
 
                 loadedMachine.Start();
                 loadedMachine.Fire(Event.S);
@@ -112,6 +113,110 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .LoadedCurrentState
                     .Should()
                     .BeEquivalentTo(Initializable<State>.Initialized(State.B)));
+        }
+
+        [Scenario]
+        public void SavingEvents(
+            PassiveStateMachine<string, int> machine,
+            StateMachineSaver<string, int> saver)
+        {
+            "establish a state machine".x(() =>
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder
+                    .In("A")
+                        .On(1)
+                        .Goto("B");
+                stateMachineDefinitionBuilder
+                    .In("B")
+                        .On(2)
+                        .Goto("C");
+                stateMachineDefinitionBuilder
+                    .In("C")
+                        .On(3)
+                        .Goto("A");
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
+
+            "when events are fired".x(() =>
+            {
+                machine.Fire(1);
+                machine.Fire(2);
+            });
+
+            "and it is saved".x(() =>
+            {
+                saver = new StateMachineSaver<string, int>();
+                machine.Save(saver);
+            });
+
+            "it should save those events".x(() =>
+                saver
+                    .Events
+                    .Select(x => x.EventId)
+                    .Should()
+                    .HaveCount(2)
+                    .And
+                    .ContainInOrder(1, 2));
+        }
+
+        [Scenario]
+        public void LoadingEvents(
+            PassiveStateMachine<string, int> machine)
+        {
+            "establish a state machine".x(() =>
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder
+                    .In("A")
+                    .On(1)
+                    .Goto("B");
+                stateMachineDefinitionBuilder
+                    .In("B")
+                    .On(2)
+                    .Goto("C");
+                stateMachineDefinitionBuilder
+                    .In("C")
+                    .On(3)
+                    .Goto("A");
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
+
+            "when it is loaded with Events".x(() =>
+            {
+                var loader = new StateMachineLoader<string, int>();
+                loader.SetEvents(new List<EventInformation<int>>
+                {
+                    new EventInformation<int>(1, null),
+                    new EventInformation<int>(2, null),
+                });
+                machine.Load(loader);
+            });
+
+            "it should process those events".x(() =>
+            {
+                var transitionRecords = new List<TransitionRecord>();
+                machine.TransitionCompleted += (sender, args) =>
+                    transitionRecords.Add(
+                        new TransitionRecord(args.EventId, args.StateId, args.NewStateId));
+
+                machine.Start();
+                transitionRecords
+                    .Should()
+                    .HaveCount(2)
+                    .And
+                    .IsEquivalentInOrder(new List<TransitionRecord>
+                    {
+                        new TransitionRecord(1, "A", "B"),
+                        new TransitionRecord(2, "B", "C")
+                    });
+            });
         }
 
         [Scenario]
@@ -225,6 +330,22 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .On(Event.B).Goto(State.B);
         }
 
+        public class TransitionRecord
+        {
+            public int EventId { get; }
+
+            public string Source { get; }
+
+            public string Destination { get; }
+
+            public TransitionRecord(int eventId, string source, string destination)
+            {
+                this.EventId = eventId;
+                this.Source = source;
+                this.Destination = destination;
+            }
+        }
+
         public class FakeExtension : ExtensionBase<State, Event>
         {
             public List<IInitializable<State>> LoadedCurrentState { get; } = new List<IInitializable<State>>();
@@ -268,8 +389,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
             where TState : IComparable
             where TEvent : IComparable
         {
-            private IInitializable<TState> currentState;
-            private IReadOnlyDictionary<TState, TState> historyStates;
+            private IInitializable<TState> currentState = Initializable<TState>.UnInitialized();
+            private IReadOnlyDictionary<TState, TState> historyStates = new Dictionary<TState, TState>();
             private IReadOnlyCollection<EventInformation<TEvent>> events = new List<EventInformation<TEvent>>();
 
             public void SetCurrentState(IInitializable<TState> state)

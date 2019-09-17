@@ -17,6 +17,7 @@
 namespace Appccelerate.StateMachine
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Linq;
     using System.Threading.Tasks;
     using AsyncMachine;
@@ -213,17 +214,20 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Save(IAsyncStateMachineSaver<TState> stateMachineSaver)
+        public async Task Save(IAsyncStateMachineSaver<TState, TEvent> stateMachineSaver)
         {
             Guard.AgainstNullArgument(nameof(stateMachineSaver), stateMachineSaver);
 
             await stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentStateId)
                 .ConfigureAwait(false);
 
-            var historyStates = this.stateContainer
-                .LastActiveStates;
+            await stateMachineSaver.SaveHistoryStates(this.stateContainer.LastActiveStates)
+                .ConfigureAwait(false);
 
-            await stateMachineSaver.SaveHistoryStates(historyStates)
+            await stateMachineSaver.SaveEvents(this.stateContainer.SaveableEvents)
+                .ConfigureAwait(false);
+
+            await stateMachineSaver.SavePriorityEvents(this.stateContainer.SaveablePriorityEvents)
                 .ConfigureAwait(false);
         }
 
@@ -233,7 +237,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
+        public async Task Load(IAsyncStateMachineLoader<TState, TEvent> stateMachineLoader)
         {
             Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
 
@@ -241,9 +245,12 @@ namespace Appccelerate.StateMachine
 
             var loadedCurrentState = await stateMachineLoader.LoadCurrentState().ConfigureAwait(false);
             var historyStates = await stateMachineLoader.LoadHistoryStates().ConfigureAwait(false);
+            var events = await stateMachineLoader.LoadEvents().ConfigureAwait(false);
+            var priorityEvents = await stateMachineLoader.LoadPriorityEvents().ConfigureAwait(false);
 
             SetCurrentState();
-            LoadHistoryStates();
+            SetHistoryStates();
+            SetEvents();
             NotifyExtensions();
 
             void SetCurrentState()
@@ -251,7 +258,13 @@ namespace Appccelerate.StateMachine
                 this.stateContainer.CurrentStateId = loadedCurrentState;
             }
 
-            void LoadHistoryStates()
+            void SetEvents()
+            {
+                this.stateContainer.Events = new ConcurrentQueue<EventInformation<TEvent>>(events);
+                this.stateContainer.PriorityEvents = new ConcurrentStack<EventInformation<TEvent>>(priorityEvents);
+            }
+
+            void SetHistoryStates()
             {
                 foreach (var historyState in historyStates)
                 {

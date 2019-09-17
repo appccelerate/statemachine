@@ -52,9 +52,13 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public IReadOnlyDictionary<TState, TState> LastActiveStates => this.lastActiveStates;
 
-        public ConcurrentQueue<EventInformation<TEvent>> Events { get; } = new ConcurrentQueue<EventInformation<TEvent>>();
+        public ConcurrentQueue<EventInformation<TEvent>> Events { get; set; } = new ConcurrentQueue<EventInformation<TEvent>>();
 
-        public ConcurrentStack<EventInformation<TEvent>> PriorityEvents { get; } = new ConcurrentStack<EventInformation<TEvent>>();
+        public IReadOnlyCollection<EventInformation<TEvent>> SaveableEvents => new List<EventInformation<TEvent>>(this.Events);
+
+        public ConcurrentStack<EventInformation<TEvent>> PriorityEvents { get; set; } = new ConcurrentStack<EventInformation<TEvent>>();
+
+        public IReadOnlyCollection<EventInformation<TEvent>> SaveablePriorityEvents => new List<EventInformation<TEvent>>(this.PriorityEvents);
 
         public async Task ForEach(Func<IExtensionInternal<TState, TEvent>, Task> action)
         {
