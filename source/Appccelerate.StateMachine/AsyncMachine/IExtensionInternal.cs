@@ -103,7 +103,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         Task Loaded(
             IInitializable<TState> loadedCurrentState,
-            IReadOnlyDictionary<TState, TState> loadedHistoryStates);
+            IReadOnlyDictionary<TState, TState> loadedHistoryStates,
+            IReadOnlyCollection<EventInformation<TEvent>> events,
+            IReadOnlyCollection<EventInformation<TEvent>> priorityEvents);
 
         Task EnteringState(
             IStateDefinition<TState, TEvent> stateDefinition,

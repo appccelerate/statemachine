@@ -296,7 +296,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public virtual Task Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             IInitializable<TState> loadedCurrentState,
-            IReadOnlyDictionary<TState, TState> loadedHistoryStates)
+            IReadOnlyDictionary<TState, TState> loadedHistoryStates,
+            IReadOnlyCollection<EventInformation<TEvent>> events,
+            IReadOnlyCollection<EventInformation<TEvent>> priorityEvents)
         {
             return TaskEx.Completed;
         }

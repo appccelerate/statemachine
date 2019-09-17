@@ -257,17 +257,41 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when it is loaded with Events".x(async () =>
             {
+                var firstEvent = new EventInformation<int>(2, null);
+                var secondEvent = new EventInformation<int>(3, null);
+                var priorityEvent = new EventInformation<int>(1, null);
                 var loader = new StateMachineLoader<string, int>();
                 loader.SetEvents(new List<EventInformation<int>>
                 {
-                    new EventInformation<int>(2, null),
-                    new EventInformation<int>(3, null),
+                    firstEvent,
+                    secondEvent,
                 });
                 loader.SetPriorityEvents(new List<EventInformation<int>>
                 {
-                    new EventInformation<int>(1, null)
+                    priorityEvent
                 });
+
+                var extension = A.Fake<IExtension<string, int>>();
+                machine.AddExtension(extension);
+
                 await machine.Load(loader);
+
+                A.CallTo(() => extension.Loaded(
+                        A<IStateMachineInformation<string, int>>.Ignored,
+                        A<Initializable<string>>.Ignored,
+                        A<IReadOnlyDictionary<string, string>>.Ignored,
+                        A<IReadOnlyCollection<EventInformation<int>>>
+                            .That
+                            .Matches(c =>
+                                c.Count == 2
+                                && c.Contains(firstEvent)
+                                && c.Contains(secondEvent)),
+                        A<IReadOnlyCollection<EventInformation<int>>>
+                            .That
+                            .Matches(c =>
+                                c.Count == 1
+                                && c.Contains(priorityEvent))))
+                    .MustHaveHappenedOnceExactly();
             });
 
             "it should process those events".x(async () =>
@@ -377,17 +401,41 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when it is loaded with Events".x(async () =>
             {
+                var firstEvent = new EventInformation<int>(2, null);
+                var secondEvent = new EventInformation<int>(3, null);
+                var priorityEvent = new EventInformation<int>(1, null);
                 var loader = new StateMachineLoader<string, int>();
                 loader.SetEvents(new List<EventInformation<int>>
                 {
-                    new EventInformation<int>(2, null),
-                    new EventInformation<int>(3, null),
+                    firstEvent,
+                    secondEvent,
                 });
                 loader.SetPriorityEvents(new List<EventInformation<int>>
                 {
-                    new EventInformation<int>(1, null)
+                    priorityEvent
                 });
+
+                var extension = A.Fake<IExtension<string, int>>();
+                machine.AddExtension(extension);
+
                 await machine.Load(loader);
+
+                A.CallTo(() => extension.Loaded(
+                        A<IStateMachineInformation<string, int>>.Ignored,
+                        A<Initializable<string>>.Ignored,
+                        A<IReadOnlyDictionary<string, string>>.Ignored,
+                        A<IReadOnlyCollection<EventInformation<int>>>
+                            .That
+                            .Matches(c =>
+                                c.Count == 2
+                                && c.Contains(firstEvent)
+                                && c.Contains(secondEvent)),
+                        A<IReadOnlyCollection<EventInformation<int>>>
+                            .That
+                            .Matches(c =>
+                                c.Count == 1
+                                && c.Contains(priorityEvent))))
+                    .MustHaveHappenedOnceExactly();
             });
 
             "it should process those events".x(async () =>
@@ -484,7 +532,9 @@ namespace Appccelerate.StateMachine.Specs.Async
             public override Task Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
                 IInitializable<State> loadedCurrentState,
-                IReadOnlyDictionary<State, State> loadedHistoryStates)
+                IReadOnlyDictionary<State, State> loadedHistoryStates,
+                IReadOnlyCollection<EventInformation<Event>> events,
+                IReadOnlyCollection<EventInformation<Event>> priorityEvents)
             {
                 this.LoadedCurrentState.Add(loadedCurrentState);
                 return Task.CompletedTask;

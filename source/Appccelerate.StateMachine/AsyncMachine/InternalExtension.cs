@@ -172,9 +172,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public Task Loaded(
             IInitializable<TState> loadedCurrentState,
-            IReadOnlyDictionary<TState, TState> loadedHistoryStates)
+            IReadOnlyDictionary<TState, TState> loadedHistoryStates,
+            IReadOnlyCollection<EventInformation<TEvent>> events,
+            IReadOnlyCollection<EventInformation<TEvent>> priorityEvents)
         {
-            return this.apiExtension.Loaded(this.stateMachineInformation, loadedCurrentState, loadedHistoryStates);
+            return this.apiExtension.Loaded(this.stateMachineInformation, loadedCurrentState, loadedHistoryStates, events, priorityEvents);
         }
 
         public Task EnteringState(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context)
