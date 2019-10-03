@@ -27,77 +27,93 @@ namespace Appccelerate.StateMachine.Specs.Async
         private const int LeafState = 1;
         private const int SuperState = 0;
 
-        private readonly CurrentStateExtension testExtension = new CurrentStateExtension();
-        private AsyncPassiveStateMachine<int, int> machine;
-
-        private bool entryActionOfLeafStateExecuted;
-        private bool entryActionOfSuperStateExecuted;
-
-        [Background]
-        public void Background()
+        [Scenario]
+        public void InitializationInLeafState(
+            AsyncPassiveStateMachine<int, int> machine,
+            CurrentStateExtension testExtension,
+            bool entryActionOfLeafStateExecuted,
+            bool entryActionOfSuperStateExecuted)
         {
-            "establish a hierarchical state machine".x(() =>
+            "establish a hierarchical state machine with leaf state as initial state".x(() =>
             {
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
                 stateMachineDefinitionBuilder
                     .DefineHierarchyOn(SuperState)
-                        .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(LeafState);
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(LeafState);
                 stateMachineDefinitionBuilder
                     .In(SuperState)
-                        .ExecuteOnEntry(() => this.entryActionOfSuperStateExecuted = true);
+                    .ExecuteOnEntry(() => entryActionOfSuperStateExecuted = true);
                 stateMachineDefinitionBuilder
                     .In(LeafState)
-                        .ExecuteOnEntry(() => this.entryActionOfLeafStateExecuted = true);
-                this.machine = stateMachineDefinitionBuilder
+                    .ExecuteOnEntry(() => entryActionOfLeafStateExecuted = true);
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState(LeafState)
                     .Build()
                     .CreatePassiveStateMachine();
 
-                this.machine.AddExtension(this.testExtension);
+                testExtension = new CurrentStateExtension();
+                machine.AddExtension(testExtension);
             });
-        }
 
-        [Scenario]
-        public void InitializationInLeafState()
-        {
-            "when initializing to a leaf state and starting the state machine".x(async () =>
-            {
-                await this.machine.Initialize(LeafState);
-                await this.machine.Start();
-            });
+            "when starting the state machine".x(async () =>
+                await machine.Start());
 
             "it should set current state of state machine to state to which it is initialized".x(() =>
-                this.testExtension.CurrentState
+                testExtension.CurrentState
                     .Should().Be(LeafState));
 
             "it should execute entry action of state to which state machine is initialized".x(() =>
-                this.entryActionOfLeafStateExecuted
+                entryActionOfLeafStateExecuted
                     .Should().BeTrue());
 
             "it should execute entry action of super states of the state to which state machine is initialized".x(() =>
-                this.entryActionOfSuperStateExecuted
+                entryActionOfSuperStateExecuted
                     .Should().BeTrue());
         }
 
         [Scenario]
-        public void InitializationInSuperState()
+        public void InitializationInSuperState(
+            AsyncPassiveStateMachine<int, int> machine,
+            CurrentStateExtension testExtension,
+            bool entryActionOfLeafStateExecuted,
+            bool entryActionOfSuperStateExecuted)
         {
-            "when initializing to a super state and starting the state machine".x(async () =>
+            "establish a hierarchical state machine with super state as initial state".x(() =>
             {
-                await this.machine.Initialize(SuperState);
-                await this.machine.Start();
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .DefineHierarchyOn(SuperState)
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(LeafState);
+                stateMachineDefinitionBuilder
+                    .In(SuperState)
+                    .ExecuteOnEntry(() => entryActionOfSuperStateExecuted = true);
+                stateMachineDefinitionBuilder
+                    .In(LeafState)
+                    .ExecuteOnEntry(() => entryActionOfLeafStateExecuted = true);
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SuperState)
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                testExtension = new CurrentStateExtension();
+                machine.AddExtension(testExtension);
             });
 
+            "when starting the state machine".x(async () =>
+                await machine.Start());
+
             "it should_set_current_state_of_state_machine_to_initial_leaf_state_of_the_state_to_which_it_is_initialized".x(() =>
-                this.testExtension.CurrentState
+                testExtension.CurrentState
                     .Should().Be(LeafState));
 
             "it should_execute_entry_action_of_super_state_to_which_state_machine_is_initialized".x(() =>
-                this.entryActionOfSuperStateExecuted
+                entryActionOfSuperStateExecuted
                     .Should().BeTrue());
 
             "it should_execute_entry_actions_of_initial_sub_states_until_a_leaf_state_is_reached".x(() =>
-                this.entryActionOfLeafStateExecuted
+                entryActionOfLeafStateExecuted
                     .Should().BeTrue());
         }
     }

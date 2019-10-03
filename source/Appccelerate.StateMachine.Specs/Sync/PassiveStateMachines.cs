@@ -31,6 +31,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish an instantiated passive state machine".x(() =>
                 machine = new StateMachineDefinitionBuilder<string, int>()
+                    .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine());
 
@@ -56,6 +57,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish an instantiated passive state machine with custom name".x(() =>
                 machine = new StateMachineDefinitionBuilder<string, int>()
+                    .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine(Name));
 
@@ -88,10 +90,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
                     .Build()
                     .CreatePassiveStateMachine();
-
-                machine.Initialize("A");
             });
 
             "when firing an event onto the state machine".x(() =>
@@ -123,10 +124,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("A")
                     .Build()
                     .CreatePassiveStateMachine();
-
-                machine.Initialize("A");
             });
 
             "when firing a priority event onto the state machine".x(() =>

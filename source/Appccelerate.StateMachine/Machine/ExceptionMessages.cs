@@ -27,6 +27,8 @@ namespace Appccelerate.StateMachine.Machine
     /// </summary>
     public static class ExceptionMessages
     {
+        public const string InitialStateNotConfigured = "Initial state is not configured.";
+
         /// <summary>
         /// Value is not initialized.
         /// </summary>
@@ -41,11 +43,6 @@ namespace Appccelerate.StateMachine.Machine
         /// State machine is already initialized.
         /// </summary>
         public const string StateMachineIsAlreadyInitialized = "state machine is already initialized";
-
-        /// <summary>
-        /// State machine is not initialized.
-        /// </summary>
-        public const string StateMachineNotInitialized = "state machine is not initialized";
 
         /// <summary>
         /// State machine has not yet entered initial state.

@@ -18,12 +18,8 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
-    using System;
-    using System.Collections.Generic;
     using FluentAssertions;
-    using Infrastructure;
     using Machine;
-    using Specs;
     using Xbehave;
 
     public class Initialization
@@ -36,20 +32,19 @@ namespace Appccelerate.StateMachine.Specs.Sync
             bool entryActionExecuted,
             CurrentStateExtension currentStateExtension)
         {
-            "establish an initialized state machine".x(() =>
+            "establish a state machine".x(() =>
             {
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
                 stateMachineDefinitionBuilder
                     .In(TestState)
                         .ExecuteOnEntry(() => entryActionExecuted = true);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(TestState)
                     .Build()
                     .CreatePassiveStateMachine();
 
                 currentStateExtension = new CurrentStateExtension();
                 machine.AddExtension(currentStateExtension);
-
-                machine.Initialize(TestState);
             });
 
             "when starting the state machine".x(() =>
@@ -60,106 +55,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "should execute entry action of state to which state machine is initialized".x(() =>
                 entryActionExecuted.Should().BeTrue());
-        }
-
-        [Scenario]
-        public void Initialize(
-            PassiveStateMachine<int, int> machine,
-            bool entryActionExecuted)
-        {
-            "establish a state machine".x(() =>
-            {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
-                stateMachineDefinitionBuilder
-                    .In(TestState)
-                    .ExecuteOnEntry(() => entryActionExecuted = true);
-                machine = stateMachineDefinitionBuilder
-                    .Build()
-                    .CreatePassiveStateMachine();
-            });
-
-            "when state machine is initialized".x(() =>
-                machine.Initialize(TestState));
-
-            "should not yet execute any entry actions".x(() =>
-                entryActionExecuted.Should().BeFalse());
-        }
-
-        [Scenario]
-        public void Reinitialization(
-            PassiveStateMachine<int, int> machine,
-            Exception receivedException)
-        {
-            "establish an initialized state machine".x(() =>
-            {
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .Build()
-                    .CreatePassiveStateMachine();
-                machine.Initialize(TestState);
-            });
-
-            "when state machine is initialized again".x(() =>
-                receivedException = Catch.Exception(() =>
-                    machine.Initialize(TestState)));
-
-            "should throw an invalid operation exception".x(() =>
-                receivedException
-                    .Should().BeAssignableTo<InvalidOperationException>()
-                    .Which.Message
-                    .Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized));
-        }
-
-        [Scenario]
-        public void StartingAnUninitializedStateMachine(
-            PassiveStateMachine<int, int> machine,
-            Exception receivedException)
-        {
-            "establish an uninitialized state machine".x(() =>
-                machine = new StateMachineDefinitionBuilder<int, int>()
-                    .Build()
-                    .CreatePassiveStateMachine());
-
-            "when starting the state machine".x(() =>
-                receivedException = Catch.Exception(() =>
-                    machine.Start()));
-
-            "should throw an invalid operation exception".x(() =>
-                receivedException
-                    .Should().BeAssignableTo<InvalidOperationException>()
-                    .Which.Message
-                    .Should().Be(ExceptionMessages.StateMachineNotInitialized));
-        }
-
-        [Scenario]
-        public void InitializeALoadedStateMachine(
-            PassiveStateMachine<int, int> machine,
-            Exception receivedException,
-            CurrentStateExtension currentStateExtension)
-        {
-            "establish a loaded initialized state machine".x(() =>
-            {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
-                stateMachineDefinitionBuilder
-                    .In(1);
-                machine = stateMachineDefinitionBuilder
-                    .Build()
-                    .CreatePassiveStateMachine();
-
-                var loader = new Persisting.StateMachineLoader<int>();
-                loader.SetCurrentState(new Initializable<int> { Value = 1 });
-                loader.SetHistoryStates(new Dictionary<int, int>());
-                machine.Load(loader);
-            });
-
-            "when initializing the state machine".x(() =>
-                receivedException = Catch.Exception(() =>
-                    machine.Initialize(0)));
-
-            "should throw an invalid operation exception".x(() =>
-                receivedException
-                    .Should().BeAssignableTo<InvalidOperationException>()
-                    .Which.Message
-                    .Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized));
         }
     }
 }

@@ -28,15 +28,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
     /// </summary>
     public static class ExceptionMessages
     {
-        /// <summary>
-        /// Value is not initialized.
-        /// </summary>
-        public const string ValueNotInitialized = "Value is not initialized";
+        public const string InitialStateNotConfigured = "Initial state is not configured.";
 
-        /// <summary>
-        /// Value is already initialized.
-        /// </summary>
-        public const string ValueAlreadyInitialized = "Value is already initialized";
+        public const string ValueNotInitialized = "Value is not initialized";
 
         /// <summary>
         /// State machine is already initialized.

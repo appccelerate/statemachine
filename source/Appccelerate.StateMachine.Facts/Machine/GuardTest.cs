@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FluentAssertions;
+    using Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 
@@ -51,8 +52,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.A, EventArgument, stateContainer, stateContainer, stateDefinitions);
 
@@ -77,12 +77,14 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.B);
+            stateContainer
+                .CurrentStateId
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
@@ -104,12 +106,14 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.Initialize(States.A, stateContainer, stateContainer);
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, 3, stateContainer, stateContainer, stateDefinitions);
 
-            stateContainer.CurrentStateId.Should().Be(States.B);
+            stateContainer
+                .CurrentStateId
+                .Should()
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         private static bool SingleIntArgumentGuardReturningTrue(int i)

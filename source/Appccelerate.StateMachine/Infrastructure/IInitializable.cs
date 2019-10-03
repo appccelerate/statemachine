@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// <copyright file="StateMachineNameReporter.cs" company="Appccelerate">
+// <copyright file="IInitializable.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,19 +16,18 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Specs.Sync
+namespace Appccelerate.StateMachine.Infrastructure
 {
-    using System.Collections.Generic;
-    using Machine;
-    using Machine.States;
+    using System;
 
-    public class StateMachineNameReporter : IStateMachineReport<string, int>
+    public interface IInitializable<out T>
     {
-        public string StateMachineName { get; private set; }
+        T Value { get; }
 
-        public void Report(string name, IEnumerable<IStateDefinition<string, int>> states, string initialStateId)
-        {
-            this.StateMachineName = name;
-        }
+        bool IsInitialized { get; }
+
+        Initializable<TResult> Map<TResult>(Func<T, TResult> func);
+
+        T ExtractOrThrow();
     }
 }

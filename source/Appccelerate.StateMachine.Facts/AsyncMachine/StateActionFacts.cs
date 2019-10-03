@@ -41,10 +41,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             entered
@@ -70,10 +67,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             entered1.Should().BeTrue("entry action was not executed.");
@@ -98,10 +92,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             receivedValue
@@ -126,9 +117,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, null, stateContainer, stateContainer, stateDefinitions)
@@ -158,9 +147,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, null, stateContainer, stateContainer, stateDefinitions)
@@ -189,9 +176,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, null, stateContainer, stateContainer, stateDefinitions)

@@ -57,10 +57,10 @@ namespace Appccelerate.StateMachine.Specs.Async
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
                 SetupStates(stateMachineDefinitionBuilder);
                 var machine = stateMachineDefinitionBuilder
+                    .WithInitialState(State.A)
                     .Build()
                     .CreatePassiveStateMachine();
 
-                await machine.Initialize(State.A);
                 await machine.Start();
                 await machine.Fire(Event.S2); // set history of super state S
                 await machine.Fire(Event.B);  // set current state to B
@@ -79,6 +79,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
                 SetupStates(stateMachineDefinitionBuilder);
                 var loadedMachine = stateMachineDefinitionBuilder
+                    .WithInitialState(State.A)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -104,8 +105,10 @@ namespace Appccelerate.StateMachine.Specs.Async
                 targetState.Should().Be(State.S2));
 
             "it should notify extensions".x(()
-                => extension.LoadedCurrentState
-                    .Should().BeEquivalentTo(State.B));
+                => extension
+                    .LoadedCurrentState
+                    .Should()
+                    .BeEquivalentTo(Initializable<State>.Initialized(State.B)));
         }
 
         [Scenario]
@@ -121,16 +124,21 @@ namespace Appccelerate.StateMachine.Specs.Async
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
                 SetupStates(stateMachineDefinitionBuilder);
                 loadedMachine = stateMachineDefinitionBuilder
+                    .WithInitialState(State.A)
                     .Build()
                     .CreatePassiveStateMachine();
                 await loadedMachine.Load(loader);
             });
 
-            "it should not be initialized already".x(() =>
+            "it should not be initialized already".x(async () =>
             {
-                Func<Task> a = async () =>
-                    await loadedMachine.Initialize(State.S);
-                a.Should().NotThrow();
+                var stateMachineSaver = new StateMachineSaver<State>();
+                await loadedMachine.Save(stateMachineSaver);
+                stateMachineSaver
+                    .CurrentStateId
+                    .IsInitialized
+                    .Should()
+                    .BeFalse();
             });
         }
 
@@ -139,18 +147,20 @@ namespace Appccelerate.StateMachine.Specs.Async
             IAsyncStateMachine<string, int> machine,
             Exception receivedException)
         {
-            "establish an initialized state machine".x(() =>
+            "establish an started state machine".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<string, int>()
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("initial");
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine();
-                machine.Initialize("initial");
+                machine.Start();
             });
 
             "when state machine is loaded".x(async () =>
-            {
-                receivedException = await Catch.Exception(async () => await machine.Load(A.Fake<IAsyncStateMachineLoader<string>>()));
-            });
+                receivedException = await Catch.Exception(async () =>
+                    await machine.Load(A.Fake<IAsyncStateMachineLoader<string>>())));
 
             "it should throw invalid operation exception".x(() =>
             {
@@ -184,25 +194,25 @@ namespace Appccelerate.StateMachine.Specs.Async
 
         public class FakeExtension : AsyncExtensionBase<State, Event>
         {
-            public List<State> LoadedCurrentState { get; } = new List<State>();
+            public List<IInitializable<State>> LoadedCurrentState { get; } = new List<IInitializable<State>>();
 
             public override void Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
-                Initializable<State> loadedCurrentState,
+                IInitializable<State> loadedCurrentState,
                 IReadOnlyDictionary<State, State> loadedHistoryStates)
             {
-                this.LoadedCurrentState.Add(loadedCurrentState.Value);
+                this.LoadedCurrentState.Add(loadedCurrentState);
             }
         }
 
         public class StateMachineSaver<TState> : IAsyncStateMachineSaver<TState>
             where TState : IComparable
         {
-            public Initializable<TState> CurrentStateId { get; private set; }
+            public IInitializable<TState> CurrentStateId { get; private set; }
 
             public IReadOnlyDictionary<TState, TState> HistoryStates { get; private set; }
 
-            public Task SaveCurrentState(Initializable<TState> currentState)
+            public Task SaveCurrentState(IInitializable<TState> currentState)
             {
                 this.CurrentStateId = currentState;
 
@@ -220,10 +230,10 @@ namespace Appccelerate.StateMachine.Specs.Async
         public class StateMachineLoader<TState> : IAsyncStateMachineLoader<TState>
             where TState : IComparable
         {
-            private Initializable<TState> currentState;
+            private IInitializable<TState> currentState;
             private IReadOnlyDictionary<TState, TState> historyStates;
 
-            public void SetCurrentState(Initializable<TState> state)
+            public void SetCurrentState(IInitializable<TState> state)
             {
                 this.currentState = state;
             }
@@ -238,7 +248,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                 return Task.FromResult(this.historyStates);
             }
 
-            public Task<Initializable<TState>> LoadCurrentState()
+            public Task<IInitializable<TState>> LoadCurrentState()
             {
                 return Task.FromResult(this.currentState);
             }

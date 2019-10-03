@@ -84,10 +84,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(GrandParentOfDestinationState)
                         .ExecuteOnEntry(() => log += "enter" + GrandParentOfDestinationState);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
-                machine.Initialize(SourceState);
                 machine.Start();
             });
 
@@ -169,10 +169,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(CommonAncestorState)
                         .ExecuteOnExit(() => commonAncestorStateLeft = true);
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
-                machine.Initialize(SourceState);
                 machine.Start();
             });
 

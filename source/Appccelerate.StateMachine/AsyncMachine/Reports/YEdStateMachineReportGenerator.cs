@@ -25,7 +25,6 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
     using System.Linq;
     using System.Xml.Linq;
     using AsyncMachine;
-    using Infrastructure;
     using States;
     using Transitions;
 
@@ -49,7 +48,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
 
         private int edgeId;
 
-        private Initializable<TState> initialStateId;
+        private TState initialState;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YEdStateMachineReportGenerator&lt;TState, TEvent&gt;"/> class.
@@ -66,13 +65,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
         /// <param name="initialState">The initial state id.</param>
-        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialState)
+        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, TState initialState)
         {
             var statesList = states.ToList();
 
             this.edgeId = 0;
 
-            this.initialStateId = initialState;
+            this.initialState = initialState;
             Guard.AgainstNullArgument("states", statesList);
 
             XElement graph = CreateGraph();
@@ -244,7 +243,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
 
         private bool DetermineWhetherThisIsAnInitialState(IStateDefinition<TState, TEvent> state)
         {
-            return (this.initialStateId.IsInitialized && state.Id.ToString() == this.initialStateId.Value.ToString()) || (state.SuperState != null && state.SuperState.InitialState == state);
+            return state.Id.ToString() == this.initialState.ToString()
+                   || (state.SuperState != null && state.SuperState.InitialState == state);
         }
     }
 }

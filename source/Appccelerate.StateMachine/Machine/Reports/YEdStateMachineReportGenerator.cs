@@ -24,7 +24,6 @@ namespace Appccelerate.StateMachine.Machine.Reports
     using System.IO;
     using System.Linq;
     using System.Xml.Linq;
-    using Infrastructure;
     using Machine;
     using States;
     using Transitions;
@@ -49,7 +48,7 @@ namespace Appccelerate.StateMachine.Machine.Reports
 
         private int edgeId;
 
-        private Initializable<TState> initialStateId;
+        private TState initialState;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YEdStateMachineReportGenerator&lt;TState, TEvent&gt;"/> class.
@@ -65,14 +64,14 @@ namespace Appccelerate.StateMachine.Machine.Reports
         /// </summary>
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
-        /// <param name="initialState">The initial state id.</param>
-        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialState)
+        /// <param name="initialStateId">The initial state id.</param>
+        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, TState initialStateId)
         {
             var statesList = states.ToList();
 
             this.edgeId = 0;
 
-            this.initialStateId = initialState;
+            this.initialState = initialStateId;
             Guard.AgainstNullArgument("states", statesList);
 
             XElement graph = CreateGraph();
@@ -244,7 +243,8 @@ namespace Appccelerate.StateMachine.Machine.Reports
 
         private bool DetermineWhetherThisIsAnInitialState(IStateDefinition<TState, TEvent> state)
         {
-            return (this.initialStateId.IsInitialized && state.Id.ToString() == this.initialStateId.Value.ToString()) || (state.SuperState != null && state.SuperState.InitialState == state);
+            return state.Id.ToString() == this.initialState.ToString()
+                   || (state.SuperState != null && state.SuperState.InitialState == state);
         }
     }
 }

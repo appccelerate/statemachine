@@ -23,7 +23,6 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
     using System.Globalization;
     using System.Linq;
     using System.Text;
-    using Infrastructure;
     using States;
     using Transitions;
 
@@ -48,18 +47,17 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
         /// <param name="initialStateId">The initial state id.</param>
-        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialStateId)
+        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, TState initialStateId)
         {
             states = states.ToList();
 
             Guard.AgainstNullArgument("states", states);
-            Guard.AgainstNullArgument("initialStateId", initialStateId);
 
             var report = new StringBuilder();
 
             const string indentation = "    ";
 
-            report.AppendFormat("{0}: initial state = {1}{2}", name, initialStateId.IsInitialized ? initialStateId.Value.ToString() : "none", Environment.NewLine);
+            report.AppendFormat("{0}: initial state = {1}{2}", name, initialStateId.ToString(), Environment.NewLine);
 
             // write states
             var rootStates = states.Where(state => state.SuperState == null);

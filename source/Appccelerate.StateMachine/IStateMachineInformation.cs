@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine
 {
     using System;
+    using Infrastructure;
 
     /// <summary>
     /// Provides information about a state machine.
@@ -40,6 +41,6 @@ namespace Appccelerate.StateMachine
         /// Gets the id of the current state.
         /// </summary>
         /// <value>The id of the current state.</value>
-        TState CurrentStateId { get; }
+        IInitializable<TState> CurrentStateId { get; }
     }
 }

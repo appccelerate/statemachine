@@ -72,12 +72,12 @@ namespace Appccelerate.StateMachine.Specs.Async
                         });
 
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
                 machine.AddExtension(CurrentStateExtension);
 
-                await machine.Initialize(SourceState);
                 await machine.Start();
             });
 

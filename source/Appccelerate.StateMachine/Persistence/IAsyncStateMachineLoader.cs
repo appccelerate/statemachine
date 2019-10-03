@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.Persistence
         /// Returns the state to be set as the current state of the state machine.
         /// </summary>
         /// <returns>State id.</returns>
-        Task<Initializable<TState>> LoadCurrentState();
+        Task<IInitializable<TState>> LoadCurrentState();
 
         /// <summary>
         /// Returns the last active state of all super states that have a last active state (i.e. they count as visited).

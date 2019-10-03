@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using Events;
+    using Infrastructure;
     using States;
 
     /// <summary>
@@ -68,48 +69,33 @@ namespace Appccelerate.StateMachine.Machine
 
         private static void SwitchStateTo(IStateDefinition<TState, TEvent> newState, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-            var oldState = stateContainer.CurrentState;
+            var oldState = stateContainer.CurrentState.ExtractOr(null);
 
-            stateContainer.CurrentState = newState;
+            stateContainer.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.Initialized(newState);
 
             stateContainer.ForEach(extension =>
                 extension.SwitchedState(stateMachineInformation, oldState, newState));
         }
 
         /// <summary>
-        /// Initializes the state machine by setting the specified initial state.
-        /// </summary>
-        /// <param name="initialState">The initial state of the state machine.</param>
-        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
-        /// <param name="stateMachineInformation">The state machine information.</param>
-        public void Initialize(TState initialState, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
-        {
-            stateContainer.ForEach(extension => extension.InitializingStateMachine(stateMachineInformation, ref initialState));
-
-            Initialize(initialState, stateContainer);
-
-            stateContainer.ForEach(extension => extension.InitializedStateMachine(stateMachineInformation, initialState));
-        }
-
-        /// <summary>
-        /// Enters the initial state that was previously set with <see cref="Initialize(TState, StateContainer{TState,TEvent}, IStateMachineInformation{TState,TEvent})"/>.
+        /// Enters the initial state as specified with <paramref name="initialState"/>.
         /// </summary>
         /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
         /// <param name="stateMachineInformation">The state machine information.</param>
         /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
+        /// <param name="initialState">The initial state the state machine should enter.</param>
         public void EnterInitialState(
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions,
+            TState initialState)
         {
-            CheckThatStateMachineIsInitialized(stateContainer);
-
-            stateContainer.ForEach(extension => extension.EnteringInitialState(stateMachineInformation, stateContainer.InitialStateId.Value));
+            stateContainer.ForEach(extension => extension.EnteringInitialState(stateMachineInformation, initialState));
 
             var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
-            this.EnterInitialState(context, stateContainer, stateMachineInformation, stateDefinitions);
+            this.EnterInitialState(context, stateContainer, stateMachineInformation, stateDefinitions, initialState);
 
-            stateContainer.ForEach(extension => extension.EnteredInitialState(stateMachineInformation, stateContainer.InitialStateId.Value, context));
+            stateContainer.ForEach(extension => extension.EnteredInitialState(stateMachineInformation, initialState, context));
         }
 
         /// <summary>
@@ -143,13 +129,13 @@ namespace Appccelerate.StateMachine.Machine
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            CheckThatStateMachineIsInitialized(stateContainer);
             CheckThatStateMachineHasEnteredInitialState(stateContainer);
 
             stateContainer.ForEach(extension => extension.FiringEvent(stateMachineInformation, ref eventId, ref eventArgument));
 
-            var context = this.factory.CreateTransitionContext(stateContainer.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
-            var result = this.stateLogic.Fire(stateContainer.CurrentState, context, stateContainer);
+            var currentState = stateContainer.CurrentState.ExtractOrThrow();
+            var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
+            var result = this.stateLogic.Fire(currentState, context, stateContainer);
 
             if (!result.Fired)
             {
@@ -210,34 +196,20 @@ namespace Appccelerate.StateMachine.Machine
             this.RaiseEvent(
                 this.TransitionCompleted,
                 new TransitionCompletedEventArgs<TState, TEvent>(
-                    stateMachineInformation.CurrentStateId,
+                    stateMachineInformation.CurrentStateId.ExtractOrThrow(),
                     transitionContext),
                 transitionContext,
                 true);
-        }
-
-        /// <summary>
-        /// Initializes the state machine by setting the specified initial state.
-        /// </summary>
-        /// <param name="initialState">The initial state.</param>
-        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
-        private static void Initialize(TState initialState, StateContainer<TState, TEvent> stateContainer)
-        {
-            if (stateContainer.InitialStateId.IsInitialized)
-            {
-                throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
-            }
-
-            stateContainer.InitialStateId.Value = initialState;
         }
 
         private void EnterInitialState(
             ITransitionContext<TState, TEvent> context,
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions,
+            TState initialStateId)
         {
-            var initialState = stateDefinitions[stateContainer.InitialStateId.Value];
+            var initialState = stateDefinitions[initialStateId];
             var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
             var newStateId = initializer.EnterInitialState(this.stateLogic, stateContainer);
             var newStateDefinition = stateDefinitions[newStateId];
@@ -267,17 +239,9 @@ namespace Appccelerate.StateMachine.Machine
             }
         }
 
-        private static void CheckThatStateMachineIsInitialized(StateContainer<TState, TEvent> stateContainer)
-        {
-            if (stateContainer.CurrentState == null && !stateContainer.InitialStateId.IsInitialized)
-            {
-                throw new InvalidOperationException(ExceptionMessages.StateMachineNotInitialized);
-            }
-        }
-
         private static void CheckThatStateMachineHasEnteredInitialState(StateContainer<TState, TEvent> stateContainer)
         {
-            if (stateContainer.CurrentState == null)
+            if (!stateContainer.CurrentState.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineHasNotYetEnteredInitialState);
             }

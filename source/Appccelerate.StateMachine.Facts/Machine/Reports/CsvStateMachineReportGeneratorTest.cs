@@ -146,11 +146,10 @@ namespace Appccelerate.StateMachine.Facts.Machine.Reports
                 .In(States.Moving)
                     .On(Events.Stop).Goto(States.OnFloor);
             var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.OnFloor)
                 .Build();
 
             var elevator = createStateMachine("Elevator", stateMachineDefinition);
-
-            elevator.Initialize(States.OnFloor);
 
             elevator.Report(testee);
 

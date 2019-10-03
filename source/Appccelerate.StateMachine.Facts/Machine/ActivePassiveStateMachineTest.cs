@@ -44,27 +44,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
         [Theory]
         [MemberData(nameof(StateMachineInstantiationProvider))]
-        public void InitializeWhenNotStartedThenNoStateIsEntered(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
-        {
-            var enteredState = false;
-
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
-            stateMachineDefinitionBuilder
-                .In(States.A)
-                    .ExecuteOnEntry(() => enteredState = true);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
-
-            var testee = createStateMachine(stateMachineDefinition);
-
-            testee.Initialize(States.A);
-
-            enteredState
-                .Should().BeFalse();
-        }
-
-        [Theory]
-        [MemberData(nameof(StateMachineInstantiationProvider))]
-        public void InitializeWhenStartedThenInitialStateIsEntered(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
+        public void StartThenInitialStateIsEntered(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
             var enteredStateSignal = new AutoResetEvent(false);
 
@@ -72,47 +52,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
             stateMachineDefinitionBuilder
                 .In(States.A)
                     .ExecuteOnEntry(() => enteredStateSignal.Set());
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
-            testee.Initialize(States.A);
             testee.Start();
 
             enteredStateSignal.WaitOne(1000)
                 .Should().BeTrue();
-        }
-
-        [Theory]
-        [MemberData(nameof(StateMachineInstantiationProvider))]
-        public void InitializeWhenInitializedTwiceThenInvalidOperationException(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
-        {
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .Build();
-
-            var testee = createStateMachine(stateMachineDefinition);
-
-            testee.Initialize(States.A);
-            Action action = () => testee.Initialize(States.A);
-
-            action.Should()
-                .Throw<InvalidOperationException>()
-                .WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
-        }
-
-        [Theory]
-        [MemberData(nameof(StateMachineInstantiationProvider))]
-        public void StartingAnUninitializedStateMachineThenInvalidOperationException(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
-        {
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-                .Build();
-
-            var testee = createStateMachine(stateMachineDefinition);
-
-            Action action = () => testee.Start();
-
-            action
-                .Should().Throw<InvalidOperationException>();
         }
 
         /// <summary>
@@ -127,11 +76,11 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
             stateMachineDefinitionBuilder
                 .In(States.A);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
-
-            testee.Initialize(States.A);
 
             var runningInitially = testee.IsRunning;
             testee.Start();
@@ -187,7 +136,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
             stateMachineDefinitionBuilder
                 .In(States.A)
                     .On(Events.B).Goto(States.B);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
@@ -200,7 +151,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             object eventArgument = "test";
 
-            testee.Initialize(States.A);
             testee.Start();
 
             testee.Fire(Events.B, eventArgument);
@@ -253,7 +203,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
             stateMachineDefinitionBuilder
                 .In(States.C)
                     .On(Events.D).Goto(States.D);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             testee = createStateMachine(stateMachineDefinition);
 
@@ -266,7 +218,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             var allTransitionsCompleted = SetUpWaitForAllTransitions(testee, 1);
 
-            testee.Initialize(States.A);
             testee.Start();
 
             testee.Fire(Events.B);
@@ -301,7 +252,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
             stateMachineDefinitionBuilder
                 .In(States.B)
                     .On(Events.C).Goto(States.C);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 
@@ -310,7 +263,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             var allTransitionsCompleted = SetUpWaitForAllTransitions(testee, 1);
 
-            testee.Initialize(States.A);
             testee.Start();
 
             testee.Stop();
@@ -343,11 +295,11 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
             stateMachineDefinitionBuilder
                 .In(States.A);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
-
-            testee.Initialize(States.A);
 
             testee.Start();
             testee.Start();
@@ -363,14 +315,16 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var extension = A.Fake<IExtension<States, Events>>();
 
             A.CallTo(() => loader.LoadCurrentState())
-                .Returns(new Initializable<States> { Value = States.C });
+                .Returns(Initializable<States>.Initialized(States.C));
 
             var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
             stateMachineDefinitionBuilder
                 .In(States.A);
             stateMachineDefinitionBuilder
                 .In(States.C);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
             testee.AddExtension(extension);
@@ -382,7 +336,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                         A<IStateMachineInformation<States, Events>>.Ignored,
                         A<Initializable<States>>
                             .That
-                            .Matches(x => x.Value == States.C),
+                            .Matches(currentState =>
+                                currentState.IsInitialized
+                                && currentState.ExtractOrThrow() == States.C),
                         A<IReadOnlyDictionary<States, States>>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
@@ -407,6 +363,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                     .ExecuteOnExit(() => exitedD2 = true)
                     .On(Events.A).Goto(States.A);
             var testee = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
                 .Build()
                 .CreatePassiveStateMachine();
 
@@ -419,7 +376,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 });
 
             testee.Load(loader);
-            testee.Initialize(States.A);
             testee.Start();
             testee.Fire(Events.D); // should go to loaded last active state D2, not initial state D1
             exitedD2 = false;
@@ -430,15 +386,50 @@ namespace Appccelerate.StateMachine.Facts.Machine
             exitedD2.Should().BeTrue();
         }
 
-        [Theory]
-        [MemberData(nameof(StateMachineInstantiationProvider))]
-        public void ThrowsExceptionOnLoading_WhenAlreadyInitialized(string dummyName, Func<StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
+        [Fact]
+        public void PassiveStateMachineThrowsExceptionOnLoading_WhenAlreadyStarted()
         {
-            var stateMachineDefinition = new StateMachineDefinitionBuilder<States, Events>()
-               .Build();
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder.In(States.A);
+            var testee = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build()
+                .CreatePassiveStateMachine();
 
-            var testee = createStateMachine(stateMachineDefinition);
-            testee.Initialize(States.A);
+            testee.Start();
+
+            Action action = () => testee.Load(A.Fake<IStateMachineLoader<States>>());
+
+            action
+                .Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage(ExceptionMessages.StateMachineIsAlreadyInitialized);
+        }
+
+        [Fact]
+        public void ThrowsExceptionOnLoading_WhenAlreadyStarted()
+        {
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder.In(States.A);
+            var testee = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build()
+                .CreateActiveStateMachine();
+
+            var signal = new AutoResetEvent(false);
+            var extension = A.Fake<IExtension<States, Events>>();
+            A.CallTo(() =>
+                    extension.EnteredInitialState(
+                        A<IStateMachineInformation<States, Events>>.Ignored,
+                        A<States>.Ignored,
+                        A<ITransitionContext<States, Events>>.Ignored))
+                .Invokes(() => signal.Set());
+            testee.AddExtension(extension);
+
+            testee.Start();
+
+            var stateMachineWasStarted = signal.WaitOne(500);
+            stateMachineWasStarted.Should().BeTrue();
 
             Action action = () => testee.Load(A.Fake<IStateMachineLoader<States>>());
 
@@ -460,7 +451,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                     .WithHistoryType(HistoryType.Deep)
                     .WithInitialSubState(States.B1)
                     .WithSubState(States.B2);
-            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
+            var stateMachineDefinition = stateMachineDefinitionBuilder
+                .WithInitialState(States.A)
+                .Build();
 
             var testee = createStateMachine(stateMachineDefinition);
 

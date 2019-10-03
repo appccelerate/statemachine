@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     using System;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Infrastructure;
     using StateMachine.AsyncMachine;
     using Xunit;
 
@@ -47,27 +48,12 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
         {
             var stateContainer = new StateContainer<States, Events>();
 
-            Action action = () => { var state = stateContainer.CurrentStateId; };
+            Action action = () => { var state = stateContainer.CurrentStateId.ExtractOrThrow(); };
 
-            action.Should().Throw<NullReferenceException>();
-        }
-
-        [Fact]
-        public async Task ThrowsException_WhenInitializeIsCalledTwice()
-        {
-            var stateContainer = new StateContainer<States, Events>();
-            var testee = new StateMachineBuilder<States, Events>()
-                .WithStateContainer(stateContainer)
-                .Build();
-
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-
-            Func<Task> action = async () =>
-                await testee.Initialize(States.B, stateContainer, stateContainer)
-                    .ConfigureAwait(false);
-
-            action.Should().Throw<InvalidOperationException>();
+            action
+                .Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage(ExceptionMessages.ValueNotInitialized);
         }
 
         [Fact]
@@ -92,9 +78,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
             testee.TransitionExceptionThrown += (sender, eventArgs) => { };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -103,7 +87,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             stateContainer
                 .CurrentStateId
                 .Should()
-                .Be(States.A);
+                .BeEquivalentTo(Initializable<States>.Initialized(States.A));
         }
 
         [Fact]
@@ -130,9 +114,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             testee.TransitionDeclined += (sender, e) => transitionDeclined = true;
             testee.TransitionExceptionThrown += (sender, eventArgs) => { };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -173,9 +155,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                     eventArgs.Exception);
             };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -209,9 +189,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
             testee.TransitionExceptionThrown += (sender, eventArgs) => { };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -220,7 +198,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             stateContainer
                 .CurrentStateId
                 .Should()
-                .Be(States.C);
+                .BeEquivalentTo(Initializable<States>.Initialized(States.C));
         }
 
         [Fact]
@@ -250,9 +228,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                     eventArgs.Exception);
             };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -282,9 +258,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
             testee.TransitionExceptionThrown += (sender, eventArgs) => { };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -293,7 +267,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             stateContainer
                 .CurrentStateId
                 .Should()
-                .Be(States.B);
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
@@ -326,9 +300,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                     eventArgs.Exception);
             };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -361,9 +333,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
             testee.TransitionExceptionThrown += (sender, eventArgs) => { };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -372,7 +342,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             stateContainer
                 .CurrentStateId
                 .Should()
-                .Be(States.B);
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
@@ -403,9 +373,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                     eventArgs.Exception);
             };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -436,9 +404,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
             testee.TransitionExceptionThrown += (sender, eventArgs) => { };
 
-            await testee.Initialize(States.A, stateContainer, stateContainer)
-                .ConfigureAwait(false);
-            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A)
                 .ConfigureAwait(false);
 
             await testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions)
@@ -447,7 +413,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             stateContainer
                 .CurrentStateId
                 .Should()
-                .Be(States.B);
+                .BeEquivalentTo(Initializable<States>.Initialized(States.B));
         }
 
         [Fact]
