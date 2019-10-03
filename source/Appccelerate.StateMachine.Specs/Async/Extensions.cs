@@ -41,6 +41,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .On(1)
                         .Goto("1");
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("0")
                     .Build()
                     .CreatePassiveStateMachine(Name);
 
@@ -80,6 +81,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                         .On("A0")
                         .Goto("A0");
                 machine = stateMachineDefinitionBuilder
+                    .WithInitialState("0")
                     .Build()
                     .CreatePassiveStateMachine(Name);
 
