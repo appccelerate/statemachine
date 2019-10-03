@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="ITransitionResult{TState, TEvent}"/> is fired.
+        /// Gets a value indicating whether this <see cref="ITransitionResult{TState}"/> is fired.
         /// </summary>
         /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
         public bool Fired { get; }
