@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void ExitsState()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened();
         }
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void EntersState()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappened();
         }

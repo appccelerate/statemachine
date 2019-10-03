@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void EntersDestinationState()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappenedOnceExactly();
         }
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void ExitsSourceState()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappenedOnceExactly();
         }
@@ -52,7 +52,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void NotifiesTransitionBeginOnTransitionContext()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.TransitionContext.OnTransitionBegin()).MustHaveHappened();
         }

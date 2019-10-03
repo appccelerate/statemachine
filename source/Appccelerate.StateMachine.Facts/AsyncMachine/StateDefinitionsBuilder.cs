@@ -22,7 +22,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     using System.Collections.Generic;
     using AsyncSyntax;
     using StateMachine.AsyncMachine;
-    using StateMachine.AsyncMachine.States;
 
     public class StateDefinitionsBuilder<TState, TEvent>
         where TState : IComparable
@@ -30,7 +29,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     {
         private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
         private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary = new ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>();
-        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+        private readonly Dictionary<TState, TState> initiallyLastActiveStates = new Dictionary<TState, TState>();
 
         public IEntryActionSyntax<TState, TEvent> In(TState state)
         {

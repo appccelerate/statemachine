@@ -32,14 +32,14 @@ namespace Appccelerate.StateMachine.Facts.Machine
         private readonly HierarchyBuilder<string, int> testee;
         private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<string, int> states;
         private readonly StateDefinition<string, int> superState;
-        private readonly IDictionary<string, IStateDefinition<string, int>> initiallyLastActiveStates;
+        private readonly IDictionary<string, string> initiallyLastActiveStates;
 
         public HierarchyBuilderTest()
         {
             this.superState = new StateDefinition<string, int>(SuperState);
             this.states = A.Fake<IImplicitAddIfNotAvailableStateDefinitionDictionary<string, int>>();
             A.CallTo(() => this.states[SuperState]).Returns(this.superState);
-            this.initiallyLastActiveStates = A.Fake<IDictionary<string, IStateDefinition<string, int>>>();
+            this.initiallyLastActiveStates = A.Fake<IDictionary<string, string>>();
 
             this.testee = new HierarchyBuilder<string, int>(SuperState, this.states, this.initiallyLastActiveStates);
         }
@@ -84,7 +84,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             this.testee.WithInitialSubState(SubState);
 
-            A.CallTo(() => this.initiallyLastActiveStates.Add(SuperState, subState)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.initiallyLastActiveStates.Add(SuperState, subState.Id)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]

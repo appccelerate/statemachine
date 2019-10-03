@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System;
     using Appccelerate.StateMachine.Machine;
     using FluentAssertions;
-    using Infrastructure;
+    using StateMachine.Infrastructure;
     using Xunit;
 
     /// <summary>
@@ -96,9 +96,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.B, eventArguments, stateContainer, stateDefinitions);
 
             recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
@@ -144,9 +144,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.B, eventArguments, stateContainer, stateDefinitions);
 
             recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
@@ -189,9 +189,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.B, eventArguments, stateContainer, stateDefinitions);
 
             recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
@@ -232,9 +232,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 recordedException = eventArgs.Exception;
             };
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.B, eventArguments, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.B, eventArguments, stateContainer, stateDefinitions);
             recordedStateId.Should().Be(States.A);
             recordedEventId.Should().Be(Events.B);
             recordedEventArgument.Should().Be(eventArguments);

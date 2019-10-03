@@ -38,7 +38,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task DoesNotExitState()
         {
-            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustNotHaveHappened();
         }
@@ -46,7 +46,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task DoesNotEnterState()
         {
-            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Entry(this.Source, this.TransitionContext)).MustNotHaveHappened();
         }

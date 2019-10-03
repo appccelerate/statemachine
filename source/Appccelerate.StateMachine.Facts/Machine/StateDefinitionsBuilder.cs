@@ -21,7 +21,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System;
     using System.Collections.Generic;
     using StateMachine.Machine;
-    using StateMachine.Machine.States;
     using StateMachine.Syntax;
 
     public class StateDefinitionsBuilder<TState, TEvent>
@@ -30,7 +29,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
     {
         private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
         private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary = new ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>();
-        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+        private readonly Dictionary<TState, TState> initiallyLastActiveStates = new Dictionary<TState, TState>();
 
         public IEntryActionSyntax<TState, TEvent> In(TState state)
         {

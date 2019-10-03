@@ -35,6 +35,6 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// </summary>
         /// <param name="action">The action to execute.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task ForEach(Func<IExtension<TState, TEvent>, Task> action);
+        Task ForEach(Func<IExtensionInternal<TState, TEvent>, Task> action);
     }
 }

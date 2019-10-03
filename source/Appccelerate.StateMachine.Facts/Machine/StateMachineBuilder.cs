@@ -43,8 +43,8 @@ namespace Appccelerate.StateMachine.Facts.Machine
         public StateMachine<TState, TEvent> Build()
         {
             var factory = new StandardFactory<TState, TEvent>();
-            var transitionLogic = new TransitionLogic<TState, TEvent>(this.stateContainer, this.stateContainer);
-            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, this.stateContainer, this.stateContainer);
+            var transitionLogic = new TransitionLogic<TState, TEvent>(this.stateContainer);
+            var stateLogic = new StateLogic<TState, TEvent>(transitionLogic, this.stateContainer);
             transitionLogic.SetStateLogic(stateLogic);
 
             return new StateMachine<TState, TEvent>(factory, stateLogic);

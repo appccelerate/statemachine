@@ -1,5 +1,5 @@
-//-------------------------------------------------------------------------------
-// <copyright file="EventInformation.cs" company="Appccelerate">
+﻿//-------------------------------------------------------------------------------
+// <copyright file="OptionalTest.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,25 +16,28 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Facts
 {
-    using System;
+    using FluentAssertions;
+    using StateMachine.Infrastructure;
+    using Xunit;
 
-    /// <summary>
-    /// Container holding an event and its argument.
-    /// </summary>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public class EventInformation<TEvent>
-        where TEvent : IComparable
+    public class OptionalTest
     {
-        public EventInformation(TEvent eventId, object eventArgument)
+        [Fact]
+        public void IsInitialized()
         {
-            this.EventId = eventId;
-            this.EventArgument = eventArgument;
+            Optional<string>
+                .Just("hello world")
+                .HasValue
+                .Should()
+                .BeTrue();
+
+            Optional<string>
+                .Nothing()
+                .HasValue
+                .Should()
+                .BeFalse();
         }
-
-        public TEvent EventId { get; }
-
-        public object EventArgument { get; }
     }
 }

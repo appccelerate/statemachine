@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task ExitsOfAllStatesFromSourceUpToTarget()
         {
-            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened()
                 .Then(A.CallTo(() => this.StateLogic.Exit(this.intermediate, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened())
@@ -52,7 +52,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task EntersTargetState()
         {
-            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappened();
         }

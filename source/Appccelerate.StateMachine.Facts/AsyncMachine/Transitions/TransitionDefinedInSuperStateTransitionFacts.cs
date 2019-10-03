@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task ExitsAllStatesFromCurrentUpToSource()
         {
-            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.StateLogic.Exit(this.current, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened()
                 .Then(A.CallTo(() => this.StateLogic.Exit(this.intermediate, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened())

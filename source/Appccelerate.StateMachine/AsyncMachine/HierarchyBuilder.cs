@@ -33,12 +33,12 @@ namespace Appccelerate.StateMachine.AsyncMachine
         private readonly StateDefinition<TState, TEvent> superState;
 
         private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions;
-        private readonly IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
+        private readonly IDictionary<TState, TState> initiallyLastActiveStates;
 
         public HierarchyBuilder(
             TState superStateId,
             IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions,
-            IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
+            IDictionary<TState, TState> initiallyLastActiveStates)
         {
             Guard.AgainstNullArgument("states", stateDefinitions);
 
@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.WithSubState(stateId);
 
             this.superState.InitialStateModifiable = this.stateDefinitions[stateId];
-            this.initiallyLastActiveStates.Add(this.superState.Id, this.stateDefinitions[stateId]);
+            this.initiallyLastActiveStates.Add(this.superState.Id, stateId);
 
             return this;
         }

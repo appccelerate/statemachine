@@ -19,14 +19,13 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    using States;
+    using Infrastructure;
 
-    public interface ILastActiveStateModifier<TState, TEvent>
+    public interface ILastActiveStateModifier<TState>
         where TState : IComparable
-        where TEvent : IComparable
     {
-        IStateDefinition<TState, TEvent> GetLastActiveStateOrNullFor(TState state);
+        Optional<TState> GetLastActiveStateFor(TState state);
 
-        void SetLastActiveStateFor(TState state, IStateDefinition<TState, TEvent> newLastActiveState);
+        void SetLastActiveStateFor(TState state, TState newLastActiveState);
     }
 }

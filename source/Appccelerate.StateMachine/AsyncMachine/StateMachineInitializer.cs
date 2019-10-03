@@ -45,13 +45,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public async Task<TState> EnterInitialState(
             IStateLogic<TState, TEvent> stateLogic,
-            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
             var stack = this.TraverseUpTheStateHierarchy();
             await this.TraverseDownTheStateHierarchyAndEnterStates(stateLogic, stack)
                 .ConfigureAwait(false);
 
-            return await stateLogic.EnterByHistory(this.initialState, this.context, lastActiveStateModifier)
+            return await stateLogic.EnterByHistory(this.initialState, this.context, lastActiveStateModifier, stateDefinitions)
                 .ConfigureAwait(false);
         }
 

@@ -19,19 +19,19 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Infrastructure;
-    using States;
 
     public class StateContainer<TState, TEvent> :
         IExtensionHost<TState, TEvent>,
         IStateMachineInformation<TState, TEvent>,
-        ILastActiveStateModifier<TState, TEvent>
+        ILastActiveStateModifier<TState>
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly Dictionary<TState, IStateDefinition<TState, TEvent>> lastActiveStates = new Dictionary<TState, IStateDefinition<TState, TEvent>>();
+        private readonly Dictionary<TState, TState> lastActiveStates = new Dictionary<TState, TState>();
 
         public StateContainer()
             : this(default(string))
@@ -41,20 +41,26 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public StateContainer(string name)
         {
             this.Name = name;
-            this.CurrentState = Initializable<IStateDefinition<TState, TEvent>>.UnInitialized();
+            this.CurrentStateId = Initializable<TState>.UnInitialized();
         }
 
         public string Name { get; }
 
-        public List<IExtension<TState, TEvent>> Extensions { get; } = new List<IExtension<TState, TEvent>>();
+        public List<IExtensionInternal<TState, TEvent>> Extensions { get; } = new List<IExtensionInternal<TState, TEvent>>();
 
-        public Initializable<IStateDefinition<TState, TEvent>> CurrentState { get; set; }
+        public IInitializable<TState> CurrentStateId { get; set; }
 
-        public IInitializable<TState> CurrentStateId => this.CurrentState.Map(x => x.Id);
+        public IReadOnlyDictionary<TState, TState> LastActiveStates => this.lastActiveStates;
 
-        public IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> LastActiveStates => this.lastActiveStates;
+        public ConcurrentQueue<EventInformation<TEvent>> Events { get; set; } = new ConcurrentQueue<EventInformation<TEvent>>();
 
-        public async Task ForEach(Func<IExtension<TState, TEvent>, Task> action)
+        public IReadOnlyCollection<EventInformation<TEvent>> SaveableEvents => new List<EventInformation<TEvent>>(this.Events);
+
+        public ConcurrentStack<EventInformation<TEvent>> PriorityEvents { get; set; } = new ConcurrentStack<EventInformation<TEvent>>();
+
+        public IReadOnlyCollection<EventInformation<TEvent>> SaveablePriorityEvents => new List<EventInformation<TEvent>>(this.PriorityEvents);
+
+        public async Task ForEach(Func<IExtensionInternal<TState, TEvent>, Task> action)
         {
             foreach (var extension in this.Extensions)
             {
@@ -63,13 +69,15 @@ namespace Appccelerate.StateMachine.AsyncMachine
             }
         }
 
-        public IStateDefinition<TState, TEvent> GetLastActiveStateOrNullFor(TState state)
+        public Optional<TState> GetLastActiveStateFor(TState state)
         {
-            this.lastActiveStates.TryGetValue(state, out var lastActiveState);
-            return lastActiveState;
+            return
+                this.lastActiveStates.TryGetValue(state, out var lastActiveState)
+                    ? Optional<TState>.Just(lastActiveState)
+                    : Optional<TState>.Nothing();
         }
 
-        public void SetLastActiveStateFor(TState state, IStateDefinition<TState, TEvent> newLastActiveState)
+        public void SetLastActiveStateFor(TState state, TState newLastActiveState)
         {
             if (this.lastActiveStates.ContainsKey(state))
             {

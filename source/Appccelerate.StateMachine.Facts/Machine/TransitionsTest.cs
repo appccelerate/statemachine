@@ -19,7 +19,7 @@
 namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FluentAssertions;
-    using Infrastructure;
+    using StateMachine.Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 
@@ -52,7 +52,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             testee.TransitionDeclined += (sender, e) => { declined = true; };
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.C, stateContainer, stateContainer, stateDefinitions);
 
@@ -88,9 +88,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.B, EventArgument, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.B, EventArgument, stateContainer, stateDefinitions);
 
             action1Argument.Should().Be(EventArgument);
             action2Argument.Should().Be(EventArgument);
@@ -118,9 +118,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.B, EventArgument, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.B, EventArgument, stateContainer, stateDefinitions);
 
             action1Executed.Should().BeTrue("action with argument should be executed");
             action2Executed.Should().BeTrue("action without argument should be executed");
@@ -148,7 +148,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.A, stateContainer, stateContainer, stateDefinitions);
 
@@ -176,7 +176,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
@@ -201,9 +201,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.B, ExpectedValue, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.B, ExpectedValue, stateContainer, stateDefinitions);
 
             value.Should().Be(ExpectedValue);
         }

@@ -32,8 +32,6 @@ namespace Appccelerate.StateMachine
         private readonly StateMachine<TState, TEvent> stateMachine;
         private readonly StateContainer<TState, TEvent> stateContainer;
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
-        private readonly ConcurrentQueue<EventInformation<TEvent>> events;
-        private readonly ConcurrentStack<EventInformation<TEvent>> priorityEvents;
         private readonly TState initialState;
 
         private Task worker;
@@ -50,9 +48,6 @@ namespace Appccelerate.StateMachine
             this.stateContainer = stateContainer;
             this.stateDefinitions = stateDefinitions;
             this.initialState = initialState;
-
-            this.events = new ConcurrentQueue<EventInformation<TEvent>>();
-            this.priorityEvents = new ConcurrentStack<EventInformation<TEvent>>();
         }
 
         /// <summary>
@@ -115,10 +110,10 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(TEvent eventId, object eventArgument)
         {
-            this.events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
+            this.stateContainer.Events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
 
             await this.stateContainer
-                .ForEach(extension => extension.EventQueued(this.stateContainer, eventId, eventArgument))
+                .ForEach(extension => extension.EventQueued(eventId, eventArgument))
                 .ConfigureAwait(false);
 
             this.workerCompletionSource.TrySetResult(true);
@@ -142,10 +137,10 @@ namespace Appccelerate.StateMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task FirePriority(TEvent eventId, object eventArgument)
         {
-            this.priorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
+            this.stateContainer.PriorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
 
             await this.stateContainer
-                .ForEach(extension => extension.EventQueuedWithPriority(this.stateContainer, eventId, eventArgument))
+                .ForEach(extension => extension.EventQueuedWithPriority(eventId, eventArgument))
                 .ConfigureAwait(false);
 
             this.workerCompletionSource.TrySetResult(true);
@@ -156,19 +151,20 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Save(IAsyncStateMachineSaver<TState> stateMachineSaver)
+        public async Task Save(IAsyncStateMachineSaver<TState, TEvent> stateMachineSaver)
         {
             Guard.AgainstNullArgument(nameof(stateMachineSaver), stateMachineSaver);
 
             await stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentStateId)
                 .ConfigureAwait(false);
 
-            var historyStates = this.stateContainer
-                .LastActiveStates
-                .ToDictionary(
-                    pair => pair.Key,
-                    pair => pair.Value.Id);
-            await stateMachineSaver.SaveHistoryStates(historyStates)
+            await stateMachineSaver.SaveHistoryStates(this.stateContainer.LastActiveStates)
+                .ConfigureAwait(false);
+
+            await stateMachineSaver.SaveEvents(this.stateContainer.SaveableEvents)
+                .ConfigureAwait(false);
+
+            await stateMachineSaver.SavePriorityEvents(this.stateContainer.SaveablePriorityEvents)
                 .ConfigureAwait(false);
         }
 
@@ -178,7 +174,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
+        public async Task Load(IAsyncStateMachineLoader<TState, TEvent> stateMachineLoader)
         {
             Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
 
@@ -186,14 +182,23 @@ namespace Appccelerate.StateMachine
 
             var loadedCurrentState = await stateMachineLoader.LoadCurrentState().ConfigureAwait(false);
             var historyStates = await stateMachineLoader.LoadHistoryStates().ConfigureAwait(false);
+            var events = await stateMachineLoader.LoadEvents().ConfigureAwait(false);
+            var priorityEvents = await stateMachineLoader.LoadPriorityEvents().ConfigureAwait(false);
 
             SetCurrentState();
             LoadHistoryStates();
+            SetEvents();
             NotifyExtensions();
 
             void SetCurrentState()
             {
-                this.stateContainer.CurrentState = loadedCurrentState.Map(x => this.stateDefinitions[x]);
+                this.stateContainer.CurrentStateId = loadedCurrentState;
+            }
+
+            void SetEvents()
+            {
+                this.stateContainer.Events = new ConcurrentQueue<EventInformation<TEvent>>(events);
+                this.stateContainer.PriorityEvents = new ConcurrentStack<EventInformation<TEvent>>(priorityEvents);
             }
 
             void LoadHistoryStates()
@@ -201,9 +206,14 @@ namespace Appccelerate.StateMachine
                 foreach (var historyState in historyStates)
                 {
                     var superState = this.stateDefinitions[historyState.Key];
-                    var lastActiveState = this.stateDefinitions[historyState.Value];
+                    var lastActiveState = historyState.Value;
 
-                    if (!superState.SubStates.Contains(lastActiveState))
+                    var lastActiveStateIsNotASubStateOfSuperState = superState
+                                                                        .SubStates
+                                                                        .Select(x => x.Id)
+                                                                        .Contains(lastActiveState)
+                                                                    == false;
+                    if (lastActiveStateIsNotASubStateOfSuperState)
                     {
                         throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
                     }
@@ -216,9 +226,10 @@ namespace Appccelerate.StateMachine
             {
                 this.stateContainer.Extensions.ForEach(
                     extension => extension.Loaded(
-                        this.stateContainer,
                         loadedCurrentState,
-                        historyStates));
+                        historyStates,
+                        events,
+                        priorityEvents));
             }
         }
 
@@ -241,7 +252,7 @@ namespace Appccelerate.StateMachine
                 CancellationToken.None);
 
             await this.stateContainer
-                .ForEach(extension => extension.StartedStateMachine(this.stateContainer))
+                .ForEach(extension => extension.StartedStateMachine())
                 .ConfigureAwait(false);
         }
 
@@ -276,12 +287,11 @@ namespace Appccelerate.StateMachine
         private async Task ProcessNormalEvents(
             CancellationToken cancellationToken)
         {
-            while (this.events.TryDequeue(out var eventInformation))
+            while (this.stateContainer.Events.TryDequeue(out var eventInformation))
             {
                 await this.stateMachine.Fire(
                         eventInformation.EventId,
                         eventInformation.EventArgument,
-                        this.stateContainer,
                         this.stateContainer,
                         this.stateDefinitions)
                     .ConfigureAwait(false);
@@ -304,12 +314,11 @@ namespace Appccelerate.StateMachine
         private async Task ProcessPriorityEvents(
             CancellationToken cancellationToken)
         {
-            while (this.priorityEvents.TryPop(out var eventInformation))
+            while (this.stateContainer.PriorityEvents.TryPop(out var eventInformation))
             {
                 await this.stateMachine.Fire(
                         eventInformation.EventId,
                         eventInformation.EventArgument,
-                        this.stateContainer,
                         this.stateContainer,
                         this.stateDefinitions)
                     .ConfigureAwait(false);
@@ -341,7 +350,7 @@ namespace Appccelerate.StateMachine
             }
 
             await this.stateContainer
-                .ForEach(extension => extension.StoppedStateMachine(this.stateContainer))
+                .ForEach(extension => extension.StoppedStateMachine())
                 .ConfigureAwait(false);
         }
 
@@ -351,7 +360,8 @@ namespace Appccelerate.StateMachine
         /// <param name="extension">The extension.</param>
         public void AddExtension(IExtension<TState, TEvent> extension)
         {
-            this.stateContainer.Extensions.Add(extension);
+            var extensionCompose = new InternalExtension<TState, TEvent>(extension, this.stateContainer);
+            this.stateContainer.Extensions.Add(extensionCompose);
         }
 
         /// <summary>
@@ -384,7 +394,7 @@ namespace Appccelerate.StateMachine
 
         private void CheckThatNotAlreadyInitialized()
         {
-            if (this.stateContainer.CurrentState.IsInitialized)
+            if (this.stateContainer.CurrentStateId.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
             }
@@ -392,13 +402,13 @@ namespace Appccelerate.StateMachine
 
         private async Task InitializeStateMachineIfInitializationIsPending()
         {
-            if (this.stateContainer.CurrentState.IsInitialized)
+            if (this.stateContainer.CurrentStateId.IsInitialized)
             {
                 return;
             }
 
             await this.stateMachine
-                .EnterInitialState(this.stateContainer, this.stateContainer, this.stateDefinitions, this.initialState)
+                .EnterInitialState(this.stateContainer, this.stateDefinitions, this.initialState)
                 .ConfigureAwait(false);
         }
     }

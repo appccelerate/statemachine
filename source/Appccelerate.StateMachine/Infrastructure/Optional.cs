@@ -1,5 +1,5 @@
-//-------------------------------------------------------------------------------
-// <copyright file="EventInformation.cs" company="Appccelerate">
+﻿//-------------------------------------------------------------------------------
+// <copyright file="Optional.cs" company="Appccelerate">
 //   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,25 +16,30 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Infrastructure
 {
-    using System;
-
-    /// <summary>
-    /// Container holding an event and its argument.
-    /// </summary>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public class EventInformation<TEvent>
-        where TEvent : IComparable
+    public class Optional<T>
     {
-        public EventInformation(TEvent eventId, object eventArgument)
+        private Optional()
         {
-            this.EventId = eventId;
-            this.EventArgument = eventArgument;
         }
 
-        public TEvent EventId { get; }
+        public T Value { get; private set; }
 
-        public object EventArgument { get; }
+        public bool HasValue { get; private set; }
+
+        public static Optional<T> Just(T value)
+        {
+            return new Optional<T>
+            {
+                HasValue = true,
+                Value = value
+            };
+        }
+
+        public static Optional<T> Nothing()
+        {
+            return new Optional<T>();
+        }
     }
 }

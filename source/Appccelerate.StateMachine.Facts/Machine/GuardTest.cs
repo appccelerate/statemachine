@@ -19,7 +19,7 @@
 namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FluentAssertions;
-    using Infrastructure;
+    using StateMachine.Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 
@@ -52,9 +52,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.A, EventArgument, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.A, EventArgument, stateContainer, stateDefinitions);
 
             actualEventArgument.Should().Be(EventArgument);
         }
@@ -77,7 +77,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
             testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
@@ -106,9 +106,9 @@ namespace Appccelerate.StateMachine.Facts.Machine
                 .WithStateContainer(stateContainer)
                 .Build();
 
-            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions, States.A);
+            testee.EnterInitialState(stateContainer, stateDefinitions, States.A);
 
-            testee.Fire(Events.B, 3, stateContainer, stateContainer, stateDefinitions);
+            testee.Fire(Events.B, 3, stateContainer, stateDefinitions);
 
             stateContainer
                 .CurrentStateId

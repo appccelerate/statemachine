@@ -20,8 +20,8 @@ namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FakeItEasy;
     using FluentAssertions;
+    using StateMachine.Infrastructure;
     using StateMachine.Machine;
-    using StateMachine.Machine.States;
     using Xunit;
 
     public class StateContainerTest
@@ -32,35 +32,43 @@ namespace Appccelerate.StateMachine.Facts.Machine
             const string Name = "container";
             var stateContainer = new StateContainer<string, int>(Name);
 
-            stateContainer.Name.Should().Be(Name);
+            stateContainer
+                .Name
+                .Should()
+                .Be(Name);
         }
 
         [Fact]
-        public void ReturnsNullAsLastActiveStateWhenStateWasNeverSet()
+        public void ReturnsNothingAsLastActiveStateWhenStateWasNeverSet()
         {
-            var stateContainer = new StateContainer<string, int>("container");
+            var stateContainer = new StateContainer<string, int>();
 
-            stateContainer.SetLastActiveStateFor("A", A.Fake<IStateDefinition<string, int>>());
+            stateContainer.SetLastActiveStateFor("A", "helloWorld");
 
-            stateContainer.GetLastActiveStateOrNullFor("B").Should().BeNull();
+            stateContainer
+                .GetLastActiveStateFor("B")
+                .Should()
+                .BeEquivalentTo(Optional<string>.Nothing());
         }
 
         [Fact]
-        public void ReturnsStateDefinitionXAsLastActiveStateWhenStateDefinitionXWasSetBefore()
+        public void ReturnsStateXAsLastActiveStateWhenXWasSetBefore()
         {
-            var stateContainer = new StateContainer<string, int>("container");
-            var lastActiveState = A.Fake<IStateDefinition<string, int>>();
+            var stateContainer = new StateContainer<string, int>();
 
-            stateContainer.SetLastActiveStateFor("A", lastActiveState);
+            stateContainer.SetLastActiveStateFor("A", "Z");
 
-            stateContainer.GetLastActiveStateOrNullFor("A").Should().Be(lastActiveState);
+            stateContainer
+                .GetLastActiveStateFor("A")
+                .Should()
+                .BeEquivalentTo(Optional<string>.Just("Z"));
         }
 
         [Fact]
         public void ExtensionsWhenExtensionsAreClearedThenNoExtensionIsRegistered()
         {
             var executed = false;
-            var extension = A.Fake<IExtension<string, int>>();
+            var extension = A.Fake<IExtensionInternal<string, int>>();
 
             var testee = new StateContainer<string, int>();
 
@@ -70,7 +78,8 @@ namespace Appccelerate.StateMachine.Facts.Machine
             testee.ForEach(e => executed = true);
 
             executed
-                .Should().BeFalse();
+                .Should()
+                .BeFalse();
         }
     }
 }

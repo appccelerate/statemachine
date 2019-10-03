@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Extensions;
     using Machine;
     using Machine.Events;
     using Persistence;
@@ -40,11 +41,6 @@ namespace Appccelerate.StateMachine
         /// The internal state machine.
         /// </summary>
         private readonly StateMachine<TState, TEvent> stateMachine;
-
-        /// <summary>
-        /// List of all queued events.
-        /// </summary>
-        private readonly LinkedList<EventInformation<TEvent>> events;
 
         private readonly StateContainer<TState, TEvent> stateContainer;
 
@@ -67,7 +63,6 @@ namespace Appccelerate.StateMachine
             this.stateContainer = stateContainer;
             this.stateDefinitions = stateDefinitions;
             this.initialState = initialState;
-            this.events = new LinkedList<EventInformation<TEvent>>();
         }
 
         /// <summary>
@@ -131,9 +126,9 @@ namespace Appccelerate.StateMachine
         /// <param name="eventArgument">The event argument.</param>
         public void Fire(TEvent eventId, object eventArgument)
         {
-            this.events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
+            this.stateContainer.Events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
 
-            this.stateContainer.ForEach(extension => extension.EventQueued(this.stateContainer, eventId, eventArgument));
+            this.stateContainer.ForEach(extension => extension.EventQueued(eventId, eventArgument));
 
             this.Execute();
         }
@@ -154,9 +149,9 @@ namespace Appccelerate.StateMachine
         /// <param name="eventArgument">The event argument.</param>
         public void FirePriority(TEvent eventId, object eventArgument)
         {
-            this.events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
+            this.stateContainer.Events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
 
-            this.stateContainer.ForEach(extension => extension.EventQueuedWithPriority(this.stateContainer, eventId, eventArgument));
+            this.stateContainer.ForEach(extension => extension.EventQueuedWithPriority(eventId, eventArgument));
 
             this.Execute();
         }
@@ -170,7 +165,7 @@ namespace Appccelerate.StateMachine
         {
             this.IsRunning = true;
 
-            this.stateContainer.ForEach(extension => extension.StartedStateMachine(this.stateContainer));
+            this.stateContainer.ForEach(extension => extension.StartedStateMachine());
 
             this.Execute();
         }
@@ -202,7 +197,7 @@ namespace Appccelerate.StateMachine
         {
             this.IsRunning = false;
 
-            this.stateContainer.ForEach(extension => extension.StoppedStateMachine(this.stateContainer));
+            this.stateContainer.ForEach(extension => extension.StoppedStateMachine());
         }
 
         /// <summary>
@@ -211,7 +206,8 @@ namespace Appccelerate.StateMachine
         /// <param name="extension">The extension.</param>
         public void AddExtension(IExtension<TState, TEvent> extension)
         {
-            this.stateContainer.Extensions.Add(extension);
+            var extensionCompose = new InternalExtension<TState, TEvent>(extension, this.stateContainer);
+            this.stateContainer.Extensions.Add(extensionCompose);
         }
 
         /// <summary>
@@ -226,19 +222,15 @@ namespace Appccelerate.StateMachine
         /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load"/>.
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
-        public void Save(IStateMachineSaver<TState> stateMachineSaver)
+        public void Save(IStateMachineSaver<TState, TEvent> stateMachineSaver)
         {
             Guard.AgainstNullArgument(nameof(stateMachineSaver), stateMachineSaver);
 
             stateMachineSaver.SaveCurrentState(this.stateContainer.CurrentStateId);
 
-            var historyStates = this.stateContainer
-                .LastActiveStates
-                .ToDictionary(
-                    pair => pair.Key,
-                    pair => pair.Value.Id);
+            stateMachineSaver.SaveHistoryStates(this.stateContainer.LastActiveStates);
 
-            stateMachineSaver.SaveHistoryStates(historyStates);
+            stateMachineSaver.SaveEvents(this.stateContainer.SaveableEvents);
         }
 
         /// <summary>
@@ -246,7 +238,7 @@ namespace Appccelerate.StateMachine
         /// The loader should return exactly the data that was passed to the saver.
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
-        public void Load(IStateMachineLoader<TState> stateMachineLoader)
+        public void Load(IStateMachineLoader<TState, TEvent> stateMachineLoader)
         {
             Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
 
@@ -254,24 +246,36 @@ namespace Appccelerate.StateMachine
 
             var loadedCurrentState = stateMachineLoader.LoadCurrentState();
             var historyStates = stateMachineLoader.LoadHistoryStates();
+            var events = stateMachineLoader.LoadEvents();
 
             SetCurrentState();
-            LoadHistoryStates();
+            SetHistoryStates();
+            SetEvents();
             NotifyExtensions();
 
             void SetCurrentState()
             {
-                this.stateContainer.CurrentState = loadedCurrentState.Map(x => this.stateDefinitions[x]);
+                this.stateContainer.CurrentStateId = loadedCurrentState;
             }
 
-            void LoadHistoryStates()
+            void SetEvents()
+            {
+                this.stateContainer.Events = new LinkedList<EventInformation<TEvent>>(events);
+            }
+
+            void SetHistoryStates()
             {
                 foreach (var historyState in historyStates)
                 {
                     var superState = this.stateDefinitions[historyState.Key];
-                    var lastActiveState = this.stateDefinitions[historyState.Value];
+                    var lastActiveState = historyState.Value;
 
-                    if (!superState.SubStates.Contains(lastActiveState))
+                    var lastActiveStateIsNotASubStateOfSuperState = superState
+                                                                        .SubStates
+                                                                        .Select(x => x.Id)
+                                                                        .Contains(lastActiveState)
+                                                                    == false;
+                    if (lastActiveStateIsNotASubStateOfSuperState)
                     {
                         throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
                     }
@@ -284,15 +288,15 @@ namespace Appccelerate.StateMachine
             {
                 this.stateContainer.Extensions.ForEach(
                     extension => extension.Loaded(
-                        this.stateContainer,
                         loadedCurrentState,
-                        historyStates));
+                        historyStates,
+                        events));
             }
         }
 
         private void CheckThatNotAlreadyInitialized()
         {
-            if (this.stateContainer.CurrentState.IsInitialized)
+            if (this.stateContainer.CurrentStateId.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
             }
@@ -326,7 +330,7 @@ namespace Appccelerate.StateMachine
         {
             this.InitializeStateMachineIfInitializationIsPending();
 
-            while (this.events.Count > 0)
+            while (this.stateContainer.Events.Count > 0)
             {
                 var eventToProcess = this.GetNextEventToProcess();
                 this.FireEventOnStateMachine(eventToProcess);
@@ -335,12 +339,12 @@ namespace Appccelerate.StateMachine
 
         private void InitializeStateMachineIfInitializationIsPending()
         {
-            if (this.stateContainer.CurrentState.IsInitialized)
+            if (this.stateContainer.CurrentStateId.IsInitialized)
             {
                 return;
             }
 
-            this.stateMachine.EnterInitialState(this.stateContainer, this.stateContainer, this.stateDefinitions, this.initialState);
+            this.stateMachine.EnterInitialState(this.stateContainer, this.stateDefinitions, this.initialState);
         }
 
         /// <summary>
@@ -349,8 +353,8 @@ namespace Appccelerate.StateMachine
         /// <returns>The next queued event.</returns>
         private EventInformation<TEvent> GetNextEventToProcess()
         {
-            var e = this.events.First.Value;
-            this.events.RemoveFirst();
+            var e = this.stateContainer.Events.First.Value;
+            this.stateContainer.Events.RemoveFirst();
             return e;
         }
 
@@ -360,7 +364,7 @@ namespace Appccelerate.StateMachine
         /// <param name="e">The event to fire.</param>
         private void FireEventOnStateMachine(EventInformation<TEvent> e)
         {
-            this.stateMachine.Fire(e.EventId, e.EventArgument, this.stateContainer, this.stateContainer, this.stateDefinitions);
+            this.stateMachine.Fire(e.EventId, e.EventArgument, this.stateContainer, this.stateDefinitions);
         }
     }
 }

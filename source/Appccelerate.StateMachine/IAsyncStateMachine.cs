@@ -121,18 +121,18 @@ namespace Appccelerate.StateMachine
         void Report(IStateMachineReport<TState, TEvent> reportGenerator);
 
         /// <summary>
-        /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load(Appccelerate.StateMachine.Persistence.IAsyncStateMachineLoader{TState})"/>.
+        /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load(IAsyncStateMachineLoader{TState,TEvent})"/>.
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task Save(IAsyncStateMachineSaver<TState> stateMachineSaver);
+        Task Save(IAsyncStateMachineSaver<TState, TEvent> stateMachineSaver);
 
         /// <summary>
-        /// Loads the current state and history states from a persisted state (<see cref="Save(Appccelerate.StateMachine.Persistence.IAsyncStateMachineSaver{TState})"/>).
+        /// Loads the current state and history states from a persisted state (<see cref="Save(IAsyncStateMachineSaver{TState, TEvent})"/>).
         /// The loader should return exactly the data that was passed to the saver.
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task Load(IAsyncStateMachineLoader<TState> stateMachineLoader);
+        Task Load(IAsyncStateMachineLoader<TState, TEvent> stateMachineLoader);
     }
 }

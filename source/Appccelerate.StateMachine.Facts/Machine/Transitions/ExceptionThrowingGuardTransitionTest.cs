@@ -46,20 +46,20 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void CallsExtensionToHandleException()
         {
-            var extension = A.Fake<IExtension<States, Events>>();
+            var extension = A.Fake<IExtensionInternal<States, Events>>();
 
             this.ExtensionHost.Extension = extension;
 
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
-            A.CallTo(() => extension.HandlingGuardException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, ref this.exception)).MustHaveHappened();
-            A.CallTo(() => extension.HandledGuardException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, this.exception)).MustHaveHappened();
+            A.CallTo(() => extension.HandlingGuardException(this.TransitionDefinition, this.TransitionContext, ref this.exception)).MustHaveHappened();
+            A.CallTo(() => extension.HandledGuardException(this.TransitionDefinition, this.TransitionContext, this.exception)).MustHaveHappened();
         }
 
         [Fact]
         public void ReturnsNotFiredTransitionResult()
         {
-            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             result.Fired.Should().BeFalse();
         }
@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Transitions
         [Fact]
         public void NotifiesExceptionOnTransitionContext()
         {
-            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier, this.StateDefinitions);
 
             A.CallTo(() => this.TransitionContext.OnExceptionThrown(this.exception)).MustHaveHappened();
         }

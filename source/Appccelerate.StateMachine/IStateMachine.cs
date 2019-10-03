@@ -118,13 +118,13 @@ namespace Appccelerate.StateMachine
         /// Saves the current state and history states to a persisted state. Can be restored using <see cref="Load"/>.
         /// </summary>
         /// <param name="stateMachineSaver">Data to be persisted is passed to the saver.</param>
-        void Save(IStateMachineSaver<TState> stateMachineSaver);
+        void Save(IStateMachineSaver<TState, TEvent> stateMachineSaver);
 
         /// <summary>
         /// Loads the current state and history states from a persisted state (<see cref="Save"/>).
         /// The loader should return exactly the data that was passed to the saver.
         /// </summary>
         /// <param name="stateMachineLoader">Loader providing persisted data.</param>
-        void Load(IStateMachineLoader<TState> stateMachineLoader);
+        void Load(IStateMachineLoader<TState, TEvent> stateMachineLoader);
     }
 }
