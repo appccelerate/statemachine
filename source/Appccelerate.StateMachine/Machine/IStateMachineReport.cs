@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="IStateMachineReport.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
+    using Infrastructure;
+    using States;
 
     /// <summary>
     /// Generates a report of the state machine.
@@ -37,6 +38,6 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
         /// <param name="initialStateId">The initial state id.</param>
-        void Report(string name, IEnumerable<IState<TState, TEvent>> states, Initializable<TState> initialStateId);
+        void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialStateId);
     }
 }

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineNameReporter.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
+    using Infrastructure;
+    using Machine;
+    using Machine.States;
 
     public class StateMachineNameReporter : IStateMachineReport<string, int>
     {
         public string StateMachineName { get; private set; }
 
-        public void Report(string name, IEnumerable<IState<string, int>> states, Initializable<string> initialStateId)
+        public void Report(string name, IEnumerable<IStateDefinition<string, int>> states, Initializable<string> initialStateId)
         {
             this.StateMachineName = name;
         }

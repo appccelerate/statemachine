@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineInitializer.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
+    using States;
 
     /// <summary>
     /// Responsible for entering the initial state of the state machine.
@@ -31,31 +32,34 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IState<TState, TEvent> initialState;
-
+        private readonly IStateDefinition<TState, TEvent> initialState;
         private readonly ITransitionContext<TState, TEvent> context;
 
-        public StateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
+        public StateMachineInitializer(
+            IStateDefinition<TState, TEvent> initialState,
+            ITransitionContext<TState, TEvent> context)
         {
             this.initialState = initialState;
             this.context = context;
         }
 
-        public IState<TState, TEvent> EnterInitialState()
+        public TState EnterInitialState(
+            IStateLogic<TState, TEvent> stateLogic,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             var stack = this.TraverseUpTheStateHierarchy();
-            this.TraverseDownTheStateHierarchyAndEnterStates(stack);
+            this.TraverseDownTheStateHierarchyAndEnterStates(stateLogic, stack);
 
-            return this.initialState.EnterByHistory(this.context);
+            return stateLogic.EnterByHistory(this.initialState, this.context, lastActiveStateModifier);
         }
 
         /// <summary>
         /// Traverses up the state hierarchy and build the stack of states.
         /// </summary>
         /// <returns>The stack containing all states up the state hierarchy.</returns>
-        private Stack<IState<TState, TEvent>> TraverseUpTheStateHierarchy()
+        private Stack<IStateDefinition<TState, TEvent>> TraverseUpTheStateHierarchy()
         {
-            var stack = new Stack<IState<TState, TEvent>>();
+            var stack = new Stack<IStateDefinition<TState, TEvent>>();
 
             var state = this.initialState;
             while (state != null)
@@ -67,12 +71,14 @@ namespace Appccelerate.StateMachine.Machine
             return stack;
         }
 
-        private void TraverseDownTheStateHierarchyAndEnterStates(Stack<IState<TState, TEvent>> stack)
+        private void TraverseDownTheStateHierarchyAndEnterStates(
+            IStateLogic<TState, TEvent> stateLogic,
+            Stack<IStateDefinition<TState, TEvent>> stack)
         {
             while (stack.Count > 0)
             {
-                IState<TState, TEvent> state = stack.Pop();
-                state.Entry(this.context);
+                var state = stack.Pop();
+                stateLogic.Entry(state, this.context);
             }
         }
     }

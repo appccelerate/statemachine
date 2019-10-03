@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="Transition.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine.ActionHolders;
-    using Appccelerate.StateMachine.AsyncMachine.GuardHolders;
+    using ActionHolders;
+    using GuardHolders;
     using LiteGuard = Guard;
 
     public class Transition<TState, TEvent>
@@ -209,13 +209,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             catch (Exception exception)
             {
                 await this.extensionHost
-                    .ForEach(extention => extention.HandlingGuardException(this.stateMachineInformation, this, context, ref exception))
+                    .ForEach(extension => extension.HandlingGuardException(this.stateMachineInformation, this, context, ref exception))
                     .ConfigureAwait(false);
 
                 HandleException(exception, context);
 
                 await this.extensionHost
-                    .ForEach(extention => extention.HandledGuardException(this.stateMachineInformation, this, context, exception))
+                    .ForEach(extension => extension.HandledGuardException(this.stateMachineInformation, this, context, exception))
                     .ConfigureAwait(false);
 
                 return false;

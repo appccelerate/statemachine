@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ActiveStateMachines.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System.Threading;
-    using Appccelerate.StateMachine.Machine;
-    using FakeItEasy;
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class ActiveStateMachines
@@ -32,9 +31,9 @@ namespace Appccelerate.StateMachine.Sync
             StateMachineNameReporter reporter)
         {
             "establish an instantiated active state machine".x(() =>
-            {
-                machine = new ActiveStateMachine<string, int>();
-            });
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreateActiveStateMachine());
 
             "establish a state machine reporter".x(() =>
             {
@@ -57,9 +56,9 @@ namespace Appccelerate.StateMachine.Sync
             const string Name = "custom name";
 
             "establish an instantiated active state machine with custom name".x(() =>
-            {
-                machine = new ActiveStateMachine<string, int>(Name);
-            });
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreateActiveStateMachine(Name));
 
             "establish a state machine reporter".x(() =>
             {
@@ -75,27 +74,6 @@ namespace Appccelerate.StateMachine.Sync
         }
 
         [Scenario]
-        public void CustomFactory(
-            ActiveStateMachine<string, int> machine,
-            StandardFactory<string, int> factory)
-        {
-            "establish a custom factory".x(() =>
-            {
-                factory = A.Fake<StandardFactory<string, int>>();
-            });
-
-            "when creating an active state machine".x(() =>
-            {
-                machine = new ActiveStateMachine<string, int>("_", factory);
-
-                machine.In("initial").On(42).Goto("answer");
-            });
-
-            "it should use custom factory to create internal instances".x(() =>
-                A.CallTo(factory).MustHaveHappened());
-        }
-
-        [Scenario]
         public void EventsQueueing(
             IStateMachine<string, int> machine,
             AutoResetEvent signal)
@@ -107,11 +85,13 @@ namespace Appccelerate.StateMachine.Sync
             {
                 signal = new AutoResetEvent(false);
 
-                machine = new ActiveStateMachine<string, int>();
-
-                machine.In("A").On(FirstEvent).Goto("B");
-                machine.In("B").On(SecondEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => signal.Set());
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreateActiveStateMachine();
 
                 machine.Initialize("A");
             });
@@ -124,7 +104,10 @@ namespace Appccelerate.StateMachine.Sync
             });
 
             "it should queue event at the end".x(() =>
-                signal.WaitOne(1000).Should().BeTrue("state machine should arrive at destination state"));
+                signal
+                    .WaitOne(1000)
+                    .Should()
+                    .BeTrue("state machine should arrive at destination state"));
         }
 
         [Scenario]
@@ -139,11 +122,13 @@ namespace Appccelerate.StateMachine.Sync
             {
                 signal = new AutoResetEvent(false);
 
-                machine = new ActiveStateMachine<string, int>();
-
-                machine.In("A").On(SecondEvent).Goto("B");
-                machine.In("B").On(FirstEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => signal.Set());
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreateActiveStateMachine();
 
                 machine.Initialize("A");
             });
@@ -156,7 +141,10 @@ namespace Appccelerate.StateMachine.Sync
             });
 
             "it should queue event at the front".x(() =>
-                signal.WaitOne(1000).Should().BeTrue("state machine should arrive at destination state"));
+                signal
+                    .WaitOne(1000)
+                    .Should()
+                    .BeTrue("state machine should arrive at destination state"));
         }
     }
 }

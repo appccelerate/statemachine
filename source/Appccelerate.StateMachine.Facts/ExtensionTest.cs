@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ExtensionTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Facts
 {
     using System;
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Machine.Contexts;
-
     using FakeItEasy;
-
     using FluentAssertions;
-
+    using Machine;
+    using StateMachine.Machine;
+    using StateMachine.Machine.States;
+    using StateMachine.Machine.Transitions;
     using Xunit;
 
     /// <summary>
@@ -33,37 +32,30 @@ namespace Appccelerate.StateMachine
     /// </summary>
     public class ExtensionTest
     {
-        private readonly StateMachine<States, Events> testee;
-        private readonly IExtension<States, Events> extension;
-        private readonly OverrideExtension overrideExtension;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExtensionTest"/> class.
-        /// </summary>
-        public ExtensionTest()
-        {
-            this.testee = new StateMachine<States, Events>();
-
-            this.extension = A.Fake<IExtension<States, Events>>();
-            this.overrideExtension = new OverrideExtension();
-            this.testee.AddExtension(this.extension);
-            this.testee.AddExtension(this.overrideExtension);
-        }
-
         /// <summary>
         /// When the state machine is initialized then the extensions get notified.
         /// </summary>
         [Fact]
         public void Initialize()
         {
-            States initialState = States.A;
+            var initialState = States.A;
 
-            this.testee.Initialize(initialState);
+            var information = A.Fake<IStateMachineInformation<States, Events>>();
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            A.CallTo(() => this.extension.InitializingStateMachine(this.testee, ref initialState))
+            var standardFactory = new StandardFactory<States, Events>();
+            var testee = new StateMachine<States, Events>(
+                standardFactory,
+                A.Fake<IStateLogic<States, Events>>());
+
+            testee.Initialize(initialState, stateContainer, information);
+
+            A.CallTo(() => extension.InitializingStateMachine(information, ref initialState))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.InitializedStateMachine(this.testee, initialState))
+            A.CallTo(() => extension.InitializedStateMachine(information, initialState))
                 .MustHaveHappened();
         }
 
@@ -72,16 +64,29 @@ namespace Appccelerate.StateMachine
         {
             const States InitialState = States.A;
 
-            this.testee.Initialize(InitialState);
-            this.testee.EnterInitialState();
+            var information = A.Fake<IStateMachineInformation<States, Events>>();
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            A.CallTo(() => this.extension.EnteringInitialState(this.testee, InitialState))
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder.In(InitialState);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
+
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(InitialState, stateContainer, information);
+            testee.EnterInitialState(stateContainer, information, stateDefinitions);
+
+            A.CallTo(() => extension.EnteringInitialState(information, InitialState))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.EnteredInitialState(
-                    this.testee,
+            A.CallTo(() => extension.EnteredInitialState(
+                    information,
                     InitialState,
-                    A<TransitionContext<States, Events>>.That.Matches(context => context.State == null)))
+                    A<ITransitionContext<States, Events>>.That.Matches(context => context.StateDefinition == null)))
                 .MustHaveHappened();
         }
 
@@ -91,14 +96,30 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void OverrideInitialState()
         {
-            this.overrideExtension.OverriddenState = States.B;
+            var overrideExtension = new OverrideExtension { OverriddenState = States.B };
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(overrideExtension);
 
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder.In(States.A);
+            stateDefinitionsBuilder.In(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
-            States? actualState = this.testee.CurrentStateId;
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            actualState.Should().Be(States.B);
+            testee.Initialize(
+                States.A,
+                stateContainer,
+                A.Fake<IStateMachineInformation<States, Events>>());
+
+            testee.EnterInitialState(
+                stateContainer,
+                A.Fake<IStateMachineInformation<States, Events>>(),
+                stateDefinitions);
+
+            stateContainer.CurrentStateId.Should().Be(States.B);
         }
 
         /// <summary>
@@ -107,23 +128,37 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void Fire()
         {
-            this.testee.In(States.A).On(Events.B).Goto(States.B);
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            Events eventId = Events.B;
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
+                .On(Events.B)
+                .Goto(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
+
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            var eventId = Events.B;
             var eventArgument = new object();
 
-            this.testee.Fire(eventId, eventArgument);
+            testee.Fire(eventId, eventArgument, stateContainer, stateContainer, stateDefinitions);
 
-            A.CallTo(() => this.extension.FiringEvent(this.testee, ref eventId, ref eventArgument))
+            A.CallTo(() => extension.FiringEvent(stateContainer, ref eventId, ref eventArgument))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.FiredEvent(
-                    this.testee,
+            A.CallTo(() => extension.FiredEvent(
+                    stateContainer,
                     A<ITransitionContext<States, Events>>.That.Matches(
                         context =>
-                            context.State.Id == States.A &&
+                            context.StateDefinition.Id == States.A &&
                             context.EventId.Value == eventId &&
                             context.EventArgument == eventArgument)))
                 .MustHaveHappened();
@@ -135,22 +170,36 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void OverrideFiredEvent()
         {
-            this.testee.In(States.A)
-                .On(Events.B).Goto(States.B)
-                .On(Events.C).Goto(States.C);
+            var extension = A.Fake<IExtension<States, Events>>();
+            var overrideExtension = new OverrideExtension();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
+            stateContainer.Extensions.Add(overrideExtension);
 
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
+                    .On(Events.B).Goto(States.C)
+                    .On(Events.C).Goto(States.C);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
+
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
 
             const Events NewEvent = Events.C;
             var newEventArgument = new object();
-            this.overrideExtension.OverriddenEvent = NewEvent;
-            this.overrideExtension.OverriddenEventArgument = newEventArgument;
 
-            this.testee.Fire(Events.B);
+            overrideExtension.OverriddenEvent = NewEvent;
+            overrideExtension.OverriddenEventArgument = newEventArgument;
 
-            A.CallTo(() => this.extension.FiredEvent(
-                this.testee,
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.FiredEvent(
+                stateContainer,
                 A<ITransitionContext<States, Events>>.That.Matches(
                     c => c.EventId.Value == NewEvent && c.EventArgument == newEventArgument)))
                 .MustHaveHappened();
@@ -163,28 +212,39 @@ namespace Appccelerate.StateMachine
             const States Target = States.B;
             const Events Event = Events.B;
 
-            this.testee.In(Source)
-                .On(Event).Goto(Target);
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            this.testee.Initialize(Source);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(Source)
+                    .On(Event).Goto(Target);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.testee.Fire(Event);
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            A.CallTo(() => this.extension.ExecutingTransition(
-                this.testee,
-                A<ITransition<States, Events>>.That.Matches(
-                    t => t.Source.Id == Source && t.Target.Id == Target),
-                A<ITransitionContext<States, Events>>.That.Matches(
-                    c => c.EventId.Value == Event && c.State.Id == Source)))
+            testee.Initialize(Source, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Event, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.ExecutingTransition(
+                    stateContainer,
+                    A<ITransitionDefinition<States, Events>>.That.Matches(
+                        t => t.Source.Id == Source && t.Target.Id == Target),
+                    A<ITransitionContext<States, Events>>.That.Matches(
+                        c => c.EventId.Value == Event && c.StateDefinition.Id == Source)))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.ExecutedTransition(
-                this.testee,
-                A<ITransition<States, Events>>.That.Matches(
-                    t => t.Source.Id == Source && t.Target.Id == Target),
-                A<ITransitionContext<States, Events>>.That.Matches(
-                    c => c.EventId.Value == Event && c.State.Id == Source)))
+            A.CallTo(() => extension.ExecutedTransition(
+                    stateContainer,
+                    A<ITransitionDefinition<States, Events>>.That.Matches(
+                        t => t.Source.Id == Source && t.Target.Id == Target),
+                    A<ITransitionContext<States, Events>>.That.Matches(
+                        c => c.EventId.Value == Event && c.StateDefinition.Id == Source)))
                 .MustHaveHappened();
         }
 
@@ -194,25 +254,40 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void ExceptionThrowingGuard()
         {
-            Exception exception = new Exception();
+            var exception = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            this.testee.In(States.A).On(Events.B).If(() => { throw exception; }).Execute(() => { });
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .If(() => throw exception)
+                    .Execute(() => { });
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.testee.Fire(Events.B);
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            A.CallTo(() => this.extension.HandlingGuardException(
-                         this.testee,
-                         Transition(States.A),
-                         Context(States.A, Events.B),
-                         ref exception))
+            testee.TransitionExceptionThrown += (s, e) => { };
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandlingGuardException(
+                     stateContainer,
+                     Transition(States.A),
+                     Context(States.A, Events.B),
+                     ref exception))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.HandledGuardException(
-                    this.testee,
+            A.CallTo(() => extension.HandledGuardException(
+                    stateContainer,
                     Transition(States.A),
                     Context(States.A, Events.B),
                     exception))
@@ -225,22 +300,39 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void OverrideGuardException()
         {
-            Exception exception = new Exception();
-            Exception overriddenException = new Exception();
+            var exception = new Exception();
+            var overriddenException = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var overrideExtension = new OverrideExtension();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
+            stateContainer.Extensions.Add(overrideExtension);
 
-            this.testee.In(States.A).On(Events.B).If(() => { throw exception; }).Execute(() => { });
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .If(() => throw exception)
+                    .Execute(() => { });
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.overrideExtension.OverriddenException = overriddenException;
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(Events.B);
+            testee.TransitionExceptionThrown += (s, e) => { };
 
-            A.CallTo(() => this.extension.HandledGuardException(
-                this.testee,
-                A<ITransition<States, Events>>._,
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            overrideExtension.OverriddenException = overriddenException;
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandledGuardException(
+                stateContainer,
+                A<ITransitionDefinition<States, Events>>._,
                 A<ITransitionContext<States, Events>>._,
                 overriddenException))
                 .MustHaveHappened();
@@ -252,25 +344,39 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void ExceptionThrowingAction()
         {
-            Exception exception = new Exception();
+            var exception = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            this.testee.In(States.A).On(Events.B).Execute(() => { throw exception; });
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Execute(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.testee.Fire(Events.B);
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            A.CallTo(() => this.extension.HandlingTransitionException(
-                    this.testee,
+            testee.TransitionExceptionThrown += (s, e) => { };
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandlingTransitionException(
+                    stateContainer,
                     Transition(States.A),
                     Context(States.A, Events.B),
                     ref exception))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.HandledTransitionException(
-                    this.testee,
+            A.CallTo(() => extension.HandledTransitionException(
+                    stateContainer,
                     Transition(States.A),
                     Context(States.A, Events.B),
                     exception))
@@ -283,22 +389,38 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void OverrideActionException()
         {
-            Exception exception = new Exception();
-            Exception overriddenException = new Exception();
+            var exception = new Exception();
+            var overriddenException = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var overrideExtension = new OverrideExtension();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
+            stateContainer.Extensions.Add(overrideExtension);
 
-            this.testee.In(States.A).On(Events.B).Execute(() => { throw exception; });
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Execute(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.overrideExtension.OverriddenException = overriddenException;
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(Events.B);
+            testee.TransitionExceptionThrown += (s, e) => { };
 
-            A.CallTo(() => this.extension.HandledTransitionException(
-                    this.testee,
-                    A<ITransition<States, Events>>._,
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            overrideExtension.OverriddenException = overriddenException;
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandledTransitionException(
+                    stateContainer,
+                    A<ITransitionDefinition<States, Events>>._,
                     A<ITransitionContext<States, Events>>._,
                     overriddenException))
                 .MustHaveHappened();
@@ -310,26 +432,42 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void EntryActionException()
         {
-            Exception exception = new Exception();
+            var exception = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            this.testee.In(States.A).On(Events.B).Goto(States.B);
-            this.testee.In(States.B).ExecuteOnEntry(() => { throw exception; });
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B);
+            stateDefinitionBuilder
+                .In(States.B)
+                    .ExecuteOnEntry(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.testee.Fire(Events.B);
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            A.CallTo(() => this.extension.HandlingEntryActionException(
-                    this.testee,
+            testee.TransitionExceptionThrown += (s, e) => { };
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandlingEntryActionException(
+                    stateContainer,
                     State(States.B),
                     Context(States.A, Events.B),
                     ref exception))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.HandledEntryActionException(
-                    this.testee,
+            A.CallTo(() => extension.HandledEntryActionException(
+                    stateContainer,
                     State(States.B),
                     Context(States.A, Events.B),
                     exception))
@@ -342,23 +480,41 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void OverrideEntryActionException()
         {
-            Exception exception = new Exception();
-            Exception overriddenException = new Exception();
+            var exception = new Exception();
+            var overriddenException = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var overrideExtension = new OverrideExtension();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
+            stateContainer.Extensions.Add(overrideExtension);
 
-            this.testee.In(States.A).On(Events.B).Goto(States.B);
-            this.testee.In(States.B).ExecuteOnEntry(() => { throw exception; });
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B);
+            stateDefinitionBuilder
+                .In(States.B)
+                    .ExecuteOnEntry(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.overrideExtension.OverriddenException = overriddenException;
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(Events.B);
+            testee.TransitionExceptionThrown += (s, e) => { };
 
-            A.CallTo(() => this.extension.HandledEntryActionException(
-                    this.testee,
-                    A<IState<States, Events>>._,
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            overrideExtension.OverriddenException = overriddenException;
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandledEntryActionException(
+                    stateContainer,
+                    A<IStateDefinition<States, Events>>._,
                     A<ITransitionContext<States, Events>>._,
                     overriddenException))
                 .MustHaveHappened();
@@ -370,28 +526,40 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void ExitActionException()
         {
-            Exception exception = new Exception();
+            var exception = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            this.testee.In(States.A)
-                .ExecuteOnExit(() => { throw exception; })
-                .On(Events.B).Goto(States.B);
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnExit(() => throw exception)
+                    .On(Events.B)
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(Events.B);
+            testee.TransitionExceptionThrown += (s, e) => { };
 
-            A.CallTo(() => this.extension.HandlingExitActionException(
-                    this.testee,
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandlingExitActionException(
+                    stateContainer,
                     State(States.A),
                     Context(States.A, Events.B),
                     ref exception))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.HandledExitActionException(
-                    this.testee,
+            A.CallTo(() => extension.HandledExitActionException(
+                    stateContainer,
                     State(States.A),
                     Context(States.A, Events.B),
                     exception))
@@ -404,24 +572,39 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void OverrideExitActionException()
         {
-            Exception exception = new Exception();
-            Exception overriddenException = new Exception();
+            var exception = new Exception();
+            var overriddenException = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var overrideExtension = new OverrideExtension();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
+            stateContainer.Extensions.Add(overrideExtension);
 
-            this.testee.In(States.A)
-                .ExecuteOnExit(() => { throw exception; })
-                .On(Events.B).Goto(States.B);
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnExit(() => throw exception)
+                    .On(Events.B)
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            this.overrideExtension.OverriddenException = overriddenException;
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(Events.B);
+            testee.TransitionExceptionThrown += (s, e) => { };
 
-            A.CallTo(() => this.extension.HandledExitActionException(
-                    this.testee,
-                    A<IState<States, Events>>._,
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            overrideExtension.OverriddenException = overriddenException;
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandledExitActionException(
+                    stateContainer,
+                    A<IStateDefinition<States, Events>>._,
                     A<ITransitionContext<States, Events>>._,
                     overriddenException))
                 .MustHaveHappened();
@@ -433,42 +616,55 @@ namespace Appccelerate.StateMachine
         [Fact]
         public void EntryActionExceptionDuringInitialization()
         {
-            Exception exception = new Exception();
+            var exception = new Exception();
 
-            this.testee.TransitionExceptionThrown += (s, e) => { };
+            var extension = A.Fake<IExtension<States, Events>>();
+            var stateContainer = new StateContainer<States, Events>();
+            stateContainer.Extensions.Add(extension);
 
-            this.testee.In(States.A).ExecuteOnEntry(() => { throw exception; });
-            this.testee.Initialize(States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(() => throw exception);
+            var stateDefinitions = stateDefinitionBuilder.Build();
 
-            A.CallTo(() => this.extension.HandlingEntryActionException(
-                    this.testee,
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.TransitionExceptionThrown += (s, e) => { };
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            A.CallTo(() => extension.HandlingEntryActionException(
+                    stateContainer,
                     State(States.A),
-                    A<TransitionContext<States, Events>>.That.Matches(context => context.State == null),
+                    A<ITransitionContext<States, Events>>.That.Matches(context => context.StateDefinition == null),
                     ref exception))
                 .MustHaveHappened();
 
-            A.CallTo(() => this.extension.HandledEntryActionException(
-                    this.testee,
+            A.CallTo(() => extension.HandledEntryActionException(
+                    stateContainer,
                     State(States.A),
-                    A<TransitionContext<States, Events>>.That.Matches(context => context.State == null),
+                    A<ITransitionContext<States, Events>>.That.Matches(context => context.StateDefinition == null),
                     exception))
                 .MustHaveHappened();
         }
 
-        private static IState<States, Events> State(States stateId)
+        private static IStateDefinition<States, Events> State(States stateId)
         {
-            return A<IState<States, Events>>.That.Matches(state => state.Id == stateId);
+            return A<IStateDefinition<States, Events>>.That.Matches(state => state.Id == stateId);
         }
 
-        private static ITransition<States, Events> Transition(States sourceState)
+        private static ITransitionDefinition<States, Events> Transition(States sourceState)
         {
-            return A<ITransition<States, Events>>.That.Matches(transition => transition.Source.Id == sourceState);
+            return A<ITransitionDefinition<States, Events>>.That.Matches(transition => transition.Source.Id == sourceState);
         }
 
         private static ITransitionContext<States, Events> Context(States sourceState, Events eventId)
         {
-            return A<ITransitionContext<States, Events>>.That.Matches(context => context.EventId.Value == eventId && context.State.Id == sourceState);
+            return A<ITransitionContext<States, Events>>.That.Matches(context => context.EventId.Value == eventId && context.StateDefinition.Id == sourceState);
         }
 
         private class OverrideExtension : Extensions.ExtensionBase<States, Events>
@@ -502,7 +698,7 @@ namespace Appccelerate.StateMachine
                 }
             }
 
-            public override void HandlingGuardException(IStateMachineInformation<States, Events> stateMachine, ITransition<States, Events> transition, ITransitionContext<States, Events> transitionContext, ref Exception exception)
+            public override void HandlingGuardException(IStateMachineInformation<States, Events> stateMachine, ITransitionDefinition<States, Events> transition, ITransitionContext<States, Events> transitionContext, ref Exception exception)
             {
                 if (this.OverriddenException != null)
                 {
@@ -510,7 +706,7 @@ namespace Appccelerate.StateMachine
                 }
             }
 
-            public override void HandlingTransitionException(IStateMachineInformation<States, Events> stateMachine, ITransition<States, Events> transition, ITransitionContext<States, Events> context, ref Exception exception)
+            public override void HandlingTransitionException(IStateMachineInformation<States, Events> stateMachine, ITransitionDefinition<States, Events> transition, ITransitionContext<States, Events> context, ref Exception exception)
             {
                 if (this.OverriddenException != null)
                 {
@@ -518,7 +714,7 @@ namespace Appccelerate.StateMachine
                 }
             }
 
-            public override void HandlingEntryActionException(IStateMachineInformation<States, Events> stateMachine, IState<States, Events> state, ITransitionContext<States, Events> context, ref Exception exception)
+            public override void HandlingEntryActionException(IStateMachineInformation<States, Events> stateMachine, IStateDefinition<States, Events> stateDefinition, ITransitionContext<States, Events> context, ref Exception exception)
             {
                 if (this.OverriddenException != null)
                 {
@@ -526,7 +722,7 @@ namespace Appccelerate.StateMachine
                 }
             }
 
-            public override void HandlingExitActionException(IStateMachineInformation<States, Events> stateMachine, IState<States, Events> state, ITransitionContext<States, Events> context, ref Exception exception)
+            public override void HandlingExitActionException(IStateMachineInformation<States, Events> stateMachine, IStateDefinition<States, Events> stateDefinition, ITransitionContext<States, Events> context, ref Exception exception)
             {
                 if (this.OverriddenException != null)
                 {

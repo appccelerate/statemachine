@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="Persisting.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Extensions;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Persistence;
     using FakeItEasy;
     using FluentAssertions;
+    using Infrastructure;
+    using Machine;
+    using Persistence;
+    using Specs;
+    using StateMachine.Extensions;
     using Xbehave;
 
     public class Persisting
@@ -49,42 +50,49 @@ namespace Appccelerate.StateMachine.Sync
             State targetState)
         {
             "establish a saved state machine with history".x(() =>
-                {
-                    var machine = new PassiveStateMachine<State, Event>();
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
+                SetupStates(stateMachineDefinitionBuilder);
+                var machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    DefineMachine(machine);
-                    machine.Initialize(State.A);
-                    machine.Start();
-                    machine.Fire(Event.S2); // set history of super state S
-                    machine.Fire(Event.B);  // set current state to B
+                machine.Initialize(State.A);
+                machine.Start();
+                machine.Fire(Event.S2); // set history of super state S
+                machine.Fire(Event.B);  // set current state to B
 
-                    saver = new StateMachineSaver<State>();
-                    loader = new StateMachineLoader<State>();
+                saver = new StateMachineSaver<State>();
+                loader = new StateMachineLoader<State>();
 
-                    machine.Save(saver);
-                });
+                machine.Save(saver);
+            });
 
             "when state machine is loaded".x(() =>
-                {
-                    loader.SetCurrentState(saver.CurrentStateId);
-                    loader.SetHistoryStates(saver.HistoryStates);
+            {
+                loader.SetCurrentState(saver.CurrentStateId);
+                loader.SetHistoryStates(saver.HistoryStates);
 
-                    extension = new FakeExtension();
-                    var loadedMachine = new PassiveStateMachine<State, Event>();
-                    loadedMachine.AddExtension(extension);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
+                SetupStates(stateMachineDefinitionBuilder);
+                var loadedMachine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    DefineMachine(loadedMachine);
-                    loadedMachine.Load(loader);
+                extension = new FakeExtension();
+                loadedMachine.AddExtension(extension);
 
-                    loadedMachine.TransitionCompleted += (sender, args) =>
-                        {
-                            sourceState = args.StateId;
-                            targetState = args.NewStateId;
-                        };
+                loadedMachine.Load(loader);
 
-                    loadedMachine.Start();
-                    loadedMachine.Fire(Event.S);
-                });
+                loadedMachine.TransitionCompleted += (sender, args) =>
+                    {
+                        sourceState = args.StateId;
+                        targetState = args.NewStateId;
+                    };
+
+                loadedMachine.Start();
+                loadedMachine.Fire(Event.S);
+            });
 
             "it should reset current state".x(() =>
                 sourceState.Should().Be(State.B));
@@ -107,15 +115,19 @@ namespace Appccelerate.StateMachine.Sync
                 loader.SetCurrentState(new Initializable<State>());
                 loader.SetHistoryStates(new Dictionary<State, State>());
 
-                loadedMachine = new PassiveStateMachine<State, Event>();
-                DefineMachine(loadedMachine);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
+                SetupStates(stateMachineDefinitionBuilder);
+                loadedMachine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
                 loadedMachine.Load(loader);
             });
 
             "it should not be initialized already".x(() =>
             {
-                Action act = () => loadedMachine.Initialize(State.S);
-                act.Should().NotThrow();
+                loadedMachine.Invoking(t => t.Initialize(State.S))
+                    .Should()
+                    .NotThrow();
             });
         }
 
@@ -125,40 +137,41 @@ namespace Appccelerate.StateMachine.Sync
             Exception receivedException)
         {
             "establish an initialized state machine".x(() =>
-                {
-                    machine = new PassiveStateMachine<string, int>();
-                    machine.Initialize("initial");
-                });
+            {
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine();
+                machine.Initialize("initial");
+            });
 
             "when state machine is loaded".x(() =>
-                {
-                    receivedException = Catch.Exception(() => machine.Load(A.Fake<IStateMachineLoader<string>>()));
-                });
+                receivedException = Catch.Exception(() => machine.Load(A.Fake<IStateMachineLoader<string>>())));
 
             "it should throw invalid operation exception".x(() =>
-                {
-                    receivedException.Should().BeOfType<InvalidOperationException>();
-                    receivedException.Message.Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized);
-                });
+            {
+                receivedException.Should().BeOfType<InvalidOperationException>();
+                receivedException.Message.Should().Be(ExceptionMessages.StateMachineIsAlreadyInitialized);
+            });
         }
 
-        private static void DefineMachine(IStateMachine<State, Event> fsm)
+        private static void SetupStates(StateMachineDefinitionBuilder<State, Event> builder)
         {
-            fsm.In(State.A)
-                   .On(Event.S2).Goto(State.S2)
-                   .On(Event.X);
-
-            fsm.In(State.B)
-                .On(Event.S).Goto(State.S)
-                .On(Event.X);
-
-            fsm.DefineHierarchyOn(State.S)
-               .WithHistoryType(HistoryType.Deep)
-               .WithInitialSubState(State.S1)
-               .WithSubState(State.S2);
-
-            fsm.In(State.S)
-                .On(Event.B).Goto(State.B);
+            builder
+                .In(State.A)
+                    .On(Event.S2).Goto(State.S2)
+                    .On(Event.X);
+            builder
+                .In(State.B)
+                    .On(Event.S).Goto(State.S)
+                    .On(Event.X);
+            builder
+                .DefineHierarchyOn(State.S)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(State.S1)
+                    .WithSubState(State.S2);
+            builder
+                .In(State.S)
+                    .On(Event.B).Goto(State.B);
         }
 
         public class FakeExtension : ExtensionBase<State, Event>
@@ -168,7 +181,7 @@ namespace Appccelerate.StateMachine.Sync
             public override void Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
                 Initializable<State> loadedCurrentState,
-                IDictionary<State, State> loadedHistoryStates)
+                IReadOnlyDictionary<State, State> loadedHistoryStates)
             {
                 this.LoadedCurrentState.Add(loadedCurrentState.Value);
             }
@@ -179,14 +192,14 @@ namespace Appccelerate.StateMachine.Sync
         {
             public Initializable<TState> CurrentStateId { get; private set; }
 
-            public IDictionary<TState, TState> HistoryStates { get; private set; }
+            public IReadOnlyDictionary<TState, TState> HistoryStates { get; private set; }
 
             public void SaveCurrentState(Initializable<TState> currentState)
             {
                 this.CurrentStateId = currentState;
             }
 
-            public void SaveHistoryStates(IDictionary<TState, TState> historyStates)
+            public void SaveHistoryStates(IReadOnlyDictionary<TState, TState> historyStates)
             {
                 this.HistoryStates = historyStates;
             }
@@ -196,19 +209,19 @@ namespace Appccelerate.StateMachine.Sync
             where TState : IComparable
         {
             private Initializable<TState> currentState;
-            private IDictionary<TState, TState> historyStates;
+            private IReadOnlyDictionary<TState, TState> historyStates;
 
             public void SetCurrentState(Initializable<TState> state)
             {
                 this.currentState = state;
             }
 
-            public void SetHistoryStates(IDictionary<TState, TState> states)
+            public void SetHistoryStates(IReadOnlyDictionary<TState, TState> states)
             {
                 this.historyStates = states;
             }
 
-            public IDictionary<TState, TState> LoadHistoryStates()
+            public IReadOnlyDictionary<TState, TState> LoadHistoryStates()
             {
                 return this.historyStates;
             }

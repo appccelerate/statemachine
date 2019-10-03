@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionInfo.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -21,8 +21,9 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using System;
     using System.Collections.Generic;
 
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.GuardHolders;
+    using ActionHolders;
+    using GuardHolders;
+    using States;
 
     /// <summary>
     /// Describes a transition.
@@ -33,7 +34,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         where TState : IComparable
         where TEvent : IComparable
     {
-        public TransitionInfo(TEvent eventId, IState<TState, TEvent> source, IState<TState, TEvent> target, IGuardHolder guard, IEnumerable<IActionHolder> actions)
+        public TransitionInfo(TEvent eventId, IStateDefinition<TState, TEvent> source, IStateDefinition<TState, TEvent> target, IGuardHolder guard, IEnumerable<IActionHolder> actions)
         {
             this.EventId = eventId;
             this.Source = source;
@@ -46,45 +47,30 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// Gets the event id.
         /// </summary>
         /// <value>The event id.</value>
-        public TEvent EventId
-        {
-            get; private set;
-        }
+        public TEvent EventId { get; }
 
         /// <summary>
         /// Gets the source.
         /// </summary>
         /// <value>The source.</value>
-        public IState<TState, TEvent> Source
-        {
-            get; private set;
-        }
+        public IStateDefinition<TState, TEvent> Source { get; }
 
         /// <summary>
         /// Gets the target.
         /// </summary>
         /// <value>The target.</value>
-        public IState<TState, TEvent> Target
-        {
-            get; private set;
-        }
+        public IStateDefinition<TState, TEvent> Target { get; }
 
         /// <summary>
         /// Gets the guard.
         /// </summary>
         /// <value>The guard.</value>
-        public IGuardHolder Guard
-        {
-            get; private set;
-        }
+        public IGuardHolder Guard { get; }
 
         /// <summary>
         /// Gets the actions.
         /// </summary>
         /// <value>The actions.</value>
-        public IEnumerable<IActionHolder> Actions
-        {
-            get;  private set;
-        }
+        public IEnumerable<IActionHolder> Actions { get; }
     }
 }

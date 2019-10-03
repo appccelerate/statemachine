@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="PassiveStateMachines.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
-    using Appccelerate.StateMachine.Machine;
-    using FakeItEasy;
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class PassiveStateMachines
@@ -31,9 +30,9 @@ namespace Appccelerate.StateMachine.Sync
             StateMachineNameReporter reporter)
         {
             "establish an instantiated passive state machine".x(() =>
-            {
-                machine = new PassiveStateMachine<string, int>();
-            });
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine());
 
             "establish a state machine reporter".x(() =>
             {
@@ -56,9 +55,9 @@ namespace Appccelerate.StateMachine.Sync
             const string Name = "custom name";
 
             "establish an instantiated passive state machine with custom name".x(() =>
-            {
-                machine = new PassiveStateMachine<string, int>(Name);
-            });
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine(Name));
 
             "establish a state machine reporter".x(() =>
             {
@@ -74,42 +73,23 @@ namespace Appccelerate.StateMachine.Sync
         }
 
         [Scenario]
-        public void CustomFactory(
-            PassiveStateMachine<string, int> machine,
-            StandardFactory<string, int> factory)
-        {
-            "establish a custom factory".x(() =>
-            {
-                factory = A.Fake<StandardFactory<string, int>>();
-            });
-
-            "when creating a passive state machine".x(() =>
-            {
-                machine = new PassiveStateMachine<string, int>("_", factory);
-
-                machine.In("initial").On(42).Goto("answer");
-            });
-
-            "it should use custom factory to create internal instances".x(() =>
-                A.CallTo(factory).MustHaveHappened());
-        }
-
-        [Scenario]
         public void EventsQueueing(
             IStateMachine<string, int> machine)
         {
             const int FirstEvent = 0;
             const int SecondEvent = 1;
 
-            bool arrived = false;
+            var arrived = false;
 
             "establish a passive state machine with transitions".x(() =>
             {
-                machine = new PassiveStateMachine<string, int>();
-
-                machine.In("A").On(FirstEvent).Goto("B");
-                machine.In("B").On(SecondEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => arrived = true);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 machine.Initialize("A");
             });
@@ -122,7 +102,9 @@ namespace Appccelerate.StateMachine.Sync
             });
 
             "it should queue event at the end".x(() =>
-                arrived.Should().BeTrue("state machine should arrive at destination state"));
+                arrived
+                    .Should()
+                    .BeTrue("state machine should arrive at destination state"));
         }
 
         [Scenario]
@@ -132,15 +114,17 @@ namespace Appccelerate.StateMachine.Sync
             const int FirstEvent = 0;
             const int SecondEvent = 1;
 
-            bool arrived = false;
+            var arrived = false;
 
             "establish a passive state machine with transitions".x(() =>
             {
-                machine = new PassiveStateMachine<string, int>();
-
-                machine.In("A").On(SecondEvent).Goto("B");
-                machine.In("B").On(FirstEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => arrived = true);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 machine.Initialize("A");
             });

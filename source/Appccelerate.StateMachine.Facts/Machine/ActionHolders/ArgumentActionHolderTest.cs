@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="ArgumentActionHolderTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.ActionHolders
+namespace Appccelerate.StateMachine.Facts.Machine.ActionHolders
 {
     using System;
     using FluentAssertions;
+    using StateMachine.Machine.ActionHolders;
     using Xunit;
 
     public class ArgumentActionHolderTest

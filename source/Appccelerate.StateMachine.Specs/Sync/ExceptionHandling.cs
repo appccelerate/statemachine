@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ExceptionHandling.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,133 +16,155 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
-    using Appccelerate.StateMachine.Machine.Events;
     using FluentAssertions;
+    using Machine;
+    using Machine.Events;
     using Xbehave;
 
     public class ExceptionHandling
     {
-        private PassiveStateMachine<int, int> machine;
         private TransitionExceptionEventArgs<int, int> receivedTransitionExceptionEventArgs;
 
-        [Background]
-        public void Background()
-        {
-            this.receivedTransitionExceptionEventArgs = null;
-
-            this.machine = new PassiveStateMachine<int, int>();
-
-            this.machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
-        }
-
         [Scenario]
-        public void TransitionActionException()
+        public void TransitionActionException(PassiveStateMachine<int, int> machine)
         {
             "establish a transition action throwing an exception".x(() =>
-                this.machine.In(Values.Source)
-                    .On(Values.Event).Goto(Values.Destination).Execute(() =>
-                        {
-                            throw Values.Exception;
-                        }));
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .On(Values.Event)
+                        .Goto(Values.Destination)
+                        .Execute(() => throw Values.Exception);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
+            });
 
             "when executing the transition".x(() =>
-                {
-                    this.machine.Initialize(Values.Source);
-                    this.machine.Start();
-                    this.machine.Fire(Values.Event, Values.Parameter);
-                });
+            {
+                machine.Initialize(Values.Source);
+                machine.Start();
+                machine.Fire(Values.Event, Values.Parameter);
+            });
 
             this.ItShouldHandleTransitionException();
         }
 
         [Scenario]
-        public void EntryActionException()
+        public void EntryActionException(PassiveStateMachine<int, int> machine)
         {
             "establish an entry action throwing an exception".x(() =>
-                {
-                    this.machine.In(Values.Source)
-                        .On(Values.Event).Goto(Values.Destination);
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .On(Values.Event)
+                        .Goto(Values.Destination);
+                stateMachineDefinitionBuilder
+                    .In(Values.Destination)
+                        .ExecuteOnEntry(() => throw Values.Exception);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    this.machine.In(Values.Destination)
-                        .ExecuteOnEntry(() =>
-                            {
-                                throw Values.Exception;
-                            });
-                });
+                machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
+            });
 
             "when executing the transition".x(() =>
-                {
-                    this.machine.Initialize(Values.Source);
-                    this.machine.Start();
-                    this.machine.Fire(Values.Event, Values.Parameter);
-                });
+            {
+                machine.Initialize(Values.Source);
+                machine.Start();
+                machine.Fire(Values.Event, Values.Parameter);
+            });
 
             this.ItShouldHandleTransitionException();
         }
 
         [Scenario]
-        public void ExitActionException()
+        public void ExitActionException(PassiveStateMachine<int, int> machine)
         {
             "establish an exit action throwing an exception".x(() =>
-                    this.machine.In(Values.Source)
-                        .ExecuteOnExit(() =>
-                            {
-                                throw Values.Exception;
-                            })
-                        .On(Values.Event).Goto(Values.Destination));
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .ExecuteOnExit(() => throw Values.Exception)
+                        .On(Values.Event)
+                        .Goto(Values.Destination);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
+            });
 
             "when executing the transition".x(() =>
-                {
-                    this.machine.Initialize(Values.Source);
-                    this.machine.Start();
-                    this.machine.Fire(Values.Event, Values.Parameter);
-                });
+            {
+                machine.Initialize(Values.Source);
+                machine.Start();
+                machine.Fire(Values.Event, Values.Parameter);
+            });
 
             this.ItShouldHandleTransitionException();
         }
 
         [Scenario]
-        public void GuardException()
+        public void GuardException(PassiveStateMachine<int, int> machine)
         {
             "establish a guard throwing an exception".x(() =>
-                    this.machine.In(Values.Source)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
                         .On(Values.Event)
-                            .If(() =>
-                                {
-                                    throw Values.Exception;
-                                })
-                                .Goto(Values.Destination));
+                        .If(() => throw Values.Exception)
+                        .Goto(Values.Destination);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
+            });
 
             "when executing the transition".x(() =>
-                {
-                    this.machine.Initialize(Values.Source);
-                    this.machine.Start();
-                    this.machine.Fire(Values.Event, Values.Parameter);
-                });
+            {
+                machine.Initialize(Values.Source);
+                machine.Start();
+                machine.Fire(Values.Event, Values.Parameter);
+            });
 
             this.ItShouldHandleTransitionException();
         }
 
         [Scenario]
-        public void InitializationException()
+        public void InitializationException(PassiveStateMachine<int, int> machine)
         {
             const int State = 1;
 
             "establish a entry action for the initial state that throws an exception".x(() =>
-                this.machine.In(State)
-                    .ExecuteOnEntry(() =>
-                        {
-                            throw Values.Exception;
-                        }));
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnEntry(() => throw Values.Exception);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
+            });
 
             "when initializing the state machine".x(() =>
-                {
-                    this.machine.Initialize(State);
-                    this.machine.Start();
-                });
+            {
+                machine.Initialize(State);
+                machine.Start();
+            });
 
             "should catch exception and fire transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.Exception.Should().NotBeNull());
@@ -153,24 +175,27 @@ namespace Appccelerate.StateMachine.Sync
 
         [Scenario]
         public void NoExceptionHandlerRegistered(
+            PassiveStateMachine<int, int> machine,
             Exception catchedException)
         {
             "establish an exception throwing state machine without a registered exception handler".x(() =>
-                {
-                    this.machine = new PassiveStateMachine<int, int>();
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(Values.Source)
+                        .On(Values.Event)
+                        .Execute(() => throw Values.Exception);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    this.machine.In(Values.Source)
-                        .On(Values.Event).Execute(() =>
-                            {
-                                throw Values.Exception;
-                            });
+                machine.Initialize(Values.Source);
 
-                    this.machine.Initialize(Values.Source);
-                    this.machine.Start();
-                });
+                machine.Start();
+            });
 
             "when an exception occurs".x(() =>
-                catchedException = Catch.Exception(() => this.machine.Fire(Values.Event)));
+                catchedException = Catch.Exception(() => machine.Fire(Values.Event)));
 
             "should (re-)throw exception".x(() =>
                 catchedException.InnerException

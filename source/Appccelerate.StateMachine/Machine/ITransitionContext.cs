@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ITransitionContext.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using States;
 
     /// <summary>
     /// Provides information about the current transition.
@@ -29,11 +30,13 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        IState<TState, TEvent> State { get; }
+        IStateDefinition<TState, TEvent> StateDefinition { get; }
 
         Missable<TEvent> EventId { get; }
 
         object EventArgument { get; }
+
+        INotifier<TState, TEvent> Notifier { get; }
 
         void AddRecord(TState stateId, RecordType recordType);
 

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="CurrentStateExtension.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
-    using Appccelerate.StateMachine.Extensions;
-    using Appccelerate.StateMachine.Machine;
+    using Machine.States;
+    using StateMachine.Extensions;
 
     public class CurrentStateExtension : ExtensionBase<int, int>
     {
         public int CurrentState { get; private set; }
 
-        public override void SwitchedState(IStateMachineInformation<int, int> stateMachine, IState<int, int> oldState, IState<int, int> newState)
+        public override void SwitchedState(IStateMachineInformation<int, int> stateMachine, IStateDefinition<int, int> oldState, IStateDefinition<int, int> newState)
         {
             this.CurrentState = newState.Id;
         }

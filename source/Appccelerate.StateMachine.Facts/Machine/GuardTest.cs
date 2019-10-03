@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="GuardTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FluentAssertions;
-
+    using StateMachine.Machine;
     using Xunit;
 
     /// <summary>
@@ -27,63 +27,89 @@ namespace Appccelerate.StateMachine.Machine
     /// </summary>
     public class GuardTest
     {
-        private const string EventArgument = "test";
-
-        private readonly StateMachine<StateMachine.States, StateMachine.Events> testee;
-
-        public GuardTest()
-        {
-            this.testee = new StateMachine<StateMachine.States, StateMachine.Events>();
-
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
-        }
-
         [Fact]
         public void EventArgumentIsPassedToTheGuard()
         {
-            string eventArgument = null;
+            const string EventArgument = "test";
+            string actualEventArgument = null;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.A)
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.A)
                     .If<string>(argument =>
-                        {
-                            eventArgument = argument;
-                            return true;
-                        })
-                    .Goto(StateMachine.States.B);
+                    {
+                        actualEventArgument = argument;
+                        return true;
+                    })
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder
+                .Build();
+            var stateContainer = new StateContainer<States, Events>();
 
-            this.testee.Fire(StateMachine.Events.A, EventArgument);
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            eventArgument.Should().Be(EventArgument);
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.A, EventArgument, stateContainer, stateContainer, stateDefinitions);
+
+            actualEventArgument.Should().Be(EventArgument);
         }
 
         [Fact]
         public void GuardWithoutArguments()
         {
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B)
-                    .If(() => false).Goto(StateMachine.States.C)
-                    .If(() => true).Goto(StateMachine.States.B);
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .If(() => false).Goto(States.C)
+                    .If(() => true).Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder
+                .Build();
 
-            this.testee.Fire(StateMachine.Events.B);
+            var stateContainer = new StateContainer<States, Events>();
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
+
+            stateContainer.CurrentStateId.Should().Be(States.B);
         }
 
         [Fact]
         public void GuardWithASingleArgument()
         {
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B)
-                    .If<int>(SingleIntArgumentGuardReturningFalse).Goto(StateMachine.States.C)
-                    .If(() => false).Goto(StateMachine.States.D)
-                    .If(() => false).Goto(StateMachine.States.E)
-                    .If<int>(SingleIntArgumentGuardReturningTrue).Goto(StateMachine.States.B);
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .If<int>(SingleIntArgumentGuardReturningFalse).Goto(States.C)
+                    .If(() => false).Goto(States.D)
+                    .If(() => false).Goto(States.E)
+                    .If<int>(SingleIntArgumentGuardReturningTrue).Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder
+                    .Build();
+            var stateContainer = new StateContainer<States, Events>();
 
-            this.testee.Fire(StateMachine.Events.B, 3);
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, 3, stateContainer, stateContainer, stateDefinitions);
+
+            stateContainer.CurrentStateId.Should().Be(States.B);
         }
 
         private static bool SingleIntArgumentGuardReturningTrue(int i)

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="IStateDictionary.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -19,32 +19,15 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    using System.Collections.Generic;
+    using States;
 
-    /// <summary>
-    /// Manages the states of a state machine.
-    /// </summary>
-    /// <typeparam name="TState">The type of the state.</typeparam>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
     public interface IStateDictionary<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        /// <summary>
-        /// Gets the <see cref="IState{TState,TEvent}"/> with the specified state id.
-        /// </summary>
-        /// <value>State with the specified id.</value>
-        /// <param name="stateId">The State id.</param>
-        /// <returns>The State with the specified id.</returns>
-        IState<TState, TEvent> this[TState stateId]
+        StateDefinition<TState, TEvent> this[TState stateId]
         {
             get;
         }
-
-        /// <summary>
-        /// Gets all states defined in this dictionary.
-        /// </summary>
-        /// <returns>All states in this directory.</returns>
-        IEnumerable<IState<TState, TEvent>> GetStates();
     }
 }

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="Reporting.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
     using FakeItEasy;
+    using Infrastructure;
+    using Machine;
+    using Machine.States;
     using Xbehave;
 
     public class Reporting
@@ -32,7 +33,9 @@ namespace Appccelerate.StateMachine.Sync
             IStateMachineReport<string, int> report)
         {
             "establish a state machine".x(() =>
-                machine = new PassiveStateMachine<string, int>());
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine());
 
             "establish a state machine reporter".x(() =>
                 report = A.Fake<IStateMachineReport<string, int>>());
@@ -41,7 +44,9 @@ namespace Appccelerate.StateMachine.Sync
                 machine.Report(report));
 
             "it should call the passed reporter".x(() =>
-                A.CallTo(() => report.Report(A<string>._, A<IEnumerable<IState<string, int>>>._, A<Initializable<string>>._)));
+                A.CallTo(() =>
+                        report.Report(A<string>._, A<IEnumerable<IStateDefinition<string, int>>>._, A<Initializable<string>>._))
+                    .MustHaveHappened());
         }
     }
 }

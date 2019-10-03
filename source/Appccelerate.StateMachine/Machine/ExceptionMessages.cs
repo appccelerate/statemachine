@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ExceptionMessages.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Globalization;
+    using States;
 
     /// <summary>
     /// Holds all exception messages.
@@ -63,17 +64,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public const string CannotSetALastActiveStateThatIsNotASubState = "The state that is set as the last active state of a super state has to be a sub state";
 
-        /// <summary>
-        /// State cannot be its own super-state..
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>error message.</returns>
-        public static string StateCannotBeItsOwnSuperState(string state)
-        {
-            return string.Format(CultureInfo.InvariantCulture, "State {0} cannot be its own super-state.", state);
-        }
-
-        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IState<TState, TEvent> stateAlreadyHavingASuperState)
+        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
             where TState : IComparable
             where TEvent : IComparable
         {
@@ -87,26 +78,13 @@ namespace Appccelerate.StateMachine.Machine
                 stateAlreadyHavingASuperState.SuperState.Id);
         }
 
-        /// <summary>
-        /// Transition cannot be added to the state because it has already been added to the state.
-        /// </summary>
-        /// <typeparam name="TState">The type of the state.</typeparam>
-        /// <typeparam name="TEvent">The type of the event.</typeparam>
-        /// <param name="transition">The transition.</param>
-        /// <param name="state">The state.</param>
-        /// <returns>error message.</returns>
-        public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransition<TState, TEvent> transition, IState<TState, TEvent> state)
+        public static string CannotFindStateDefinition<TState>(TState state)
             where TState : IComparable
-            where TEvent : IComparable
         {
-            Guard.AgainstNullArgument("transition", transition);
-
             return string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Transition {0} cannot be added to the state {1} because it has already been added to the state {2}.",
-                        transition,
-                        state,
-                        transition.Source);
+                CultureInfo.InvariantCulture,
+                "Cannot find StateDefinition for state {0}. Are you sure you have configured this state via myStateDefinitionBuilder.WithConfiguration(..)?",
+                state);
         }
     }
 }

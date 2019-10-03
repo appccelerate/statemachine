@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="EntryActions.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine.Specs.Async
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
-
     using Xbehave;
 
     public class EntryActions
@@ -207,7 +206,7 @@ namespace Appccelerate.StateMachine.Async
 
         [Scenario]
         public void EventArgument(
-            PassiveStateMachine<int, int> machine,
+            AsyncPassiveStateMachine<int, int> machine,
             int passedArgument,
             int asyncPassedArgument)
         {
@@ -217,7 +216,7 @@ namespace Appccelerate.StateMachine.Async
 
             "establish a state machine with an entry action taking an event argument".x(() =>
             {
-                machine = new PassiveStateMachine<int, int>();
+                machine = new AsyncPassiveStateMachine<int, int>();
 
                 machine.In(State)
                     .On(Event).Goto(anotherState);
@@ -231,11 +230,11 @@ namespace Appccelerate.StateMachine.Async
                     });
             });
 
-            "when entering the state".x(() =>
+            "when entering the state".x(async () =>
             {
-                machine.Initialize(State);
-                machine.Start();
-                machine.Fire(Event, argument);
+                await machine.Initialize(State);
+                await machine.Start();
+                await machine.Fire(Event, argument);
             });
 
             "it should pass event argument to synchronousentry action".x(()

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="YEdStateMachineReportGenerator.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -24,9 +24,10 @@ namespace Appccelerate.StateMachine.Reports
     using System.IO;
     using System.Linq;
     using System.Xml.Linq;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Machine.Transitions;
+    using Infrastructure;
+    using Machine;
+    using Machine.States;
+    using Machine.Transitions;
 
     /// <summary>
     /// generates a graph meta language file that can be read by yEd.
@@ -65,7 +66,7 @@ namespace Appccelerate.StateMachine.Reports
         /// <param name="name">The name of the state machine.</param>
         /// <param name="states">The states.</param>
         /// <param name="initialState">The initial state id.</param>
-        public void Report(string name, IEnumerable<IState<TState, TEvent>> states, Initializable<TState> initialState)
+        public void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> states, Initializable<TState> initialState)
         {
             var statesList = states.ToList();
 
@@ -117,14 +118,14 @@ namespace Appccelerate.StateMachine.Reports
             return doc;
         }
 
-        private static string CreateExitActionsDescription(IState<TState, TEvent> state)
+        private static string CreateExitActionsDescription(IStateDefinition<TState, TEvent> state)
         {
             return state.ExitActions.Any()
                        ? (state.ExitActions.Aggregate(Environment.NewLine + "(", (aggregate, action) => (aggregate.Length > 3 ? aggregate + ", " : aggregate) + action.Describe()) + ")")
                        : string.Empty;
         }
 
-        private static string CreateEntryActionDescription(IState<TState, TEvent> state)
+        private static string CreateEntryActionDescription(IStateDefinition<TState, TEvent> state)
         {
             return state.EntryActions.Any()
                        ? (state.EntryActions.Aggregate("(", (aggregate, action) => (aggregate.Length > 1 ? aggregate + ", " : aggregate) + action.Describe()) + ")" + Environment.NewLine)
@@ -141,11 +142,11 @@ namespace Appccelerate.StateMachine.Reports
             return transition.Actions.Any() ? (transition.Actions.Aggregate("(", (aggregate, action) => (aggregate.Length > 1 ? aggregate + ", " : aggregate) + action.Describe()) + ")") : string.Empty;
         }
 
-        private void AddEdges(XElement graph, IEnumerable<IState<TState, TEvent>> states)
+        private void AddEdges(XElement graph, IEnumerable<IStateDefinition<TState, TEvent>> states)
         {
             foreach (var state in states)
             {
-                foreach (var transition in state.Transitions.GetTransitions())
+                foreach (var transition in state.TransitionInfos)
                 {
                     this.AddEdge(graph, transition);
                 }
@@ -187,7 +188,7 @@ namespace Appccelerate.StateMachine.Reports
             graph.Add(edge);
         }
 
-        private void AddNodes(XElement graph, IEnumerable<IState<TState, TEvent>> states)
+        private void AddNodes(XElement graph, IEnumerable<IStateDefinition<TState, TEvent>> states)
         {
             foreach (var state in states.Where(s => s.SuperState == null))
             {
@@ -195,7 +196,7 @@ namespace Appccelerate.StateMachine.Reports
             }
         }
 
-        private void AddNode(XElement graph, IState<TState, TEvent> state)
+        private void AddNode(XElement graph, IStateDefinition<TState, TEvent> state)
         {
             var node = new XElement(N + "node", new XAttribute("id", state.Id.ToString()));
 
@@ -241,7 +242,7 @@ namespace Appccelerate.StateMachine.Reports
             graph.Add(node);
         }
 
-        private bool DetermineWhetherThisIsAnInitialState(IState<TState, TEvent> state)
+        private bool DetermineWhetherThisIsAnInitialState(IStateDefinition<TState, TEvent> state)
         {
             return (this.initialStateId.IsInitialized && state.Id.ToString() == this.initialStateId.Value.ToString()) || (state.SuperState != null && state.SuperState.InitialState == state);
         }

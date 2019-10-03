@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionResult.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,29 +20,28 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
 
-    public class TransitionResult<TState, TEvent>
-        : ITransitionResult<TState, TEvent>
+    public class TransitionResult<TState>
+        : ITransitionResult<TState>
         where TState : IComparable
-        where TEvent : IComparable
     {
-        public static readonly ITransitionResult<TState, TEvent> NotFired = new TransitionResult<TState, TEvent>(false, null);
+        public static readonly ITransitionResult<TState> NotFired = new TransitionResult<TState>(false, default(TState));
 
-        public TransitionResult(bool fired, IState<TState, TEvent> newState)
+        public TransitionResult(bool fired, TState newState)
         {
             this.Fired = fired;
             this.NewState = newState;
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="ITransitionResult{TState, TEvent}"/> is fired.
+        /// Gets a value indicating whether this <see cref="ITransitionResult{TState}"/> is fired.
         /// </summary>
         /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
-        public bool Fired { get; private set; }
+        public bool Fired { get; }
 
         /// <summary>
         /// Gets the new state the state machine is in.
         /// </summary>
         /// <value>The new state.</value>
-        public IState<TState, TEvent> NewState { get; private set; }
+        public TState NewState { get; }
     }
 }

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionsExceptionMessages.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
     using System.Globalization;
+    using States;
 
     /// <summary>
     /// Holds all exception messages.
@@ -34,18 +35,18 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <param name="transition">The transition.</param>
         /// <param name="state">The state.</param>
         /// <returns>error message.</returns>
-        public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransition<TState, TEvent> transition, IState<TState, TEvent> state)
+        public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransitionDefinition<TState, TEvent> transition, IStateDefinition<TState, TEvent> state)
             where TState : IComparable
             where TEvent : IComparable
         {
             Guard.AgainstNullArgument("transition", transition);
 
             return string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Transition {0} cannot be added to the state {1} because it has already been added to the state {2}.",
-                        transition,
-                        state,
-                        transition.Source);
+                CultureInfo.InvariantCulture,
+                "Transition {0} cannot be added to the state {1} because it has already been added to the state {2}.",
+                transition,
+                state,
+                transition.Source);
         }
     }
 }

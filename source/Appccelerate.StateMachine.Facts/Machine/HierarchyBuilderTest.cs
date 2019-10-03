@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="HierarchyBuilderTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,35 +16,32 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Facts.Machine
 {
     using System;
-
+    using System.Collections.Generic;
     using FakeItEasy;
-
     using FluentAssertions;
-
+    using StateMachine.Machine;
+    using StateMachine.Machine.States;
     using Xunit;
-    using Xunit.Extensions;
 
     public class HierarchyBuilderTest
     {
         private const string SuperState = "SuperState";
-
         private readonly HierarchyBuilder<string, int> testee;
-
         private readonly IStateDictionary<string, int> states;
-
-        private readonly IState<string, int> superState;
+        private readonly StateDefinition<string, int> superState;
+        private readonly IDictionary<string, IStateDefinition<string, int>> initiallyLastActiveStates;
 
         public HierarchyBuilderTest()
         {
-            this.superState = A.Fake<IState<string, int>>();
-            A.CallTo(() => this.superState.Id).Returns(SuperState);
+            this.superState = new StateDefinition<string, int>(SuperState);
             this.states = A.Fake<IStateDictionary<string, int>>();
             A.CallTo(() => this.states[SuperState]).Returns(this.superState);
+            this.initiallyLastActiveStates = A.Fake<IDictionary<string, IStateDefinition<string, int>>>();
 
-            this.testee = new HierarchyBuilder<string, int>(this.states, SuperState);
+            this.testee = new HierarchyBuilder<string, int>(SuperState, this.states, this.initiallyLastActiveStates);
         }
 
         [Theory]
@@ -63,8 +60,10 @@ namespace Appccelerate.StateMachine.Machine
         public void SetsInitialSubStateOfSuperState()
         {
             const string SubState = "SubState";
-            var subState = A.Fake<IState<string, int>>();
-            subState.SuperState = null;
+            var subState = new StateDefinition<string, int>(SubState)
+            {
+                SuperStateModifiable = null
+            };
             A.CallTo(() => this.states[SubState]).Returns(subState);
 
             this.testee.WithInitialSubState(SubState);
@@ -74,25 +73,49 @@ namespace Appccelerate.StateMachine.Machine
         }
 
         [Fact]
+        public void SettingTheInitialSubStateAlsoAddsItToTheInitiallyLastActiveStates()
+        {
+            const string SubState = "SubState";
+            var subState = new StateDefinition<string, int>(SubState)
+            {
+                SuperStateModifiable = null
+            };
+            A.CallTo(() => this.states[SubState]).Returns(subState);
+
+            this.testee.WithInitialSubState(SubState);
+
+            A.CallTo(() => this.initiallyLastActiveStates.Add(SuperState, subState)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
         public void AddsSubStatesToSuperState()
         {
             const string AnotherSubState = "AnotherSubState";
-            var anotherSubState = A.Fake<IState<string, int>>();
-            anotherSubState.SuperState = null;
+            var anotherSubState = new StateDefinition<string, int>(AnotherSubState)
+            {
+                SuperStateModifiable = null
+            };
             A.CallTo(() => this.states[AnotherSubState]).Returns(anotherSubState);
 
             this.testee
                 .WithSubState(AnotherSubState);
 
-            A.CallTo(() => this.superState.SubStates.Add(anotherSubState)).MustHaveHappened();
+            this.superState
+                .SubStates
+                .Should()
+                .HaveCount(1)
+                .And
+                .Contain(anotherSubState);
         }
 
         [Fact]
         public void ThrowsExceptionIfSubStateAlreadyHasASuperState()
         {
             const string SubState = "SubState";
-            var subState = A.Fake<IState<string, int>>();
-            subState.SuperState = A.Fake<IState<string, int>>();
+            var subState = new StateDefinition<string, int>(SubState)
+            {
+                SuperStateModifiable = new StateDefinition<string, int>("SomeOtherSuperState")
+            };
             A.CallTo(() => this.states[SubState]).Returns(subState);
 
             this.testee.Invoking(t => t.WithInitialSubState(SubState))

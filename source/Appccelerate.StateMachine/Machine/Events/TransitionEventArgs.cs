@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionEventArgs.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -44,28 +44,19 @@ namespace Appccelerate.StateMachine.Machine.Events
         /// Gets the id of the source state of the transition.
         /// </summary>
         /// <value>The id of the source state of the transition.</value>
-        public TState StateId
-        {
-            get { return this.Context.State.Id; }
-        }
+        public TState StateId => this.Context.StateDefinition.Id;
 
         /// <summary>
         /// Gets the event id.
         /// </summary>
         /// <value>The event id.</value>
-        public TEvent EventId
-        {
-            get { return this.Context.EventId.Value; }
-        }
+        public TEvent EventId => this.Context.EventId.Value;
 
         /// <summary>
         /// Gets the event argument.
         /// </summary>
         /// <value>The event argument.</value>
-        public object EventArgument
-        {
-            get { return this.Context.EventArgument; }
-        }
+        public object EventArgument => this.Context.EventArgument;
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.

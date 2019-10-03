@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,19 +16,14 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Facts.Machine
 {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Text;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Persistence;
-
-    using FakeItEasy;
-
     using FluentAssertions;
-
+    using StateMachine.Machine;
     using Xunit;
 
     /// <summary>
@@ -36,130 +31,131 @@ namespace Appccelerate.StateMachine.Machine
     /// </summary>
     public class StateMachineTest
     {
-        /// <summary>
-        /// Object under test.
-        /// </summary>
-        private readonly StateMachine<StateMachine.States, StateMachine.Events> testee;
+        private readonly IStateDefinitionDictionary<States, Events> stateDefinitions;
 
         /// <summary>
         /// The list of recorded actions.
         /// </summary>
-        private readonly List<Record> records;
+        private readonly List<Record> records = new List<Record>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StateMachineTest"/> class.
         /// </summary>
         public StateMachineTest()
         {
-            this.records = new List<Record>();
-
-            this.testee = new StateMachine<StateMachine.States, StateMachine.Events>();
-
-            this.testee.DefineHierarchyOn(StateMachine.States.B)
-                .WithHistoryType(HistoryType.None)
-                .WithInitialSubState(StateMachine.States.B1)
-                .WithSubState(StateMachine.States.B2);
-
-            this.testee.DefineHierarchyOn(StateMachine.States.C)
-                .WithHistoryType(HistoryType.Shallow)
-                .WithInitialSubState(StateMachine.States.C2)
-                .WithSubState(StateMachine.States.C1);
-
-            this.testee.DefineHierarchyOn(StateMachine.States.C1)
-                .WithHistoryType(HistoryType.Shallow)
-                .WithInitialSubState(StateMachine.States.C1A)
-                .WithSubState(StateMachine.States.C1B);
-
-            this.testee.DefineHierarchyOn(StateMachine.States.D)
-                .WithHistoryType(HistoryType.Deep)
-                .WithInitialSubState(StateMachine.States.D1)
-                .WithSubState(StateMachine.States.D2);
-
-            this.testee.DefineHierarchyOn(StateMachine.States.D1)
-                .WithHistoryType(HistoryType.Deep)
-                .WithInitialSubState(StateMachine.States.D1A)
-                .WithSubState(StateMachine.States.D1B);
-
-            this.testee.In(StateMachine.States.A)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.A))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.A))
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B)
-                .On(StateMachine.Events.C).Goto(StateMachine.States.C)
-                .On(StateMachine.Events.D).Goto(StateMachine.States.D)
-                .On(StateMachine.Events.A);
-
-            this.testee.In(StateMachine.States.B)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.B))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.B))
-                .On(StateMachine.Events.D).Goto(StateMachine.States.D);
-
-            this.testee.In(StateMachine.States.B1)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.B1))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.B1))
-                .On(StateMachine.Events.B2).Goto(StateMachine.States.B2);
-
-            this.testee.In(StateMachine.States.B2)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.B2))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.B2))
-                .On(StateMachine.Events.A).Goto(StateMachine.States.A)
-                .On(StateMachine.Events.C1B).Goto(StateMachine.States.C1B);
-
-            this.testee.In(StateMachine.States.C)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.C))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.C))
-                .On(StateMachine.Events.A).Goto(StateMachine.States.A);
-
-            this.testee.In(StateMachine.States.C1)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.C1))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.C1))
-                .On(StateMachine.Events.C1B).Goto(StateMachine.States.C1B);
-
-            this.testee.In(StateMachine.States.C2)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.C2))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.C2));
-
-            this.testee.In(StateMachine.States.C1A)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.C1A))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.C1A));
-
-            this.testee.In(StateMachine.States.C1B)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.C1B))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.C1B));
-
-            this.testee.In(StateMachine.States.D)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.D))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.D));
-
-            this.testee.In(StateMachine.States.D1)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.D1))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.D1));
-
-            this.testee.In(StateMachine.States.D1A)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.D1A))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.D1A));
-
-            this.testee.In(StateMachine.States.D1B)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.D1B))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.D1B))
-                .On(StateMachine.Events.A).Goto(StateMachine.States.A)
-                .On(StateMachine.Events.B1).Goto(StateMachine.States.B1);
-
-            this.testee.In(StateMachine.States.D2)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.D2))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.D2))
-                .On(StateMachine.Events.A).Goto(StateMachine.States.A);
-
-            this.testee.In(StateMachine.States.E)
-                .ExecuteOnEntry(() => this.RecordEntry(StateMachine.States.E))
-                .ExecuteOnExit(() => this.RecordExit(StateMachine.States.E))
-                .On(StateMachine.Events.A).Goto(StateMachine.States.A)
-                .On(StateMachine.Events.E).Goto(StateMachine.States.E);
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.B)
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(States.B1)
+                    .WithSubState(States.B2);
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.C)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C2)
+                    .WithSubState(States.C1);
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.C1)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C1A)
+                    .WithSubState(States.C1B);
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.D)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1)
+                    .WithSubState(States.D2);
+            stateDefinitionBuilder
+                .DefineHierarchyOn(States.D1)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1A)
+                    .WithSubState(States.D1B);
+            stateDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.A))
+                    .ExecuteOnExit(() => this.RecordExit(States.A))
+                    .On(Events.B).Goto(States.B)
+                    .On(Events.C).Goto(States.C)
+                    .On(Events.D).Goto(States.D)
+                    .On(Events.A);
+            stateDefinitionBuilder
+                .In(States.B)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.B))
+                    .ExecuteOnExit(() => this.RecordExit(States.B))
+                    .On(Events.D).Goto(States.D);
+            stateDefinitionBuilder
+                .In(States.B1)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.B1))
+                    .ExecuteOnExit(() => this.RecordExit(States.B1))
+                    .On(Events.B2).Goto(States.B2);
+            stateDefinitionBuilder
+                .In(States.B2)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.B2))
+                    .ExecuteOnExit(() => this.RecordExit(States.B2))
+                    .On(Events.A).Goto(States.A)
+                    .On(Events.C1B).Goto(States.C1B);
+            stateDefinitionBuilder
+                .In(States.C)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C))
+                    .ExecuteOnExit(() => this.RecordExit(States.C))
+                    .On(Events.A).Goto(States.A);
+            stateDefinitionBuilder
+                .In(States.C1)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C1))
+                    .ExecuteOnExit(() => this.RecordExit(States.C1))
+                    .On(Events.C1B).Goto(States.C1B);
+            stateDefinitionBuilder
+                .In(States.C2)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C2))
+                    .ExecuteOnExit(() => this.RecordExit(States.C2));
+            stateDefinitionBuilder
+                .In(States.C1A)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C1A))
+                    .ExecuteOnExit(() => this.RecordExit(States.C1A));
+            stateDefinitionBuilder
+                .In(States.C1B)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.C1B))
+                    .ExecuteOnExit(() => this.RecordExit(States.C1B));
+            stateDefinitionBuilder
+                .In(States.D)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D))
+                    .ExecuteOnExit(() => this.RecordExit(States.D));
+            stateDefinitionBuilder
+                .In(States.D1)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D1))
+                    .ExecuteOnExit(() => this.RecordExit(States.D1));
+            stateDefinitionBuilder
+                .In(States.D1A)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D1A))
+                    .ExecuteOnExit(() => this.RecordExit(States.D1A));
+            stateDefinitionBuilder
+                .In(States.D1B)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D1B))
+                    .ExecuteOnExit(() => this.RecordExit(States.D1B))
+                    .On(Events.A).Goto(States.A)
+                    .On(Events.B1).Goto(States.B1);
+            stateDefinitionBuilder
+                .In(States.D2)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.D2))
+                    .ExecuteOnExit(() => this.RecordExit(States.D2))
+                    .On(Events.A).Goto(States.A);
+            stateDefinitionBuilder
+                .In(States.E)
+                    .ExecuteOnEntry(() => this.RecordEntry(States.E))
+                    .ExecuteOnExit(() => this.RecordExit(States.E))
+                    .On(Events.A).Goto(States.A)
+                    .On(Events.E).Goto(States.E);
+            this.stateDefinitions = stateDefinitionBuilder.Build();
         }
 
         [Fact]
         public void InitializationWhenInitialStateIsNotYetEnteredThenNoActionIsPerformed()
         {
-            this.testee.Initialize(StateMachine.States.A);
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
 
             this.CheckNoRemainingRecords();
         }
@@ -170,12 +166,17 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void InitializeToTopLevelState()
         {
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
 
-            this.CheckRecord<EntryRecord>(StateMachine.States.A);
+            stateContainer.CurrentStateId.Should().Be(States.A);
+
+            this.CheckRecord<EntryRecord>(States.A);
             this.CheckNoRemainingRecords();
         }
 
@@ -186,14 +187,19 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void InitializeToNestedState()
         {
-            this.testee.Initialize(StateMachine.States.D1B);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.D1B);
+            testee.Initialize(States.D1B, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
 
-            this.CheckRecord<EntryRecord>(StateMachine.States.D);
-            this.CheckRecord<EntryRecord>(StateMachine.States.D1);
-            this.CheckRecord<EntryRecord>(StateMachine.States.D1B);
+            stateContainer.CurrentStateId.Should().Be(States.D1B);
+
+            this.CheckRecord<EntryRecord>(States.D);
+            this.CheckRecord<EntryRecord>(States.D1);
+            this.CheckRecord<EntryRecord>(States.D1B);
             this.CheckNoRemainingRecords();
         }
 
@@ -204,50 +210,23 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void InitializeStateWithSubStates()
         {
-            this.testee.Initialize(StateMachine.States.D);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.D1A);
+            stateContainer.SetLastActiveStateFor(States.D, this.stateDefinitions[States.D1]);
+            stateContainer.SetLastActiveStateFor(States.D1, this.stateDefinitions[States.D1A]);
 
-            this.CheckRecord<EntryRecord>(StateMachine.States.D);
-            this.CheckRecord<EntryRecord>(StateMachine.States.D1);
-            this.CheckRecord<EntryRecord>(StateMachine.States.D1A);
+            testee.Initialize(States.D, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+
+            stateContainer.CurrentStateId.Should().Be(States.D1A);
+
+            this.CheckRecord<EntryRecord>(States.D);
+            this.CheckRecord<EntryRecord>(States.D1);
+            this.CheckRecord<EntryRecord>(States.D1A);
             this.CheckNoRemainingRecords();
-        }
-
-        [Fact]
-        public void SetsCurrentStateOnLoadingFromPersistedState()
-        {
-            var loader = A.Fake<IStateMachineLoader<StateMachine.States>>();
-
-            A.CallTo(() => loader.LoadCurrentState())
-                .Returns(new Initializable<StateMachine.States> { Value = StateMachine.States.C });
-
-            this.testee.Load(loader);
-
-            this.testee.CurrentStateId
-                .Should().Be(StateMachine.States.C);
-        }
-
-        [Fact]
-        public void SetsHistoryStatesOnLoadingFromPersistedState()
-        {
-            var loader = A.Fake<IStateMachineLoader<StateMachine.States>>();
-
-            A.CallTo(() => loader.LoadHistoryStates())
-                .Returns(new Dictionary<StateMachine.States, StateMachine.States>
-                             {
-                                 { StateMachine.States.D, StateMachine.States.D2 }
-                             });
-
-            this.testee.Load(loader);
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
-            this.testee.Fire(StateMachine.Events.D); // should go to loaded last active state D2, not initial state D1
-            this.ClearRecords();
-            this.testee.Fire(StateMachine.Events.A);
-
-            this.CheckRecord<ExitRecord>(StateMachine.States.D2);
         }
 
         /// <summary>
@@ -259,17 +238,22 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExecuteTransition()
         {
-            this.testee.Initialize(StateMachine.States.E);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.E, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.A);
+            testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
+            stateContainer.CurrentStateId.Should().Be(States.A);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.E);
-            this.CheckRecord<EntryRecord>(StateMachine.States.A);
+            this.CheckRecord<ExitRecord>(States.E);
+            this.CheckRecord<EntryRecord>(States.A);
             this.CheckNoRemainingRecords();
         }
 
@@ -281,17 +265,22 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExecuteTransitionBetweenStatesWithSameSuperState()
         {
-            this.testee.Initialize(StateMachine.States.B1);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.B1, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.B2);
+            testee.Fire(Events.B2, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B2);
+            stateContainer.CurrentStateId.Should().Be(States.B2);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.B1);
-            this.CheckRecord<EntryRecord>(StateMachine.States.B2);
+            this.CheckRecord<ExitRecord>(States.B1);
+            this.CheckRecord<EntryRecord>(States.B2);
             this.CheckNoRemainingRecords();
         }
 
@@ -303,20 +292,25 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExecuteTransitionBetweenStatesOnDifferentLevelsDownwards()
         {
-            this.testee.Initialize(StateMachine.States.B2);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.B2, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.C1B);
+            testee.Fire(Events.C1B, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.C1B);
+            stateContainer.CurrentStateId.Should().Be(States.C1B);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.B2);
-            this.CheckRecord<ExitRecord>(StateMachine.States.B);
-            this.CheckRecord<EntryRecord>(StateMachine.States.C);
-            this.CheckRecord<EntryRecord>(StateMachine.States.C1);
-            this.CheckRecord<EntryRecord>(StateMachine.States.C1B);
+            this.CheckRecord<ExitRecord>(States.B2);
+            this.CheckRecord<ExitRecord>(States.B);
+            this.CheckRecord<EntryRecord>(States.C);
+            this.CheckRecord<EntryRecord>(States.C1);
+            this.CheckRecord<EntryRecord>(States.C1B);
             this.CheckNoRemainingRecords();
         }
 
@@ -328,42 +322,53 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExecuteTransitionBetweenStatesOnDifferentLevelsUpwards()
         {
-            this.testee.Initialize(StateMachine.States.D1B);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.D1B, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.B1);
+            testee.Fire(Events.B1, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B1);
+            stateContainer.CurrentStateId.Should().Be(States.B1);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.D1B);
-            this.CheckRecord<ExitRecord>(StateMachine.States.D1);
-            this.CheckRecord<ExitRecord>(StateMachine.States.D);
-            this.CheckRecord<EntryRecord>(StateMachine.States.B);
-            this.CheckRecord<EntryRecord>(StateMachine.States.B1);
+            this.CheckRecord<ExitRecord>(States.D1B);
+            this.CheckRecord<ExitRecord>(States.D1);
+            this.CheckRecord<ExitRecord>(States.D);
+            this.CheckRecord<EntryRecord>(States.B);
+            this.CheckRecord<EntryRecord>(States.B1);
             this.CheckNoRemainingRecords();
         }
 
         /// <summary>
         /// When a transition targets a super-state then the initial-state of this super-state is entered recursively
-        /// down to the most nested state. No history here!
+        /// down to the most nested state.
+        /// No history here.
         /// </summary>
         [Fact]
         public void ExecuteTransitionWithInitialSubState()
         {
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.B);
+            testee.Fire(Events.B, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B1);
+            stateContainer.CurrentStateId.Should().Be(States.B1);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.A);
-            this.CheckRecord<EntryRecord>(StateMachine.States.B);
-            this.CheckRecord<EntryRecord>(StateMachine.States.B1);
+            this.CheckRecord<ExitRecord>(States.A);
+            this.CheckRecord<EntryRecord>(States.B);
+            this.CheckRecord<EntryRecord>(States.B1);
             this.CheckNoRemainingRecords();
         }
 
@@ -374,17 +379,22 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExecuteTransitionWithHistoryTypeNone()
         {
-            this.testee.Initialize(StateMachine.States.B2);
-            this.testee.EnterInitialState();
-            this.testee.Fire(StateMachine.Events.A);
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.B2, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.B);
+            testee.Fire(Events.B, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.A);
-            this.CheckRecord<EntryRecord>(StateMachine.States.B);
-            this.CheckRecord<EntryRecord>(StateMachine.States.B1);
+            this.CheckRecord<ExitRecord>(States.A);
+            this.CheckRecord<EntryRecord>(States.B);
+            this.CheckRecord<EntryRecord>(States.B1);
             this.CheckNoRemainingRecords();
         }
 
@@ -395,20 +405,25 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExecuteTransitionWithHistoryTypeShallow()
         {
-            this.testee.Initialize(StateMachine.States.C1B);
-            this.testee.EnterInitialState();
-            this.testee.Fire(StateMachine.Events.A);
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.C1B, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.C);
+            testee.Fire(Events.C, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.C1A);
+            stateContainer.CurrentStateId.Should().Be(States.C1A);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.A);
-            this.CheckRecord<EntryRecord>(StateMachine.States.C);
-            this.CheckRecord<EntryRecord>(StateMachine.States.C1);
-            this.CheckRecord<EntryRecord>(StateMachine.States.C1A);
+            this.CheckRecord<ExitRecord>(States.A);
+            this.CheckRecord<EntryRecord>(States.C);
+            this.CheckRecord<EntryRecord>(States.C1);
+            this.CheckRecord<EntryRecord>(States.C1A);
             this.CheckNoRemainingRecords();
         }
 
@@ -419,20 +434,25 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExecuteTransitionWithHistoryTypeDeep()
         {
-            this.testee.Initialize(StateMachine.States.D1B);
-            this.testee.EnterInitialState();
-            this.testee.Fire(StateMachine.Events.A);
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.D1B, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
+            testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.D);
+            testee.Fire(Events.D, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.D1B);
+            stateContainer.CurrentStateId.Should().Be(States.D1B);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.A);
-            this.CheckRecord<EntryRecord>(StateMachine.States.D);
-            this.CheckRecord<EntryRecord>(StateMachine.States.D1);
-            this.CheckRecord<EntryRecord>(StateMachine.States.D1B);
+            this.CheckRecord<ExitRecord>(States.A);
+            this.CheckRecord<EntryRecord>(States.D);
+            this.CheckRecord<EntryRecord>(States.D1);
+            this.CheckRecord<EntryRecord>(States.D1B);
             this.CheckNoRemainingRecords();
         }
 
@@ -442,19 +462,24 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void ExecuteTransitionHandledBySuperState()
         {
-            this.testee.Initialize(StateMachine.States.C1B);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.C1B, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
 
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.A);
+            testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
+            stateContainer.CurrentStateId.Should().Be(States.A);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.C1B);
-            this.CheckRecord<ExitRecord>(StateMachine.States.C1);
-            this.CheckRecord<ExitRecord>(StateMachine.States.C);
-            this.CheckRecord<EntryRecord>(StateMachine.States.A);
+            this.CheckRecord<ExitRecord>(States.C1B);
+            this.CheckRecord<ExitRecord>(States.C1);
+            this.CheckRecord<ExitRecord>(States.C);
+            this.CheckRecord<EntryRecord>(States.A);
             this.CheckNoRemainingRecords();
         }
 
@@ -464,67 +489,67 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void InternalTransition()
         {
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.A);
+            testee.Fire(Events.A, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
+            stateContainer.CurrentStateId.Should().Be(States.A);
         }
 
         [Fact]
         public void ExecuteSelfTransition()
         {
-            this.testee.Initialize(StateMachine.States.E);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.E, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.E);
+            testee.Fire(Events.E, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.E);
+            stateContainer.CurrentStateId.Should().Be(States.E);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.E);
-            this.CheckRecord<EntryRecord>(StateMachine.States.E);
+            this.CheckRecord<ExitRecord>(States.E);
+            this.CheckRecord<EntryRecord>(States.E);
             this.CheckNoRemainingRecords();
         }
 
         [Fact]
         public void ExecuteTransitionToNephew()
         {
-            this.testee.Initialize(StateMachine.States.C1A);
-            this.testee.EnterInitialState();
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.C1A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, this.stateDefinitions);
             this.ClearRecords();
 
-            this.testee.Fire(StateMachine.Events.C1B);
+            testee.Fire(Events.C1B, stateContainer, stateContainer, this.stateDefinitions);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.C1B);
+            stateContainer.CurrentStateId.Should().Be(States.C1B);
 
-            this.CheckRecord<ExitRecord>(StateMachine.States.C1A);
-            this.CheckRecord<EntryRecord>(StateMachine.States.C1B);
+            this.CheckRecord<ExitRecord>(States.C1A);
+            this.CheckRecord<EntryRecord>(States.C1B);
             this.CheckNoRemainingRecords();
         }
 
-        [Fact]
-        public void ExtensionsWhenExtensionsAreClearedThenNoExtensionIsRegistered()
-        {
-            bool executed = false;
-            var extension = A.Fake<IExtension<StateMachine.States, StateMachine.Events>>();
-
-            this.testee.AddExtension(extension);
-            this.testee.ClearExtensions();
-
-            this.testee.ForEach(e => executed = true);
-
-            executed
-                .Should().BeFalse();
-        }
-
         /// <summary>
-        /// Records the entry into a state
+        /// Records the entry into a state.
         /// </summary>
         /// <param name="state">The state.</param>
-        private void RecordEntry(StateMachine.States state)
+        private void RecordEntry(States state)
         {
             this.records.Add(new EntryRecord { State = state });
         }
@@ -533,7 +558,7 @@ namespace Appccelerate.StateMachine.Machine
         /// Records the exit out of a state.
         /// </summary>
         /// <param name="state">The state.</param>
-        private void RecordExit(StateMachine.States state)
+        private void RecordExit(States state)
         {
             this.records.Add(new ExitRecord { State = state });
         }
@@ -552,7 +577,7 @@ namespace Appccelerate.StateMachine.Machine
         /// </summary>
         /// <typeparam name="T">Type of the record.</typeparam>
         /// <param name="state">The state.</param>
-        private void CheckRecord<T>(StateMachine.States state)
+        private void CheckRecord<T>(States state)
             where T : Record
         {
             Record record = this.records.FirstOrDefault();
@@ -576,7 +601,7 @@ namespace Appccelerate.StateMachine.Machine
             }
 
             var sb = new StringBuilder("there are additional records:");
-            foreach (string s in from record in this.records select record.GetType().Name + "-" + record.State)
+            foreach (var s in from record in this.records select record.GetType().Name + "-" + record.State)
             {
                 sb.AppendLine();
                 sb.Append(s);
@@ -595,7 +620,7 @@ namespace Appccelerate.StateMachine.Machine
             /// Gets or sets the state.
             /// </summary>
             /// <value>The state.</value>
-            public StateMachine.States State { get; set; }
+            public States State { get; set; }
 
             /// <summary>
             /// Gets the message.
@@ -613,10 +638,7 @@ namespace Appccelerate.StateMachine.Machine
             /// Gets the message.
             /// </summary>
             /// <value>The message.</value>
-            public override string Message
-            {
-                get { return "State " + this.State + " not entered."; }
-            }
+            public override string Message => "State " + this.State + " not entered.";
         }
 
         /// <summary>
@@ -628,10 +650,7 @@ namespace Appccelerate.StateMachine.Machine
             /// Gets the message.
             /// </summary>
             /// <value>The message.</value>
-            public override string Message
-            {
-                get { return "State " + this.State + " not exited."; }
-            }
+            public override string Message => "State " + this.State + " not exited.";
         }
     }
 }

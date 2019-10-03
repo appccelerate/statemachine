@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="IFactory.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -19,18 +19,14 @@
 namespace Appccelerate.StateMachine.Machine.Events
 {
     using System;
-
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.GuardHolders;
+    using ActionHolders;
+    using GuardHolders;
+    using States;
 
     public interface IFactory<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        IState<TState, TEvent> CreateState(TState id);
-
-        ITransition<TState, TEvent> CreateTransition();
-
         IActionHolder CreateActionHolder(Action action);
 
         IActionHolder CreateActionHolder<T>(Action<T> action);
@@ -45,8 +41,8 @@ namespace Appccelerate.StateMachine.Machine.Events
 
         IGuardHolder CreateGuardHolder<T>(Func<T, bool> guard);
 
-        ITransitionContext<TState, TEvent> CreateTransitionContext(IState<TState, TEvent> state, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier);
+        ITransitionContext<TState, TEvent> CreateTransitionContext(IStateDefinition<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier);
 
-        StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context);
+        StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IStateDefinition<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context);
     }
 }

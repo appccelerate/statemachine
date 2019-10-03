@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="HierarchicalStateMachineInitialization.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class HierarchicalStateMachineInitialization
@@ -26,7 +27,7 @@ namespace Appccelerate.StateMachine.Sync
         private const int LeafState = 1;
         private const int SuperState = 0;
 
-        private CurrentStateExtension testExtension;
+        private readonly CurrentStateExtension testExtension = new CurrentStateExtension();
         private PassiveStateMachine<int, int> machine;
 
         private bool entryActionOfLeafStateExecuted;
@@ -36,22 +37,24 @@ namespace Appccelerate.StateMachine.Sync
         public void Background()
         {
             "establish a hierarchical state machine".x(() =>
-                {
-                    this.testExtension = new CurrentStateExtension();
-
-                    this.machine = new PassiveStateMachine<int, int>();
-
-                    this.machine.AddExtension(this.testExtension);
-
-                    this.machine.DefineHierarchyOn(SuperState)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .DefineHierarchyOn(SuperState)
                         .WithHistoryType(HistoryType.None)
                         .WithInitialSubState(LeafState);
-
-                    this.machine.In(SuperState)
+                stateMachineDefinitionBuilder
+                    .In(SuperState)
                         .ExecuteOnEntry(() => this.entryActionOfSuperStateExecuted = true);
-                    this.machine.In(LeafState)
+                stateMachineDefinitionBuilder
+                    .In(LeafState)
                         .ExecuteOnEntry(() => this.entryActionOfLeafStateExecuted = true);
-                });
+                this.machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                this.machine.AddExtension(this.testExtension);
+            });
         }
 
         [Scenario]

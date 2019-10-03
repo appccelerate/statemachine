@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
-// <copyright file="StateBuilder.g.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+// <copyright file="StateBuilder.cs" company="Appccelerate">
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Linq;
-
-    using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Syntax;
+    using Events;
+    using States;
+    using Syntax;
+    using Transitions;
 
     /// <summary>
     /// Provides operations to build a state machine.
@@ -40,27 +41,22 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IState<TState, TEvent> state;
-
-        private readonly IStateDictionary<TState, TEvent> stateDictionary;
-
+        private readonly StateDefinition<TState, TEvent> stateDefinition;
+        private readonly IStateDictionary<TState, TEvent> stateDefinitionDictionary;
         private readonly IFactory<TState, TEvent> factory;
 
-        private ITransition<TState, TEvent> currentTransition;
+        private TransitionDefinition<TState, TEvent> currentTransitionDefinition;
 
         private TEvent currentEventId;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StateBuilder&lt;TState, TEvent&gt;"/> class.
-        /// </summary>
-        /// <param name="state">The state to build.</param>
-        /// <param name="stateDictionary">The state dictionary of the state machine.</param>
-        /// <param name="factory">The factory.</param>
-        public StateBuilder(IState<TState, TEvent> state, IStateDictionary<TState, TEvent> stateDictionary, IFactory<TState, TEvent> factory)
+        public StateBuilder(
+            TState stateId,
+            IStateDictionary<TState, TEvent> stateDefinitionDictionary,
+            IFactory<TState, TEvent> factory)
         {
-            this.state = state;
-            this.stateDictionary = stateDictionary;
+            this.stateDefinitionDictionary = stateDefinitionDictionary;
             this.factory = factory;
+            this.stateDefinition = this.stateDefinitionDictionary[stateId];
         }
 
         /// <summary>
@@ -72,7 +68,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.state.EntryActions.Add(this.factory.CreateActionHolder(action));
+            this.stateDefinition.EntryActionsModifiable.Add(this.factory.CreateActionHolder(action));
 
             return this;
         }
@@ -81,7 +77,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.state.EntryActions.Add(this.factory.CreateActionHolder(action));
+            this.stateDefinition.EntryActionsModifiable.Add(this.factory.CreateActionHolder(action));
 
             return this;
         }
@@ -95,7 +91,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <returns>Exit action syntax.</returns>
         IEntryActionSyntax<TState, TEvent> IEntryActionSyntax<TState, TEvent>.ExecuteOnEntryParametrized<T>(Action<T> action, T parameter)
         {
-            this.state.EntryActions.Add(this.factory.CreateActionHolder(action, parameter));
+            this.stateDefinition.EntryActionsModifiable.Add(this.factory.CreateActionHolder(action, parameter));
 
             return this;
         }
@@ -109,7 +105,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.state.ExitActions.Add(this.factory.CreateActionHolder(action));
+            this.stateDefinition.ExitActionsModifiable.Add(this.factory.CreateActionHolder(action));
 
             return this;
         }
@@ -118,7 +114,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             Guard.AgainstNullArgument("action", action);
 
-            this.state.ExitActions.Add(this.factory.CreateActionHolder(action));
+            this.stateDefinition.ExitActionsModifiable.Add(this.factory.CreateActionHolder(action));
 
             return this;
         }
@@ -132,7 +128,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <returns>Exit action syntax.</returns>
         IExitActionSyntax<TState, TEvent> IExitActionSyntax<TState, TEvent>.ExecuteOnExitParametrized<T>(Action<T> action, T parameter)
         {
-            this.state.ExitActions.Add(this.factory.CreateActionHolder(action, parameter));
+            this.stateDefinition.ExitActionsModifiable.Add(this.factory.CreateActionHolder(action, parameter));
 
             return this;
         }
@@ -153,8 +149,8 @@ namespace Appccelerate.StateMachine.Machine
 
         private void CreateTransition()
         {
-            this.currentTransition = this.factory.CreateTransition();
-            this.state.Transitions.Add(this.currentEventId, this.currentTransition);
+            this.currentTransitionDefinition = new TransitionDefinition<TState, TEvent>();
+            this.stateDefinition.TransitionsModifiable.Add(this.currentEventId, this.currentTransitionDefinition);
         }
 
         /// <summary>
@@ -270,7 +266,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private StateBuilder<TState, TEvent> ExecuteInternal(Action action)
         {
-            this.currentTransition.Actions.Add(this.factory.CreateTransitionActionHolder(action));
+            this.currentTransitionDefinition.ActionsModifiable.Add(this.factory.CreateTransitionActionHolder(action));
 
             this.CheckGuards();
 
@@ -279,7 +275,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private StateBuilder<TState, TEvent> ExecuteInternal<T>(Action<T> action)
         {
-            this.currentTransition.Actions.Add(this.factory.CreateTransitionActionHolder(action));
+            this.currentTransitionDefinition.ActionsModifiable.Add(this.factory.CreateTransitionActionHolder(action));
 
             this.CheckGuards();
 
@@ -327,24 +323,24 @@ namespace Appccelerate.StateMachine.Machine
 
         private void SetGuard<T>(Func<T, bool> guard)
         {
-            this.currentTransition.Guard = this.factory.CreateGuardHolder(guard);
+            this.currentTransitionDefinition.Guard = this.factory.CreateGuardHolder(guard);
         }
 
         private void SetGuard(Func<bool> guard)
         {
-            this.currentTransition.Guard = this.factory.CreateGuardHolder(guard);
+            this.currentTransitionDefinition.Guard = this.factory.CreateGuardHolder(guard);
         }
 
         private void SetTargetState(TState target)
         {
-            this.currentTransition.Target = this.stateDictionary[target];
+            this.currentTransitionDefinition.Target = this.stateDefinitionDictionary[target];
 
             this.CheckGuards();
         }
 
         private void CheckGuards()
         {
-            var transitionsByEvent = this.state.Transitions.GetTransitions().GroupBy(t => t.EventId).ToList();
+            var transitionsByEvent = this.stateDefinition.TransitionsModifiable.GetTransitions().GroupBy(t => t.EventId).ToList();
             var withMoreThenOneTransitionWithoutGuard = transitionsByEvent.Where(g => g.Count(t => t.Guard == null) > 1);
 
             if (withMoreThenOneTransitionWithoutGuard.Any())

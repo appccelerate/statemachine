@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StateMachineReportGeneratorTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -15,74 +15,81 @@
 //   limitations under the License.
 // </copyright>
 //-------------------------------------------------------------------------------
-namespace Appccelerate.StateMachine.Reports
+namespace Appccelerate.StateMachine.Facts.Reports
 {
-    using Appccelerate.StateMachine.Machine;
-
+    using System;
+    using System.Collections.Generic;
     using FluentAssertions;
-
+    using StateMachine.Machine;
+    using StateMachine.Reports;
     using Xunit;
 
     public class StateMachineReportGeneratorTest
     {
-        private readonly StateMachine<States, Events> machine;
+        public static IEnumerable<object[]> StateMachineInstantiationProvider =>
+            new List<object[]>
+            {
+                new object[] { "PassiveStateMachine", new Func<string, StateMachineDefinition<States, Events>, IStateMachine<States, Events>>((name, smd) => smd.CreatePassiveStateMachine(name)) },
+                new object[] { "ActiveStateMachine", new Func<string, StateMachineDefinition<States, Events>, IStateMachine<States, Events>>((name, smd) => smd.CreateActiveStateMachine(name)) }
+            };
 
-        public StateMachineReportGeneratorTest()
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void Report(string dummyName, Func<string, StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
         {
-            this.machine = new StateMachine<States, Events>("Test Machine");
-        }
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.B)
+                    .WithHistoryType(HistoryType.None)
+                    .WithInitialSubState(States.B1)
+                    .WithSubState(States.B2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.C)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C1)
+                    .WithSubState(States.C2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.C1)
+                    .WithHistoryType(HistoryType.Shallow)
+                    .WithInitialSubState(States.C1A)
+                    .WithSubState(States.C1B);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.D)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1)
+                    .WithSubState(States.D2);
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(States.D1)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(States.D1A)
+                    .WithSubState(States.D1B);
+            stateMachineDefinitionBuilder
+                .In(States.A)
+                    .ExecuteOnEntry(EnterA)
+                    .ExecuteOnExit(ExitA)
+                    .On(Events.A)
+                    .On(Events.B).Goto(States.B)
+                    .On(Events.C).If(AlwaysTrue).Goto(States.C1)
+                    .On(Events.C).If(AlwaysFalse).Goto(States.C2);
+            stateMachineDefinitionBuilder
+                .In(States.B)
+                    .On(Events.A).Goto(States.A).Execute(Action);
+            stateMachineDefinitionBuilder
+                .In(States.B1)
+                    .On(Events.B2).Goto(States.B1);
+            stateMachineDefinitionBuilder
+                .In(States.B2)
+                    .On(Events.B1).Goto(States.B2);
+            var stateMachineDefinition = stateMachineDefinitionBuilder.Build();
 
-        [Fact]
-        public void Report()
-        {
-            this.machine.DefineHierarchyOn(States.B)
-                .WithHistoryType(HistoryType.None)
-                .WithInitialSubState(States.B1)
-                .WithSubState(States.B2);
+            var stateMachine = createStateMachine("Test Machine", stateMachineDefinition);
 
-            this.machine.DefineHierarchyOn(States.C)
-                .WithHistoryType(HistoryType.Shallow)
-                .WithInitialSubState(States.C1)
-                .WithSubState(States.C2);
-
-            this.machine.DefineHierarchyOn(States.C1)
-                .WithHistoryType(HistoryType.Shallow)
-                .WithInitialSubState(States.C1A)
-                .WithSubState(States.C1B);
-
-            this.machine.DefineHierarchyOn(States.D)
-                .WithHistoryType(HistoryType.Deep)
-                .WithInitialSubState(States.D1)
-                .WithSubState(States.D2);
-
-            this.machine.DefineHierarchyOn(States.D1)
-                .WithHistoryType(HistoryType.Deep)
-                .WithInitialSubState(States.D1A)
-                .WithSubState(States.D1B);
-
-            this.machine.In(States.A)
-                .ExecuteOnEntry(EnterA)
-                .ExecuteOnExit(ExitA)
-                .On(Events.A)
-                .On(Events.B).Goto(States.B)
-                .On(Events.C).If(() => true).Goto(States.C1)
-                .On(Events.C).If(() => false).Goto(States.C2);
-
-            this.machine.In(States.B)
-                .On(Events.A).Goto(States.A).Execute(Action);
-
-            this.machine.In(States.B1)
-                .On(Events.B2).Goto(States.B1);
-
-            this.machine.In(States.B2)
-                .On(Events.B1).Goto(States.B2);
-
-            this.machine.Initialize(States.A);
+            stateMachine.Initialize(States.A);
 
             var testee = new StateMachineReportGenerator<States, Events>();
-            this.machine.Report(testee);
+            stateMachine.Report(testee);
 
-            string report = testee.Result;
+            var actualReport = testee.Result;
 
             const string ExpectedReport =
 @"Test Machine: initial state = A
@@ -133,11 +140,15 @@ namespace Appccelerate.StateMachine.Reports
         exit action: ExitA
         A -> internal actions:  guard: 
         B -> B actions:  guard: 
-        C -> C1 actions:  guard: <Report>b__2_0
-        C -> C2 actions:  guard: <Report>b__2_1
+        C -> C1 actions:  guard: AlwaysTrue
+        C -> C2 actions:  guard: AlwaysFalse
 ";
-            report.Replace("\n", string.Empty).Replace("\r", string.Empty)
-                .Should().Be(ExpectedReport.Replace("\n", string.Empty).Replace("\r", string.Empty));
+            actualReport
+                .IgnoringNewlines()
+                .Should()
+                .Be(
+                    ExpectedReport
+                        .IgnoringNewlines());
         }
 
         private static void EnterA()
@@ -150,6 +161,16 @@ namespace Appccelerate.StateMachine.Reports
 
         private static void Action()
         {
+        }
+
+        private static bool AlwaysTrue()
+        {
+            return true;
+        }
+
+        private static bool AlwaysFalse()
+        {
+            return false;
         }
     }
 }

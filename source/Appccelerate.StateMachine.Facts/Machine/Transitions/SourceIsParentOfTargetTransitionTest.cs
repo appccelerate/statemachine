@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="SourceIsParentOfTargetTransitionTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,33 +16,34 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using FakeItEasy;
+    using StateMachine.Machine.States;
     using Xunit;
 
     public class SourceIsParentOfTargetTransitionTest : SuccessfulTransitionWithExecutedActionsTestBase
     {
-        private readonly IState<States, Events> intermediate;
+        private readonly IStateDefinition<States, Events> intermediate;
 
         public SourceIsParentOfTargetTransitionTest()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
-            this.intermediate = Builder<States, Events>.CreateState().WithSuperState(this.Source).Build();
-            this.Target = Builder<States, Events>.CreateState().WithSuperState(this.intermediate).Build();
-            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
+            this.intermediate = Builder<States, Events>.CreateStateDefinition().WithSuperState(this.Source).Build();
+            this.Target = Builder<States, Events>.CreateStateDefinition().WithSuperState(this.intermediate).Build();
+            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithStateDefinition(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Target;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Target;
         }
 
         [Fact]
         public void EntersAllStatesBelowSourceDownToTarget()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.intermediate.Entry(this.TransitionContext)).MustHaveHappened()
-                .Then(A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened());
+            A.CallTo(() => this.StateLogic.Entry(this.intermediate, this.TransitionContext)).MustHaveHappened()
+                .Then(A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappened());
         }
     }
 }

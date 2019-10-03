@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
-// <copyright file="Transition.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+// <copyright file="TransitionLogic.cs" company="Appccelerate">
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -19,93 +19,77 @@
 namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.GuardHolders;
+    using States;
     using LiteGuard = Guard;
 
-    public class Transition<TState, TEvent>
-        : ITransition<TState, TEvent>
+    public class TransitionLogic<TState, TEvent>
+        : ITransitionLogic<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly List<IActionHolder> actions;
         private readonly IExtensionHost<TState, TEvent> extensionHost;
         private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;
 
-        public Transition(IStateMachineInformation<TState, TEvent> stateMachineInformation, IExtensionHost<TState, TEvent> extensionHost)
+        private IStateLogic<TState, TEvent> stateLogic;
+
+        public TransitionLogic(
+            IExtensionHost<TState, TEvent> extensionHost,
+            IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-            this.stateMachineInformation = stateMachineInformation;
             this.extensionHost = extensionHost;
-
-            this.actions = new List<IActionHolder>();
+            this.stateMachineInformation = stateMachineInformation;
         }
 
-        public IState<TState, TEvent> Source { get; set; }
-
-        public IState<TState, TEvent> Target { get; set; }
-
-        public IGuardHolder Guard { get; set; }
-
-        public ICollection<IActionHolder> Actions
+        public void SetStateLogic(IStateLogic<TState, TEvent> stateLogicToSet)
         {
-            get { return this.actions; }
+            this.stateLogic = stateLogicToSet;
         }
 
-        private bool IsInternalTransition
-        {
-            get { return this.Target == null; }
-        }
-
-        public ITransitionResult<TState, TEvent> Fire(ITransitionContext<TState, TEvent> context)
+        public ITransitionResult<TState> Fire(
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             LiteGuard.AgainstNullArgument("context", context);
 
-            if (!this.ShouldFire(context))
+            if (!this.ShouldFire(transitionDefinition, context))
             {
                 this.extensionHost.ForEach(extension => extension.SkippedTransition(
                     this.stateMachineInformation,
-                    this,
+                    transitionDefinition,
                     context));
 
-                return TransitionResult<TState, TEvent>.NotFired;
+                return TransitionResult<TState>.NotFired;
             }
 
             context.OnTransitionBegin();
 
             this.extensionHost.ForEach(extension => extension.ExecutingTransition(
                 this.stateMachineInformation,
-                this,
+                transitionDefinition,
                 context));
 
-            IState<TState, TEvent> newState = context.State;
+            var newState = context.StateDefinition.Id;
 
-            if (!this.IsInternalTransition)
+            if (!transitionDefinition.IsInternalTransition)
             {
-                this.UnwindSubStates(context);
+                this.UnwindSubStates(transitionDefinition, context, lastActiveStateModifier);
 
-                this.Fire(this.Source, this.Target, context);
+                this.Fire(transitionDefinition, transitionDefinition.Source, transitionDefinition.Target, context, lastActiveStateModifier);
 
-                newState = this.Target.EnterByHistory(context);
+                newState = this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier);
             }
             else
             {
-                this.PerformActions(context);
+                this.PerformActions(transitionDefinition, context);
             }
 
             this.extensionHost.ForEach(extension => extension.ExecutedTransition(
                 this.stateMachineInformation,
-                this,
+                transitionDefinition,
                 context));
 
-            return new TransitionResult<TState, TEvent>(true, newState);
-        }
-
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);
+            return new TransitionResult<TState>(true, newState);
         }
 
         private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
@@ -144,31 +128,38 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         ///    c. The target state is lower in the hierarchy than the source state
         ///    --> move up the hierarchy on the target state side, afterward enter target state.
         /// </remarks>
+        /// <param name="transitionDefinition">The transition definition.</param>
         /// <param name="source">The source state.</param>
         /// <param name="target">The target state.</param>
         /// <param name="context">The event context.</param>
-        private void Fire(IState<TState, TEvent> source, IState<TState, TEvent> target, ITransitionContext<TState, TEvent> context)
+        /// <param name="lastActiveStateModifier">The last active state modifier.</param>
+        private void Fire(
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            IStateDefinition<TState, TEvent> source,
+            IStateDefinition<TState, TEvent> target,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
-            if (source == this.Target)
+            if (source == transitionDefinition.Target)
             {
                 // Handles 1.
                 // Handles 3. after traversing from the source to the target.
-                source.Exit(context);
-                this.PerformActions(context);
-                this.Target.Entry(context);
+                this.stateLogic.Exit(source, context, lastActiveStateModifier);
+                this.PerformActions(transitionDefinition, context);
+                this.stateLogic.Entry(transitionDefinition.Target, context);
             }
             else if (source == target)
             {
                 // Handles 2. after traversing from the target to the source.
-                this.PerformActions(context);
+                this.PerformActions(transitionDefinition, context);
             }
             else if (source.SuperState == target.SuperState)
             {
                 //// Handles 4.
                 //// Handles 5a. after traversing the hierarchy until a common ancestor if found.
-                source.Exit(context);
-                this.PerformActions(context);
-                target.Entry(context);
+                this.stateLogic.Exit(source, context, lastActiveStateModifier);
+                this.PerformActions(transitionDefinition, context);
+                this.stateLogic.Entry(target, context);
             }
             else
             {
@@ -178,47 +169,51 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 // Handles 5b.
                 if (source.Level > target.Level)
                 {
-                    source.Exit(context);
-                    this.Fire(source.SuperState, target, context);
+                    this.stateLogic.Exit(source, context, lastActiveStateModifier);
+                    this.Fire(transitionDefinition, source.SuperState, target, context, lastActiveStateModifier);
                 }
                 else if (source.Level < target.Level)
                 {
                     // Handles 2.
                     // Handles 5c.
-                    this.Fire(source, target.SuperState, context);
-                    target.Entry(context);
+                    this.Fire(transitionDefinition, source, target.SuperState, context, lastActiveStateModifier);
+                    this.stateLogic.Entry(target, context);
                 }
                 else
                 {
                     // Handles 5a.
-                    source.Exit(context);
-                    this.Fire(source.SuperState, target.SuperState, context);
-                    target.Entry(context);
+                    this.stateLogic.Exit(source, context, lastActiveStateModifier);
+                    this.Fire(transitionDefinition, source.SuperState, target.SuperState, context, lastActiveStateModifier);
+                    this.stateLogic.Entry(target, context);
                 }
             }
         }
 
-        private bool ShouldFire(ITransitionContext<TState, TEvent> context)
+        private bool ShouldFire(
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            ITransitionContext<TState, TEvent> context)
         {
             try
             {
-                return this.Guard == null || this.Guard.Execute(context.EventArgument);
+                return transitionDefinition.Guard == null || transitionDefinition.Guard.Execute(context.EventArgument);
             }
             catch (Exception exception)
             {
-                this.extensionHost.ForEach(extention => extention.HandlingGuardException(this.stateMachineInformation, this, context, ref exception));
+                this.extensionHost.ForEach(extension =>
+                    extension.HandlingGuardException(this.stateMachineInformation, transitionDefinition, context, ref exception));
 
                 HandleException(exception, context);
 
-                this.extensionHost.ForEach(extention => extention.HandledGuardException(this.stateMachineInformation, this, context, exception));
+                this.extensionHost.ForEach(extension =>
+                    extension.HandledGuardException(this.stateMachineInformation, transitionDefinition, context, exception));
 
                 return false;
             }
         }
 
-        private void PerformActions(ITransitionContext<TState, TEvent> context)
+        private void PerformActions(ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context)
         {
-            foreach (IActionHolder action in this.actions)
+            foreach (var action in transitionDefinition.Actions)
             {
                 try
                 {
@@ -226,20 +221,27 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 }
                 catch (Exception exception)
                 {
-                    this.extensionHost.ForEach(extension => extension.HandlingTransitionException(this.stateMachineInformation, this, context, ref exception));
+                    this.extensionHost.ForEach(extension =>
+                        extension.HandlingTransitionException(this.stateMachineInformation, transitionDefinition, context, ref exception));
 
                     HandleException(exception, context);
 
-                    this.extensionHost.ForEach(extension => extension.HandledTransitionException(this.stateMachineInformation, this, context, exception));
+                    this.extensionHost.ForEach(extension =>
+                        extension.HandledTransitionException(this.stateMachineInformation, transitionDefinition, context, exception));
                 }
             }
         }
 
-        private void UnwindSubStates(ITransitionContext<TState, TEvent> context)
+        private void UnwindSubStates(
+            ITransitionDefinition<TState, TEvent> transitionDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
-            for (IState<TState, TEvent> o = context.State; o != this.Source; o = o.SuperState)
+            var o = context.StateDefinition;
+            while (o != transitionDefinition.Source)
             {
-                o.Exit(context);
+                this.stateLogic.Exit(o, context, lastActiveStateModifier);
+                o = o.SuperState;
             }
         }
     }

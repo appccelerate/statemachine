@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="EntryActions.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class EntryActions
@@ -33,18 +34,21 @@ namespace Appccelerate.StateMachine.Sync
             bool entryActionExecuted)
         {
             "establish a state machine with entry action on a state".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnEntry(() => entryActionExecuted = true);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when entering the state".x(() =>
-                {
-                    machine.Initialize(State);
-                    machine.Start();
-                });
+            {
+                machine.Initialize(State);
+                machine.Start();
+            });
 
             "it should execute the entry action".x(() =>
                 entryActionExecuted.Should().BeTrue());
@@ -59,10 +63,13 @@ namespace Appccelerate.StateMachine.Sync
 
             "establish a state machine with entry action with parameter on a state".x(() =>
             {
-                machine = new PassiveStateMachine<int, int>();
-
-                machine.In(State)
-                    .ExecuteOnEntryParametrized(p => parameter = p, Parameter);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnEntryParametrized(p => parameter = p, Parameter);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(() =>
@@ -86,11 +93,14 @@ namespace Appccelerate.StateMachine.Sync
         {
             "establish a state machine with several entry actions on a state".x(() =>
             {
-                machine = new PassiveStateMachine<int, int>();
-
-                machine.In(State)
-                    .ExecuteOnEntry(() => entryAction1Executed = true)
-                    .ExecuteOnEntry(() => entryAction2Executed = true);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnEntry(() => entryAction1Executed = true)
+                        .ExecuteOnEntry(() => entryAction2Executed = true);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(() =>
@@ -118,26 +128,29 @@ namespace Appccelerate.StateMachine.Sync
         {
             var exception2 = new Exception();
             var exception3 = new Exception();
-            var receivedException = new List<Exception>();
+            var receivedExceptions = new List<Exception>();
 
             "establish a state machine with several entry actions on a state and some of them throw an exception".x(() =>
             {
-                machine = new PassiveStateMachine<int, int>();
-
-                machine.In(State)
-                .ExecuteOnEntry(() => entryAction1Executed = true)
-                .ExecuteOnEntry(() =>
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnEntry(() => entryAction1Executed = true)
+                        .ExecuteOnEntry(() =>
                         {
                             entryAction2Executed = true;
                             throw exception2;
                         })
-                .ExecuteOnEntry(() =>
+                        .ExecuteOnEntry(() =>
                         {
                             entryAction3Executed = true;
                             throw exception3;
                         });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
+                machine.TransitionExceptionThrown += (s, e) => receivedExceptions.Add(e.Exception);
             });
 
             "when entering the state".x(() =>
@@ -159,11 +172,13 @@ namespace Appccelerate.StateMachine.Sync
             });
 
             "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
-                receivedException
-                    .Should().BeEquivalentTo(new object[]
-                                                 {
-                                                     exception2, exception3
-                                                 }));
+                receivedExceptions
+                    .Should()
+                    .HaveCount(2)
+                    .And
+                    .Contain(exception2)
+                    .And
+                    .Contain(exception3));
         }
 
         [Scenario]
@@ -177,13 +192,16 @@ namespace Appccelerate.StateMachine.Sync
 
             "establish a state machine with an entry action taking an event argument".x(() =>
             {
-                machine = new PassiveStateMachine<int, int>();
-
-                machine.In(State)
-                    .On(Event).Goto(AnotherState);
-
-                machine.In(AnotherState)
-                    .ExecuteOnEntry((int argument) => passedArgument = argument);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .On(Event).Goto(AnotherState);
+                stateMachineDefinitionBuilder
+                    .In(AnotherState)
+                        .ExecuteOnEntry((int argument) => passedArgument = argument);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(() =>
@@ -194,7 +212,9 @@ namespace Appccelerate.StateMachine.Sync
             });
 
             "it should pass event argument to entry action".x(() =>
-                passedArgument.Should().Be(Argument));
+                passedArgument
+                    .Should()
+                    .Be(Argument));
         }
     }
 }

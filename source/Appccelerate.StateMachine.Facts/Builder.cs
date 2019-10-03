@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="Builder.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Facts
 {
     using System;
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Machine.GuardHolders;
     using FakeItEasy;
+    using StateMachine.Machine;
+    using StateMachine.Machine.GuardHolders;
+    using StateMachine.Machine.States;
 
     public static class Builder<TState, TEvent>
             where TState : IComparable
@@ -32,9 +33,9 @@ namespace Appccelerate.StateMachine
             return new GuardBuilder();
         }
 
-        public static StateBuilder CreateState()
+        public static StateDefinitionBuilder CreateStateDefinition()
         {
-            return new StateBuilder();
+            return new StateDefinitionBuilder();
         }
 
         public static TransitionContextBuilder CreateTransitionContext()
@@ -78,20 +79,20 @@ namespace Appccelerate.StateMachine
             }
         }
 
-        public class StateBuilder
+        public class StateDefinitionBuilder
         {
-            private readonly IState<TState, TEvent> state;
+            private readonly IStateDefinition<TState, TEvent> stateDefinition;
 
-            private IState<TState, TEvent> superState;
+            private IStateDefinition<TState, TEvent> superState;
 
             private int level;
 
-            public StateBuilder()
+            public StateDefinitionBuilder()
             {
-                this.state = A.Fake<IState<TState, TEvent>>();
+                this.stateDefinition = A.Fake<IStateDefinition<TState, TEvent>>();
             }
 
-            public StateBuilder WithSuperState(IState<TState, TEvent> newSuperState)
+            public StateDefinitionBuilder WithSuperState(IStateDefinition<TState, TEvent> newSuperState)
             {
                 this.superState = newSuperState;
                 this.level = newSuperState.Level + 1;
@@ -99,12 +100,12 @@ namespace Appccelerate.StateMachine
                 return this;
             }
 
-            public IState<TState, TEvent> Build()
+            public IStateDefinition<TState, TEvent> Build()
             {
-                A.CallTo(() => this.state.SuperState).Returns(this.superState);
-                A.CallTo(() => this.state.Level).Returns(this.level);
+                A.CallTo(() => this.stateDefinition.SuperState).Returns(this.superState);
+                A.CallTo(() => this.stateDefinition.Level).Returns(this.level);
 
-                return this.state;
+                return this.stateDefinition;
             }
         }
 
@@ -117,10 +118,9 @@ namespace Appccelerate.StateMachine
                 this.transitionContext = A.Fake<ITransitionContext<TState, TEvent>>();
             }
 
-            public TransitionContextBuilder WithState(IState<TState, TEvent> state)
+            public TransitionContextBuilder WithStateDefinition(IStateDefinition<TState, TEvent> stateDefinition)
             {
-                A.CallTo(() => this.transitionContext.State).Returns(state);
-
+                A.CallTo(() => this.transitionContext.StateDefinition).Returns(stateDefinition);
                 return this;
             }
 

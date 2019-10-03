@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ExitActions.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class ExitActions
@@ -35,20 +36,23 @@ namespace Appccelerate.StateMachine.Sync
             bool exitActionExecuted)
         {
             "establish a state machine with exit action on a state".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExit(() => exitActionExecuted = true)
                         .On(Event).Goto(AnotherState);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(() =>
-                {
-                    machine.Initialize(State);
-                    machine.Start();
-                    machine.Fire(Event);
-                });
+            {
+                machine.Initialize(State);
+                machine.Start();
+                machine.Fire(Event);
+            });
 
             "it should execute the exit action".x(() =>
                 exitActionExecuted.Should().BeTrue());
@@ -62,20 +66,23 @@ namespace Appccelerate.StateMachine.Sync
             const string Parameter = "parameter";
 
             "establish a state machine with exit action with parameter on a state".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExitParametrized(p => parameter = p, Parameter)
                         .On(Event).Goto(AnotherState);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(() =>
-                {
-                    machine.Initialize(State);
-                    machine.Start();
-                    machine.Fire(Event);
-                });
+            {
+                machine.Initialize(State);
+                machine.Start();
+                machine.Fire(Event);
+            });
 
             "it should execute the exit action".x(() =>
                 parameter.Should().NotBeNull());
@@ -91,30 +98,33 @@ namespace Appccelerate.StateMachine.Sync
             bool exitAction2Executed)
         {
             "establish a state machine with several exit actions on a state".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExit(() => exitAction1Executed = true)
                         .ExecuteOnExit(() => exitAction2Executed = true)
                         .On(Event).Goto(AnotherState);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(() =>
-                {
-                    machine.Initialize(State);
-                    machine.Start();
-                    machine.Fire(Event);
-                });
+            {
+                machine.Initialize(State);
+                machine.Start();
+                machine.Fire(Event);
+            });
 
             "It should execute all exit actions".x(() =>
-                {
-                    exitAction1Executed
-                        .Should().BeTrue("first action should be executed");
+            {
+                exitAction1Executed
+                    .Should().BeTrue("first action should be executed");
 
-                    exitAction2Executed
-                        .Should().BeTrue("second action should be executed");
-                });
+                exitAction2Executed
+                    .Should().BeTrue("second action should be executed");
+            });
         }
 
         [Scenario]
@@ -126,54 +136,59 @@ namespace Appccelerate.StateMachine.Sync
         {
             var exception2 = new Exception();
             var exception3 = new Exception();
-            var receivedException = new List<Exception>();
+            var receivedExceptions = new List<Exception>();
 
             "establish a state machine with several exit actions on a state and some of them throw an exception".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExit(() => exitAction1Executed = true)
                         .ExecuteOnExit(() =>
-                            {
-                                exitAction2Executed = true;
-                                throw exception2;
-                            })
+                        {
+                            exitAction2Executed = true;
+                            throw exception2;
+                        })
                         .ExecuteOnExit(() =>
-                            {
-                                exitAction3Executed = true;
-                                throw exception3;
-                            })
+                        {
+                            exitAction3Executed = true;
+                            throw exception3;
+                        })
                         .On(Event).Goto(AnotherState);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
-                });
+                machine.TransitionExceptionThrown += (s, e) => receivedExceptions.Add(e.Exception);
+            });
 
             "when entering the state".x(() =>
-                {
-                    machine.Initialize(State);
-                    machine.Start();
-                    machine.Fire(Event);
-                });
+            {
+                machine.Initialize(State);
+                machine.Start();
+                machine.Fire(Event);
+            });
 
             "it should execute all entry actions on entry".x(() =>
-                {
-                    exitAction1Executed
-                        .Should().BeTrue("action 1 should be executed");
+            {
+                exitAction1Executed
+                    .Should().BeTrue("action 1 should be executed");
 
-                    exitAction2Executed
-                        .Should().BeTrue("action 2 should be executed");
+                exitAction2Executed
+                    .Should().BeTrue("action 2 should be executed");
 
-                    exitAction3Executed
-                        .Should().BeTrue("action 3 should be executed");
-                });
+                exitAction3Executed
+                    .Should().BeTrue("action 3 should be executed");
+            });
 
             "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
-                receivedException
-                    .Should().BeEquivalentTo(new object[]
-                                                    {
-                                                        exception2, exception3
-                                                    }));
+                receivedExceptions
+                    .Should()
+                    .HaveCount(2)
+                    .And
+                    .Contain(exception2)
+                    .And
+                    .Contain(exception3));
         }
 
         [Scenario]
@@ -184,23 +199,26 @@ namespace Appccelerate.StateMachine.Sync
             const int Argument = 17;
 
             "establish a state machine with an exit action taking an event argument".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExit((int argument) => passedArgument = argument)
                         .On(Event).Goto(AnotherState);
-
-                    machine.In(AnotherState)
+                stateMachineDefinitionBuilder
+                    .In(AnotherState)
                         .ExecuteOnEntry((int argument) => passedArgument = argument);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(() =>
-                {
-                    machine.Initialize(State);
-                    machine.Start();
-                    machine.Fire(Event, Argument);
-                });
+            {
+                machine.Initialize(State);
+                machine.Start();
+                machine.Fire(Event, Argument);
+            });
 
             "it should pass event argument to exit action".x(() =>
                 passedArgument.Should().Be(Argument));

@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="ExceptionThrowingActionTransitionTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using System;
-    using Appccelerate.StateMachine.Machine.ActionHolders;
     using FakeItEasy;
     using FluentAssertions;
+    using StateMachine.Machine;
+    using StateMachine.Machine.ActionHolders;
     using Xunit;
 
     public class ExceptionThrowingActionTransitionTest : TransitionTestBase
@@ -30,16 +31,16 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
         public ExceptionThrowingActionTransitionTest()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
-            this.Target = Builder<States, Events>.CreateState().Build();
-            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
+            this.Target = Builder<States, Events>.CreateStateDefinition().Build();
+            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithStateDefinition(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Target;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Target;
 
             this.exception = new Exception();
 
-            this.Testee.Actions.Add(new ArgumentLessActionHolder(() => { throw this.exception; }));
+            this.TransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(() => throw this.exception));
         }
 
         [Fact]
@@ -49,16 +50,16 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             this.ExtensionHost.Extension = extension;
 
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => extension.HandlingTransitionException(this.StateMachineInformation, this.Testee, this.TransitionContext, ref this.exception)).MustHaveHappened();
-            A.CallTo(() => extension.HandledTransitionException(this.StateMachineInformation, this.Testee, this.TransitionContext, this.exception)).MustHaveHappened();
+            A.CallTo(() => extension.HandlingTransitionException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, ref this.exception)).MustHaveHappened();
+            A.CallTo(() => extension.HandledTransitionException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, this.exception)).MustHaveHappened();
         }
 
         [Fact]
         public void ReturnsFiredTransitionResult()
         {
-            ITransitionResult<States, Events> result = this.Testee.Fire(this.TransitionContext);
+            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             result.Fired.Should().BeTrue();
         }
@@ -66,7 +67,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         [Fact]
         public void NotifiesExceptionOnTransitionContext()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             A.CallTo(() => this.TransitionContext.OnExceptionThrown(this.exception)).MustHaveHappened();
         }

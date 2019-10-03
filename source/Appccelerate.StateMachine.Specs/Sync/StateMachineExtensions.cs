@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="StateMachineExtensions.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
-    using Appccelerate.StateMachine.Machine;
     using FakeItEasy;
+    using Machine;
     using Xbehave;
 
     public class StateMachineExtensions
@@ -30,20 +30,23 @@ namespace Appccelerate.StateMachine.Sync
             IExtension<string, int> extension)
         {
             "establish a state machine".x(() =>
-                {
-                    machine = new PassiveStateMachine<string, int>();
+            {
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    extension = A.Fake<IExtension<string, int>>();
-                });
+                extension = A.Fake<IExtension<string, int>>();
+            });
 
             "when adding an extension".x(() =>
-                {
-                    machine.AddExtension(extension);
-                    machine.Initialize("initial");
-                });
+            {
+                machine.AddExtension(extension);
+                machine.Initialize("initial");
+            });
 
             "it should notify extension about internal events".x(() =>
-                A.CallTo(extension).MustHaveHappened());
+                A.CallTo(extension)
+                    .MustHaveHappened());
         }
 
         [Scenario]
@@ -52,18 +55,20 @@ namespace Appccelerate.StateMachine.Sync
             IExtension<string, int> extension)
         {
             "establish a state machine with an extension".x(() =>
-                {
-                    machine = new PassiveStateMachine<string, int>();
+            {
+                machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    extension = A.Fake<IExtension<string, int>>();
-                    machine.AddExtension(extension);
-                });
+                extension = A.Fake<IExtension<string, int>>();
+                machine.AddExtension(extension);
+            });
 
             "when clearing all extensions from the state machine".x(() =>
-                {
-                    machine.ClearExtensions();
-                    machine.Initialize("initial");
-                });
+            {
+                machine.ClearExtensions();
+                machine.Initialize("initial");
+            });
 
             "it should not anymore notify extension about internal events".x(() =>
                 A.CallTo(extension)

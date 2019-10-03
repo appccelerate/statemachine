@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
-// <copyright file="StateTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+// <copyright file="StateFacts.cs" company="Appccelerate">
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,24 +16,20 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.States
+namespace Appccelerate.StateMachine.Facts.AsyncMachine.State
 {
     using System;
-
     using FakeItEasy;
-
     using FluentAssertions;
-
+    using StateMachine.AsyncMachine;
+    using StateMachine.AsyncMachine.States;
     using Xunit;
 
-    using Events = Appccelerate.StateMachine.Events;
-    using States = Appccelerate.StateMachine.States;
-
-    public class StateTest
+    public class StateFacts
     {
         private readonly State<States, Events> testee;
 
-        public StateTest()
+        public StateFacts()
         {
             this.testee = new State<States, Events>(
                 States.A,
@@ -53,16 +49,16 @@ namespace Appccelerate.StateMachine.Machine.States
         [Fact]
         public void HierarchyWhenSettingLevelThenTheLevelOfAllChildrenIsUpdated()
         {
-            const int Level = 2;
+            const int level = 2;
 
             var subState = A.Fake<IState<States, Events>>();
 
             this.testee.SubStates.Add(subState);
 
-            this.testee.Level = Level;
+            this.testee.Level = level;
 
             subState.Level
-                .Should().Be(Level + 1);
+                .Should().Be(level + 1);
         }
     }
 }

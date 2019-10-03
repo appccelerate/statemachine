@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
-// <copyright file="ActiveStateMachineTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+// <copyright file="ITransitionDefinition.cs" company="Appccelerate">
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,19 +16,26 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Machine.Transitions
 {
-    /// <summary>
-    /// Tests the <see cref="ActiveStateMachine{TState,TEvent}"/> class.
-    /// </summary>
-    public class ActiveStateMachineTest : StateMachineTestBase<ActiveStateMachine<States, Events>>
+    using System;
+    using System.Collections.Generic;
+    using ActionHolders;
+    using GuardHolders;
+    using States;
+
+    public interface ITransitionDefinition<TState, TEvent>
+        where TState : IComparable
+        where TEvent : IComparable
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ActiveStateMachineTest"/> class.
-        /// </summary>
-        public ActiveStateMachineTest()
-            : base(new ActiveStateMachine<States, Events>("Test Machine"))
-        {
-        }
+        IStateDefinition<TState, TEvent> Source { get; }
+
+        IStateDefinition<TState, TEvent> Target { get; }
+
+        IGuardHolder Guard { get; }
+
+        IEnumerable<IActionHolder> Actions { get; }
+
+        bool IsInternalTransition { get; }
     }
 }

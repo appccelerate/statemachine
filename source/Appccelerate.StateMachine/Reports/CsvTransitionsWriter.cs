@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="CsvTransitionsWriter.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ namespace Appccelerate.StateMachine.Reports
     using System.IO;
     using System.Linq;
 
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Machine.Transitions;
+    using Machine.States;
+    using Machine.Transitions;
 
     /// <summary>
     /// Writes the transitions of a state machine to a stream as csv.
@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine.Reports
         /// Writes the transitions of the specified states.
         /// </summary>
         /// <param name="states">The states.</param>
-        public void Write(IEnumerable<IState<TState, TEvent>> states)
+        public void Write(IEnumerable<IStateDefinition<TState, TEvent>> states)
         {
             states = states.ToList();
 
@@ -69,9 +69,9 @@ namespace Appccelerate.StateMachine.Reports
             this.writer.WriteLine("Source;Event;Guard;Target;Actions");
         }
 
-        private void ReportTransitionsOfState(IState<TState, TEvent> state)
+        private void ReportTransitionsOfState(IStateDefinition<TState, TEvent> state)
         {
-            foreach (var transition in state.Transitions.GetTransitions())
+            foreach (var transition in state.TransitionInfos)
             {
                 this.ReportTransition(transition);
             }

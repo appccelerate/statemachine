@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StartStop.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class StartStop
@@ -35,16 +36,21 @@ namespace Appccelerate.StateMachine.Sync
         {
             "establish initialized state machine".x(() =>
             {
-                this.machine = new PassiveStateMachine<int, int>();
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(A)
+                        .On(Event)
+                        .Goto(B);
+                stateMachineDefinitionBuilder
+                    .In(B)
+                        .On(Event)
+                        .Goto(A);
+                this.machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 this.extension = new RecordEventsExtension();
                 this.machine.AddExtension(this.extension);
-
-                this.machine.In(A)
-                    .On(Event).Goto(B);
-
-                this.machine.In(B)
-                    .On(Event).Goto(A);
 
                 this.machine.Initialize(A);
             });
@@ -54,11 +60,11 @@ namespace Appccelerate.StateMachine.Sync
         public void Starting()
         {
             "establish some queued events".x(() =>
-                {
-                    this.machine.Fire(Event);
-                    this.machine.Fire(Event);
-                    this.machine.Fire(Event);
-                });
+            {
+                this.machine.Fire(Event);
+                this.machine.Fire(Event);
+                this.machine.Fire(Event);
+            });
 
             "when starting".x(() =>
                 this.machine.Start());

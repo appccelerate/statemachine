@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ExceptionCasesFacts.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,25 +16,26 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine
+namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.Persistence;
     using FakeItEasy;
     using FluentAssertions;
+    using Persistence;
+    using StateMachine.AsyncMachine;
     using Xunit;
 
     public class ExceptionCasesFacts
     {
-        private readonly StateMachine<StateMachine.States, StateMachine.Events> testee;
+        private readonly StateMachine<States, Events> testee;
 
         private CapturedException capturedException;
 
         public ExceptionCasesFacts()
         {
-            this.testee = new StateMachine<StateMachine.States, StateMachine.Events>();
+            this.testee = new StateMachine<States, Events>();
 
             this.testee.TransitionExceptionThrown += (sender, eventArgs) =>
                                                          {
@@ -49,7 +50,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         [Fact]
         public void ThrowsExceptionIfNotInitialized_WhenFiringAnEvent()
         {
-            Func<Task> action = async () => await this.testee.Fire(StateMachine.Events.A, Missing.Value);
+            Func<Task> action = async () => await this.testee.Fire(Events.A, Missing.Value);
             action.Should().Throw<InvalidOperationException>();
         }
 
@@ -65,9 +66,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
         [Fact]
         public async Task ThrowsException_WhenInitializeIsCalledTwice()
         {
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
 
-            Func<Task> action = async () => await this.testee.Initialize(StateMachine.States.B);
+            Func<Task> action = async () => await this.testee.Initialize(States.B);
 
             action.Should().Throw<InvalidOperationException>();
         }
@@ -80,16 +81,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             bool ThrowingGuard() => throw exception;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B)
-                .If((Func<bool>)ThrowingGuard).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B)
+                .If(ThrowingGuard).Goto(States.B);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
+            this.testee.CurrentStateId.Should().Be(States.A);
         }
 
         [Fact]
@@ -100,17 +101,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             bool ThrowingGuard() => throw exception;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B)
-                .If((Func<bool>)ThrowingGuard).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B)
+                .If(ThrowingGuard).Goto(States.B);
 
             bool transitionDeclined = false;
             this.testee.TransitionDeclined += (sender, e) => transitionDeclined = true;
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
             transitionDeclined.Should().BeTrue("transition was not declined.");
         }
@@ -123,16 +124,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             bool ThrowingGuard() => throw exception;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B)
-                .If((Func<bool>)ThrowingGuard).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B)
+                .If(ThrowingGuard).Goto(States.B);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.capturedException.Should().Be(new CapturedException(StateMachine.States.A, StateMachine.Events.B, eventArguments, exception));
+            this.capturedException.Should().Be(new CapturedException(States.A, Events.B, eventArguments, exception));
         }
 
         [Fact]
@@ -143,34 +144,34 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
             bool ThrowingGuard() => throw exception;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B)
-                .If((Func<bool>)ThrowingGuard).Goto(StateMachine.States.B)
-                .If(() => true).Goto(StateMachine.States.C);
+            this.testee.In(States.A)
+                .On(Events.B)
+                .If(ThrowingGuard).Goto(States.B)
+                .If(() => true).Goto(States.C);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.C);
+            this.testee.CurrentStateId.Should().Be(States.C);
         }
 
         [Fact]
-        public async Task CapturesException_WhenAnTransitioNActionThrowsAnException()
+        public async Task CapturesException_WhenAnTransitionActionThrowsAnException()
         {
             var eventArguments = new object[] { 1, 2, "test" };
             Exception exception = new Exception();
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B).Execute(() => throw exception);
+            this.testee.In(States.A)
+                .On(Events.B).Goto(States.B).Execute(() => throw exception);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.capturedException.Should().Be(new CapturedException(StateMachine.States.A, StateMachine.Events.B, eventArguments, exception));
+            this.capturedException.Should().Be(new CapturedException(States.A, Events.B, eventArguments, exception));
         }
 
         [Fact]
@@ -179,15 +180,15 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var eventArguments = new object[] { 1, 2, "test" };
             Exception exception = new Exception();
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B).Execute(() => throw exception);
+            this.testee.In(States.A)
+                .On(Events.B).Goto(States.B).Execute(() => throw exception);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
+            this.testee.CurrentStateId.Should().Be(States.B);
         }
 
         [Fact]
@@ -196,18 +197,18 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var eventArguments = new object[] { 1, 2, "test" };
             Exception exception = new Exception();
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B).Goto(States.B);
 
-            this.testee.In(StateMachine.States.B)
+            this.testee.In(States.B)
                 .ExecuteOnEntry(() => throw exception);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.capturedException.Should().Be(new CapturedException(StateMachine.States.A, StateMachine.Events.B, eventArguments, exception));
+            this.capturedException.Should().Be(new CapturedException(States.A, Events.B, eventArguments, exception));
         }
 
         [Fact]
@@ -216,18 +217,18 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var eventArguments = new object[] { 1, 2, "test" };
             Exception exception = new Exception();
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B).Goto(States.B);
 
-            this.testee.In(StateMachine.States.B)
+            this.testee.In(States.B)
                 .ExecuteOnEntry(() => throw exception);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
+            this.testee.CurrentStateId.Should().Be(States.B);
         }
 
         [Fact]
@@ -236,16 +237,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var eventArguments = new object[] { 1, 2, "test" };
             Exception exception = new Exception();
 
-            this.testee.In(StateMachine.States.A)
+            this.testee.In(States.A)
                 .ExecuteOnExit(() => throw exception)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
+                .On(Events.B).Goto(States.B);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.capturedException.Should().Be(new CapturedException(StateMachine.States.A, StateMachine.Events.B, eventArguments, exception));
+            this.capturedException.Should().Be(new CapturedException(States.A, Events.B, eventArguments, exception));
         }
 
         [Fact]
@@ -254,37 +255,37 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var eventArguments = new object[] { 1, 2, "test" };
             Exception exception = new Exception();
 
-            this.testee.In(StateMachine.States.A)
+            this.testee.In(States.A)
                 .ExecuteOnExit(() => throw exception)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
+                .On(Events.B).Goto(States.B);
 
-            await this.testee.Initialize(StateMachine.States.A);
+            await this.testee.Initialize(States.A);
             await this.testee.EnterInitialState();
 
-            await this.testee.Fire(StateMachine.Events.B, eventArguments);
+            await this.testee.Fire(Events.B, eventArguments);
 
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.B);
+            this.testee.CurrentStateId.Should().Be(States.B);
         }
 
         [Fact]
         public void ThrowsException_WhenFiringAnEventOntoAnNotInitializedStateMachine()
         {
-            Func<Task> action = async () => await this.testee.Fire(StateMachine.Events.B, Missing.Value);
+            Func<Task> action = async () => await this.testee.Fire(Events.B, Missing.Value);
             action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
         public void ThrowsException_WhenDefiningNonTreeHierarchy()
         {
-            this.testee.DefineHierarchyOn(StateMachine.States.A)
+            this.testee.DefineHierarchyOn(States.A)
                 .WithHistoryType(HistoryType.None)
-                .WithInitialSubState(StateMachine.States.B);
+                .WithInitialSubState(States.B);
 
             Action action = () =>
             {
-                this.testee.DefineHierarchyOn(StateMachine.States.C)
+                this.testee.DefineHierarchyOn(States.C)
                     .WithHistoryType(HistoryType.None)
-                    .WithInitialSubState(StateMachine.States.B);
+                    .WithInitialSubState(States.B);
             };
 
             action.Should().Throw<InvalidOperationException>();
@@ -293,11 +294,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
         [Fact]
         public void ThrowsException_WhenInitialStateIsSuperStateItselfInAnHierarchy()
         {
-            Action action = () => this.testee.DefineHierarchyOn(StateMachine.States.B)
+            Action action = () => this.testee.DefineHierarchyOn(States.B)
                 .WithHistoryType(HistoryType.None)
-                .WithInitialSubState(StateMachine.States.B)
-                .WithSubState(StateMachine.States.B1)
-                .WithSubState(StateMachine.States.B2);
+                .WithInitialSubState(States.B)
+                .WithSubState(States.B1)
+                .WithSubState(States.B2);
 
             action.Should().Throw<ArgumentException>();
         }
@@ -305,73 +306,73 @@ namespace Appccelerate.StateMachine.AsyncMachine
         [Fact]
         public void ThrowsException_WhenMultipleTransitionsWithoutGuardsAreDefined_GotoCase()
         {
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).If(() => false).Goto(StateMachine.States.C)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B).If(() => false).Goto(States.C)
+                .On(Events.B).Goto(States.B);
 
-            Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).Goto(StateMachine.States.C);
+            Action action = () => this.testee.In(States.A).On(Events.B).Goto(States.C);
 
-            action.Should().Throw<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
+            action.Should().Throw<InvalidOperationException>().WithMessage(StateMachine.Machine.ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
         }
 
         [Fact]
         public void ThrowsException_WhenMultipleTransitionsWithoutGuardsAreDefined_ExecuteCase()
         {
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B).Goto(States.B);
 
-            Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).Execute(() => { });
+            Action action = () => this.testee.In(States.A).On(Events.B).Execute(() => { });
 
-            action.Should().Throw<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
+            action.Should().Throw<InvalidOperationException>().WithMessage(StateMachine.Machine.ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
         }
 
         [Fact]
-        public void ThrowsException_WhenTransitionWithoutGuardIsNotdefinedLast()
+        public void ThrowsException_WhenTransitionWithoutGuardIsNotDefinedLast()
         {
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
+            this.testee.In(States.A)
+                .On(Events.B).Goto(States.B);
 
-            Action action = () => this.testee.In(StateMachine.States.A).On(StateMachine.Events.B).If(() => false).Execute(() => { });
+            Action action = () => this.testee.In(States.A).On(Events.B).If(() => false).Execute(() => { });
 
-            action.Should().Throw<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.TransitionWithoutGuardHasToBeLast);
+            action.Should().Throw<InvalidOperationException>().WithMessage(StateMachine.Machine.ExceptionMessages.TransitionWithoutGuardHasToBeLast);
         }
 
         [Fact]
         public void ThrowsExceptionOnLoading_WhenAlreadyInitialized()
         {
-            this.testee.Initialize(StateMachine.States.A);
-            Func<Task> action = async () => await this.testee.Load(A.Fake<IAsyncStateMachineLoader<StateMachine.States>>());
+            this.testee.Initialize(States.A);
+            Func<Task> action = async () => await this.testee.Load(A.Fake<IAsyncStateMachineLoader<States>>());
 
-            action.Should().Throw<InvalidOperationException>().WithMessage(Machine.ExceptionMessages.StateMachineIsAlreadyInitialized);
+            action.Should().Throw<InvalidOperationException>().WithMessage(StateMachine.Machine.ExceptionMessages.StateMachineIsAlreadyInitialized);
         }
 
         [Fact]
         public void ThrowsExceptionOnLoading_WhenSettingALastActiveStateThatIsNotASubState()
         {
-            this.testee.DefineHierarchyOn(StateMachine.States.B)
+            this.testee.DefineHierarchyOn(States.B)
                 .WithHistoryType(HistoryType.Deep)
-                .WithInitialSubState(StateMachine.States.B1)
-                .WithSubState(StateMachine.States.B2);
+                .WithInitialSubState(States.B1)
+                .WithSubState(States.B2);
 
-            var loader = A.Fake<IAsyncStateMachineLoader<StateMachine.States>>();
+            var loader = A.Fake<IAsyncStateMachineLoader<States>>();
 
             A.CallTo(() => loader.LoadHistoryStates())
-                .Returns(new Dictionary<StateMachine.States, StateMachine.States>
+                .Returns(new Dictionary<States, States>
                              {
-                                 { StateMachine.States.B, StateMachine.States.A }
+                                 { States.B, States.A }
                              });
 
             Func<Task> action = async () => await this.testee.Load(loader);
 
             action.Should().Throw<InvalidOperationException>()
-                .WithMessage(Machine.ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
+                .WithMessage(StateMachine.Machine.ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
         }
 
         private class CapturedException
         {
             public CapturedException(
-                StateMachine.States? recordedStateId,
-                StateMachine.Events? recordedEventId,
+                States? recordedStateId,
+                Events? recordedEventId,
                 object recordedEventArgument,
                 Exception recordedException)
             {
@@ -381,9 +382,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 this.RecordedException = recordedException;
             }
 
-            private StateMachine.States? RecordedStateId { get; }
+            private States? RecordedStateId { get; }
 
-            private StateMachine.Events? RecordedEventId { get; }
+            private Events? RecordedEventId { get; }
 
             private object RecordedEventArgument { get; }
 

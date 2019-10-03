@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="HierarchyBuilder.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -19,8 +19,9 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-
-    using Appccelerate.StateMachine.Syntax;
+    using System.Collections.Generic;
+    using States;
+    using Syntax;
 
     public class HierarchyBuilder<TState, TEvent> :
         IHierarchySyntax<TState>,
@@ -29,21 +30,26 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
+        private readonly StateDefinition<TState, TEvent> superState;
+
         private readonly IStateDictionary<TState, TEvent> states;
+        private readonly IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
-        private readonly IState<TState, TEvent> superState;
-
-        public HierarchyBuilder(IStateDictionary<TState, TEvent> states, TState superStateId)
+        public HierarchyBuilder(
+            TState superStateId,
+            IStateDictionary<TState, TEvent> states,
+            IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
             Guard.AgainstNullArgument("states", states);
 
             this.states = states;
+            this.initiallyLastActiveStates = initiallyLastActiveStates;
             this.superState = this.states[superStateId];
         }
 
         public IInitialSubStateSyntax<TState> WithHistoryType(HistoryType historyType)
         {
-            this.superState.HistoryType = historyType;
+            this.superState.HistoryTypeModifiable = historyType;
 
             return this;
         }
@@ -52,7 +58,8 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.WithSubState(stateId);
 
-            this.superState.InitialState = this.states[stateId];
+            this.superState.InitialStateModifiable = this.states[stateId];
+            this.initiallyLastActiveStates.Add(this.superState.Id, this.states[stateId]);
 
             return this;
         }
@@ -63,13 +70,13 @@ namespace Appccelerate.StateMachine.Machine
 
             this.CheckThatStateHasNotAlreadyASuperState(subState);
 
-            subState.SuperState = this.superState;
-            this.superState.SubStates.Add(subState);
+            subState.SuperStateModifiable = this.superState;
+            this.superState.SubStatesModifiable.Add(subState);
 
             return this;
         }
 
-        private void CheckThatStateHasNotAlreadyASuperState(IState<TState, TEvent> subState)
+        private void CheckThatStateHasNotAlreadyASuperState(StateDefinition<TState, TEvent> subState)
         {
             Guard.AgainstNullArgument("subState", subState);
 

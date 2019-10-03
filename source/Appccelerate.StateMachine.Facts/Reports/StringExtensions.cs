@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
-// <copyright file="PassiveStateMachineTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+// <copyright file="StringExtensions.cs" company="Appccelerate">
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,19 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Facts.Reports
 {
-    /// <summary>
-    /// Tests the <see cref="PassiveStateMachine{TState,TEvent}"/> class.
-    /// </summary>
-    public class PassiveStateMachineTest : StateMachineTestBase<PassiveStateMachine<States, Events>>
+    internal static class StringExtensions
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PassiveStateMachineTest"/> class.
-        /// </summary>
-        public PassiveStateMachineTest()
-            : base(new PassiveStateMachine<States, Events>("Test Machine"))
-        {
-        }
+        public static string IgnoringNewlines(this string s) =>
+            s
+                .Replace("\n", string.Empty)
+                .Replace("\r", string.Empty);
     }
 }

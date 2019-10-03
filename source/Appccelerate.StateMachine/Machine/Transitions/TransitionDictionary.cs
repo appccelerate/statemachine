@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionDictionary.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using States;
 
     /// <summary>
     /// Manages the transitions of a state.
@@ -33,22 +35,27 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <summary>
         /// The transitions.
         /// </summary>
-        private readonly Dictionary<TEvent, List<ITransition<TState, TEvent>>> transitions;
+        private readonly Dictionary<TEvent, List<TransitionDefinition<TState, TEvent>>> transitions;
 
         /// <summary>
         /// The state this transition dictionary belongs to.
         /// </summary>
-        private readonly IState<TState, TEvent> state;
+        private readonly IStateDefinition<TState, TEvent> state;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransitionDictionary&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         /// <param name="state">The state.</param>
-        public TransitionDictionary(IState<TState, TEvent> state)
+        public TransitionDictionary(IStateDefinition<TState, TEvent> state)
         {
             this.state = state;
-            this.transitions = new Dictionary<TEvent, List<ITransition<TState, TEvent>>>();
+            this.transitions = new Dictionary<TEvent, List<TransitionDefinition<TState, TEvent>>>();
         }
+
+        public IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions =>
+            this.transitions.ToDictionary(
+                pair => pair.Key,
+                pair => (IEnumerable<ITransitionDefinition<TState, TEvent>>)pair.Value);
 
         /// <summary>
         /// Gets the transitions for the specified event id.
@@ -56,14 +63,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <value>transitions for the event id.</value>
         /// <param name="eventId">Id of the event.</param>
         /// <returns>The transitions for the event id.</returns>
-        public ICollection<ITransition<TState, TEvent>> this[TEvent eventId]
+        public ICollection<TransitionDefinition<TState, TEvent>> this[TEvent eventId]
         {
             get
             {
-                List<ITransition<TState, TEvent>> result;
-
-                this.transitions.TryGetValue(eventId, out result);
-
+                this.transitions.TryGetValue(eventId, out var result);
                 return result;
             }
         }
@@ -72,18 +76,18 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// Adds the specified event id.
         /// </summary>
         /// <param name="eventId">The event id.</param>
-        /// <param name="transition">The transition.</param>
-        public void Add(TEvent eventId, ITransition<TState, TEvent> transition)
+        /// <param name="transitionDefinition">The transition.</param>
+        public void Add(TEvent eventId, TransitionDefinition<TState, TEvent> transitionDefinition)
         {
-            Guard.AgainstNullArgument("transition", transition);
+            Guard.AgainstNullArgument("transition", transitionDefinition);
 
-            this.CheckTransitionDoesNotYetExist(transition);
+            this.CheckTransitionDoesNotYetExist(transitionDefinition);
 
-            transition.Source = this.state;
+            transitionDefinition.Source = this.state;
 
             this.MakeSureEventExistsInTransitionList(eventId);
 
-            this.transitions[eventId].Add(transition);
+            this.transitions[eventId].Add(transitionDefinition);
         }
 
         /// <summary>
@@ -92,24 +96,21 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         /// <returns>All transitions.</returns>
         public IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions()
         {
-            var list = new List<TransitionInfo<TState, TEvent>>();
-            foreach (var eventId in this.transitions.Keys)
-            {
-                this.GetTransitionsOfEvent(eventId, list);
-            }
-
-            return list;
+            return this.transitions
+                .SelectMany(eventIdAndStates =>
+                    eventIdAndStates.Value.Select(transition =>
+                        new TransitionInfo<TState, TEvent>(eventIdAndStates.Key, transition.Source, transition.Target, transition.Guard, transition.Actions)));
         }
 
         /// <summary>
         /// Throws an exception if the specified transition is already defined on this state.
         /// </summary>
-        /// <param name="transition">The transition.</param>
-        private void CheckTransitionDoesNotYetExist(ITransition<TState, TEvent> transition)
+        /// <param name="transitionDefinition">The transition.</param>
+        private void CheckTransitionDoesNotYetExist(TransitionDefinition<TState, TEvent> transitionDefinition)
         {
-            if (transition.Source != null)
+            if (transitionDefinition.Source != null)
             {
-                throw new InvalidOperationException(TransitionsExceptionMessages.TransitionDoesAlreadyExist(transition, this.state));
+                throw new InvalidOperationException(TransitionsExceptionMessages.TransitionDoesAlreadyExist(transitionDefinition, this.state));
             }
         }
 
@@ -124,21 +125,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 return;
             }
 
-            var list = new List<ITransition<TState, TEvent>>();
+            var list = new List<TransitionDefinition<TState, TEvent>>();
             this.transitions.Add(eventId, list);
-        }
-
-        /// <summary>
-        /// Gets all the transitions associated to the specified event.
-        /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="list">The list to add the transition.</param>
-        private void GetTransitionsOfEvent(TEvent eventId, List<TransitionInfo<TState, TEvent>> list)
-        {
-            foreach (var transition in this.transitions[eventId])
-            {
-                list.Add(new TransitionInfo<TState, TEvent>(eventId, transition.Source, transition.Target, transition.Guard, transition.Actions));
-            }
         }
     }
 }

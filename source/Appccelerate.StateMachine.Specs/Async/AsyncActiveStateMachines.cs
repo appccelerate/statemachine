@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="AsyncActiveStateMachines.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Async
+namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Threading;
-    using Appccelerate.StateMachine.AsyncMachine;
+    using AsyncMachine;
     using FakeItEasy;
     using FluentAssertions;
     using Xbehave;

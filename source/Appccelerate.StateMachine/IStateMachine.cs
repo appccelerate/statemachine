@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="IStateMachine.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ namespace Appccelerate.StateMachine
 {
     using System;
 
-    using Appccelerate.StateMachine.Machine;
-    using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Persistence;
-    using Appccelerate.StateMachine.Syntax;
+    using Machine;
+    using Machine.Events;
+    using Persistence;
+    using Syntax;
 
     /// <summary>
     /// A state machine.
@@ -59,20 +59,6 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         bool IsRunning { get; }
-
-        /// <summary>
-        /// Define the behavior of a state.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>Syntax to build state behavior.</returns>
-        IEntryActionSyntax<TState, TEvent> In(TState state);
-
-        /// <summary>
-        /// Defines a state hierarchy.
-        /// </summary>
-        /// <param name="superStateId">The super state id.</param>
-        /// <returns>Syntax to build hierarchy.</returns>
-        IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId);
 
         /// <summary>
         /// Fires the specified event.

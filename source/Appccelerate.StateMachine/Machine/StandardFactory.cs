@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="StandardFactory.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -19,13 +19,11 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-
-    using Appccelerate.StateMachine.Machine.ActionHolders;
-    using Appccelerate.StateMachine.Machine.Contexts;
-    using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Machine.GuardHolders;
-    using Appccelerate.StateMachine.Machine.States;
-    using Appccelerate.StateMachine.Machine.Transitions;
+    using ActionHolders;
+    using Contexts;
+    using Events;
+    using GuardHolders;
+    using States;
 
     /// <summary>
     /// Standard implementation of the state machine factory.
@@ -38,25 +36,6 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;
-        private readonly IExtensionHost<TState, TEvent> extensionHost;
-
-        public StandardFactory(IStateMachineInformation<TState, TEvent> stateMachineInformation, IExtensionHost<TState, TEvent> extensionHost)
-        {
-            this.stateMachineInformation = stateMachineInformation;
-            this.extensionHost = extensionHost;
-        }
-
-        public virtual IState<TState, TEvent> CreateState(TState id)
-        {
-            return new State<TState, TEvent>(id, this.stateMachineInformation, this.extensionHost);
-        }
-
-        public virtual ITransition<TState, TEvent> CreateTransition()
-        {
-            return new Transition<TState, TEvent>(this.stateMachineInformation, this.extensionHost);
-        }
-
         public virtual IActionHolder CreateActionHolder(Action action)
         {
             return new ArgumentLessActionHolder(action);
@@ -92,12 +71,12 @@ namespace Appccelerate.StateMachine.Machine
             return new ArgumentGuardHolder<T>(guard);
         }
 
-        public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(IState<TState, TEvent> state, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
+        public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(IStateDefinition<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
         {
-            return new TransitionContext<TState, TEvent>(state, eventId, eventArgument, notifier);
+            return new TransitionContext<TState, TEvent>(stateDefinition, eventId, eventArgument, notifier);
         }
 
-        public virtual StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
+        public virtual StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IStateDefinition<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
         {
             return new StateMachineInitializer<TState, TEvent>(initialState, context);
         }

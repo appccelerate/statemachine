@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ITransitionDictionary.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
-
-    using Appccelerate.StateMachine.Machine.Transitions;
+    using Transitions;
 
     public interface ITransitionDictionary<TState, TEvent>
         where TState : IComparable
@@ -31,13 +30,21 @@ namespace Appccelerate.StateMachine.Machine
         /// Adds the specified event id.
         /// </summary>
         /// <param name="eventId">The event id.</param>
-        /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, ITransition<TState, TEvent> transition);
+        /// <param name="transitionDefinition">The transition.</param>
+        void Add(TEvent eventId, TransitionDefinition<TState, TEvent> transitionDefinition);
 
         /// <summary>
         /// Gets all transitions.
         /// </summary>
         /// <returns>All transitions.</returns>
         IEnumerable<TransitionInfo<TState, TEvent>> GetTransitions();
+
+        /// <summary>
+        /// Gets the transitions for the specified event id.
+        /// </summary>
+        /// <value>transitions for the event id.</value>
+        /// <param name="eventId">Id of the event.</param>
+        /// <returns>The transitions for the event id.</returns>
+        ICollection<TransitionDefinition<TState, TEvent>> this[TEvent eventId] { get; }
     }
 }

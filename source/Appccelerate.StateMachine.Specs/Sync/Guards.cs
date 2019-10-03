@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="Guards.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class Guards
@@ -36,17 +37,20 @@ namespace Appccelerate.StateMachine.Sync
         {
             "establish a state machine with guarded transitions".x(() =>
             {
-                machine = new PassiveStateMachine<int, int>();
-
-                currentStateExtension = new CurrentStateExtension();
-                machine.AddExtension(currentStateExtension);
-
-                machine.In(SourceState)
-                    .On(Event)
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                        .On(Event)
                         .If(() => false).Goto(ErrorState)
                         .If(() => true).Goto(DestinationState)
                         .If(() => true).Goto(ErrorState)
                         .Otherwise().Goto(ErrorState);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                currentStateExtension = new CurrentStateExtension();
+                machine.AddExtension(currentStateExtension);
 
                 machine.Initialize(SourceState);
                 machine.Start();
@@ -64,21 +68,24 @@ namespace Appccelerate.StateMachine.Sync
             PassiveStateMachine<int, int> machine,
             CurrentStateExtension currentStateExtension)
         {
-            "establish a state machine with otherwise guard and no machting other guard".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    currentStateExtension = new CurrentStateExtension();
-                    machine.AddExtension(currentStateExtension);
-
-                    machine.In(SourceState)
+            "establish a state machine with otherwise guard and no matching other guard".x(() =>
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
                         .On(Event)
-                            .If(() => false).Goto(ErrorState)
-                            .Otherwise().Goto(DestinationState);
+                        .If(() => false).Goto(ErrorState)
+                        .Otherwise().Goto(DestinationState);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    machine.Initialize(SourceState);
-                    machine.Start();
-                });
+                currentStateExtension = new CurrentStateExtension();
+                machine.AddExtension(currentStateExtension);
+
+                machine.Initialize(SourceState);
+                machine.Start();
+            });
 
             "when an event is fired".x(() =>
                 machine.Fire(Event));
@@ -89,27 +96,26 @@ namespace Appccelerate.StateMachine.Sync
 
         [Scenario]
         public void NoMatchingGuard(
-            PassiveStateMachine<int, int> machine,
-            CurrentStateExtension currentStateExtension)
+            PassiveStateMachine<int, int> machine)
         {
-            bool declined = false;
+            var declined = false;
 
             "establish state machine with no matching guard".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    currentStateExtension = new CurrentStateExtension();
-                    machine.AddExtension(currentStateExtension);
-
-                    machine.In(SourceState)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
                         .On(Event)
-                            .If(() => false).Goto(ErrorState);
+                        .If(() => false).Goto(ErrorState);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    machine.TransitionDeclined += (sender, e) => declined = true;
+                machine.TransitionDeclined += (sender, e) => declined = true;
 
-                    machine.Initialize(SourceState);
-                    machine.Start();
-                });
+                machine.Initialize(SourceState);
+                machine.Start();
+            });
 
             "when an event is fired".x(() =>
                 machine.Fire(Event));

@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="SelfTransitionTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using FakeItEasy;
     using Xunit;
@@ -25,28 +25,28 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     {
         public SelfTransitionTest()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
             this.Target = this.Source;
-            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
+            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithStateDefinition(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Source;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Source;
         }
 
         [Fact]
         public void ExitsState()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappened();
+            A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened();
         }
 
         [Fact]
         public void EntersState()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened();
+            A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappened();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="SuccessfulTransitionWithExecutedActionsTestBase.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Extensions;
-    using Appccelerate.StateMachine.Machine.ActionHolders;
+    using Extensions;
     using FluentAssertions;
+    using StateMachine.Machine;
+    using StateMachine.Machine.ActionHolders;
+    using StateMachine.Machine.States;
+    using StateMachine.Machine.Transitions;
     using Xunit;
 
     public abstract class SuccessfulTransitionWithExecutedActionsTestBase : TransitionTestBase
@@ -29,7 +32,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         [Fact]
         public void ReturnsSuccessfulTransitionResult()
         {
-            ITransitionResult<States, Events> result = this.Testee.Fire(this.TransitionContext);
+            var result = this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             result.Should().BeSuccessfulTransitionResultWithNewState(this.Target);
         }
@@ -39,9 +42,9 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         {
             bool executed = false;
 
-            this.Testee.Actions.Add(new ArgumentLessActionHolder(() => executed = true));
+            this.TransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(() => executed = true));
 
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             executed.Should().BeTrue("actions should be executed");
         }
@@ -52,7 +55,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             var extension = new FakeExtension();
             this.ExtensionHost.Extension = extension;
 
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             extension.Items.Should().Contain(new FakeExtension.Item(
                 this.StateMachineInformation,
@@ -67,7 +70,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             public override void ExecutedTransition(
                 IStateMachineInformation<States, Events> stateMachine,
-                ITransition<States, Events> transition,
+                ITransitionDefinition<States, Events> transition,
                 ITransitionContext<States, Events> transitionContext)
             {
                 this.items.Add(new Item(stateMachine, transition.Source, transition.Target, transitionContext));
@@ -120,8 +123,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
                 public Item(
                     IStateMachineInformation<States, Events> stateMachine,
-                    IState<States, Events> source,
-                    IState<States, Events> target,
+                    IStateDefinition<States, Events> source,
+                    IStateDefinition<States, Events> target,
                     ITransitionContext<States, Events> transitionContext)
                 {
                     this.StateMachine = stateMachine;
@@ -132,9 +135,9 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
                 public IStateMachineInformation<States, Events> StateMachine { get; }
 
-                public IState<States, Events> Source { get; }
+                public IStateDefinition<States, Events> Source { get; }
 
-                public IState<States, Events> Target { get; }
+                public IStateDefinition<States, Events> Target { get; }
 
                 public ITransitionContext<States, Events> TransitionContext { get; }
             }

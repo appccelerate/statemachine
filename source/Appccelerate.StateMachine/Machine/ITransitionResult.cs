@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="ITransitionResult.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -24,13 +24,11 @@ namespace Appccelerate.StateMachine.Machine
     /// Represents the result of a transition.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public interface ITransitionResult<TState, TEvent>
+    public interface ITransitionResult<TState>
         where TState : IComparable
-        where TEvent : IComparable
     {
         /// <summary>
-        /// Gets a value indicating whether this <see cref="ITransitionResult{TState, TEvent}"/> is fired.
+        /// Gets a value indicating whether this <see cref="ITransitionResult{TState}"/> is fired.
         /// </summary>
         /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
         bool Fired { get; }
@@ -39,6 +37,6 @@ namespace Appccelerate.StateMachine.Machine
         /// Gets the new state.
         /// </summary>
         /// <value>The new state.</value>
-        IState<TState, TEvent> NewState { get; }
+        TState NewState { get; }
     }
 }

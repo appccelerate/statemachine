@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="TransitionsTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine
+namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FluentAssertions;
-
+    using StateMachine.Machine;
     using Xunit;
 
     /// <summary>
@@ -28,19 +28,6 @@ namespace Appccelerate.StateMachine.Machine
     public class TransitionsTest
     {
         /// <summary>
-        /// Object under test.
-        /// </summary>
-        private readonly StateMachine<StateMachine.States, StateMachine.Events> testee;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TransitionsTest"/> class.
-        /// </summary>
-        public TransitionsTest()
-        {
-            this.testee = new StateMachine<StateMachine.States, StateMachine.Events>();
-        }
-
-        /// <summary>
         /// When no transition for the fired event can be found in the entire
         /// hierarchy up from the current state then the transition declined event is fired and
         /// the state machine remains in its current state.
@@ -48,23 +35,29 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void MissingTransition()
         {
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B);
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B);
+            var stateDefinitions = stateDefinitionBuilder.Build();
+            var stateContainer = new StateContainer<States, Events>();
 
-            bool declined = false;
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.TransitionDeclined += (sender, e) =>
-                                                  {
-                                                      declined = true;
-                                                  };
+            var declined = false;
 
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            testee.TransitionDeclined += (sender, e) => { declined = true; };
 
-            this.testee.Fire(StateMachine.Events.C);
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.C, stateContainer, stateContainer, stateDefinitions);
 
             declined.Should().BeTrue("Declined event was not fired");
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
+            stateContainer.CurrentStateId.Should().Be(States.A);
         }
 
         /// <summary>
@@ -78,15 +71,24 @@ namespace Appccelerate.StateMachine.Machine
             int? action1Argument = null;
             int? action2Argument = null;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B)
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B)
                     .Execute<int>(argument => { action1Argument = argument; })
                     .Execute((int argument) => { action2Argument = argument; });
+            var stateDefinitions = stateDefinitionBuilder.Build();
+            var stateContainer = new StateContainer<States, Events>();
 
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(StateMachine.Events.B, EventArgument);
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, EventArgument, stateContainer, stateContainer, stateDefinitions);
 
             action1Argument.Should().Be(EventArgument);
             action2Argument.Should().Be(EventArgument);
@@ -97,18 +99,27 @@ namespace Appccelerate.StateMachine.Machine
         {
             const int EventArgument = 17;
 
-            bool action1Executed = false;
-            bool action2Executed = false;
+            var action1Executed = false;
+            var action2Executed = false;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Goto(StateMachine.States.B)
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Goto(States.B)
                     .Execute<int>(argument => { action1Executed = true; })
-                    .Execute(() => { action2Executed = true; });
+                    .Execute((int argument) => { action2Executed = true; });
+            var stateDefinitions = stateDefinitionBuilder.Build();
+            var stateContainer = new StateContainer<States, Events>();
 
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(StateMachine.Events.B, EventArgument);
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, EventArgument, stateContainer, stateContainer, stateDefinitions);
 
             action1Executed.Should().BeTrue("action with argument should be executed");
             action2Executed.Should().BeTrue("action without argument should be executed");
@@ -122,31 +133,50 @@ namespace Appccelerate.StateMachine.Machine
         [Fact]
         public void InternalTransition()
         {
-            bool executed = false;
+            var executed = false;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.A).Execute(() => executed = true);
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.A)
+                    .Execute(() => executed = true);
+            var stateDefinitions = stateDefinitionBuilder.Build();
+            var stateContainer = new StateContainer<States, Events>();
 
-            this.testee.Fire(StateMachine.Events.A);
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
+
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.A, stateContainer, stateContainer, stateDefinitions);
 
             executed.Should().BeTrue("internal transition was not executed.");
-            this.testee.CurrentStateId.Should().Be(StateMachine.States.A);
+            stateContainer.CurrentStateId.Should().Be(States.A);
         }
 
         [Fact]
         public void ActionsWithoutArguments()
         {
-            bool executed = false;
+            var executed = false;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Execute(() => executed = true);
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Execute(() => executed = true);
+            var stateDefinitions = stateDefinitionBuilder.Build();
+            var stateContainer = new StateContainer<States, Events>();
 
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(StateMachine.Events.B);
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, stateContainer, stateContainer, stateDefinitions);
 
             executed.Should().BeTrue();
         }
@@ -155,15 +185,24 @@ namespace Appccelerate.StateMachine.Machine
         public void ActionsWithOneArgument()
         {
             const int ExpectedValue = 1;
-            int value = 0;
+            var value = 0;
 
-            this.testee.In(StateMachine.States.A)
-                .On(StateMachine.Events.B).Execute<int>(v => value = v);
+            var stateDefinitionBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionBuilder
+                .In(States.A)
+                    .On(Events.B)
+                    .Execute<int>(v => value = v);
+            var stateDefinitions = stateDefinitionBuilder.Build();
+            var stateContainer = new StateContainer<States, Events>();
 
-            this.testee.Initialize(StateMachine.States.A);
-            this.testee.EnterInitialState();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.Fire(StateMachine.Events.B, ExpectedValue);
+            testee.Initialize(States.A, stateContainer, stateContainer);
+            testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions);
+
+            testee.Fire(Events.B, ExpectedValue, stateContainer, stateContainer, stateDefinitions);
 
             value.Should().Be(ExpectedValue);
         }

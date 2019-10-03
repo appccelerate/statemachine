@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="SyntaxFacts.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.AsyncMachine.Syntax
+namespace Appccelerate.StateMachine.Facts.AsyncMachine.Syntax
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine;
-    using Appccelerate.StateMachine.AsyncSyntax;
+    using AsyncSyntax;
+    using StateMachine.AsyncMachine;
     using Xunit;
 
     public class SyntaxFacts

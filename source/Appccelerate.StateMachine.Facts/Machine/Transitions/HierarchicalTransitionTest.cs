@@ -1,6 +1,6 @@
 ﻿//-------------------------------------------------------------------------------
 // <copyright file="HierarchicalTransitionTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,63 +16,64 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Machine.Transitions
+namespace Appccelerate.StateMachine.Facts.Machine.Transitions
 {
     using FakeItEasy;
+    using StateMachine.Machine.States;
     using Xunit;
 
     public class HierarchicalTransitionTest : SuccessfulTransitionWithExecutedActionsTestBase
     {
-        private readonly IState<States, Events> root;
-        private readonly IState<States, Events> superStateOfSource;
-        private readonly IState<States, Events> superStateOfTarget;
+        private readonly IStateDefinition<States, Events> root;
+        private readonly IStateDefinition<States, Events> superStateOfSource;
+        private readonly IStateDefinition<States, Events> superStateOfTarget;
 
         public HierarchicalTransitionTest()
         {
-            this.root = Builder<States, Events>.CreateState().Build();
-            this.superStateOfSource = Builder<States, Events>.CreateState().WithSuperState(this.root).Build();
-            this.Source = Builder<States, Events>.CreateState().WithSuperState(this.superStateOfSource).Build();
-            this.superStateOfTarget = Builder<States, Events>.CreateState().WithSuperState(this.root).Build();
-            this.Target = Builder<States, Events>.CreateState().WithSuperState(this.superStateOfTarget).Build();
+            this.root = Builder<States, Events>.CreateStateDefinition().Build();
+            this.superStateOfSource = Builder<States, Events>.CreateStateDefinition().WithSuperState(this.root).Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().WithSuperState(this.superStateOfSource).Build();
+            this.superStateOfTarget = Builder<States, Events>.CreateStateDefinition().WithSuperState(this.root).Build();
+            this.Target = Builder<States, Events>.CreateStateDefinition().WithSuperState(this.superStateOfTarget).Build();
 
-            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
+            this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithStateDefinition(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Target;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Target;
         }
 
         [Fact]
         public void ExitsStatesUpToBelowCommonSuperState()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappened()
-                .Then(A.CallTo(() => this.superStateOfSource.Exit(this.TransitionContext)).MustHaveHappened());
+            A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened()
+                .Then(A.CallTo(() => this.StateLogic.Exit(this.superStateOfSource, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappened());
         }
 
         [Fact]
         public void EntersStatesBelowCommonSuperStateToTarget()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.superStateOfTarget.Entry(this.TransitionContext)).MustHaveHappened()
-                .Then(A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappened());
+            A.CallTo(() => this.StateLogic.Entry(this.superStateOfTarget, this.TransitionContext)).MustHaveHappened()
+                .Then(A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappened());
         }
 
         [Fact]
         public void DoesNotExitCommonSuperState()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.root.Exit(this.TransitionContext)).MustNotHaveHappened();
+            A.CallTo(() => this.StateLogic.Exit(this.root, this.TransitionContext, this.LastActiveStateModifier)).MustNotHaveHappened();
         }
 
         [Fact]
         public void DoesNotEnterCommonSuperState()
         {
-            this.Testee.Fire(this.TransitionContext);
+            this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.root.Entry(this.TransitionContext)).MustNotHaveHappened();
+            A.CallTo(() => this.StateLogic.Entry(this.root, this.TransitionContext)).MustNotHaveHappened();
         }
     }
 }

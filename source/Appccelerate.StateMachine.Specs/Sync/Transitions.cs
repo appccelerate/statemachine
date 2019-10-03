@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="Transitions.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Sync
+namespace Appccelerate.StateMachine.Specs.Sync
 {
     using FluentAssertions;
+    using Machine;
     using Xbehave;
 
     public class Transitions
@@ -39,21 +40,26 @@ namespace Appccelerate.StateMachine.Sync
             bool entryActionExecuted)
         {
             "establish a state machine with transitions".x(() =>
-                {
-                    machine = new PassiveStateMachine<int, int>();
-
-                    machine.AddExtension(CurrentStateExtension);
-
-                    machine.In(SourceState)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
                         .ExecuteOnExit(() => exitActionExecuted = true)
-                        .On(Event).Goto(DestinationState).Execute<string>(p => actualParameter = p);
-
-                    machine.In(DestinationState)
+                        .On(Event)
+                        .Goto(DestinationState)
+                        .Execute<string>(p => actualParameter = p);
+                stateMachineDefinitionBuilder
+                    .In(DestinationState)
                         .ExecuteOnEntry(() => entryActionExecuted = true);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    machine.Initialize(SourceState);
-                    machine.Start();
-                });
+                machine.AddExtension(CurrentStateExtension);
+
+                machine.Initialize(SourceState);
+                machine.Start();
+            });
 
             "when firing an event onto the state machine".x(() =>
                 machine.Fire(Event, Parameter));

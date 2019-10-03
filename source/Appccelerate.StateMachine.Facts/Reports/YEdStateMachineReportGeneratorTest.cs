@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 // <copyright file="YEdStateMachineReportGeneratorTest.cs" company="Appccelerate">
-//   Copyright (c) 2008-2017 Appccelerate
+//   Copyright (c) 2008-2019 Appccelerate
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine.Reports
+namespace Appccelerate.StateMachine.Facts.Reports
 {
+    using System;
+    using System.Collections.Generic;
     using System.IO;
-
     using FluentAssertions;
-
+    using StateMachine.Machine;
+    using StateMachine.Reports;
     using Xunit;
 
     public class YEdStateMachineReportGeneratorTest
@@ -29,7 +31,7 @@ namespace Appccelerate.StateMachine.Reports
         /// <summary>
         /// Some test states for simulating an elevator.
         /// </summary>
-        private enum States
+        public enum States
         {
             /// <summary>Elevator has an Error</summary>
             Error,
@@ -57,9 +59,9 @@ namespace Appccelerate.StateMachine.Reports
         }
 
         /// <summary>
-        /// Some test events for the elevator
+        /// Some test events for the elevator.
         /// </summary>
-        private enum Events
+        public enum Events
         {
             /// <summary>An error occurred.</summary>
             ErrorOccured,
@@ -83,50 +85,62 @@ namespace Appccelerate.StateMachine.Reports
             Stop
         }
 
-        [Fact]
-        public void YEdGraphMl()
-        {
-            var elevator = new PassiveStateMachine<States, Events>("Elevator");
+        public static IEnumerable<object[]> StateMachineInstantiationProvider =>
+            new List<object[]>
+            {
+                new object[] { "PassiveStateMachine", new Func<string, StateMachineDefinition<States, Events>, IStateMachine<States, Events>>((name, smd) => smd.CreatePassiveStateMachine(name)) },
+                new object[] { "ActiveStateMachine", new Func<string, StateMachineDefinition<States, Events>, IStateMachine<States, Events>>((name, smd) => smd.CreateActiveStateMachine(name)) }
+            };
 
-            elevator.DefineHierarchyOn(States.Healthy)
+        [Theory]
+        [MemberData(nameof(StateMachineInstantiationProvider))]
+        public void YEdGraphMl(string dummyName, Func<string, StateMachineDefinition<States, Events>, IStateMachine<States, Events>> createStateMachine)
+        {
+            var builder = new StateMachineDefinitionBuilder<States, Events>();
+            builder
+                .DefineHierarchyOn(States.Healthy)
                 .WithHistoryType(HistoryType.Deep)
                 .WithInitialSubState(States.OnFloor)
                 .WithSubState(States.Moving);
-
-            elevator.DefineHierarchyOn(States.Moving)
+            builder
+                .DefineHierarchyOn(States.Moving)
                 .WithHistoryType(HistoryType.Shallow)
                 .WithInitialSubState(States.MovingUp)
                 .WithSubState(States.MovingDown);
-
-            elevator.DefineHierarchyOn(States.OnFloor)
+            builder
+                .DefineHierarchyOn(States.OnFloor)
                 .WithHistoryType(HistoryType.None)
                 .WithInitialSubState(States.DoorClosed)
                 .WithSubState(States.DoorOpen);
-
-            elevator.In(States.Healthy)
+            builder
+                .In(States.Healthy)
                 .On(Events.ErrorOccured).Goto(States.Error);
-
-            elevator.In(States.Error)
+            builder
+                .In(States.Error)
                 .On(Events.Reset).Goto(States.Healthy)
                 .On(Events.ErrorOccured);
-
-            elevator.In(States.OnFloor)
+            builder
+                .In(States.OnFloor)
                 .ExecuteOnEntry(AnnounceFloor)
                 .ExecuteOnExit(Beep)
                 .ExecuteOnExit(Beep)
                 .On(Events.CloseDoor).Goto(States.DoorClosed)
                 .On(Events.OpenDoor).Goto(States.DoorOpen)
                 .On(Events.GoUp)
-                    .If(CheckOverload).Goto(States.MovingUp)
-                    .Otherwise()
-                        .Execute(AnnounceOverload)
-                        .Execute(Beep)
+                .If(CheckOverload).Goto(States.MovingUp)
+                .Otherwise()
+                .Execute(AnnounceOverload)
+                .Execute(Beep)
                 .On(Events.GoDown)
-                    .If(CheckOverload).Goto(States.MovingDown)
-                    .Otherwise().Execute(AnnounceOverload);
-
-            elevator.In(States.Moving)
+                .If(CheckOverload).Goto(States.MovingDown)
+                .Otherwise().Execute(AnnounceOverload);
+            builder
+                .In(States.Moving)
                 .On(Events.Stop).Goto(States.OnFloor);
+
+            var stateMachineDefinition = builder.Build();
+
+            var elevator = createStateMachine("Elevator", stateMachineDefinition);
 
             elevator.Initialize(States.OnFloor);
 
@@ -144,7 +158,11 @@ namespace Appccelerate.StateMachine.Reports
 
             var cleanedReport = report.Replace("\n", string.Empty).Replace("\r", string.Empty);
 
-            cleanedReport.Should().Be(ExpectedReport.Replace("\n", string.Empty).Replace("\r", string.Empty));
+            cleanedReport
+                .Should()
+                .Be(
+                    ExpectedReport
+                        .IgnoringNewlines());
         }
 
         private static void Beep()
