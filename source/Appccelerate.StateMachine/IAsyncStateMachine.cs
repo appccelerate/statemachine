@@ -20,10 +20,9 @@ namespace Appccelerate.StateMachine
 {
     using System;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine;
-    using Appccelerate.StateMachine.AsyncMachine.Events;
-    using Appccelerate.StateMachine.AsyncSyntax;
-    using Appccelerate.StateMachine.Persistence;
+    using AsyncMachine;
+    using AsyncMachine.Events;
+    using Persistence;
 
     /// <summary>
     /// A state machine.
@@ -59,20 +58,6 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         bool IsRunning { get; }
-
-        /// <summary>
-        /// Define the behavior of a state.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>Syntax to build state behavior.</returns>
-        IEntryActionSyntax<TState, TEvent> In(TState state);
-
-        /// <summary>
-        /// Defines a state hierarchy.
-        /// </summary>
-        /// <param name="superStateId">The super state id.</param>
-        /// <returns>Syntax to build hierarchy.</returns>
-        IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId);
 
         /// <summary>
         /// Fires the specified event.

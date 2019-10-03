@@ -27,34 +27,34 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
     {
         public TransitionFacts()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
-            this.Target = Builder<States, Events>.CreateState().Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
+            this.Target = Builder<States, Events>.CreateStateDefinition().Build();
             this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Target;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Target;
         }
 
         [Fact]
         public async Task EntersDestinationState()
         {
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Target.Entry(this.TransitionContext)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.StateLogic.Entry(this.Target, this.TransitionContext)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
         public async Task ExitsSourceState()
         {
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
         public async Task NotifiesTransitionBeginOnTransitionContext()
         {
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             A.CallTo(() => this.TransitionContext.OnTransitionBegin()).MustHaveHappened();
         }

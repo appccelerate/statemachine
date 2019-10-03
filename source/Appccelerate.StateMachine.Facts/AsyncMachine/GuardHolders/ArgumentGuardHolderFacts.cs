@@ -27,56 +27,144 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.GuardHolders
 
     public class ArgumentGuardHolderFacts
     {
-        private readonly ArgumentGuardHolder<IBase> testee;
-
-        private bool guardExecuted;
-
-        public ArgumentGuardHolderFacts()
+        [Fact]
+        public async Task SyncActionIsInvokedWithSameArgumentThatIsPassedToGuardHolderExecuted()
         {
-            this.guardExecuted = false;
-            this.testee = new ArgumentGuardHolder<IBase>(async v => await Guard(v));
+            var expected = new MyArgument();
+            MyArgument value = null;
+            bool SyncGuard(MyArgument x)
+            {
+                value = x;
+                return true;
+            }
 
-            // ReSharper disable once UnusedParameter.Local
-            Task<bool> Guard(IBase v) => Task.FromResult(this.guardExecuted = true);
+            var testee = new ArgumentGuardHolder<MyArgument>(SyncGuard);
+
+            await testee.Execute(expected);
+
+            value.Should().Be(expected);
+        }
+
+        [Fact]
+        public async Task AsyncActionIsInvokedWithSameArgumentThatIsPassedTGuardHolderExecuted()
+        {
+            var expected = new MyArgument();
+            MyArgument value = null;
+            Task<bool> AsyncGuard(MyArgument x)
+            {
+                value = x;
+                return Task.FromResult(true);
+            }
+
+            var testee = new ArgumentGuardHolder<MyArgument>(AsyncGuard);
+
+            await testee.Execute(expected);
+
+            value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ReturnsFunctionNameForNonAnonymousSyncActionWhenDescribing()
+        {
+            var testee = new ArgumentGuardHolder<MyArgument>(SyncGuard);
+
+            var description = testee.Describe();
+
+            description
+                .Should()
+                .Be("SyncGuard");
+        }
+
+        [Fact]
+        public void ReturnsFunctionNameForNonAnonymousAsyncActionWhenDescribing()
+        {
+            var testee = new ArgumentGuardHolder<MyArgument>(AsyncGuard);
+
+            var description = testee.Describe();
+
+            description
+                .Should()
+                .Be("AsyncGuard");
+        }
+
+        [Fact]
+        public void ReturnsAnonymousForAnonymousSyncActionWhenDescribing()
+        {
+            var testee = new ArgumentGuardHolder<MyArgument>(a => true);
+
+            var description = testee.Describe();
+
+            description
+                .Should()
+                .Be("anonymous");
+        }
+
+        [Fact]
+        public void ReturnsAnonymousForAnonymousAsyncActionWhenDescribing()
+        {
+            var testee = new ArgumentGuardHolder<MyArgument>(a => Task.FromResult(true));
+
+            var description = testee.Describe();
+
+            description
+                .Should()
+                .Be("anonymous");
+        }
+
+        [Fact]
+        public async Task MatchingType()
+        {
+            var testee = new ArgumentGuardHolder<IBase>(BaseGuard);
+
+            await testee.Execute(A.Fake<IBase>());
+        }
+
+        [Fact]
+        public async Task DerivedType()
+        {
+            var testee = new ArgumentGuardHolder<IBase>(BaseGuard);
+
+            await testee.Execute(A.Fake<IDerived>());
+        }
+
+        [Fact]
+        public void NonMatchingType()
+        {
+            var testee = new ArgumentGuardHolder<IBase>(BaseGuard);
+
+            Func<Task> action = async () => await testee.Execute(3);
+
+            action
+                .Should()
+                .Throw<ArgumentException>()
+                .WithMessage(GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(3, "BaseGuard"));
+        }
+
+        private static bool SyncGuard(MyArgument a)
+        {
+            return true;
+        }
+
+        private static Task<bool> AsyncGuard(MyArgument a)
+        {
+            return Task.FromResult(true);
+        }
+
+        private static bool BaseGuard(IBase b)
+        {
+            return true;
+        }
+
+        private class MyArgument
+        {
         }
 
         public interface IBase
         {
         }
 
-        // ReSharper disable once MemberCanBePrivate.Global
         public interface IDerived : IBase
         {
-        }
-
-        [Fact]
-        public async Task Execute()
-        {
-            await this.testee.Execute(A.Fake<IBase>());
-
-            this.guardExecuted
-                .Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task ExecuteWhenPassingADerivedClassThenGuardGetsExecuted()
-        {
-            await this.testee.Execute(A.Fake<IDerived>());
-
-            this.guardExecuted
-                .Should().BeTrue();
-        }
-
-        [Fact]
-        public void ExecuteWhenPassingWrongTypeThenException()
-        {
-            const int argument = 4;
-
-            Func<Task> action = async () => await this.testee.Execute(argument);
-
-            action
-                .Should().Throw<ArgumentException>()
-                .WithMessage(StateMachine.Machine.GuardHolders.GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.testee.Describe()));
         }
     }
 }

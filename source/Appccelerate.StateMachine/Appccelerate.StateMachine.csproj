@@ -93,6 +93,9 @@
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Machine\Reports\" />
+  </ItemGroup>
 
   <!-- xml documentation file generation -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

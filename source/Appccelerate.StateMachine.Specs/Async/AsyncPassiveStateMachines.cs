@@ -19,7 +19,6 @@
 namespace Appccelerate.StateMachine.Specs.Async
 {
     using AsyncMachine;
-    using FakeItEasy;
     using FluentAssertions;
     using Xbehave;
 
@@ -31,7 +30,9 @@ namespace Appccelerate.StateMachine.Specs.Async
             StateMachineNameReporter reporter)
         {
             "establish an instantiated passive state machine".x(()
-                => machine = new AsyncPassiveStateMachine<string, int>());
+                => machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine());
 
             "establish a state machine reporter".x(()
                 => reporter = new StateMachineNameReporter());
@@ -52,7 +53,9 @@ namespace Appccelerate.StateMachine.Specs.Async
             const string name = "custom name";
 
             "establish an instantiated passive state machine with custom name".x(()
-                => machine = new AsyncPassiveStateMachine<string, int>(name));
+                => machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine(name));
 
             "establish a state machine reporter".x(()
                 => reporter = new StateMachineNameReporter());
@@ -66,47 +69,31 @@ namespace Appccelerate.StateMachine.Specs.Async
         }
 
         [Scenario]
-        public void CustomFactory(
-            StandardFactory<string, int> factory)
-        {
-            "establish a custom factory".x(()
-                => factory = A.Fake<StandardFactory<string, int>>());
-
-            "when creating a passive state machine".x(() =>
-            {
-                var machine = new AsyncPassiveStateMachine<string, int>("_", factory);
-
-                machine.In("initial").On(42).Goto("answer");
-            });
-
-            "it should use custom factory to create internal instances".x(()
-                => A.CallTo(factory).MustHaveHappened());
-        }
-
-        [Scenario]
         public void EventsQueueing(
             IAsyncStateMachine<string, int> machine)
         {
-            const int firstEvent = 0;
-            const int secondEvent = 1;
+            const int FirstEvent = 0;
+            const int SecondEvent = 1;
 
-            bool arrived = false;
+            var arrived = false;
 
             "establish a passive state machine with transitions".x(() =>
             {
-                machine = new AsyncPassiveStateMachine<string, int>();
-
-                machine.In("A").On(firstEvent).Goto("B");
-                machine.In("B").On(secondEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => arrived = true);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 machine.Initialize("A");
             });
 
             "when firing an event onto the state machine".x(() =>
             {
-                machine.Fire(firstEvent);
-                machine.Fire(secondEvent);
+                machine.Fire(FirstEvent);
+                machine.Fire(SecondEvent);
                 machine.Start();
             });
 
@@ -118,26 +105,28 @@ namespace Appccelerate.StateMachine.Specs.Async
         public void PriorityEventsQueueing(
             IAsyncStateMachine<string, int> machine)
         {
-            const int firstEvent = 0;
-            const int secondEvent = 1;
+            const int FirstEvent = 0;
+            const int SecondEvent = 1;
 
-            bool arrived = false;
+            var arrived = false;
 
             "establish a passive state machine with transitions".x(() =>
             {
-                machine = new AsyncPassiveStateMachine<string, int>();
-
-                machine.In("A").On(secondEvent).Goto("B");
-                machine.In("B").On(firstEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => arrived = true);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 machine.Initialize("A");
             });
 
             "when firing a priority event onto the state machine".x(() =>
             {
-                machine.Fire(firstEvent);
-                machine.FirePriority(secondEvent);
+                machine.Fire(FirstEvent);
+                machine.FirePriority(SecondEvent);
                 machine.Start();
             });
 

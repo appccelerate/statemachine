@@ -20,11 +20,6 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
 
-    /// <summary>
-    /// Represents a transition in the state machine.
-    /// </summary>
-    /// <typeparam name="TState">The type of the state.</typeparam>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
     public interface ITransitionLogic<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable

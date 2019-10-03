@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         where TEvent : IComparable
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TransitionExceptionEventArgs&lt;TState, TEvent&gt;"/> class.
+        /// Initializes a new instance of the <see cref="TransitionExceptionEventArgs{TState,TEvent}"/> class.
         /// </summary>
         /// <param name="context">The event context.</param>
         /// <param name="exception">The exception.</param>

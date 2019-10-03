@@ -20,7 +20,6 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
     using States;
-    using LiteGuard = Guard;
 
     public class TransitionLogic<TState, TEvent>
         : ITransitionLogic<TState, TEvent>
@@ -50,7 +49,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             ITransitionContext<TState, TEvent> context,
             ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
-            LiteGuard.AgainstNullArgument("context", context);
+            Guard.AgainstNullArgument("context", context);
 
             if (!this.ShouldFire(transitionDefinition, context))
             {

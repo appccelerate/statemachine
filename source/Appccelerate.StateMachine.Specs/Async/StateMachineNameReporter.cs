@@ -20,13 +20,14 @@ namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Collections.Generic;
     using AsyncMachine;
+    using AsyncMachine.States;
     using Infrastructure;
 
     public class StateMachineNameReporter : IStateMachineReport<string, int>
     {
         public string StateMachineName { get; private set; }
 
-        public void Report(string name, IEnumerable<IState<string, int>> states, Initializable<string> initialStateId)
+        public void Report(string name, IEnumerable<IStateDefinition<string, int>> states, Initializable<string> initialStateId)
         {
             this.StateMachineName = name;
         }

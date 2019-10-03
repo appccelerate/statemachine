@@ -26,85 +26,138 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
     public class GuardFacts
     {
-        private const string EventArgument = "test";
-
-        private readonly StateMachine<States, Events> testee;
-
-        public GuardFacts()
-        {
-            this.testee = new StateMachine<States, Events>();
-
-            this.testee.Initialize(States.A);
-        }
-
         [Fact]
         public async Task EventArgumentIsPassedToTheGuard_SyncUsage()
         {
-            string eventArgument = null;
+            const string ExpectedEventArgument = "test";
+            string actualEventArgument = null;
 
-            this.testee.In(States.A)
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
                 .On(Events.A)
                     .If<string>(argument =>
-                        {
-                            eventArgument = argument;
-                            return true;
-                        })
+                    {
+                        actualEventArgument = argument;
+                        return true;
+                    })
                     .Goto(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
-            await this.testee.EnterInitialState();
-            await this.testee.Fire(Events.A, EventArgument);
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            eventArgument.Should().Be(EventArgument);
+            await testee.Initialize(States.A, stateContainer, stateContainer)
+                .ConfigureAwait(false);
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+                .ConfigureAwait(false);
+
+            await testee.Fire(Events.A, ExpectedEventArgument, stateContainer, stateContainer, stateDefinitions)
+                .ConfigureAwait(false);
+
+            actualEventArgument
+                .Should()
+                .Be(ExpectedEventArgument);
         }
 
         [Fact]
         public async Task EventArgumentIsPassedToTheGuard_AsyncUsage()
         {
-            string eventArgument = null;
+            const string ExpectedEventArgument = "test";
+            string actualEventArgument = null;
 
-            this.testee.In(States.A)
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
                 .On(Events.A)
                 .If((string argument) =>
                 {
-                    eventArgument = argument;
+                    actualEventArgument = argument;
                     return Task.FromResult(true);
                 })
                 .Goto(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
-            await this.testee.EnterInitialState();
-            await this.testee.Fire(Events.A, EventArgument);
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            eventArgument.Should().Be(EventArgument);
+            await testee.Initialize(States.A, stateContainer, stateContainer)
+                .ConfigureAwait(false);
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+                .ConfigureAwait(false);
+
+            await testee.Fire(Events.A, ExpectedEventArgument, stateContainer, stateContainer, stateDefinitions)
+                .ConfigureAwait(false);
+
+            actualEventArgument
+                .Should()
+                .Be(ExpectedEventArgument);
         }
 
         [Fact]
         public async Task GuardWithoutArguments()
         {
-            this.testee.In(States.A)
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
                 .On(Events.B)
                     .If(() => false).Goto(States.C)
                     .If(() => true).Goto(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
-            await this.testee.EnterInitialState();
-            await this.testee.Fire(Events.B, Missing.Value);
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.CurrentStateId.Should().Be(States.B);
+            await testee.Initialize(States.A, stateContainer, stateContainer)
+                .ConfigureAwait(false);
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+                .ConfigureAwait(false);
+
+            await testee.Fire(Events.B, Missing.Value, stateContainer, stateContainer, stateDefinitions)
+                .ConfigureAwait(false);
+
+            stateContainer
+                .CurrentStateId
+                .Should()
+                .Be(States.B);
         }
 
         [Fact]
         public async Task GuardWithASingleArgument()
         {
-            this.testee.In(States.A)
-                .On(Events.B)
-                    .If((Func<int, bool>)SingleIntArgumentGuardReturningFalse).Goto(States.C)
-                    .If(() => false).Goto(States.D)
-                    .If(() => false).Goto(States.E)
-                    .If((Func<int, bool>)SingleIntArgumentGuardReturningTrue).Goto(States.B);
+            var stateDefinitionsBuilder = new StateDefinitionsBuilder<States, Events>();
+            stateDefinitionsBuilder
+                .In(States.A)
+                    .On(Events.B)
+                        .If((Func<int, bool>)SingleIntArgumentGuardReturningFalse).Goto(States.C)
+                        .If(() => false).Goto(States.D)
+                        .If(() => false).Goto(States.E)
+                        .If((Func<int, bool>)SingleIntArgumentGuardReturningTrue).Goto(States.B);
+            var stateDefinitions = stateDefinitionsBuilder.Build();
 
-            await this.testee.EnterInitialState();
-            await this.testee.Fire(Events.B, 3);
+            var stateContainer = new StateContainer<States, Events>();
+            var testee = new StateMachineBuilder<States, Events>()
+                .WithStateContainer(stateContainer)
+                .Build();
 
-            this.testee.CurrentStateId.Should().Be(States.B);
+            await testee.Initialize(States.A, stateContainer, stateContainer)
+                .ConfigureAwait(false);
+            await testee.EnterInitialState(stateContainer, stateContainer, stateDefinitions)
+                .ConfigureAwait(false);
+
+            await testee.Fire(Events.B, 3, stateContainer, stateContainer, stateDefinitions)
+                .ConfigureAwait(false);
+
+            stateContainer
+                .CurrentStateId
+                .Should()
+                .Be(States.B);
         }
 
         private static bool SingleIntArgumentGuardReturningTrue(int i)

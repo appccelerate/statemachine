@@ -19,13 +19,9 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine.Events;
-    using Appccelerate.StateMachine.AsyncSyntax;
-    using Appccelerate.StateMachine.Infrastructure;
-    using Appccelerate.StateMachine.Persistence;
+    using Events;
+    using States;
 
     /// <summary>
     /// Base implementation of a state machine.
@@ -33,49 +29,22 @@ namespace Appccelerate.StateMachine.AsyncMachine
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class StateMachine<TState, TEvent> :
-        INotifier<TState, TEvent>,
-        IStateMachineInformation<TState, TEvent>,
-        IExtensionHost<TState, TEvent>
+        INotifier<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IStateDictionary<TState, TEvent> states;
         private readonly IFactory<TState, TEvent> factory;
-        private readonly Initializable<TState> initialStateId;
-        private readonly string name;
-        private readonly List<IExtension<TState, TEvent>> extensions;
-        private IState<TState, TEvent> currentState;
+        private readonly IStateLogic<TState, TEvent> stateLogic;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
         /// </summary>
-        public StateMachine()
-            : this(null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
-        /// </summary>
-        /// <param name="name">The name of this state machine used in log messages.</param>
-        public StateMachine(string name)
-            : this(name, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StateMachine{TState,TEvent}"/> class.
-        /// </summary>
-        /// <param name="name">The name of this state machine used in log messages.</param>
         /// <param name="factory">The factory used to create internal instances.</param>
-        public StateMachine(string name, IFactory<TState, TEvent> factory)
+        /// <param name="stateLogic">The state logic used to handle state changes.</param>
+        public StateMachine(IFactory<TState, TEvent> factory, IStateLogic<TState, TEvent> stateLogic)
         {
-            this.name = name;
-            this.factory = factory ?? new StandardFactory<TState, TEvent>(this, this);
-            this.states = new StateDictionary<TState, TEvent>(this.factory);
-            this.extensions = new List<IExtension<TState, TEvent>>();
-
-            this.initialStateId = new Initializable<TState>();
+            this.factory = factory;
+            this.stateLogic = stateLogic;
         }
 
         /// <summary>
@@ -98,117 +67,61 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// </summary>
         public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>> TransitionCompleted;
 
-        /// <summary>
-        /// Gets the name of this instance.
-        /// </summary>
-        /// <value>The name of this instance.</value>
-        public string Name => this.name;
-
-        /// <summary>
-        /// Gets the id of the current state.
-        /// </summary>
-        /// <value>The id of the current state.</value>
-        public TState CurrentStateId => this.CurrentState.Id;
-
-        /// <summary>
-        /// Gets the current state.
-        /// </summary>
-        /// <value>The current state.</value>
-        private IState<TState, TEvent> CurrentState
+        private static async Task SwitchStateTo(
+            IStateDefinition<TState, TEvent> newState,
+            StateContainer<TState, TEvent> stateContainer,
+            IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-            get
-            {
-                this.CheckThatStateMachineIsInitialized();
-                this.CheckThatStateMachineHasEnteredInitialState();
+            var oldState = stateContainer.CurrentState;
 
-                return this.currentState;
-            }
-        }
+            stateContainer.CurrentState = newState;
 
-        private async Task SetCurrentState(IState<TState, TEvent> newCurrentState)
-        {
-            IState<TState, TEvent> oldState = this.currentState;
-
-            this.currentState = newCurrentState;
-
-            await this.ForEach(extension => extension.SwitchedState(this, oldState, this.currentState))
+            await stateContainer
+                .ForEach(extension =>
+                    extension.SwitchedState(stateMachineInformation, oldState, newState))
                 .ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Adds the <paramref name="extension"/>.
-        /// </summary>
-        /// <param name="extension">The extension.</param>
-        public void AddExtension(IExtension<TState, TEvent> extension)
-        {
-            this.extensions.Add(extension);
-        }
-
-        /// <summary>
-        /// Clears all extensions.
-        /// </summary>
-        public void ClearExtensions()
-        {
-            this.extensions.Clear();
-        }
-
-        /// <summary>
-        /// Executes the specified <paramref name="action"/> for all extensions.
-        /// </summary>
-        /// <param name="action">The action to execute.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task ForEach(Func<IExtension<TState, TEvent>, Task> action)
-        {
-            foreach (var extension in this.extensions)
-            {
-                await action(extension)
-                    .ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// Define the behavior of a state.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>Syntax to build state behavior.</returns>
-        public IEntryActionSyntax<TState, TEvent> In(TState state)
-        {
-            IState<TState, TEvent> newState = this.states[state];
-
-            return new StateBuilder<TState, TEvent>(newState, this.states, this.factory);
         }
 
         /// <summary>
         /// Initializes the state machine by setting the specified initial state.
         /// </summary>
         /// <param name="initialState">The initial state of the state machine.</param>
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Initialize(TState initialState)
+        public async Task Initialize(TState initialState, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-            await this.ForEach(extension => extension.InitializingStateMachine(this, ref initialState))
+            await stateContainer.ForEach(extension => extension.InitializingStateMachine(stateMachineInformation, ref initialState))
                 .ConfigureAwait(false);
 
-            this.Initialize(this.states[initialState]);
+            Initialize(initialState, stateContainer);
 
-            await this.ForEach(extension => extension.InitializedStateMachine(this, initialState))
+            await stateContainer.ForEach(extension => extension.InitializedStateMachine(stateMachineInformation, initialState))
                 .ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Enters the initial state that was previously set with <see cref="Initialize(TState)"/>.
+        /// Enters the initial state that was previously set with <see cref="Initialize(TState, StateContainer{TState,TEvent}, IStateMachineInformation{TState,TEvent})"/>.
         /// </summary>
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
+        /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task EnterInitialState()
+        public async Task EnterInitialState(
+            StateContainer<TState, TEvent> stateContainer,
+            IStateMachineInformation<TState, TEvent> stateMachineInformation,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            this.CheckThatStateMachineIsInitialized();
+            CheckThatStateMachineIsInitialized(stateContainer);
 
-            await this.ForEach(extension => extension.EnteringInitialState(this, this.initialStateId.Value))
+            await stateContainer.ForEach(extension => extension.EnteringInitialState(stateMachineInformation, stateContainer.InitialStateId.Value))
                 .ConfigureAwait(false);
 
             var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
-            await this.EnterInitialState(this.states[this.initialStateId.Value], context).ConfigureAwait(false);
+            await this.EnterInitialState(context, stateContainer, stateMachineInformation, stateDefinitions)
+                .ConfigureAwait(false);
 
-            await this.ForEach(extension => extension.EnteredInitialState(this, this.initialStateId.Value, context))
+            await stateContainer.ForEach(extension => extension.EnteredInitialState(stateMachineInformation, stateContainer.InitialStateId.Value, context))
                 .ConfigureAwait(false);
         }
 
@@ -217,17 +130,26 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
+        /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Fire(TEvent eventId, object eventArgument)
+        public async Task Fire(
+            TEvent eventId,
+            object eventArgument,
+            StateContainer<TState, TEvent> stateContainer,
+            IStateMachineInformation<TState, TEvent> stateMachineInformation,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            this.CheckThatStateMachineIsInitialized();
-            this.CheckThatStateMachineHasEnteredInitialState();
+            CheckThatStateMachineIsInitialized(stateContainer);
+            CheckThatStateMachineHasEnteredInitialState(stateContainer);
 
-            await this.ForEach(extension => extension.FiringEvent(this, ref eventId, ref eventArgument))
+            await stateContainer.ForEach(extension => extension.FiringEvent(stateMachineInformation, ref eventId, ref eventArgument))
                 .ConfigureAwait(false);
 
-            ITransitionContext<TState, TEvent> context = this.factory.CreateTransitionContext(this.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
-            ITransitionResult<TState, TEvent> result = await this.CurrentState.Fire(context).ConfigureAwait(false);
+            var context = this.factory.CreateTransitionContext(stateContainer.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
+            var result = await this.stateLogic.Fire(stateContainer.CurrentState, context, stateContainer)
+                .ConfigureAwait(false);
 
             if (!result.Fired)
             {
@@ -235,23 +157,14 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 return;
             }
 
-            await this.SetCurrentState(result.NewState)
+            var newState = stateDefinitions[result.NewState];
+            await SwitchStateTo(newState, stateContainer, stateMachineInformation)
                 .ConfigureAwait(false);
 
-            await this.ForEach(extension => extension.FiredEvent(this, context))
+            await stateContainer.ForEach(extension => extension.FiredEvent(stateMachineInformation, context))
                 .ConfigureAwait(false);
 
-            this.OnTransitionCompleted(context);
-        }
-
-        /// <summary>
-        /// Defines the hierarchy on.
-        /// </summary>
-        /// <param name="superStateId">The super state id.</param>
-        /// <returns>Syntax to build a state hierarchy.</returns>
-        public IHierarchySyntax<TState> DefineHierarchyOn(TState superStateId)
-        {
-            return new HierarchyBuilder<TState, TEvent>(this.states, superStateId);
+            this.OnTransitionCompleted(context, stateMachineInformation);
         }
 
         public void OnExceptionThrown(ITransitionContext<TState, TEvent> context, Exception exception)
@@ -268,100 +181,6 @@ namespace Appccelerate.StateMachine.AsyncMachine
         public void OnTransitionBegin(ITransitionContext<TState, TEvent> transitionContext)
         {
             this.RaiseEvent(this.TransitionBegin, new TransitionEventArgs<TState, TEvent>(transitionContext), transitionContext, true);
-        }
-
-        /// <summary>
-        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-        /// </returns>
-        public override string ToString()
-        {
-            return this.name ?? base.ToString();
-        }
-
-        /// <summary>
-        /// Creates a report with the specified generator.
-        /// </summary>
-        /// <param name="reportGenerator">The report generator.</param>
-        public void Report(IStateMachineReport<TState, TEvent> reportGenerator)
-        {
-            Guard.AgainstNullArgument("reportGenerator", reportGenerator);
-
-            reportGenerator.Report(this.ToString(), this.states.GetStates(), this.initialStateId);
-        }
-
-        public async Task Save(IAsyncStateMachineSaver<TState> stateMachineSaver)
-        {
-            Guard.AgainstNullArgument("stateMachineSaver", stateMachineSaver);
-
-            await stateMachineSaver.SaveCurrentState(this.currentState != null ?
-                new Initializable<TState> { Value = this.currentState.Id } :
-                new Initializable<TState>()).ConfigureAwait(false);
-
-            IEnumerable<IState<TState, TEvent>> superStatesWithLastActiveState = this.states.GetStates()
-                .Where(s => s.SubStates.Any())
-                .Where(s => s.LastActiveState != null)
-                .ToList();
-
-            var historyStates = superStatesWithLastActiveState.ToDictionary(
-                s => s.Id,
-                s => s.LastActiveState.Id);
-
-            await stateMachineSaver.SaveHistoryStates(historyStates).ConfigureAwait(false);
-        }
-
-        public async Task<bool> Load(IAsyncStateMachineLoader<TState> stateMachineLoader)
-        {
-            Guard.AgainstNullArgument(nameof(stateMachineLoader), stateMachineLoader);
-            this.CheckThatStateMachineIsNotAlreadyInitialized();
-
-            Initializable<TState> loadedCurrentState = await stateMachineLoader.LoadCurrentState().ConfigureAwait(false);
-            IDictionary<TState, TState> historyStates = await stateMachineLoader.LoadHistoryStates().ConfigureAwait(false);
-
-            var initialized = SetCurrentState();
-            LoadHistoryStates();
-            NotifyExtensions();
-
-            return initialized;
-
-            bool SetCurrentState()
-            {
-                if (loadedCurrentState.IsInitialized)
-                {
-                    this.currentState = this.states[loadedCurrentState.Value];
-                    return true;
-                }
-
-                this.currentState = null;
-                return false;
-            }
-
-            void LoadHistoryStates()
-            {
-                foreach (KeyValuePair<TState, TState> historyState in historyStates)
-                {
-                    IState<TState, TEvent> superState = this.states[historyState.Key];
-                    IState<TState, TEvent> lastActiveState = this.states[historyState.Value];
-
-                    if (!superState.SubStates.Contains(lastActiveState))
-                    {
-                        throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
-                    }
-
-                    superState.LastActiveState = lastActiveState;
-                }
-            }
-
-            void NotifyExtensions()
-            {
-                this.extensions.ForEach(
-                    extension => extension.Loaded(
-                        this,
-                        loadedCurrentState,
-                        historyStates));
-            }
         }
 
         // ReSharper disable once UnusedParameter.Local
@@ -387,55 +206,45 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// Fires the <see cref="TransitionCompleted"/> event.
         /// </summary>
         /// <param name="transitionContext">The transition event context.</param>
-        private void OnTransitionCompleted(ITransitionContext<TState, TEvent> transitionContext)
+        /// <param name="stateMachineInformation">The state machine information.</param>
+        private void OnTransitionCompleted(ITransitionContext<TState, TEvent> transitionContext, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-            this.RaiseEvent(this.TransitionCompleted, new TransitionCompletedEventArgs<TState, TEvent>(this.CurrentStateId, transitionContext), transitionContext, true);
-        }
-
-        private async Task LoadCurrentState(IAsyncStateMachineLoader<TState> stateMachineLoader)
-        {
-            Initializable<TState> loadedCurrentState = await stateMachineLoader.LoadCurrentState().ConfigureAwait(false);
-
-            this.currentState = loadedCurrentState.IsInitialized ? this.states[loadedCurrentState.Value] : null;
-        }
-
-        private async Task LoadHistoryStates(IAsyncStateMachineLoader<TState> stateMachineLoader)
-        {
-            IDictionary<TState, TState> historyStates = await stateMachineLoader.LoadHistoryStates().ConfigureAwait(false);
-            foreach (KeyValuePair<TState, TState> historyState in historyStates)
-            {
-                IState<TState, TEvent> superState = this.states[historyState.Key];
-                IState<TState, TEvent> lastActiveState = this.states[historyState.Value];
-
-                if (!superState.SubStates.Contains(lastActiveState))
-                {
-                    throw new InvalidOperationException(ExceptionMessages.CannotSetALastActiveStateThatIsNotASubState);
-                }
-
-                superState.LastActiveState = lastActiveState;
-            }
+            this.RaiseEvent(
+                this.TransitionCompleted,
+                new TransitionCompletedEventArgs<TState, TEvent>(
+                    stateMachineInformation.CurrentStateId,
+                    transitionContext),
+                transitionContext,
+                true);
         }
 
         /// <summary>
         /// Initializes the state machine by setting the specified initial state.
         /// </summary>
         /// <param name="initialState">The initial state.</param>
-        private void Initialize(IState<TState, TEvent> initialState)
+        /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        private static void Initialize(TState initialState, StateContainer<TState, TEvent> stateContainer)
         {
-            if (this.initialStateId.IsInitialized)
+            if (stateContainer.InitialStateId.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
             }
 
-            this.initialStateId.Value = initialState.Id;
+            stateContainer.InitialStateId.Value = initialState;
         }
 
-        private async Task EnterInitialState(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
+        private async Task EnterInitialState(
+            ITransitionContext<TState, TEvent> context,
+            StateContainer<TState, TEvent> stateContainer,
+            IStateMachineInformation<TState, TEvent> stateMachineInformation,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
+            var initialState = stateDefinitions[stateContainer.InitialStateId.Value];
             var initializer = this.factory.CreateStateMachineInitializer(initialState, context);
-            var newCurrentState = await initializer.EnterInitialState().
+            var newStateId = await initializer.EnterInitialState(this.stateLogic, stateContainer).
                 ConfigureAwait(false);
-            await this.SetCurrentState(newCurrentState)
+            var newStateDefinition = stateDefinitions[newStateId];
+            await SwitchStateTo(newStateDefinition, stateContainer, stateMachineInformation)
                 .ConfigureAwait(false);
         }
 
@@ -462,25 +271,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
             }
         }
 
-        private void CheckThatStateMachineIsInitialized()
+        private static void CheckThatStateMachineIsInitialized(StateContainer<TState, TEvent> stateContainer)
         {
-            if (this.currentState == null && !this.initialStateId.IsInitialized)
+            if (stateContainer.CurrentState == null && !stateContainer.InitialStateId.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineNotInitialized);
             }
         }
 
-        private void CheckThatStateMachineIsNotAlreadyInitialized()
+        private static void CheckThatStateMachineHasEnteredInitialState(StateContainer<TState, TEvent> stateContainer)
         {
-            if (this.currentState != null || this.initialStateId.IsInitialized)
-            {
-                throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
-            }
-        }
-
-        private void CheckThatStateMachineHasEnteredInitialState()
-        {
-            if (this.currentState == null)
+            if (stateContainer.CurrentState == null)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineHasNotYetEnteredInitialState);
             }

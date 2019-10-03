@@ -19,7 +19,6 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    using System.Collections.Generic;
     using Events;
     using States;
 
@@ -73,7 +72,7 @@ namespace Appccelerate.StateMachine.Machine
 
             stateContainer.CurrentState = newState;
 
-            stateContainer.Extensions.ForEach(extension =>
+            stateContainer.ForEach(extension =>
                 extension.SwitchedState(stateMachineInformation, oldState, newState));
         }
 
@@ -85,11 +84,11 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="stateMachineInformation">The state machine information.</param>
         public void Initialize(TState initialState, StateContainer<TState, TEvent> stateContainer, IStateMachineInformation<TState, TEvent> stateMachineInformation)
         {
-            stateContainer.Extensions.ForEach(extension => extension.InitializingStateMachine(stateMachineInformation, ref initialState));
+            stateContainer.ForEach(extension => extension.InitializingStateMachine(stateMachineInformation, ref initialState));
 
             Initialize(initialState, stateContainer);
 
-            stateContainer.Extensions.ForEach(extension => extension.InitializedStateMachine(stateMachineInformation, initialState));
+            stateContainer.ForEach(extension => extension.InitializedStateMachine(stateMachineInformation, initialState));
         }
 
         /// <summary>
@@ -105,12 +104,12 @@ namespace Appccelerate.StateMachine.Machine
         {
             CheckThatStateMachineIsInitialized(stateContainer);
 
-            stateContainer.Extensions.ForEach(extension => extension.EnteringInitialState(stateMachineInformation, stateContainer.InitialStateId.Value));
+            stateContainer.ForEach(extension => extension.EnteringInitialState(stateMachineInformation, stateContainer.InitialStateId.Value));
 
             var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
             this.EnterInitialState(context, stateContainer, stateMachineInformation, stateDefinitions);
 
-            stateContainer.Extensions.ForEach(extension => extension.EnteredInitialState(stateMachineInformation, stateContainer.InitialStateId.Value, context));
+            stateContainer.ForEach(extension => extension.EnteredInitialState(stateMachineInformation, stateContainer.InitialStateId.Value, context));
         }
 
         /// <summary>
@@ -147,7 +146,7 @@ namespace Appccelerate.StateMachine.Machine
             CheckThatStateMachineIsInitialized(stateContainer);
             CheckThatStateMachineHasEnteredInitialState(stateContainer);
 
-            stateContainer.Extensions.ForEach(extension => extension.FiringEvent(stateMachineInformation, ref eventId, ref eventArgument));
+            stateContainer.ForEach(extension => extension.FiringEvent(stateMachineInformation, ref eventId, ref eventArgument));
 
             var context = this.factory.CreateTransitionContext(stateContainer.CurrentState, new Missable<TEvent>(eventId), eventArgument, this);
             var result = this.stateLogic.Fire(stateContainer.CurrentState, context, stateContainer);
@@ -161,7 +160,7 @@ namespace Appccelerate.StateMachine.Machine
             var newState = stateDefinitions[result.NewState];
             SwitchStateTo(newState, stateContainer, stateMachineInformation);
 
-            stateContainer.Extensions.ForEach(extension => extension.FiredEvent(stateMachineInformation, context));
+            stateContainer.ForEach(extension => extension.FiredEvent(stateMachineInformation, context));
 
             this.OnTransitionCompleted(context, stateMachineInformation);
         }

@@ -22,12 +22,6 @@ namespace Appccelerate.StateMachine.Machine.States
     using ActionHolders;
     using Transitions;
 
-    /// <summary>
-    /// A state of the state machine.
-    /// A state can be a sub-state or super-state of another state.
-    /// </summary>
-    /// <typeparam name="TState">The type of the state id.</typeparam>
-    /// <typeparam name="TEvent">The type of the event id.</typeparam>
     public class StateLogic<TState, TEvent>
         : IStateLogic<TState, TEvent>
         where TState : IComparable
@@ -61,7 +55,7 @@ namespace Appccelerate.StateMachine.Machine.States
         {
             Guard.AgainstNullArgument("context", context);
 
-            ITransitionResult<TState> result = TransitionResult<TState>.NotFired;
+            var result = TransitionResult<TState>.NotFired;
 
             if (stateDefinition.Transitions.TryGetValue(context.EventId.Value, out var transitionsForEvent))
             {

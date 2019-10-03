@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Threading.Tasks;
+    using AsyncMachine;
     using FluentAssertions;
     using Xbehave;
 
@@ -43,12 +44,10 @@ namespace Appccelerate.StateMachine.Specs.Async
             bool asyncEntryActionExecuted)
         {
             "establish a state machine with transitions".x(async () =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    machine.AddExtension(CurrentStateExtension);
-
-                    machine.In(SourceState)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
                         .ExecuteOnExit(() => exitActionExecuted = true)
                         .ExecuteOnExit(async () =>
                             {
@@ -63,7 +62,8 @@ namespace Appccelerate.StateMachine.Specs.Async
                                     await Task.Yield();
                                 });
 
-                    machine.In(DestinationState)
+                stateMachineDefinitionBuilder
+                    .In(DestinationState)
                         .ExecuteOnEntry(() => entryActionExecuted = true)
                         .ExecuteOnEntry(async () =>
                         {
@@ -71,9 +71,15 @@ namespace Appccelerate.StateMachine.Specs.Async
                             await Task.Yield();
                         });
 
-                    await machine.Initialize(SourceState);
-                    await machine.Start();
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                machine.AddExtension(CurrentStateExtension);
+
+                await machine.Initialize(SourceState);
+                await machine.Start();
+            });
 
             "when firing an event onto the state machine".x(()
                 => machine.Fire(Event, Parameter));

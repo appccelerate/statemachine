@@ -19,9 +19,8 @@
 namespace Appccelerate.StateMachine.Machine.ActionHolders
 {
     using System;
-    using System.Linq;
     using System.Reflection;
-    using System.Runtime.CompilerServices;
+    using static MethodNameExtractor;
 
     public class ParametrizedActionHolder<T> : IActionHolder
     {
@@ -42,7 +41,7 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
 
         public string Describe()
         {
-            return this.action.GetMethodInfo().GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any() ? "anonymous" : this.action.GetMethodInfo().Name;
+            return ExtractMethodNameOrAnonymous(this.action.GetMethodInfo());
         }
     }
 }

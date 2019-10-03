@@ -20,17 +20,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
 {
     using System;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine.ActionHolders;
-    using Appccelerate.StateMachine.AsyncMachine.GuardHolders;
+    using ActionHolders;
+    using GuardHolders;
+    using States;
 
     public interface IFactory<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
-        IState<TState, TEvent> CreateState(TState id);
-
-        ITransition<TState, TEvent> CreateTransition();
-
         IActionHolder CreateActionHolder(Func<Task> action);
 
         IActionHolder CreateActionHolder(Action action);
@@ -59,8 +56,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
 
         IGuardHolder CreateGuardHolder<T>(Func<T, bool> guard);
 
-        ITransitionContext<TState, TEvent> CreateTransitionContext(IState<TState, TEvent> state, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier);
+        ITransitionContext<TState, TEvent> CreateTransitionContext(IStateDefinition<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier);
 
-        StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context);
+        StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IStateDefinition<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context);
     }
 }

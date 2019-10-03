@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
+    using States;
 
     /// <summary>
     /// Provides information about the current transition.
@@ -29,7 +30,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         where TState : IComparable
         where TEvent : IComparable
     {
-        IState<TState, TEvent> State { get; }
+        IStateDefinition<TState, TEvent> StateDefinition { get; }
 
         Missable<TEvent> EventId { get; }
 

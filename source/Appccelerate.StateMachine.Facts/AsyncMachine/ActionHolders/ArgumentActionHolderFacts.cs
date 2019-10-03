@@ -25,122 +25,157 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.ActionHolders
     using StateMachine.AsyncMachine.ActionHolders;
     using Xunit;
 
-    public static class ArgumentActionHolderFacts
+    public class ArgumentActionHolderFacts
     {
-        public class SyncUsage
+        [Fact]
+        public async Task SyncActionIsInvokedWithSameArgumentThatIsPassedToActionHolderExecuted()
         {
-            private readonly ArgumentActionHolder<MyArgument> testee;
-            private Action<MyArgument> action;
+            var expected = new MyArgument();
+            MyArgument value = null;
+            void SyncAction(MyArgument x) => value = x;
 
-            public SyncUsage()
-            {
-                this.testee = new ArgumentActionHolder<MyArgument>(s => this.action(s));
-            }
+            var testee = new ArgumentActionHolder<MyArgument>(SyncAction);
 
-            [Fact]
-            public async Task NullArgumentsArePassedToAction()
-            {
-                MyArgument value = new MyArgument();
+            await testee.Execute(expected);
 
-                this.action = s => value = s;
-
-                await this.testee.Execute(null);
-
-                value.Should().Be(null);
-            }
+            value.Should().Be(expected);
         }
 
-        public class AsyncUsage
+        [Fact]
+        public async Task AsyncActionIsInvokedWithSameArgumentThatIsPassedToActionHolderExecuted()
         {
-            private readonly ArgumentActionHolder<MyArgument> testee;
-            private Action<MyArgument> action;
-
-            public AsyncUsage()
+            var expected = new MyArgument();
+            MyArgument value = null;
+            Task AsyncAction(MyArgument x)
             {
-                this.testee = new ArgumentActionHolder<MyArgument>(s =>
-                {
-                    this.action(s);
-                    return Task.CompletedTask;
-                });
-            }
-
-            [Fact]
-            public async Task NullArgumentsArePassedToAction()
-            {
-                MyArgument value = new MyArgument();
-
-                this.action = s => value = s;
-
-                await this.testee.Execute(null);
-
-                value.Should().Be(null);
-            }
-        }
-
-        public class ArgumentCasting
-        {
-            public interface IBase
-            {
-            }
-
-            // ReSharper disable once MemberCanBePrivate.Global
-            public interface IDerived : IBase
-            {
-            }
-
-            [Fact]
-            public async Task MatchingType()
-            {
-                var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-                await testee.Execute(A.Fake<IBase>());
-            }
-
-            [Fact]
-            public async Task DerivedType()
-            {
-                var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-                await testee.Execute(A.Fake<IDerived>());
-            }
-
-            [Fact]
-            public void NonMatchingType()
-            {
-                var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-                Func<Task> action = async () => await testee.Execute(3);
-
-                action.Should().Throw<ArgumentException>();
-            }
-
-            [Fact]
-            public void TooManyArguments()
-            {
-                var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-                Func<Task> action = async () => await testee.Execute(new object[] { 3, 4 });
-
-                action.Should().Throw<ArgumentException>();
-            }
-
-            [Fact]
-            public void TooFewArguments()
-            {
-                var testee = new ArgumentActionHolder<IBase>(BaseAction);
-
-                Func<Task> action = async () => await testee.Execute(new object[] { });
-
-                action.Should().Throw<ArgumentException>();
-            }
-
-            private static Task BaseAction(IBase b)
-            {
+                value = x;
                 return Task.CompletedTask;
             }
+
+            var testee = new ArgumentActionHolder<MyArgument>(AsyncAction);
+
+            await testee.Execute(expected);
+
+            value.Should().Be(expected);
         }
 
-        public class MyArgument
+        [Fact]
+        public void ReturnsFunctionNameForNonAnonymousSyncActionWhenDescribing()
+        {
+            var testee = new ArgumentActionHolder<MyArgument>(SyncAction);
+
+            var description = testee.Describe();
+
+            description
+                .Should()
+                .Be("SyncAction");
+        }
+
+        [Fact]
+        public void ReturnsFunctionNameForNonAnonymousAsyncActionWhenDescribing()
+        {
+            var testee = new ArgumentActionHolder<MyArgument>(AsyncAction);
+
+            var description = testee.Describe();
+
+            description
+                .Should()
+                .Be("AsyncAction");
+        }
+
+        [Fact]
+        public void ReturnsAnonymousForAnonymousSyncActionWhenDescribing()
+        {
+            var testee = new ArgumentActionHolder<MyArgument>(a => { });
+
+            var description = testee.Describe();
+
+            description
+                .Should()
+                .Be("anonymous");
+        }
+
+        [Fact]
+        public void ReturnsAnonymousForAnonymousAsyncActionWhenDescribing()
+        {
+            var testee = new ArgumentActionHolder<MyArgument>(a => Task.CompletedTask);
+
+            var description = testee.Describe();
+
+            description
+                .Should()
+                .Be("anonymous");
+        }
+
+        [Fact]
+        public async Task MatchingType()
+        {
+            var testee = new ArgumentActionHolder<IBase>(BaseAction);
+
+            await testee.Execute(A.Fake<IBase>());
+        }
+
+        [Fact]
+        public async Task DerivedType()
+        {
+            var testee = new ArgumentActionHolder<IBase>(BaseAction);
+
+            await testee.Execute(A.Fake<IDerived>());
+        }
+
+        [Fact]
+        public void NonMatchingType()
+        {
+            var testee = new ArgumentActionHolder<IBase>(BaseAction);
+
+            Func<Task> action = async () => await testee.Execute(3);
+
+            action.Should().Throw<ArgumentException>();
+        }
+
+        [Fact]
+        public void TooManyArguments()
+        {
+            var testee = new ArgumentActionHolder<IBase>(BaseAction);
+
+            Func<Task> action = async () => await testee.Execute(new object[] { 3, 4 });
+
+            action.Should().Throw<ArgumentException>();
+        }
+
+        [Fact]
+        public void TooFewArguments()
+        {
+            var testee = new ArgumentActionHolder<IBase>(BaseAction);
+
+            Func<Task> action = async () => await testee.Execute(new object[] { });
+
+            action.Should().Throw<ArgumentException>();
+        }
+
+        private static void SyncAction(MyArgument a)
+        {
+        }
+
+        private static Task AsyncAction(MyArgument a)
+        {
+            return Task.CompletedTask;
+        }
+
+        private static Task BaseAction(IBase b)
+        {
+            return Task.CompletedTask;
+        }
+
+        private class MyArgument
+        {
+        }
+
+        public interface IBase
+        {
+        }
+
+        public interface IDerived : IBase
         {
         }
     }

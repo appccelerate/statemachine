@@ -17,6 +17,7 @@
 namespace Appccelerate.StateMachine.Specs.Async
 {
     using AsyncMachine;
+    using AsyncMachine.States;
     using FakeItEasy;
     using Xbehave;
 
@@ -34,12 +35,16 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a state machine using the extension".x(async () =>
             {
-                machine = new AsyncPassiveStateMachine<string, int>(Name);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder
+                    .In("0")
+                        .On(1)
+                        .Goto("1");
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine(Name);
 
                 machine.AddExtension(extension);
-
-                machine.In("0")
-                    .On(1).Goto("1");
 
                 await machine.Initialize("0");
                 await machine.Start();
@@ -51,7 +56,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             "it should call EnteringState on registered extensions for target state".x(()
                 => A.CallTo(() => extension.EnteringState(
                         A<IStateMachineInformation<string, int>>.That.Matches(x => x.Name == Name && x.CurrentStateId == "1"),
-                        A<IState<string, int>>.That.Matches(x => x.Id == "1"),
+                        A<IStateDefinition<string, int>>.That.Matches(x => x.Id == "1"),
                         A<ITransitionContext<string, int>>.That.Matches(x => x.EventId.Value == 1)))
                     .MustHaveHappened());
         }
@@ -66,16 +71,20 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a hierarchical state machine using the extension".x(async () =>
             {
-                machine = new AsyncPassiveStateMachine<string, string>(Name);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, string>();
+                stateMachineDefinitionBuilder
+                    .DefineHierarchyOn("A")
+                        .WithHistoryType(HistoryType.None)
+                        .WithInitialSubState("A0");
+                stateMachineDefinitionBuilder
+                    .In("0")
+                        .On("A0")
+                        .Goto("A0");
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine(Name);
 
                 machine.AddExtension(extension);
-
-                machine.DefineHierarchyOn("A")
-                    .WithHistoryType(HistoryType.None)
-                    .WithInitialSubState("A0");
-
-                machine.In("0")
-                    .On("A0").Goto("A0");
 
                 await machine.Initialize("0");
                 await machine.Start();
@@ -87,14 +96,14 @@ namespace Appccelerate.StateMachine.Specs.Async
             "it should call EnteringState on registered extensions for entered super states of target state".x(()
                 => A.CallTo(() => extension.EnteringState(
                         A<IStateMachineInformation<string, string>>.That.Matches(x => x.Name == Name && x.CurrentStateId == "A0"),
-                        A<IState<string, string>>.That.Matches(x => x.Id == "A"),
+                        A<IStateDefinition<string, string>>.That.Matches(x => x.Id == "A"),
                         A<ITransitionContext<string, string>>.That.Matches(x => x.EventId.Value == "A0")))
                     .MustHaveHappened());
 
             "it should call EnteringState on registered extensions for entered leaf target state".x(()
                 => A.CallTo(() => extension.EnteringState(
                         A<IStateMachineInformation<string, string>>.That.Matches(x => x.Name == Name && x.CurrentStateId == "A0"),
-                        A<IState<string, string>>.That.Matches(x => x.Id == "A0"),
+                        A<IStateDefinition<string, string>>.That.Matches(x => x.Id == "A0"),
                         A<ITransitionContext<string, string>>.That.Matches(x => x.EventId.Value == "A0")))
                     .MustHaveHappened());
         }

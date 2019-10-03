@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.AsyncMachine.Transitions;
+    using Transitions;
 
     public interface ITransitionDictionary<TState, TEvent>
         where TState : IComparable
@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// </summary>
         /// <param name="eventId">The event id.</param>
         /// <param name="transition">The transition.</param>
-        void Add(TEvent eventId, ITransition<TState, TEvent> transition);
+        void Add(TEvent eventId, TransitionDefinition<TState, TEvent> transition);
 
         /// <summary>
         /// Gets all transitions.

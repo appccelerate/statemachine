@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Collections.Generic;
     using AsyncMachine;
+    using AsyncMachine.States;
     using FakeItEasy;
     using Infrastructure;
     using Xbehave;
@@ -32,7 +33,9 @@ namespace Appccelerate.StateMachine.Specs.Async
             IStateMachineReport<string, int> report)
         {
             "establish a state machine".x(()
-                => machine = new AsyncPassiveStateMachine<string, int>());
+                => machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreatePassiveStateMachine());
 
             "establish a state machine reporter".x(()
                 => report = A.Fake<IStateMachineReport<string, int>>());
@@ -41,7 +44,8 @@ namespace Appccelerate.StateMachine.Specs.Async
                 => machine.Report(report));
 
             "it should call the passed reporter".x(()
-                => A.CallTo(() => report.Report(A<string>._, A<IEnumerable<IState<string, int>>>._, A<Initializable<string>>._))
+                => A.CallTo(() =>
+                        report.Report(A<string>._, A<IEnumerable<IStateDefinition<string, int>>>._, A<Initializable<string>>._))
                     .MustHaveHappened());
         }
     }

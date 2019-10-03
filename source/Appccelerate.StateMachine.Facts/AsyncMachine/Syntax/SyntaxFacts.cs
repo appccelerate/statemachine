@@ -21,7 +21,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Syntax
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-    using AsyncSyntax;
     using StateMachine.AsyncMachine;
     using Xunit;
 
@@ -34,75 +33,76 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Syntax
         [Fact]
         public void Syntax()
         {
-            IEntryActionSyntax<int, int> s = new StateBuilder<int, int>(null, null, null);
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
 
             // ReSharper disable once UnusedVariable
             Action a = () =>
-                s
-                    .ExecuteOnEntry(() => { })
-                    .ExecuteOnEntry((int i) => { })
-                    .ExecuteOnEntry(() => Task.CompletedTask)
-                    .ExecuteOnEntry((int i) => Task.CompletedTask)
-                    .ExecuteOnEntryParametrized(p => { }, 4)
-                    .ExecuteOnEntryParametrized(p => { }, "test")
-                    .ExecuteOnEntryParametrized(p => Task.CompletedTask, 4)
-                    .ExecuteOnEntryParametrized(p => Task.CompletedTask, "test")
-                    .ExecuteOnExit(() => { })
-                    .ExecuteOnExit((string st) => { })
-                    .ExecuteOnExit(() => Task.CompletedTask)
-                    .ExecuteOnExit((string st) => Task.CompletedTask)
-                    .ExecuteOnExitParametrized(p => { }, 4)
-                    .ExecuteOnExitParametrized(p => { }, "test")
-                    .ExecuteOnExitParametrized(p => Task.CompletedTask, 4)
-                    .ExecuteOnExitParametrized(p => Task.CompletedTask, "test")
-                    .On(3)
-                        .If(() => true).Goto(4).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
-                        .If(() => Task.FromResult(true)).Goto(4).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
-                        .If(() => true).Goto(4)
-                        .If(() => true).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
-                        .If((Func<string, bool>)this.AGuard).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
-                        .If((Func<string, Task<bool>>)this.AAsyncGuard).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
-                        .Otherwise().Goto(4).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
-                    .On(5)
-                        .If(() => true).Execute(() => { })
-                        .Otherwise()
-                    .On(2)
-                        .If<int>(i => i != 0).Goto(7)
-                        .Otherwise().Goto(7)
-                    .On(1)
-                        .If(() => true).Goto(7).Execute(() => { }).Execute<string>(argument => { })
-                    .On(1)
-                        .If(() => true).Execute(() => { })
-                        .If(() => true).Execute((string argument) => { })
-                        .Otherwise().Execute(() => { }).Execute((int i) => { })
-                    .On(4)
-                        .Goto(5).Execute(() => { }).Execute<string>(argument => { })
-                    .On(5)
-                        .Execute(() => { }).Execute((int i) => { })
-                    .On(7)
-                        .Goto(4)
-                    .On(8)
-                    .On(9);
+                stateMachineDefinitionBuilder
+                    .In(0)
+                        .ExecuteOnEntry(() => { })
+                        .ExecuteOnEntry((int i) => { })
+                        .ExecuteOnEntry(() => Task.CompletedTask)
+                        .ExecuteOnEntry((int i) => Task.CompletedTask)
+                        .ExecuteOnEntryParametrized(p => { }, 4)
+                        .ExecuteOnEntryParametrized(p => { }, "test")
+                        .ExecuteOnEntryParametrized(p => Task.CompletedTask, 4)
+                        .ExecuteOnEntryParametrized(p => Task.CompletedTask, "test")
+                        .ExecuteOnExit(() => { })
+                        .ExecuteOnExit((string st) => { })
+                        .ExecuteOnExit(() => Task.CompletedTask)
+                        .ExecuteOnExit((string st) => Task.CompletedTask)
+                        .ExecuteOnExitParametrized(p => { }, 4)
+                        .ExecuteOnExitParametrized(p => { }, "test")
+                        .ExecuteOnExitParametrized(p => Task.CompletedTask, 4)
+                        .ExecuteOnExitParametrized(p => Task.CompletedTask, "test")
+                        .On(3)
+                            .If(() => true).Goto(4).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
+                            .If(() => Task.FromResult(true)).Goto(4).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
+                            .If(() => true).Goto(4)
+                            .If(() => true).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
+                            .If((Func<string, bool>)AGuard).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
+                            .If((Func<string, Task<bool>>)AnAsyncGuard).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
+                            .Otherwise().Goto(4).Execute(() => { }).Execute((int i) => { }).Execute(() => Task.CompletedTask).Execute((int i) => Task.CompletedTask)
+                        .On(5)
+                            .If(() => true).Execute(() => { })
+                            .Otherwise()
+                        .On(2)
+                            .If<int>(i => i != 0).Goto(7)
+                            .Otherwise().Goto(7)
+                        .On(1)
+                            .If(() => true).Goto(7).Execute(() => { }).Execute<string>(argument => { })
+                        .On(1)
+                            .If(() => true).Execute(() => { })
+                            .If(() => true).Execute((string argument) => { })
+                            .Otherwise().Execute(() => { }).Execute((int i) => { })
+                        .On(4)
+                            .Goto(5).Execute(() => { }).Execute<string>(argument => { })
+                        .On(5)
+                            .Execute(() => { }).Execute((int i) => { })
+                        .On(7)
+                            .Goto(4)
+                        .On(8)
+                        .On(9);
         }
 
         [Fact]
         public void DefineHierarchySyntax()
         {
-            var stateMachine = new StateMachine<int, int>();
-
-            stateMachine.DefineHierarchyOn(1)
-                .WithHistoryType(HistoryType.Deep)
-                .WithInitialSubState(2)
-                .WithSubState(3)
-                .WithSubState(4);
+            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+            stateMachineDefinitionBuilder
+                .DefineHierarchyOn(1)
+                    .WithHistoryType(HistoryType.Deep)
+                    .WithInitialSubState(2)
+                    .WithSubState(3)
+                    .WithSubState(4);
         }
 
-        private bool AGuard(string argument)
+        private static bool AGuard(string argument)
         {
             return true;
         }
 
-        private Task<bool> AAsyncGuard(string argument)
+        private static Task<bool> AnAsyncGuard(string argument)
         {
             return Task.FromResult(true);
         }

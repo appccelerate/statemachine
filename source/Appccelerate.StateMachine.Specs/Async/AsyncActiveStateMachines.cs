@@ -20,7 +20,6 @@ namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Threading;
     using AsyncMachine;
-    using FakeItEasy;
     using FluentAssertions;
     using Xbehave;
 
@@ -32,7 +31,9 @@ namespace Appccelerate.StateMachine.Specs.Async
             StateMachineNameReporter reporter)
         {
             "establish an instantiated active state machine".x(()
-                => machine = new AsyncActiveStateMachine<string, int>());
+                => machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreateActiveStateMachine());
 
             "establish a state machine reporter".x(()
                 => reporter = new StateMachineNameReporter());
@@ -53,7 +54,9 @@ namespace Appccelerate.StateMachine.Specs.Async
             const string name = "custom name";
 
             "establish an instantiated active state machine with custom name".x(()
-                => machine = new AsyncActiveStateMachine<string, int>(name));
+                => machine = new StateMachineDefinitionBuilder<string, int>()
+                    .Build()
+                    .CreateActiveStateMachine(name));
 
             "establish a state machine reporter".x(()
                 => reporter = new StateMachineNameReporter());
@@ -64,24 +67,6 @@ namespace Appccelerate.StateMachine.Specs.Async
             "it should use custom name for state machine".x(()
                 => reporter.StateMachineName
                     .Should().Be(name));
-        }
-
-        [Scenario]
-        public void CustomFactory(
-            StandardFactory<string, int> factory)
-        {
-            "establish a custom factory".x(()
-                => factory = A.Fake<StandardFactory<string, int>>());
-
-            "when creating an active state machine".x(() =>
-            {
-                var machine = new AsyncActiveStateMachine<string, int>("_", factory);
-
-                machine.In("initial").On(42).Goto("answer");
-            });
-
-            "it should use custom factory to create internal instances".x(()
-                => A.CallTo(factory).MustHaveHappened());
         }
 
         [Scenario]
@@ -96,11 +81,13 @@ namespace Appccelerate.StateMachine.Specs.Async
             {
                 signal = new AutoResetEvent(false);
 
-                machine = new AsyncActiveStateMachine<string, int>();
-
-                machine.In("A").On(firstEvent).Goto("B");
-                machine.In("B").On(secondEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => signal.Set());
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(firstEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(secondEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreateActiveStateMachine();
 
                 machine.Initialize("A");
             });
@@ -113,7 +100,10 @@ namespace Appccelerate.StateMachine.Specs.Async
             });
 
             "it should queue event at the end".x(() =>
-                signal.WaitOne(1000).Should().BeTrue("state machine should arrive at destination state"));
+                signal
+                    .WaitOne(1000)
+                    .Should()
+                    .BeTrue("state machine should arrive at destination state"));
         }
 
         [Scenario]
@@ -128,11 +118,13 @@ namespace Appccelerate.StateMachine.Specs.Async
             {
                 signal = new AutoResetEvent(false);
 
-                machine = new AsyncActiveStateMachine<string, int>();
-
-                machine.In("A").On(secondEvent).Goto("B");
-                machine.In("B").On(firstEvent).Goto("C");
-                machine.In("C").ExecuteOnEntry(() => signal.Set());
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder.In("A").On(secondEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(firstEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreateActiveStateMachine();
 
                 machine.Initialize("A");
             });
@@ -161,12 +153,26 @@ namespace Appccelerate.StateMachine.Specs.Async
             {
                 signal = new AutoResetEvent(false);
 
-                machine = new AsyncActiveStateMachine<string, int>();
-
-                machine.In("A").On(firstEvent).Goto("B").Execute(() => machine.FirePriority(priorityEvent));
-                machine.In("B").On(priorityEvent).Goto("C");
-                machine.In("C").On(secondEvent).Goto("D");
-                machine.In("D").ExecuteOnEntry(() => signal.Set());
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                stateMachineDefinitionBuilder
+                    .In("A")
+                        .On(firstEvent)
+                        .Goto("B")
+                        .Execute(() => machine.FirePriority(priorityEvent));
+                stateMachineDefinitionBuilder
+                    .In("B")
+                        .On(priorityEvent)
+                        .Goto("C");
+                stateMachineDefinitionBuilder
+                    .In("C")
+                    .On(secondEvent)
+                    .Goto("D");
+                stateMachineDefinitionBuilder
+                    .In("D")
+                    .ExecuteOnEntry(() => signal.Set());
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreateActiveStateMachine();
 
                 machine.Initialize("A");
             });

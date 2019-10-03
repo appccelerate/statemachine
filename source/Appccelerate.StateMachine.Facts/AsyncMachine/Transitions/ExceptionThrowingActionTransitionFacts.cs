@@ -33,16 +33,16 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
         public ExceptionThrowingActionTransitionFacts()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
-            this.Target = Builder<States, Events>.CreateState().Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
+            this.Target = Builder<States, Events>.CreateStateDefinition().Build();
             this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = this.Target;
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = this.Target;
 
             this.exception = new Exception();
 
-            this.Testee.Actions.Add(new ArgumentLessActionHolder(() => throw this.exception));
+            this.TransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(() => throw this.exception));
         }
 
         [Fact]
@@ -52,16 +52,16 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
             this.ExtensionHost.Extension = extension;
 
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => extension.HandlingTransitionException(this.StateMachineInformation, this.Testee, this.TransitionContext, ref this.exception)).MustHaveHappened();
-            A.CallTo(() => extension.HandledTransitionException(this.StateMachineInformation, this.Testee, this.TransitionContext, this.exception)).MustHaveHappened();
+            A.CallTo(() => extension.HandlingTransitionException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, ref this.exception)).MustHaveHappened();
+            A.CallTo(() => extension.HandledTransitionException(this.StateMachineInformation, this.TransitionDefinition, this.TransitionContext, this.exception)).MustHaveHappened();
         }
 
         [Fact]
         public async Task ReturnsFiredTransitionResult()
         {
-            ITransitionResult<States, Events> result = await this.Testee.Fire(this.TransitionContext);
+            var result = await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             result.Fired.Should().BeTrue();
         }
@@ -69,7 +69,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task NotifiesExceptionOnTransitionContext()
         {
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             A.CallTo(() => this.TransitionContext.OnExceptionThrown(this.exception)).MustHaveHappened();
         }

@@ -27,28 +27,28 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
     {
         public InternalTransitionFacts()
         {
-            this.Source = Builder<States, Events>.CreateState().Build();
+            this.Source = Builder<States, Events>.CreateStateDefinition().Build();
             this.Target = this.Source;
             this.TransitionContext = Builder<States, Events>.CreateTransitionContext().WithState(this.Source).Build();
 
-            this.Testee.Source = this.Source;
-            this.Testee.Target = null; // target == null indicates an internal transition
+            this.TransitionDefinition.Source = this.Source;
+            this.TransitionDefinition.Target = null; // target == null indicates an internal transition
         }
 
         [Fact]
         public async Task DoesNotExitState()
         {
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Source.Exit(this.TransitionContext)).MustNotHaveHappened();
+            A.CallTo(() => this.StateLogic.Exit(this.Source, this.TransitionContext, this.LastActiveStateModifier)).MustNotHaveHappened();
         }
 
         [Fact]
         public async Task DoesNotEnterState()
         {
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
-            A.CallTo(() => this.Source.Entry(this.TransitionContext)).MustNotHaveHappened();
+            A.CallTo(() => this.StateLogic.Entry(this.Source, this.TransitionContext)).MustNotHaveHappened();
         }
     }
 }

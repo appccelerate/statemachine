@@ -23,7 +23,6 @@ namespace Appccelerate.StateMachine
     using Machine;
     using Machine.Events;
     using Persistence;
-    using Syntax;
 
     /// <summary>
     /// A state machine.

@@ -20,6 +20,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Globalization;
+    using States;
+    using Transitions;
 
     /// <summary>
     /// Holds all exception messages.
@@ -73,7 +75,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return string.Format(CultureInfo.InvariantCulture, "State {0} cannot be its own super-state.", state);
         }
 
-        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IState<TState, TEvent> stateAlreadyHavingASuperState)
+        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
             where TState : IComparable
             where TEvent : IComparable
         {
@@ -95,7 +97,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="transition">The transition.</param>
         /// <param name="state">The state.</param>
         /// <returns>error message.</returns>
-        public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransition<TState, TEvent> transition, IState<TState, TEvent> state)
+        public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransitionDefinition<TState, TEvent> transition, IStateDefinition<TState, TEvent> state)
             where TState : IComparable
             where TEvent : IComparable
         {
@@ -107,6 +109,15 @@ namespace Appccelerate.StateMachine.AsyncMachine
                         transition,
                         state,
                         transition.Source);
+        }
+
+        public static string CannotFindStateDefinition<TState>(TState state)
+            where TState : IComparable
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Cannot find StateDefinition for state {0}. Are you sure you have configured this state via myStateDefinitionBuilder.In(..) or myStateDefinitionBuilder.DefineHierarchyOn(..)?",
+                state);
         }
     }
 }

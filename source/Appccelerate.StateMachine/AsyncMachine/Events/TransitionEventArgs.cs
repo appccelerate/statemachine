@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         where TEvent : IComparable
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TransitionEventArgs&lt;TState, TEvent&gt;"/> class.
+        /// Initializes a new instance of the <see cref="TransitionEventArgs{TState,TEvent}"/> class.
         /// </summary>
         /// <param name="context">The event context.</param>
         public TransitionEventArgs(ITransitionContext<TState, TEvent> context)
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         /// Gets the id of the source state of the transition.
         /// </summary>
         /// <value>The id of the source state of the transition.</value>
-        public TState StateId => this.Context.State.Id;
+        public TState StateId => this.Context.StateDefinition.Id;
 
         /// <summary>
         /// Gets the event id.

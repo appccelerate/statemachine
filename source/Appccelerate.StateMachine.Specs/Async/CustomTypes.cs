@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Async
 {
     using System;
+    using AsyncMachine;
     using FluentAssertions;
     using Xbehave;
 
@@ -32,19 +33,23 @@ namespace Appccelerate.StateMachine.Specs.Async
             bool arrivedInStateB)
         {
             "establish a state machine with custom types for states and events".x(async () =>
-                {
-                    machine = new AsyncPassiveStateMachine<MyState, MyEvent>();
-
-                    machine.In(new MyState("A"))
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<MyState, MyEvent>();
+                stateMachineDefinitionBuilder
+                    .In(new MyState("A"))
                         .On(new MyEvent(1)).Goto(new MyState("B"));
-
-                    machine.In(new MyState("B"))
+                stateMachineDefinitionBuilder
+                    .In(new MyState("B"))
                         .ExecuteOnEntry(() => arrivedInStateB = true);
 
-                    await machine.Initialize(new MyState("A"));
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
-                    await machine.Start();
-                });
+                await machine.Initialize(new MyState("A"));
+
+                await machine.Start();
+            });
 
             "when using the state machine".x(() =>
                 machine.Fire(new MyEvent(1)));

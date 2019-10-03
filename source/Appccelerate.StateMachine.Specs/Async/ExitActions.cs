@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Specs.Async
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using AsyncMachine;
     using FluentAssertions;
     using Xbehave;
 
@@ -37,10 +38,10 @@ namespace Appccelerate.StateMachine.Specs.Async
             bool asyncExitActionExecuted)
         {
             "establish a state machine with exit action on a state".x(() =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExit(() => exitActionExecuted = true)
                         .ExecuteOnExit(async () =>
                         {
@@ -48,14 +49,17 @@ namespace Appccelerate.StateMachine.Specs.Async
                             await Task.Yield();
                         })
                         .On(Event).Goto(AnotherState);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(async () =>
-                {
-                    await machine.Initialize(State);
-                    await machine.Start();
-                    await machine.Fire(Event);
-                });
+            {
+                await machine.Initialize(State);
+                await machine.Start();
+                await machine.Fire(Event);
+            });
 
             "it should execute the synchronous exit action".x(()
                 => exitActionExecuted.Should().BeTrue());
@@ -73,10 +77,10 @@ namespace Appccelerate.StateMachine.Specs.Async
             const string parameter = "parameter";
 
             "establish a state machine with exit action with parameter on a state".x(() =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExitParametrized(p => receivedParameter = p, parameter)
                         .ExecuteOnExitParametrized(
                             async p =>
@@ -86,14 +90,17 @@ namespace Appccelerate.StateMachine.Specs.Async
                             },
                             parameter)
                         .On(Event).Goto(AnotherState);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(async () =>
-                {
-                    await machine.Initialize(State);
-                    await machine.Start();
-                    await machine.Fire(Event);
-                });
+            {
+                await machine.Initialize(State);
+                await machine.Start();
+                await machine.Fire(Event);
+            });
 
             "it should execute the synchronous exit action".x(() =>
                 receivedParameter.Should().NotBeNull());
@@ -117,10 +124,10 @@ namespace Appccelerate.StateMachine.Specs.Async
             bool asyncExitAction2Executed)
         {
             "establish a state machine with several exit actions on a state".x(() =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExit(() => exitAction1Executed = true)
                         .ExecuteOnExit(() => exitAction2Executed = true)
                         .ExecuteOnExit(async () =>
@@ -134,14 +141,17 @@ namespace Appccelerate.StateMachine.Specs.Async
                             await Task.Yield();
                         })
                         .On(Event).Goto(AnotherState);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(async () =>
-                {
-                    await machine.Initialize(State);
-                    await machine.Start();
-                    await machine.Fire(Event);
-                });
+            {
+                await machine.Initialize(State);
+                await machine.Start();
+                await machine.Fire(Event);
+            });
 
             "it should execute all exit actions".x(()
                 => new[]
@@ -167,10 +177,10 @@ namespace Appccelerate.StateMachine.Specs.Async
             var receivedException = new List<Exception>();
 
             "establish a state machine with several exit actions on a state and some of them throw an exception".x(() =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExit(() => exitAction1Executed = true)
                         .ExecuteOnExit(() =>
                             {
@@ -190,24 +200,28 @@ namespace Appccelerate.StateMachine.Specs.Async
                         })
                         .On(Event).Goto(AnotherState);
 
-                    machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
-                });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
+            });
 
             "when entering the state".x(async () =>
-                {
-                    await machine.Initialize(State);
-                    await machine.Start();
-                    await machine.Fire(Event);
-                });
+            {
+                await machine.Initialize(State);
+                await machine.Start();
+                await machine.Fire(Event);
+            });
 
             "it should execute all entry actions on entry".x(()
-                => new[]
-                {
-                    exitAction1Executed,
-                    exitAction2Executed,
-                    exitAction3Executed,
-                    exitAction4Executed
-                }.Should().Equal(true, true, true, true));
+            => new[]
+            {
+                exitAction1Executed,
+                exitAction2Executed,
+                exitAction3Executed,
+                exitAction4Executed
+            }.Should().Equal(true, true, true, true));
 
             "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
                 receivedException
@@ -222,23 +236,28 @@ namespace Appccelerate.StateMachine.Specs.Async
             const int argument = 17;
 
             "establish a state machine with an exit action taking an event argument".x(() =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnExit((int a) => passedArgument = a)
                         .On(Event).Goto(AnotherState);
 
-                    machine.In(AnotherState)
+                stateMachineDefinitionBuilder
+                    .In(AnotherState)
                         .ExecuteOnEntry((int a) => passedArgument = a);
-                });
+
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when leaving the state".x(async () =>
-                {
-                    await machine.Initialize(State);
-                    await machine.Start();
-                    await machine.Fire(Event, argument);
-                });
+            {
+                await machine.Initialize(State);
+                await machine.Start();
+                await machine.Fire(Event, argument);
+            });
 
             "it should pass event argument to exit action".x(() =>
                 passedArgument.Should().Be(argument));

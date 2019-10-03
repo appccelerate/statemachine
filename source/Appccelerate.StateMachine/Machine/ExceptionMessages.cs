@@ -83,7 +83,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             return string.Format(
                 CultureInfo.InvariantCulture,
-                "Cannot find StateDefinition for state {0}. Are you sure you have configured this state via myStateDefinitionBuilder.WithConfiguration(..)?",
+                "Cannot find StateDefinition for state {0}. Are you sure you have configured this state via myStateDefinitionBuilder.In(..) or myStateDefinitionBuilder.DefineHierarchyOn(..)?",
                 state);
         }
     }

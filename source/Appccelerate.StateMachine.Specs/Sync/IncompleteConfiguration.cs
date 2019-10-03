@@ -48,7 +48,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 receivedException
                     .Message
                     .Should()
-                    .Be($"Cannot find StateDefinition for state {state}. Are you sure you have configured this state via myStateDefinitionBuilder.WithConfiguration(..)?"));
+                    .Be($"Cannot find StateDefinition for state {state}. Are you sure you have configured this state via myStateDefinitionBuilder.In(..) or myStateDefinitionBuilder.DefineHierarchyOn(..)?"));
         }
     }
 }

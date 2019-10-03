@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Specs.Async
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using AsyncMachine;
     using FluentAssertions;
     using Xbehave;
 
@@ -35,23 +36,27 @@ namespace Appccelerate.StateMachine.Specs.Async
             bool asyncEntryActionExecuted)
         {
             "establish a state machine with entry action on a state".x(() =>
-                {
-                    machine = new AsyncPassiveStateMachine<int, int>();
-
-                    machine.In(State)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
                         .ExecuteOnEntry(() => entryActionExecuted = true)
                         .ExecuteOnEntry(async () =>
                         {
                             asyncEntryActionExecuted = true;
                             await Task.Yield();
                         });
-                });
+
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+            });
 
             "when entering the state".x(async () =>
-                {
-                    await machine.Initialize(State);
-                    await machine.Start();
-                });
+            {
+                await machine.Initialize(State);
+                await machine.Start();
+            });
 
             "it should execute the synchronous entry action".x(()
                 => entryActionExecuted.Should().BeTrue());
@@ -70,17 +75,20 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a state machine with entry action with parameter on a state".x(() =>
             {
-                machine = new AsyncPassiveStateMachine<int, int>();
-
-                machine.In(State)
-                    .ExecuteOnEntryParametrized(p => receivedParameter = p, parameter)
-                    .ExecuteOnEntryParametrized(
-                        async p =>
-                        {
-                            asyncReceivedParameter = p;
-                            await Task.Yield();
-                        },
-                        parameter);
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnEntryParametrized(p => receivedParameter = p, parameter)
+                        .ExecuteOnEntryParametrized(
+                            async p =>
+                            {
+                                asyncReceivedParameter = p;
+                                await Task.Yield();
+                            },
+                            parameter);
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(async () =>
@@ -112,21 +120,24 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a state machine with several entry actions on a state".x(() =>
             {
-                machine = new AsyncPassiveStateMachine<int, int>();
-
-                machine.In(State)
-                    .ExecuteOnEntry(() => entryAction1Executed = true)
-                    .ExecuteOnEntry(async () =>
-                    {
-                        asyncEntryAction1Executed = true;
-                        await Task.Yield();
-                    })
-                    .ExecuteOnEntry(() => entryAction2Executed = true)
-                    .ExecuteOnEntry(async () =>
-                    {
-                        asyncEntryAction2Executed = true;
-                        await Task.Yield();
-                    });
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnEntry(() => entryAction1Executed = true)
+                        .ExecuteOnEntry(async () =>
+                        {
+                            asyncEntryAction1Executed = true;
+                            await Task.Yield();
+                        })
+                        .ExecuteOnEntry(() => entryAction2Executed = true)
+                        .ExecuteOnEntry(async () =>
+                        {
+                            asyncEntryAction2Executed = true;
+                            await Task.Yield();
+                        });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(async () =>
@@ -160,26 +171,29 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a state machine with several entry actions on a state and some of them throw an exception".x(() =>
             {
-                machine = new AsyncPassiveStateMachine<int, int>();
-
-                machine.In(State)
-                .ExecuteOnEntry(() => entryAction1Executed = true)
-                .ExecuteOnEntry(() =>
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .ExecuteOnEntry(() => entryAction1Executed = true)
+                        .ExecuteOnEntry(() =>
                         {
                             entryAction2Executed = true;
                             throw exception2;
                         })
-                .ExecuteOnEntry(() =>
+                        .ExecuteOnEntry(() =>
                         {
                             entryAction3Executed = true;
                             throw exception3;
                         })
-                .ExecuteOnEntry(async () =>
-                    {
-                        entryAction4Executed = true;
-                        await Task.Yield();
-                        throw exception4;
-                    });
+                        .ExecuteOnEntry(async () =>
+                        {
+                            entryAction4Executed = true;
+                            await Task.Yield();
+                            throw exception4;
+                        });
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
             });
@@ -216,18 +230,24 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a state machine with an entry action taking an event argument".x(() =>
             {
-                machine = new AsyncPassiveStateMachine<int, int>();
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
 
-                machine.In(State)
-                    .On(Event).Goto(anotherState);
+                stateMachineDefinitionBuilder
+                    .In(State)
+                        .On(Event).Goto(anotherState);
 
-                machine.In(anotherState)
-                    .ExecuteOnEntry((int a) => passedArgument = a)
-                    .ExecuteOnEntry(async (int a) =>
-                    {
-                        asyncPassedArgument = argument;
-                        await Task.Yield();
-                    });
+                stateMachineDefinitionBuilder
+                    .In(anotherState)
+                        .ExecuteOnEntry((int a) => passedArgument = a)
+                        .ExecuteOnEntry(async (int a) =>
+                        {
+                            asyncPassedArgument = argument;
+                            await Task.Yield();
+                        });
+
+                machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
             });
 
             "when entering the state".x(async () =>

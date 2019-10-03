@@ -24,6 +24,8 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
     using FluentAssertions;
     using StateMachine.AsyncMachine;
     using StateMachine.AsyncMachine.ActionHolders;
+    using StateMachine.AsyncMachine.States;
+    using StateMachine.AsyncMachine.Transitions;
     using Xunit;
 
     public abstract class SuccessfulTransitionWithExecutedActionsFactsBase : TransitionFactsBase
@@ -31,7 +33,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task ReturnsSuccessfulTransitionResult()
         {
-            ITransitionResult<States, Events> result = await this.Testee.Fire(this.TransitionContext);
+            var result = await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             result.Should().BeSuccessfulTransitionResultWithNewState(this.Target);
         }
@@ -39,11 +41,11 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
         [Fact]
         public async Task ExecutesActions()
         {
-            bool executed = false;
+            var executed = false;
 
-            this.Testee.Actions.Add(new ArgumentLessActionHolder(() => executed = true));
+            this.TransitionDefinition.ActionsModifiable.Add(new ArgumentLessActionHolder(() => executed = true));
 
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             executed.Should().BeTrue("actions should be executed");
         }
@@ -54,7 +56,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
             var extension = new FakeExtension();
             this.ExtensionHost.Extension = extension;
 
-            await this.Testee.Fire(this.TransitionContext);
+            await this.Testee.Fire(this.TransitionDefinition, this.TransitionContext, this.LastActiveStateModifier);
 
             extension.Items.Should().Contain(new FakeExtension.Item(
                 this.StateMachineInformation,
@@ -69,7 +71,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
             public override Task ExecutedTransition(
                 IStateMachineInformation<States, Events> stateMachine,
-                ITransition<States, Events> transition,
+                ITransitionDefinition<States, Events> transition,
                 ITransitionContext<States, Events> transitionContext)
             {
                 this.items.Add(new Item(stateMachine, transition.Source, transition.Target, transitionContext));
@@ -124,8 +126,8 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
                 public Item(
                     IStateMachineInformation<States, Events> stateMachine,
-                    IState<States, Events> source,
-                    IState<States, Events> target,
+                    IStateDefinition<States, Events> source,
+                    IStateDefinition<States, Events> target,
                     ITransitionContext<States, Events> transitionContext)
                 {
                     this.StateMachine = stateMachine;
@@ -136,9 +138,9 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Transitions
 
                 public IStateMachineInformation<States, Events> StateMachine { get; }
 
-                public IState<States, Events> Source { get; }
+                public IStateDefinition<States, Events> Source { get; }
 
-                public IState<States, Events> Target { get; }
+                public IStateDefinition<States, Events> Target { get; }
 
                 public ITransitionContext<States, Events> TransitionContext { get; }
             }

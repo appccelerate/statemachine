@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Persistence
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.Infrastructure;
+    using Infrastructure;
 
     public interface IAsyncStateMachineSaver<TState>
         where TState : IComparable
@@ -38,6 +38,6 @@ namespace Appccelerate.StateMachine.Persistence
         /// </summary>
         /// <param name="historyStates">Key = id of the super state; Value = if of last active state of super state.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task SaveHistoryStates(IDictionary<TState, TState> historyStates);
+        Task SaveHistoryStates(IReadOnlyDictionary<TState, TState> historyStates);
     }
 }

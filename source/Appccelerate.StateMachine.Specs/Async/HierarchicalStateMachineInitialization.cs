@@ -18,6 +18,7 @@
 
 namespace Appccelerate.StateMachine.Specs.Async
 {
+    using AsyncMachine;
     using FluentAssertions;
     using Xbehave;
 
@@ -26,7 +27,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         private const int LeafState = 1;
         private const int SuperState = 0;
 
-        private CurrentStateExtension testExtension;
+        private readonly CurrentStateExtension testExtension = new CurrentStateExtension();
         private AsyncPassiveStateMachine<int, int> machine;
 
         private bool entryActionOfLeafStateExecuted;
@@ -36,22 +37,24 @@ namespace Appccelerate.StateMachine.Specs.Async
         public void Background()
         {
             "establish a hierarchical state machine".x(() =>
-                {
-                    this.testExtension = new CurrentStateExtension();
-
-                    this.machine = new AsyncPassiveStateMachine<int, int>();
-
-                    this.machine.AddExtension(this.testExtension);
-
-                    this.machine.DefineHierarchyOn(SuperState)
+            {
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .DefineHierarchyOn(SuperState)
                         .WithHistoryType(HistoryType.None)
                         .WithInitialSubState(LeafState);
-
-                    this.machine.In(SuperState)
+                stateMachineDefinitionBuilder
+                    .In(SuperState)
                         .ExecuteOnEntry(() => this.entryActionOfSuperStateExecuted = true);
-                    this.machine.In(LeafState)
+                stateMachineDefinitionBuilder
+                    .In(LeafState)
                         .ExecuteOnEntry(() => this.entryActionOfLeafStateExecuted = true);
-                });
+                this.machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                this.machine.AddExtension(this.testExtension);
+            });
         }
 
         [Scenario]

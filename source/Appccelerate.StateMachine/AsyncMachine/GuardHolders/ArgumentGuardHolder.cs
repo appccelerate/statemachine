@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
     using System;
     using System.Reflection;
     using System.Threading.Tasks;
+    using static MethodNameExtractor;
 
     /// <summary>
     /// Holds a single argument guard.
@@ -27,6 +28,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
     /// <typeparam name="T">Type of the argument of the guard.</typeparam>
     public class ArgumentGuardHolder<T> : IGuardHolder
     {
+        private readonly MethodInfo originalGuardMethodInfo;
         private readonly Func<T, Task<bool>> guard;
 
         /// <summary>
@@ -35,6 +37,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <param name="guard">The guard.</param>
         public ArgumentGuardHolder(Func<T, bool> guard)
         {
+            this.originalGuardMethodInfo = guard.GetMethodInfo();
             this.guard = argument => guard(argument) ? TaskEx.True : TaskEx.False;
         }
 
@@ -44,6 +47,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <param name="guard">The guard.</param>
         public ArgumentGuardHolder(Func<T, Task<bool>> guard)
         {
+            this.originalGuardMethodInfo = guard.GetMethodInfo();
             this.guard = guard;
         }
 
@@ -68,7 +72,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <returns>Description of the guard.</returns>
         public string Describe()
         {
-            return this.guard.GetMethodInfo().Name;
+            return ExtractMethodNameOrAnonymous(this.originalGuardMethodInfo);
         }
     }
 }

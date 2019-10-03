@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     using FakeItEasy;
     using StateMachine.AsyncMachine;
     using StateMachine.AsyncMachine.GuardHolders;
+    using StateMachine.AsyncMachine.States;
 
     public static class Builder<TState, TEvent>
             where TState : IComparable
@@ -32,7 +33,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             return new GuardBuilder();
         }
 
-        public static StateBuilder CreateState()
+        public static StateBuilder CreateStateDefinition()
         {
             return new StateBuilder();
         }
@@ -80,18 +81,18 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
         public class StateBuilder
         {
-            private readonly IState<TState, TEvent> state;
+            private readonly IStateDefinition<TState, TEvent> stateDefinition;
 
-            private IState<TState, TEvent> superState;
+            private IStateDefinition<TState, TEvent> superState;
 
             private int level;
 
             public StateBuilder()
             {
-                this.state = A.Fake<IState<TState, TEvent>>();
+                this.stateDefinition = A.Fake<IStateDefinition<TState, TEvent>>();
             }
 
-            public StateBuilder WithSuperState(IState<TState, TEvent> newSuperState)
+            public StateBuilder WithSuperState(IStateDefinition<TState, TEvent> newSuperState)
             {
                 this.superState = newSuperState;
                 this.level = newSuperState.Level + 1;
@@ -99,12 +100,12 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 return this;
             }
 
-            public IState<TState, TEvent> Build()
+            public IStateDefinition<TState, TEvent> Build()
             {
-                A.CallTo(() => this.state.SuperState).Returns(this.superState);
-                A.CallTo(() => this.state.Level).Returns(this.level);
+                A.CallTo(() => this.stateDefinition.SuperState).Returns(this.superState);
+                A.CallTo(() => this.stateDefinition.Level).Returns(this.level);
 
-                return this.state;
+                return this.stateDefinition;
             }
         }
 
@@ -117,9 +118,9 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 this.transitionContext = A.Fake<ITransitionContext<TState, TEvent>>();
             }
 
-            public TransitionContextBuilder WithState(IState<TState, TEvent> state)
+            public TransitionContextBuilder WithState(IStateDefinition<TState, TEvent> state)
             {
-                A.CallTo(() => this.transitionContext.State).Returns(state);
+                A.CallTo(() => this.transitionContext.StateDefinition).Returns(state);
 
                 return this;
             }

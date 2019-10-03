@@ -20,7 +20,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Infrastructure;
+    using Infrastructure;
+    using States;
 
     /// <summary>
     /// Generates a report of the state machine.
@@ -35,8 +36,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// Generates a report of the state machine.
         /// </summary>
         /// <param name="name">The name of the state machine.</param>
-        /// <param name="states">The states.</param>
+        /// <param name="stateDefinitions">The states.</param>
         /// <param name="initialStateId">The initial state id.</param>
-        void Report(string name, IEnumerable<IState<TState, TEvent>> states, Initializable<TState> initialStateId);
+        void Report(string name, IEnumerable<IStateDefinition<TState, TEvent>> stateDefinitions, Initializable<TState> initialStateId);
     }
 }

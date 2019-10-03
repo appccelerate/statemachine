@@ -20,8 +20,9 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.AsyncMachine.ActionHolders;
-    using Appccelerate.StateMachine.AsyncMachine.GuardHolders;
+    using ActionHolders;
+    using GuardHolders;
+    using States;
 
     /// <summary>
     /// Describes a transition.
@@ -32,7 +33,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         where TState : IComparable
         where TEvent : IComparable
     {
-        public TransitionInfo(TEvent eventId, IState<TState, TEvent> source, IState<TState, TEvent> target, IGuardHolder guard, IEnumerable<IActionHolder> actions)
+        public TransitionInfo(TEvent eventId, IStateDefinition<TState, TEvent> source, IStateDefinition<TState, TEvent> target, IGuardHolder guard, IEnumerable<IActionHolder> actions)
         {
             this.EventId = eventId;
             this.Source = source;
@@ -51,13 +52,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         /// Gets the source.
         /// </summary>
         /// <value>The source.</value>
-        public IState<TState, TEvent> Source { get; }
+        public IStateDefinition<TState, TEvent> Source { get; }
 
         /// <summary>
         /// Gets the target.
         /// </summary>
         /// <value>The target.</value>
-        public IState<TState, TEvent> Target { get; }
+        public IStateDefinition<TState, TEvent> Target { get; }
 
         /// <summary>
         /// Gets the guard.

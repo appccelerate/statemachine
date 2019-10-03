@@ -21,30 +21,30 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     using System;
     using FluentAssertions.Execution;
     using FluentAssertions.Primitives;
-    using StateMachine.AsyncMachine;
+    using StateMachine.AsyncMachine.States;
+    using StateMachine.AsyncMachine.Transitions;
 
     public static class StateMachineAssertionsExtensionMethods
     {
-        public static void BeSuccessfulTransitionResultWithNewState<TStates, TEvents>(this ObjectAssertions assertions, IState<TStates, TEvents> expectedNewState)
+        public static void BeSuccessfulTransitionResultWithNewState<TStates, TEvents>(this ObjectAssertions assertions, IStateDefinition<TStates, TEvents> expectedNewState)
             where TStates : IComparable
             where TEvents : IComparable
         {
-            ITransitionResult<TStates, TEvents> transitionResult = (ITransitionResult<TStates, TEvents>)assertions.Subject;
+            var transitionResult = (ITransitionResult<TStates>)assertions.Subject;
 
             Execute.Assertion
                    .ForCondition(transitionResult.Fired)
                    .FailWith("expected successful (fired) transition result.");
 
             Execute.Assertion
-                   .ForCondition(transitionResult.NewState.Id.CompareTo(expectedNewState.Id) == 0)
-                   .FailWith("expected transition result with new state = `" + expectedNewState.Id + "`, but found `" + transitionResult.NewState.Id + "`.");
+                   .ForCondition(transitionResult.NewState.CompareTo(expectedNewState.Id) == 0)
+                   .FailWith("expected transition result with new state = `" + expectedNewState.Id + "`, but found `" + transitionResult.NewState + "`.");
         }
 
-        public static void BeNotFiredTransitionResult<TStates, TEvents>(this ObjectAssertions assertions)
+        public static void BeNotFiredTransitionResult<TStates>(this ObjectAssertions assertions)
             where TStates : IComparable
-            where TEvents : IComparable
         {
-            ITransitionResult<TStates, TEvents> transitionResult = (ITransitionResult<TStates, TEvents>)assertions.Subject;
+            var transitionResult = (ITransitionResult<TStates>)assertions.Subject;
 
             Execute.Assertion
                    .ForCondition(!transitionResult.Fired)

@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using States;
 
     /// <summary>
     /// Responsible for entering the initial state of the state machine.
@@ -32,31 +33,35 @@ namespace Appccelerate.StateMachine.AsyncMachine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IState<TState, TEvent> initialState;
+        private readonly IStateDefinition<TState, TEvent> initialState;
 
         private readonly ITransitionContext<TState, TEvent> context;
 
-        public StateMachineInitializer(IState<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
+        public StateMachineInitializer(IStateDefinition<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
         {
             this.initialState = initialState;
             this.context = context;
         }
 
-        public async Task<IState<TState, TEvent>> EnterInitialState()
+        public async Task<TState> EnterInitialState(
+            IStateLogic<TState, TEvent> stateLogic,
+            ILastActiveStateModifier<TState, TEvent> lastActiveStateModifier)
         {
             var stack = this.TraverseUpTheStateHierarchy();
-            await this.TraverseDownTheStateHierarchyAndEnterStates(stack).ConfigureAwait(false);
+            await this.TraverseDownTheStateHierarchyAndEnterStates(stateLogic, stack)
+                .ConfigureAwait(false);
 
-            return await this.initialState.EnterByHistory(this.context).ConfigureAwait(false);
+            return await stateLogic.EnterByHistory(this.initialState, this.context, lastActiveStateModifier)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
         /// Traverses up the state hierarchy and build the stack of states.
         /// </summary>
         /// <returns>The stack containing all states up the state hierarchy.</returns>
-        private Stack<IState<TState, TEvent>> TraverseUpTheStateHierarchy()
+        private Stack<IStateDefinition<TState, TEvent>> TraverseUpTheStateHierarchy()
         {
-            var stack = new Stack<IState<TState, TEvent>>();
+            var stack = new Stack<IStateDefinition<TState, TEvent>>();
 
             var state = this.initialState;
             while (state != null)
@@ -68,12 +73,15 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return stack;
         }
 
-        private async Task TraverseDownTheStateHierarchyAndEnterStates(Stack<IState<TState, TEvent>> stack)
+        private async Task TraverseDownTheStateHierarchyAndEnterStates(
+            IStateLogic<TState, TEvent> stateLogic,
+            Stack<IStateDefinition<TState, TEvent>> stack)
         {
             while (stack.Count > 0)
             {
-                IState<TState, TEvent> state = stack.Pop();
-                await state.Entry(this.context).ConfigureAwait(false);
+                var state = stack.Pop();
+                await stateLogic.Entry(state, this.context)
+                    .ConfigureAwait(false);
             }
         }
     }

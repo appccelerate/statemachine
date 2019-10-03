@@ -19,7 +19,9 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using Appccelerate.StateMachine.AsyncSyntax;
+    using System.Collections.Generic;
+    using AsyncSyntax;
+    using States;
 
     public class HierarchyBuilder<TState, TEvent> :
         IHierarchySyntax<TState>,
@@ -28,21 +30,26 @@ namespace Appccelerate.StateMachine.AsyncMachine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly IStateDictionary<TState, TEvent> states;
+        private readonly StateDefinition<TState, TEvent> superState;
 
-        private readonly IState<TState, TEvent> superState;
+        private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions;
+        private readonly IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
-        public HierarchyBuilder(IStateDictionary<TState, TEvent> states, TState superStateId)
+        public HierarchyBuilder(
+            TState superStateId,
+            IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions,
+            IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
-            Guard.AgainstNullArgument("states", states);
+            Guard.AgainstNullArgument("states", stateDefinitions);
 
-            this.states = states;
-            this.superState = this.states[superStateId];
+            this.stateDefinitions = stateDefinitions;
+            this.initiallyLastActiveStates = initiallyLastActiveStates;
+            this.superState = this.stateDefinitions[superStateId];
         }
 
         public IInitialSubStateSyntax<TState> WithHistoryType(HistoryType historyType)
         {
-            this.superState.HistoryType = historyType;
+            this.superState.HistoryTypeModifiable = historyType;
 
             return this;
         }
@@ -51,24 +58,25 @@ namespace Appccelerate.StateMachine.AsyncMachine
         {
             this.WithSubState(stateId);
 
-            this.superState.InitialState = this.states[stateId];
+            this.superState.InitialStateModifiable = this.stateDefinitions[stateId];
+            this.initiallyLastActiveStates.Add(this.superState.Id, this.stateDefinitions[stateId]);
 
             return this;
         }
 
         public ISubStateSyntax<TState> WithSubState(TState stateId)
         {
-            var subState = this.states[stateId];
+            var subState = this.stateDefinitions[stateId];
 
             this.CheckThatStateHasNotAlreadyASuperState(subState);
 
-            subState.SuperState = this.superState;
-            this.superState.SubStates.Add(subState);
+            subState.SuperStateModifiable = this.superState;
+            this.superState.SubStatesModifiable.Add(subState);
 
             return this;
         }
 
-        private void CheckThatStateHasNotAlreadyASuperState(IState<TState, TEvent> subState)
+        private void CheckThatStateHasNotAlreadyASuperState(StateDefinition<TState, TEvent> subState)
         {
             Guard.AgainstNullArgument("subState", subState);
 

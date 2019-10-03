@@ -30,16 +30,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly ITransitionContext<TState, TEvent> context;
-
         protected ContextEventArgs(ITransitionContext<TState, TEvent> context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
-        protected ITransitionContext<TState, TEvent> Context
-        {
-            get { return this.context; }
-        }
+        protected ITransitionContext<TState, TEvent> Context { get; }
     }
 }

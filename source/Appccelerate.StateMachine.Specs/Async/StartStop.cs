@@ -18,6 +18,7 @@
 
 namespace Appccelerate.StateMachine.Specs.Async
 {
+    using AsyncMachine;
     using FluentAssertions;
     using Xbehave;
 
@@ -35,16 +36,19 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish initialized state machine".x(() =>
             {
-                this.machine = new AsyncPassiveStateMachine<int, int>();
+                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(A)
+                        .On(Event).Goto(B);
+                stateMachineDefinitionBuilder
+                    .In(B)
+                        .On(Event).Goto(A);
+                this.machine = stateMachineDefinitionBuilder
+                    .Build()
+                    .CreatePassiveStateMachine();
 
                 this.extension = new RecordEventsExtension();
                 this.machine.AddExtension(this.extension);
-
-                this.machine.In(A)
-                    .On(Event).Goto(B);
-
-                this.machine.In(B)
-                    .On(Event).Goto(A);
 
                 this.machine.Initialize(A);
             });
@@ -54,11 +58,11 @@ namespace Appccelerate.StateMachine.Specs.Async
         public void Starting()
         {
             "establish some queued events".x(async () =>
-                {
-                    await this.machine.Fire(Event);
-                    await this.machine.Fire(Event);
-                    await this.machine.Fire(Event);
-                });
+            {
+                await this.machine.Fire(Event);
+                await this.machine.Fire(Event);
+                await this.machine.Fire(Event);
+            });
 
             "when starting".x(async ()
                 => await this.machine.Start());

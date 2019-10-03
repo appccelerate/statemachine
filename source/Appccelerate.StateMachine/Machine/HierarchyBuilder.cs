@@ -32,19 +32,19 @@ namespace Appccelerate.StateMachine.Machine
     {
         private readonly StateDefinition<TState, TEvent> superState;
 
-        private readonly IStateDictionary<TState, TEvent> states;
+        private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions;
         private readonly IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates;
 
         public HierarchyBuilder(
             TState superStateId,
-            IStateDictionary<TState, TEvent> states,
+            IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions,
             IDictionary<TState, IStateDefinition<TState, TEvent>> initiallyLastActiveStates)
         {
-            Guard.AgainstNullArgument("states", states);
+            Guard.AgainstNullArgument("states", stateDefinitions);
 
-            this.states = states;
+            this.stateDefinitions = stateDefinitions;
             this.initiallyLastActiveStates = initiallyLastActiveStates;
-            this.superState = this.states[superStateId];
+            this.superState = this.stateDefinitions[superStateId];
         }
 
         public IInitialSubStateSyntax<TState> WithHistoryType(HistoryType historyType)
@@ -58,15 +58,15 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.WithSubState(stateId);
 
-            this.superState.InitialStateModifiable = this.states[stateId];
-            this.initiallyLastActiveStates.Add(this.superState.Id, this.states[stateId]);
+            this.superState.InitialStateModifiable = this.stateDefinitions[stateId];
+            this.initiallyLastActiveStates.Add(this.superState.Id, this.stateDefinitions[stateId]);
 
             return this;
         }
 
         public ISubStateSyntax<TState> WithSubState(TState stateId)
         {
-            var subState = this.states[stateId];
+            var subState = this.stateDefinitions[stateId];
 
             this.CheckThatStateHasNotAlreadyASuperState(subState);
 

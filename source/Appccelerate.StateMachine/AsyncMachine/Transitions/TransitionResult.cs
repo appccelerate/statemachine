@@ -20,21 +20,20 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
     using System;
 
-    public class TransitionResult<TState, TEvent>
-        : ITransitionResult<TState, TEvent>
+    public class TransitionResult<TState>
+        : ITransitionResult<TState>
         where TState : IComparable
-        where TEvent : IComparable
     {
-        public static readonly ITransitionResult<TState, TEvent> NotFired = new TransitionResult<TState, TEvent>(false, null);
+        public static readonly ITransitionResult<TState> NotFired = new TransitionResult<TState>(false, default(TState));
 
-        public TransitionResult(bool fired, IState<TState, TEvent> newState)
+        public TransitionResult(bool fired, TState newState)
         {
             this.Fired = fired;
             this.NewState = newState;
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="ITransitionResult{TState, TEvent}"/> is fired.
+        /// Gets a value indicating whether this <see cref="ITransitionResult{TState}"/> is fired.
         /// </summary>
         /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
         public bool Fired { get; }
@@ -43,6 +42,6 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         /// Gets the new state the state machine is in.
         /// </summary>
         /// <value>The new state.</value>
-        public IState<TState, TEvent> NewState { get; }
+        public TState NewState { get; }
     }
 }
