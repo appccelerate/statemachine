@@ -30,7 +30,15 @@
       state machine report for description of state machine (csv, yEd)
     </description>
     <PackageReleaseNotes>
-      5.0.0:
+      5.1.0:
+      - completely redesigned the state machine definition API.
+        You can now define a state machine definition and then spawn state machine instances from the definition.
+        This speeds up creation of state machines from a static definition for example in ASP.NET requests.
+        The initial state is set at definition time (on the definition) and not on the state machine anymore.
+        The interfaces of the extensions had to be changed, too.
+        For details see https://github.com/appccelerate/statemachine/pull/51, https://github.com/appccelerate/statemachine/pull/52 and https://github.com/appccelerate/statemachine/pull/53
+      - Loading and saving the state machinbe now includes the queued events. The whole internal state holding was redesigned to be in a single place. Details see https://github.com/appccelerate/statemachine/pull/53
+      - fixed that Fire on AsyncActiveStateMachine could not complete on blocking ExecuteOnEntry. Details see https://github.com/appccelerate/statemachine/pull/49
       - changed release pipeline of Appccelerate.StateMachine and lots of internal stuff
 
       4.4.0:
