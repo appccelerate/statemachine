@@ -36,8 +36,8 @@ namespace Appccelerate.StateMachine
         private readonly ConcurrentStack<EventInformation<TEvent>> priorityEvents;
         private readonly TState initialState;
 
-        private Task worker;
-        private CancellationTokenSource stopToken;
+        private Task? worker;
+        private CancellationTokenSource stopToken = new CancellationTokenSource();
         private TaskCompletionSource<bool> workerCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public AsyncActiveStateMachine(
@@ -332,8 +332,11 @@ namespace Appccelerate.StateMachine
 
             try
             {
-                await this.worker
-                    .ConfigureAwait(false);
+                if (this.worker != null)
+                {
+                    await this.worker
+                        .ConfigureAwait(false);
+                }
             }
             catch (OperationCanceledException)
             {

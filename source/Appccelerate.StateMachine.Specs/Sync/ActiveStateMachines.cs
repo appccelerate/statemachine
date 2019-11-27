@@ -100,7 +100,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "when firing an event onto the state machine".x(() =>
             {
                 machine.Fire(FirstEvent);
-                machine.Fire(SecondEvent);
+                machine.Fire(SecondEvent, null);
                 machine.Start();
             });
 

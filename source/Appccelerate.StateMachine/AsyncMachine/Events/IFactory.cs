@@ -56,7 +56,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
 
         IGuardHolder CreateGuardHolder<T>(Func<T, bool> guard);
 
-        ITransitionContext<TState, TEvent> CreateTransitionContext(IStateDefinition<TState, TEvent> stateDefinition, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier);
+        ITransitionContext<TState, TEvent> CreateTransitionContext(
+            IStateDefinition<TState, TEvent> stateDefinition,
+            Missable<TEvent> eventId,
+            object? eventArgument,
+            INotifier<TState, TEvent> notifier);
 
         StateMachineInitializer<TState, TEvent> CreateStateMachineInitializer(IStateDefinition<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context);
     }

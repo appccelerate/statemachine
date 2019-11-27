@@ -119,7 +119,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(
             TEvent eventId,
-            object eventArgument,
+            object? eventArgument,
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)

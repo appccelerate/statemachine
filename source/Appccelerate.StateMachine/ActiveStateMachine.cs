@@ -43,8 +43,8 @@ namespace Appccelerate.StateMachine
         private readonly LinkedList<EventInformation<TEvent>> queue;
         private readonly TState initialState;
 
-        private Task worker;
-        private CancellationTokenSource stopToken;
+        private Task? worker;
+        private CancellationTokenSource stopToken = new CancellationTokenSource();
 
         public ActiveStateMachine(
             StateMachine<TState, TEvent> stateMachine,
@@ -116,7 +116,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public void Fire(TEvent eventId, object eventArgument)
+        public void Fire(TEvent eventId, object? eventArgument)
         {
             lock (this.queue)
             {
@@ -141,7 +141,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public void FirePriority(TEvent eventId, object eventArgument)
+        public void FirePriority(TEvent eventId, object? eventArgument)
         {
             lock (this.queue)
             {
@@ -260,12 +260,12 @@ namespace Appccelerate.StateMachine
 
             try
             {
-                this.worker.Wait();
+                this.worker?.Wait();
             }
             catch (AggregateException)
             {
                 // in case the task was stopped before it could actually start, it will be canceled.
-                if (this.worker.IsFaulted)
+                if (this.worker?.IsFaulted ?? false)
                 {
                     throw;
                 }
@@ -339,7 +339,12 @@ namespace Appccelerate.StateMachine
                     }
                 }
 
-                this.stateMachine.Fire(eventInformation.EventId, eventInformation.EventArgument, this.stateContainer, this.stateContainer, this.stateDefinitions);
+                this.stateMachine.Fire(
+                    eventInformation.EventId,
+                    eventInformation.EventArgument,
+                    this.stateContainer,
+                    this.stateContainer,
+                    this.stateDefinitions);
             }
         }
 

@@ -124,7 +124,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
         public void Fire(
             TEvent eventId,
-            object eventArgument,
+            object? eventArgument,
             StateContainer<TState, TEvent> stateContainer,
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)

@@ -51,7 +51,10 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
-        void EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument);
+        void EventQueued(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            TEvent eventId,
+            object? eventArgument);
 
         /// <summary>
         /// Called after an events was queued with priority.
@@ -59,7 +62,10 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
-        void EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument);
+        void EventQueuedWithPriority(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            TEvent eventId,
+            object? eventArgument);
 
         /// <summary>
         /// Called after the state machine switched states.

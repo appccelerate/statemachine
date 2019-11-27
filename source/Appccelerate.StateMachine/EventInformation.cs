@@ -27,7 +27,7 @@ namespace Appccelerate.StateMachine
     public class EventInformation<TEvent>
         where TEvent : IComparable
     {
-        public EventInformation(TEvent eventId, object eventArgument)
+        public EventInformation(TEvent eventId, object? eventArgument)
         {
             this.EventId = eventId;
             this.EventArgument = eventArgument;
@@ -35,6 +35,6 @@ namespace Appccelerate.StateMachine
 
         public TEvent EventId { get; private set; }
 
-        public object EventArgument { get; private set; }
+        public object? EventArgument { get; private set; }
     }
 }
