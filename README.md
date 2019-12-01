@@ -43,3 +43,5 @@ Extensions can be used to extend the functionality of the state machine. They pr
 
 ### Reports
 Out of the box, Appccelerate provides a textual report, a csv report and a yEd diagram reporter. You can add your own reports by just implementing `IStateMachineReport`.
+
+[Tutorial](documentation/tutorial.md)
