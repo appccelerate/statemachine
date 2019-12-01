@@ -5,7 +5,7 @@ The examples use the enums `States` and `Events` that define the available state
 We use the `StateMachineDefinitionBuilder` to define our state machine. Use the one from the `AsyncMachine` namespace for state machines with support for async/await or the one from the `Machine` namespace for state machines without async/await.
 
 ```c#
-var fsm = new StateMachineDefinitionBuilder<int, int>();
+var builder = new StateMachineDefinitionBuilder<int, int>();
 ```
 
 ### Define Transitions
@@ -13,7 +13,7 @@ var fsm = new StateMachineDefinitionBuilder<int, int>();
 #### A simple transition
 
 ```c#
-fsm.In(States.A)
+builder.In(States.A)
    .On(Events.B).Goto(States.B);
 ```
 
@@ -22,7 +22,7 @@ If the state machine is in state `A` and receives event `B` then it performs a t
 #### Transition with action
 
 ```c#
-fsm.In(States.A)
+builder.In(States.A)
     .On(Events.B)
         .Goto(States.B)
         .Execute(() => { /* do something here */ });
@@ -45,7 +45,7 @@ If the type you specify as the generic parameter type does not match the argumen
 #### Transition with guard
 
 ```c#
-fsm.In(States.A)
+builder.In(States.A)
     .On(Events.B)
         .If(arguments => false).Goto(States.B1)
         .If(arguments => true).Goto(States.B2);
@@ -66,7 +66,7 @@ If(Func<Task<bool>> guard) // async machines only, for guards that do not need a
 #### Entry and Exit Actions
 
 ```c#
-fsm.In(States.A)
+builder.In(States.A)
     .ExecuteOnEntry(() => { /* execute entry action stuff */ }
     .ExecuteOnExit(() => { /* execute exit action stuff */ };
 ```
@@ -88,7 +88,7 @@ When an internal transition is performed then the state is not exited, i.e. no e
 When an self transition is performed then the state is exited and re-entered, i.e. exit and entry actions, if any, are performed.
 
 ```c#
-fsm.In(States.A)
+builder.In(States.A)
     .On(Events.Self).Goto(States.A) // self transition
     .On(Events.Internal)            // internal transition
 ```
@@ -98,7 +98,7 @@ The following sample defines that `B1`, `B2` and `B3` are sub states of state `B
 `B1` is defined to be the initial sub state of state `B`.
 
 ```c#
-fsm.DefineHierarchyOn(States.B)
+builder.DefineHierarchyOn(States.B)
     .WithHistoryType(HistoryType.None)
 	.WithInitialSubState(States.B1)
 	.WithSubState(States.B2)
@@ -115,14 +115,14 @@ When defining hierarchies then you can define which history type is used when a 
 The state machine need to know in which state it should start.
 
 ```c#
-fsm.WithInitialState(States.A)
+builder.WithInitialState(States.A)
 ```
 
-### Build the Definition
+## Build the Definition
 Then we build our definition:
 
 ```c#
-fsm.Build()
+var definition = builder.Build()
 ```
 
 The definition can then be used to spawn state machines - as many as you need.
@@ -133,11 +133,11 @@ Once you have defined your state machine then you can start using it.
 Create either a passive or an active state machine, with support for async/await or without:
 
 ```c#
-var machine = fsm.CreatePassiveStateMachine() // create a passive state machine
+var machine = definition.CreatePassiveStateMachine() // create a passive state machine
 ```
 
 ```c#
-var machine = fsm.CreateActiveStateMachine() // create an active state machine
+var machine = definition.CreateActiveStateMachine() // create an active state machine
 ```
 
 Once you start the state machine, it will execute events fired on it:
@@ -159,7 +159,7 @@ If you want, you can then start the state machine again, then stop it, start aga
 To get the state machine to do its work, you send events to it:
 
 ```c#
-fsm.Fire(Events.B);
+machine.Fire(Events.B);
 ```
 
 This fires the event `B` onto the state machine and it will perform the corresponding transition for this event on its current state.
@@ -167,14 +167,15 @@ This fires the event `B` onto the state machine and it will perform the correspo
 You can also pass an argument to the state machine that can be used by transition actions and guards:
 
 ```c#
-fsm.Fire(Events.B, anArgument);
+machine.Fire(Events.B, anArgument);
 ```
 
 Another possibility is to send a priority event:
 
 ```c#
-fsm.FirePriority(Events.B);
+machine.FirePriority(Events.B);
 ```
+
 In this case, the event `B` is enqueued in front of all queued events. This is especially helpful in error scenarios to go to the error state immediately without performing any other already queued events first.
 
 That's it for the tutorial. See the rest of the documentation for more details on specific topics.
