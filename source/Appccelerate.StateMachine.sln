@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine", "Appccelerate.StateMachine\Appccelerate.StateMachine.csproj", "{3B998204-8D0E-413D-B2C1-6F0E5C5E0E1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appccelerate.StateMachine.Samples", "Appccelerate.StateMachine.Samples\Appccelerate.StateMachine.Samples.csproj", "{A3317C84-EF68-45AD-9F91-E6412BDB85EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{3B998204-8D0E-413D-B2C1-6F0E5C5E0E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B998204-8D0E-413D-B2C1-6F0E5C5E0E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B998204-8D0E-413D-B2C1-6F0E5C5E0E1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3317C84-EF68-45AD-9F91-E6412BDB85EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3317C84-EF68-45AD-9F91-E6412BDB85EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3317C84-EF68-45AD-9F91-E6412BDB85EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3317C84-EF68-45AD-9F91-E6412BDB85EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
