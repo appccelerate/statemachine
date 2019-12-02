@@ -118,3 +118,4 @@ public class SimpleStateMachine
 ## More Documentation
 
 - [Tutorial](documentation/tutorial.md)
+- [Example](documentation/example.md)
