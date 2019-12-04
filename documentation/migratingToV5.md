@@ -65,3 +65,8 @@ machine
 Make sure you use the correct `StateMachineDefinitionBuilder`:
 - from namespace `Appccelerate.StateMachine.Machine` for state machines **without** async/await support
 - from namespace `Appccelerate.StateMachine.AsyncMachine` for state machines **with** async/await support
+
+## Changes in extension API
+
+The extension API is changed in version 5, too.
+Instead of mutable states, the state definition is passed to the extensions.
