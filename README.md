@@ -119,3 +119,4 @@ public class SimpleStateMachine
 
 - [Tutorial](documentation/tutorial.md)
 - [Example](documentation/example.md)
+- [Migrating to V5.x](documentation/migratingToV5.md)
