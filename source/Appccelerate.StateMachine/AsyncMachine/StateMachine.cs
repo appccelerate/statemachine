@@ -23,6 +23,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using Events;
     using Infrastructure;
     using States;
+    using Transitions;
 
     /// <summary>
     /// Base implementation of a state machine.
@@ -134,13 +135,13 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var result = await this.stateLogic.Fire(currentState, context, stateContainer)
                 .ConfigureAwait(false);
 
-            if (!result.Fired)
+            if (!(result is FiredTransitionResult<TState> firedTransitionResult))
             {
                 this.OnTransitionDeclined(context);
                 return;
             }
 
-            var newState = stateDefinitions[result.NewState];
+            var newState = stateDefinitions[firedTransitionResult.NewState];
             await SwitchStateTo(newState, stateContainer, stateMachineInformation)
                 .ConfigureAwait(false);
 

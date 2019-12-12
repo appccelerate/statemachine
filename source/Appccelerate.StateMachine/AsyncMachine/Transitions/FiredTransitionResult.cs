@@ -20,15 +20,17 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
     using System;
 
-    public class TransitionResult<TState>
+    /// <summary>
+    /// Represents a fired transition.
+    /// </summary>
+    /// <typeparam name="TState">ype of the states.</typeparam>
+    public class FiredTransitionResult<TState>
         : ITransitionResult<TState>
         where TState : IComparable
     {
-        public static readonly ITransitionResult<TState> NotFired = new TransitionResult<TState>(false, default(TState));
-
-        public TransitionResult(bool fired, TState newState)
+        public FiredTransitionResult(
+            TState newState)
         {
-            this.Fired = fired;
             this.NewState = newState;
         }
 
@@ -36,7 +38,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         /// Gets a value indicating whether this <see cref="ITransitionResult{TState}"/> is fired.
         /// </summary>
         /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
-        public bool Fired { get; }
+        public bool Fired => true;
 
         /// <summary>
         /// Gets the new state the state machine is in.

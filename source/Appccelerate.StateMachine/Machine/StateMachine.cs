@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using Appccelerate.StateMachine.Machine.Transitions;
     using Events;
     using Infrastructure;
     using States;
@@ -137,13 +138,13 @@ namespace Appccelerate.StateMachine.Machine
             var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
             var result = this.stateLogic.Fire(currentState, context, stateContainer);
 
-            if (!result.Fired)
+            if (!(result is FiredTransitionResult<TState> firedTransitionResult))
             {
                 this.OnTransitionDeclined(context);
                 return;
             }
 
-            var newState = stateDefinitions[result.NewState];
+            var newState = stateDefinitions[firedTransitionResult.NewState];
             SwitchStateTo(newState, stateContainer, stateMachineInformation);
 
             stateContainer.ForEach(extension => extension.FiredEvent(stateMachineInformation, context));

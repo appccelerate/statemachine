@@ -113,7 +113,7 @@ namespace Appccelerate.StateMachine
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Fire(TEvent eventId, object eventArgument)
+        public async Task Fire(TEvent eventId, object? eventArgument)
         {
             this.events.Enqueue(new EventInformation<TEvent>(eventId, eventArgument));
 
@@ -140,7 +140,7 @@ namespace Appccelerate.StateMachine
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task FirePriority(TEvent eventId, object eventArgument)
+        public async Task FirePriority(TEvent eventId, object? eventArgument)
         {
             this.priorityEvents.Push(new EventInformation<TEvent>(eventId, eventArgument));
 

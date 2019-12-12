@@ -16,6 +16,8 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
+using Appccelerate.StateMachine.Machine.Building;
+
 namespace Appccelerate.StateMachine.Machine
 {
     using System;

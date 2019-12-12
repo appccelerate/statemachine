@@ -72,7 +72,7 @@ namespace Appccelerate.StateMachine
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task Fire(TEvent eventId, object eventArgument);
+        Task Fire(TEvent eventId, object? eventArgument);
 
         /// <summary>
         /// Fires the specified priority event. The event will be handled before any already queued event.
@@ -87,7 +87,7 @@ namespace Appccelerate.StateMachine
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task FirePriority(TEvent eventId, object eventArgument);
+        Task FirePriority(TEvent eventId, object? eventArgument);
 
         /// <summary>
         /// Starts the state machine. Events will be processed.

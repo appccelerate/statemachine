@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public virtual void EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument)
+        public virtual void EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object? eventArgument)
         {
         }
 
@@ -66,7 +66,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public virtual void EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument)
+        public virtual void EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object? eventArgument)
         {
         }
 

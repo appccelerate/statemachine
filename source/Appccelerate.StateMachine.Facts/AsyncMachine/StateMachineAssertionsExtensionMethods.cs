@@ -36,9 +36,12 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                    .ForCondition(transitionResult.Fired)
                    .FailWith("expected successful (fired) transition result.");
 
-            Execute.Assertion
-                   .ForCondition(transitionResult.NewState.CompareTo(expectedNewState.Id) == 0)
-                   .FailWith("expected transition result with new state = `" + expectedNewState.Id + "`, but found `" + transitionResult.NewState + "`.");
+            if (transitionResult is FiredTransitionResult<TStates> fired)
+            {
+                Execute.Assertion
+                    .ForCondition(fired.NewState.CompareTo(expectedNewState.Id) == 0)
+                    .FailWith("expected transition result with new state = `" + expectedNewState.Id + "`, but found `" + fired.NewState + "`.");
+            }
         }
 
         public static void BeNotFiredTransitionResult<TStates>(this ObjectAssertions assertions)

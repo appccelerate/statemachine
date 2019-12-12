@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             Guard.AgainstNullArgument("context", context);
 
-            var result = TransitionResult<TState>.NotFired;
+            ITransitionResult<TState> result = new NotFiredTransitionResult<TState>();
 
             if (stateDefinition.Transitions.TryGetValue(context.EventId.Value, out var transitionsForEvent))
             {

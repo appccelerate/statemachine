@@ -70,7 +70,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
-        void Fire(TEvent eventId, object eventArgument);
+        void Fire(TEvent eventId, object? eventArgument);
 
         /// <summary>
         /// Fires the specified priority event. The event will be handled before any already queued event.
@@ -83,7 +83,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
-        void FirePriority(TEvent eventId, object eventArgument);
+        void FirePriority(TEvent eventId, object? eventArgument);
 
         /// <summary>
         /// Starts the state machine. Events will be processed.

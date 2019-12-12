@@ -58,7 +58,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                     transitionDefinition,
                     context));
 
-                return TransitionResult<TState>.NotFired;
+                return new NotFiredTransitionResult<TState>();
             }
 
             context.OnTransitionBegin();
@@ -88,7 +88,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 transitionDefinition,
                 context));
 
-            return new TransitionResult<TState>(true, newState);
+            return new FiredTransitionResult<TState>(newState);
         }
 
         private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)

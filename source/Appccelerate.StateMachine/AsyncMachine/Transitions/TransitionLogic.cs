@@ -62,7 +62,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                         context))
                     .ConfigureAwait(false);
 
-                return TransitionResult<TState>.NotFired;
+                return new NotFiredTransitionResult<TState>();
             }
 
             context.OnTransitionBegin();
@@ -98,7 +98,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                     context))
                 .ConfigureAwait(false);
 
-            return new TransitionResult<TState>(true, newState);
+            return new FiredTransitionResult<TState>(newState);
         }
 
         private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
