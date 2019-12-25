@@ -31,22 +31,17 @@ namespace Appccelerate.StateMachine.Machine
     {
         private readonly Dictionary<TState, TState> lastActiveStates = new Dictionary<TState, TState>();
 
-        public StateContainer()
-            : this(default(string))
-        {
-        }
-
         public StateContainer(string name)
         {
             this.Name = name;
-            this.CurrentStateId = Initializable<TState>.UnInitialized();
+            this.CurrentStateId = Option<TState>.None;
         }
 
         public string Name { get; }
 
         public List<IExtensionInternal<TState, TEvent>> Extensions { get; } = new List<IExtensionInternal<TState, TEvent>>();
 
-        public IInitializable<TState> CurrentStateId { get; set; }
+        public Option<TState> CurrentStateId { get; set; }
 
         public IReadOnlyDictionary<TState, TState> LastActiveStates => this.lastActiveStates;
 
@@ -59,12 +54,12 @@ namespace Appccelerate.StateMachine.Machine
             this.Extensions.ForEach(action);
         }
 
-        public Optional<TState> GetLastActiveStateFor(TState state)
+        public Option<TState> GetLastActiveStateFor(TState state)
         {
             return
                 this.lastActiveStates.TryGetValue(state, out var lastActiveState)
-                    ? Optional<TState>.Just(lastActiveState)
-                    : Optional<TState>.Nothing();
+                    ? Option<TState>.Some(lastActiveState)
+                    : Option<TState>.None;
         }
 
         public void SetLastActiveStateFor(TState state, TState newLastActiveState)

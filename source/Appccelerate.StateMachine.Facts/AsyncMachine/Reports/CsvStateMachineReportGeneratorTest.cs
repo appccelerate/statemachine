@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using Appccelerate.StateMachine.AsyncMachine.Building;
     using FluentAssertions;
     using StateMachine.AsyncMachine;
     using StateMachine.AsyncMachine.Reports;
@@ -101,7 +102,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
 
             var testee = new CsvStateMachineReportGenerator<States, Events>(stateStream, transitionsStream);
 
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<States, Events>();
             stateMachineDefinitionBuilder
                 .DefineHierarchyOn(States.Healthy)
                     .WithHistoryType(HistoryType.Deep)
@@ -167,8 +168,8 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
                 transitionsReport = reader.ReadToEnd();
             }
 
-            const string ExpectedTransitionsReport = "Source;Event;Guard;Target;ActionsHealthy;ErrorOccurred;;Error;OnFloor;CloseDoor;;DoorClosed;OnFloor;OpenDoor;;DoorOpen;OnFloor;GoUp;CheckOverload;MovingUp;OnFloor;GoUp;;internal transition;AnnounceOverload, BeepOnFloor;GoDown;CheckOverload;MovingDown;OnFloor;GoDown;;internal transition;AnnounceOverloadMoving;Stop;;OnFloor;Error;Reset;;Healthy;Error;ErrorOccurred;;internal transition;";
-            const string ExpectedStatesReport = "Source;Entry;Exit;ChildrenHealthy;;;OnFloor, MovingOnFloor;AnnounceFloor;Beep, Beep;DoorClosed, DoorOpenMoving;;;MovingUp, MovingDownMovingUp;;;MovingDown;;;DoorClosed;;;DoorOpen;;;Error;;;";
+            const string ExpectedTransitionsReport = "Source;Event;Guard;Target;Actions OnFloor;CloseDoor;;DoorClosed; OnFloor;OpenDoor;;DoorOpen; OnFloor;GoUp;CheckOverload;MovingUp; OnFloor;GoUp;;internal transition;AnnounceOverload, Beep OnFloor;GoDown;CheckOverload;MovingDown; OnFloor;GoDown;;internal transition;AnnounceOverload Moving;Stop;;OnFloor; Healthy;ErrorOccurred;;Error; Error;Reset;;Healthy; Error;ErrorOccurred;;internal transition; ";
+            const string ExpectedStatesReport = "Source;Entry;Exit;Children DoorClosed;;; DoorOpen;;; OnFloor;AnnounceFloor;Beep, Beep;DoorClosed, DoorOpen MovingUp;;; MovingDown;;; Moving;;;MovingUp, MovingDown Healthy;;;OnFloor, Moving Error;;; ";
 
             statesReport
                 .IgnoringNewlines()

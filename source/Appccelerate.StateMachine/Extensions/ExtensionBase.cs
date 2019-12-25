@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public virtual void EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument)
+        public virtual void EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object? eventArgument)
         {
         }
 
@@ -66,7 +66,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public virtual void EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument)
+        public virtual void EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object? eventArgument)
         {
         }
 
@@ -76,7 +76,10 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="oldState">The old state.</param>
         /// <param name="newState">The new state.</param>
-        public virtual void SwitchedState(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState)
+        public virtual void SwitchedState(
+            IStateMachineInformation<TState, TEvent> stateMachine,
+            IStateDefinition<TState, TEvent>? oldState,
+            IStateDefinition<TState, TEvent> newState)
         {
         }
 
@@ -105,7 +108,7 @@ namespace Appccelerate.StateMachine.Extensions
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id. Can be replaced by the extension.</param>
         /// <param name="eventArgument">The event argument. Can be replaced by the extension.</param>
-        public virtual void FiringEvent(IStateMachineInformation<TState, TEvent> stateMachine, ref TEvent eventId, ref object eventArgument)
+        public virtual void FiringEvent(IStateMachineInformation<TState, TEvent> stateMachine, ref TEvent eventId, ref object? eventArgument)
         {
         }
 
@@ -254,7 +257,7 @@ namespace Appccelerate.StateMachine.Extensions
 
         public virtual void Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IInitializable<TState> loadedCurrentState,
+            Option<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates,
             IReadOnlyCollection<EventInformation<TEvent>> events)
         {

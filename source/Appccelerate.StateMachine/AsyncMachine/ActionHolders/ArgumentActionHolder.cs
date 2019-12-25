@@ -44,19 +44,16 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
             };
         }
 
-        public async Task Execute(object argument)
+        public async Task Execute(object? argument)
         {
-            T castArgument = default(T);
-
-            if (argument != Missing.Value && argument != null && !(argument is T))
+            var castArgument = argument switch
             {
-                throw new ArgumentException(ActionHoldersExceptionMessages.CannotCastArgumentToActionArgument(argument, this.Describe()));
-            }
-
-            if (argument != Missing.Value)
-            {
-                castArgument = (T)argument;
-            }
+                T value => value,
+                _ => throw new ArgumentException(
+                    ActionHoldersExceptionMessages.CannotCastArgumentToActionArgument(
+                        argument,
+                        this.Describe()))
+            };
 
             await this.action(castArgument).ConfigureAwait(false);
         }

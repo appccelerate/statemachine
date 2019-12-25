@@ -1,3 +1,19 @@
+// <copyright file="Option.cs" company="Appccelerate">
+//   Copyright (c) 2008-2019 Appccelerate
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+// </copyright>
+
 namespace Appccelerate.StateMachine
 {
     using System;
@@ -18,18 +34,52 @@ namespace Appccelerate.StateMachine
             this.values = values;
         }
 
-        public bool HasValue
-            => this.values != null
-               && this.values.Any();
+        public bool IsSome
+            => this.values.Any();
+
+        public bool IsNone
+            => !this.values.Any();
 
         private T Value
-            => !this.HasValue
+            => !this.IsSome
                 ? throw new InvalidOperationException("Maybe does not have a value")
                 : this.values.Single();
 
         public Option<T2> Map<T2>(Func<T, T2> f)
-            => this.HasValue
+            => this.IsSome
                 ? Option<T2>.Some(f(this.Value))
                 : Option<T2>.None;
+
+        public bool TryGetValue(out T value)
+        {
+            if (this.IsSome)
+            {
+                value = this.Value;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+    }
+
+    public static class OptionExtensionMethods
+    {
+        public static T ExtractOrNull<T>(
+            this Option<T> option)
+            where T : class
+        {
+            return option.TryGetValue(out var value)
+                ? value
+                : null;
+        }
+
+        public static T ExtractOrThrow<T>(
+            this Option<T> option)
+        {
+            return option.TryGetValue(out var value)
+                ? value
+                : throw new InvalidOperationException("Option has no value.");
+        }
     }
 }

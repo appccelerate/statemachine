@@ -101,7 +101,7 @@ namespace Appccelerate.StateMachine.Machine
             ITransitionContext<TState, TEvent> context);
 
         void Loaded(
-            IInitializable<TState> loadedCurrentState,
+            Option<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates,
             IReadOnlyCollection<EventInformation<TEvent>> events);
 

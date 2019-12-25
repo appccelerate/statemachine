@@ -19,10 +19,11 @@
 namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System;
+    using Appccelerate.StateMachine.Machine.Transitions;
     using FluentAssertions.Execution;
     using FluentAssertions.Primitives;
-    using StateMachine.AsyncMachine.States;
-    using StateMachine.AsyncMachine.Transitions;
+    using StateMachine.Machine;
+    using StateMachine.Machine.States;
 
     public static class StateMachineAssertionsExtensionMethods
     {
@@ -30,15 +31,18 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             where TStates : IComparable
             where TEvents : IComparable
         {
-            var transitionResult = (ITransitionResult<TStates>)assertions.Subject;
+            var transitionResult = assertions.Subject;
 
             Execute.Assertion
-                   .ForCondition(transitionResult.Fired)
-                   .FailWith("expected successful (fired) transition result.");
+                .ForCondition(assertions.Subject is FiredTransitionResult<TStates>)
+                .FailWith("expected successful (fired) transition result.");
 
-            Execute.Assertion
-                   .ForCondition(transitionResult.NewState.CompareTo(expectedNewState.Id) == 0)
-                   .FailWith("expected transition result with new state = `" + expectedNewState.Id + "`, but found `" + transitionResult.NewState + "`.");
+            if (assertions.Subject is FiredTransitionResult<TStates> fired)
+            {
+                Execute.Assertion
+                    .ForCondition(fired.NewState.CompareTo(expectedNewState.Id) == 0)
+                    .FailWith("expected transition result with new state = `" + expectedNewState.Id + "`, but found `" + fired.NewState + "`.");
+            }
         }
 
         public static void BeNotFiredTransitionResult<TStates>(this ObjectAssertions assertions)

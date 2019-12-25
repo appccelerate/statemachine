@@ -41,27 +41,29 @@ namespace Appccelerate.StateMachine.Facts.Machine
         [Fact]
         public void ReturnsNothingAsLastActiveStateWhenStateWasNeverSet()
         {
-            var stateContainer = new StateContainer<string, int>();
+            var stateContainer = new StateContainer<string, int>("name");
 
             stateContainer.SetLastActiveStateFor("A", "helloWorld");
 
             stateContainer
                 .GetLastActiveStateFor("B")
+                .IsNone
                 .Should()
-                .BeEquivalentTo(Optional<string>.Nothing());
+                .BeTrue();
         }
 
         [Fact]
         public void ReturnsStateXAsLastActiveStateWhenXWasSetBefore()
         {
-            var stateContainer = new StateContainer<string, int>();
+            var stateContainer = new StateContainer<string, int>("name");
 
             stateContainer.SetLastActiveStateFor("A", "Z");
 
             stateContainer
                 .GetLastActiveStateFor("A")
+                .ExtractOrNull()
                 .Should()
-                .BeEquivalentTo(Optional<string>.Just("Z"));
+                .BeEquivalentTo("Z");
         }
 
         [Fact]
@@ -70,7 +72,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var executed = false;
             var extension = A.Fake<IExtensionInternal<string, int>>();
 
-            var testee = new StateContainer<string, int>();
+            var testee = new StateContainer<string, int>("name");
 
             testee.Extensions.Add(extension);
             testee.Extensions.Clear();

@@ -140,7 +140,7 @@ namespace Appccelerate.StateMachine.Extensions
         }
 
         public virtual void Loaded(
-            IInitializable<TState> loadedCurrentState,
+            Option<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates,
             IReadOnlyCollection<EventInformation<TEvent>> events)
         {

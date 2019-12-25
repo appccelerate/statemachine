@@ -21,7 +21,6 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Infrastructure;
     using States;
     using Transitions;
 
@@ -160,7 +159,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         public virtual Task Loaded(
-            IInitializable<TState> loadedCurrentState,
+            Option<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates,
             IReadOnlyCollection<EventInformation<TEvent>> events,
             IReadOnlyCollection<EventInformation<TEvent>> priorityEvents)

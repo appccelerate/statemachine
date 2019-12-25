@@ -19,12 +19,12 @@
 namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
-    using Infrastructure;
+    using States;
 
     public interface ILastActiveStateModifier<TState>
         where TState : IComparable
     {
-        Optional<TState> GetLastActiveStateFor(TState state);
+        Option<TState> GetLastActiveStateFor(TState state);
 
         void SetLastActiveStateFor(TState state, TState newLastActiveState);
     }

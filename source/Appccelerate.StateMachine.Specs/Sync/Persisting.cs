@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Appccelerate.StateMachine.Machine.Building;
     using FakeItEasy;
     using FluentAssertions;
     using Infrastructure;
@@ -49,7 +50,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             StateMachineSaver<State, Event> saver,
             StateMachineLoader<State, Event> loader,
             FakeExtension extension,
-            State sourceState,
+            Option<State> sourceState,
             State targetState)
         {
             "establish a saved state machine with history".x(() =>
@@ -89,10 +90,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 loadedMachine.Load(loader);
 
                 loadedMachine.TransitionCompleted += (sender, args) =>
-                {
-                    sourceState = args.StateId;
-                    targetState = args.NewStateId;
-                };
+                    {
+                        sourceState = args.StateId;
+                        targetState = args.NewStateId;
+                    };
 
                 loadedMachine.Start();
                 loadedMachine.Fire(Event.S);
@@ -100,6 +101,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "it should reset current state".x(() =>
                 sourceState
+                    .ExtractOrThrow()
                     .Should()
                     .Be(State.B));
 
@@ -111,8 +113,10 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "it should notify extensions".x(()
                 => extension
                     .LoadedCurrentState
+                    .Single()
+                    .ExtractOrThrow()
                     .Should()
-                    .BeEquivalentTo(Initializable<State>.Initialized(State.B)));
+                    .Be(State.B));
         }
 
         [Scenario]
@@ -204,7 +208,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 var transitionRecords = new List<TransitionRecord>();
                 machine.TransitionCompleted += (sender, args) =>
                     transitionRecords.Add(
-                        new TransitionRecord(args.EventId, args.StateId, args.NewStateId));
+                        new TransitionRecord(args.EventId, args.StateId.ExtractOrNull(), args.NewStateId));
 
                 machine.Start();
                 transitionRecords
@@ -226,7 +230,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "when a not started state machine is loaded".x(() =>
             {
                 var loader = new StateMachineLoader<State, Event>();
-                loader.SetCurrentState(Initializable<State>.UnInitialized());
+                loader.SetCurrentState(Option<State>.None);
                 loader.SetHistoryStates(new Dictionary<State, State>());
 
                 var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<State, Event>();
@@ -244,7 +248,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 loadedMachine.Save(stateMachineSaver);
                 stateMachineSaver
                     .CurrentStateId
-                    .IsInitialized
+                    .IsSome
                     .Should()
                     .BeFalse();
             });
@@ -305,8 +309,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
             stateMachineSaver
                 .CurrentStateId
                 .Should()
-                .Match<Initializable<string>>(currentState =>
-                    currentState.IsInitialized
+                .Match<Option<string>>(currentState =>
+                    currentState.IsSome
                     && currentState.ExtractOrThrow() == "B");
         }
 
@@ -348,11 +352,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
         public class FakeExtension : ExtensionBase<State, Event>
         {
-            public List<IInitializable<State>> LoadedCurrentState { get; } = new List<IInitializable<State>>();
+            public List<Option<State>> LoadedCurrentState { get; } = new List<Option<State>>();
 
             public override void Loaded(
                 IStateMachineInformation<State, Event> stateMachineInformation,
-                IInitializable<State> loadedCurrentState,
+                Option<State> loadedCurrentState,
                 IReadOnlyDictionary<State, State> loadedHistoryStates,
                 IReadOnlyCollection<EventInformation<Event>> events)
             {
@@ -364,13 +368,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
             where TState : IComparable
             where TEvent : IComparable
         {
-            public IInitializable<TState> CurrentStateId { get; private set; }
+            public Option<TState> CurrentStateId { get; private set; }
 
             public IReadOnlyDictionary<TState, TState> HistoryStates { get; private set; }
 
             public IReadOnlyCollection<EventInformation<TEvent>> Events { get; private set; }
 
-            public void SaveCurrentState(IInitializable<TState> currentState)
+            public void SaveCurrentState(Option<TState> currentState)
             {
                 this.CurrentStateId = currentState;
             }
@@ -390,11 +394,11 @@ namespace Appccelerate.StateMachine.Specs.Sync
             where TState : IComparable
             where TEvent : IComparable
         {
-            private IInitializable<TState> currentState = Initializable<TState>.UnInitialized();
+            private Option<TState> currentState = Option<TState>.None;
             private IReadOnlyDictionary<TState, TState> historyStates = new Dictionary<TState, TState>();
             private IReadOnlyCollection<EventInformation<TEvent>> events = new List<EventInformation<TEvent>>();
 
-            public void SetCurrentState(IInitializable<TState> state)
+            public void SetCurrentState(Option<TState> state)
             {
                 this.currentState = state;
             }
@@ -419,7 +423,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 return this.events;
             }
 
-            public IInitializable<TState> LoadCurrentState()
+            public Option<TState> LoadCurrentState()
             {
                 return this.currentState;
             }

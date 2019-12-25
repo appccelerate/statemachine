@@ -27,18 +27,7 @@ namespace Appccelerate.StateMachine.Infrastructure
     /// <typeparam name="T">Type of the value.</typeparam>
     public class Initializable<T> : IInitializable<T>
     {
-        private T value;
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is initialized (has a set value).
-        /// </summary>
-        /// <value><c>true</c> if this instance is initialized; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsInitialized { get; private set; }
-
-        private Initializable()
-        {
-        }
+        private T value = default!;
 
         public static Initializable<T> UnInitialized()
         {
@@ -62,25 +51,55 @@ namespace Appccelerate.StateMachine.Infrastructure
                     : Initializable<TResult>.UnInitialized();
         }
 
-        public T ExtractOr(T valueIfNotInitialized)
-        {
-            return
-                this.IsInitialized
-                    ? this.value
-                    : valueIfNotInitialized;
-        }
-
         public T ExtractOrThrow()
         {
             this.CheckInitialized();
             return this.value;
         }
 
+        /// <summary>
+        /// Gets or sets the value.
+        /// </summary>
+        /// <value>The value.</value>
+        public T Value
+        {
+            get
+            {
+                this.CheckInitialized();
+
+                return this.value;
+            }
+
+            set
+            {
+                this.CheckNotAlreadyInitialized();
+
+                this.IsInitialized = true;
+
+                this.value = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is initialized (has a set value).
+        /// </summary>
+        /// <value><c>true</c> if this instance is initialized; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsInitialized { get; private set; }
+
         private void CheckInitialized()
         {
             if (!this.IsInitialized)
             {
                 throw new InvalidOperationException(ExceptionMessages.ValueNotInitialized);
+            }
+        }
+
+        private void CheckNotAlreadyInitialized()
+        {
+            if (this.IsInitialized)
+            {
+                throw new InvalidOperationException("Value is already initialized");
             }
         }
     }

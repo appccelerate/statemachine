@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a hierarchical state machine".x(async () =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
 
                 stateMachineDefinitionBuilder
                     .DefineHierarchyOn(parentOfSourceState)
@@ -157,7 +157,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a hierarchical state machine".x(async () =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
 
                 stateMachineDefinitionBuilder
                     .DefineHierarchyOn(commonAncestorState)

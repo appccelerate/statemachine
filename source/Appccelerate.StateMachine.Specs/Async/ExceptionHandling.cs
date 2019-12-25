@@ -35,7 +35,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a transition action throwing an exception".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(Values.Source)
                         .On(Values.Event)
@@ -63,7 +63,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish an entry action throwing an exception".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(Values.Source)
                         .On(Values.Event)
@@ -93,7 +93,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish an exit action throwing an exception".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(Values.Source)
                         .ExecuteOnExit(() => throw Values.Exception)
@@ -120,7 +120,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a guard throwing an exception".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(Values.Source)
                         .On(Values.Event)
@@ -150,7 +150,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a entry action for the initial state that throws an exception".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(state)
                     .ExecuteOnEntry(() => throw Values.Exception);
@@ -181,7 +181,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish an exception throwing state machine without a registered exception handler".x(async () =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(Values.Source)
                         .On(Values.Event).Execute(() => throw Values.Exception);
@@ -208,7 +208,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                 this.receivedTransitionExceptionEventArgs.Should().NotBeNull());
 
             "should pass source state of failing transition to event arguments of transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.StateId.Should().Be(Values.Source));
+                this.receivedTransitionExceptionEventArgs.StateId.ExtractOrThrow().Should().Be(Values.Source));
 
             "should pass event id causing transition to event arguments of transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.EventId.Should().Be(Values.Event));

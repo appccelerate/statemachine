@@ -118,10 +118,9 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
                 this.transitionContext = A.Fake<ITransitionContext<TState, TEvent>>();
             }
 
-            public TransitionContextBuilder WithState(IStateDefinition<TState, TEvent> state)
+            public TransitionContextBuilder WithStateDefinition(IStateDefinition<TState, TEvent> stateDefinition)
             {
-                A.CallTo(() => this.transitionContext.StateDefinition).Returns(state);
-
+                A.CallTo(() => this.transitionContext.StateDefinition).Returns(stateDefinition);
                 return this;
             }
 

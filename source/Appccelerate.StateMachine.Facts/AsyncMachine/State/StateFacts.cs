@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Facts.AsyncMachine.State
 {
     using System;
+    using Appccelerate.StateMachine.AsyncMachine.Building;
     using FakeItEasy;
     using FluentAssertions;
     using StateMachine.AsyncMachine;
@@ -30,9 +31,9 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.State
         [Fact]
         public void HierarchyWhenDefiningAStateAsItsOwnSuperStateThenAnExceptionIsThrown()
         {
-            var testee = new StateDefinition<States, Events>(States.A);
+            var testee = new BuildableStateDefinition<States, Events>(States.A);
 
-            Action action = () => testee.SuperStateModifiable = testee;
+            Action action = () => testee.SuperState = testee;
 
             action
                 .Should()
@@ -43,9 +44,9 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.State
         [Fact]
         public void HierarchyWhenDefiningAStateAsItsOwnInitialSubStateThenAnExceptionIsThrown()
         {
-            var testee = new StateDefinition<States, Events>(States.A);
+            var testee = new BuildableStateDefinition<States, Events>(States.A);
 
-            Action action = () => testee.InitialStateModifiable = testee;
+            Action action = () => testee.InitialState = testee;
 
             action
                 .Should()
@@ -56,12 +57,12 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.State
         [Fact]
         public void HierarchyWhenDefiningAStateAAndAssigningAnInitialStateThatDoesntHaveStateAAsSuperStateThenAnExceptionIsThrown()
         {
-            var testee = new StateDefinition<States, Events>(States.A);
+            var testee = new BuildableStateDefinition<States, Events>(States.A);
 
-            var initialState = A.Fake<StateDefinition<States, Events>>();
-            initialState.SuperStateModifiable = A.Fake<StateDefinition<States, Events>>();
+            var initialState = A.Fake<BuildableStateDefinition<States, Events>>();
+            initialState.SuperState = A.Fake<BuildableStateDefinition<States, Events>>();
 
-            Action action = () => testee.InitialStateModifiable = initialState;
+            Action action = () => testee.InitialState = initialState;
 
             action
                 .Should()
@@ -73,9 +74,9 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.State
         public void HierarchyWhenSettingLevelThenTheLevelOfAllChildrenIsUpdated()
         {
             const int level = 2;
-            var testee = new StateDefinition<States, Events>(States.A);
-            var subState = A.Fake<StateDefinition<States, Events>>();
-            testee.SubStatesModifiable.Add(subState);
+            var testee = new BuildableStateDefinition<States, Events>(States.A);
+            var subState = A.Fake<BuildableStateDefinition<States, Events>>();
+            testee.SubStates.Add(subState);
 
             testee.Level = level;
 

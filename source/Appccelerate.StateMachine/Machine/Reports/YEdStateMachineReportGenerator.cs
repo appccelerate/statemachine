@@ -48,7 +48,7 @@ namespace Appccelerate.StateMachine.Machine.Reports
 
         private int edgeId;
 
-        private TState initialState;
+        private Missable<TState> initialState = new Missable<TState>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YEdStateMachineReportGenerator&lt;TState, TEvent&gt;"/> class.
@@ -71,7 +71,7 @@ namespace Appccelerate.StateMachine.Machine.Reports
 
             this.edgeId = 0;
 
-            this.initialState = initialStateId;
+            this.initialState = new Missable<TState>(initialStateId);
             Guard.AgainstNullArgument("states", statesList);
 
             XElement graph = CreateGraph();
@@ -131,12 +131,12 @@ namespace Appccelerate.StateMachine.Machine.Reports
                        : string.Empty;
         }
 
-        private static string CreateGuardDescription(TransitionInfo<TState, TEvent> transition)
+        private static string CreateGuardDescription(ITransitionDefinition<TState, TEvent> transition)
         {
             return transition.Guard != null ? "[" + transition.Guard.Describe() + "]" : string.Empty;
         }
 
-        private static string CreateActionsDescription(TransitionInfo<TState, TEvent> transition)
+        private static string CreateActionsDescription(ITransitionDefinition<TState, TEvent> transition)
         {
             return transition.Actions.Any() ? (transition.Actions.Aggregate("(", (aggregate, action) => (aggregate.Length > 1 ? aggregate + ", " : aggregate) + action.Describe()) + ")") : string.Empty;
         }
@@ -145,14 +145,14 @@ namespace Appccelerate.StateMachine.Machine.Reports
         {
             foreach (var state in states)
             {
-                foreach (var transition in state.TransitionInfos)
+                foreach (var transition in state.Transitions.SelectMany(x => x.Value))
                 {
                     this.AddEdge(graph, transition);
                 }
             }
         }
 
-        private void AddEdge(XElement graph, TransitionInfo<TState, TEvent> transition)
+        private void AddEdge(XElement graph, ITransitionDefinition<TState, TEvent> transition)
         {
             string actions = CreateActionsDescription(transition);
             string guard = CreateGuardDescription(transition);
@@ -175,14 +175,14 @@ namespace Appccelerate.StateMachine.Machine.Reports
 
             var edge = new XElement(
                 N + "edge",
-                new XAttribute("id", transition.EventId + (this.edgeId++).ToString(CultureInfo.InvariantCulture)),
+                new XAttribute("id", transition.Event + (this.edgeId++).ToString(CultureInfo.InvariantCulture)),
                 new XAttribute("source", transition.Source.Id),
                 new XAttribute("target", targetId));
 
             edge.Add(new XElement(
                 N + "data",
                 new XAttribute("key", "d10"),
-                new XElement(Y + "PolyLineEdge", new XElement(Y + "LineStyle", new XAttribute("type", lineStyle)), new XElement(Y + "Arrows", new XAttribute("source", "none"), new XAttribute("target", arrow)), new XElement(Y + "EdgeLabel", guard + transition.EventId + actions))));
+                new XElement(Y + "PolyLineEdge", new XElement(Y + "LineStyle", new XAttribute("type", lineStyle)), new XElement(Y + "Arrows", new XAttribute("source", "none"), new XAttribute("target", arrow)), new XElement(Y + "EdgeLabel", guard + transition.Event + actions))));
 
             graph.Add(edge);
         }
@@ -243,7 +243,7 @@ namespace Appccelerate.StateMachine.Machine.Reports
 
         private bool DetermineWhetherThisIsAnInitialState(IStateDefinition<TState, TEvent> state)
         {
-            return state.Id.ToString() == this.initialState.ToString()
+            return state.Id.ToString() == this.initialState.Value.ToString()
                    || (state.SuperState != null && state.SuperState.InitialState == state);
         }
     }

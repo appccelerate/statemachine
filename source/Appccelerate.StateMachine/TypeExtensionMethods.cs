@@ -29,14 +29,14 @@ namespace Appccelerate.StateMachine
         /// <returns>A correctly formatted full name.</returns>
         public static string FullNameToString(this Type type)
         {
-            Guard.AgainstNullArgument("type", type);
+            Guard.AgainstNullArgument(nameof(type), type);
 
             if (!type.GetTypeInfo().IsGenericType)
             {
                 return type.FullName;
             }
 
-            var partName = type.FullName.Substring(0, type.FullName.IndexOf('`'));
+            var partName = type.FullName?.Substring(0, type.FullName.IndexOf('`'));
             var genericArgumentNames = type.GetTypeInfo().GenericTypeArguments.Select(arg => arg.FullNameToString());
             return string.Concat(partName, "<", string.Join(",", genericArgumentNames), ">");
         }

@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a StateDefinition without configurations".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
+                machine = StateMachineBuilder.ForAsyncMachine<int, int>()
                     .WithInitialState(state)
                     .Build()
                     .CreatePassiveStateMachine();
@@ -52,7 +52,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         [Scenario]
         public void BuildingAStateMachineWithoutInitialStateThenInvalidOperationException()
         {
-            var testee = new StateMachineDefinitionBuilder<int, int>();
+            var testee = StateMachineBuilder.ForAsyncMachine<int, int>();
 
             Action action = () => testee.Build();
 

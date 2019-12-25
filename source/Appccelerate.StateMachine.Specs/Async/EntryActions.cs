@@ -37,7 +37,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a state machine with entry action on a state".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
                         .ExecuteOnEntry(() => entryActionExecuted = true)
@@ -69,21 +69,21 @@ namespace Appccelerate.StateMachine.Specs.Async
             string receivedParameter,
             string asyncReceivedParameter)
         {
-            const string parameter = "parameter";
+            const string Parameter = "parameter";
 
             "establish a state machine with entry action with parameter on a state".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
-                        .ExecuteOnEntryParametrized(p => receivedParameter = p, parameter)
+                        .ExecuteOnEntryParametrized(p => receivedParameter = p, Parameter)
                         .ExecuteOnEntryParametrized(
                             async p =>
                             {
                                 asyncReceivedParameter = p;
                                 await Task.Yield();
                             },
-                            parameter);
+                            Parameter);
                 machine = stateMachineDefinitionBuilder
                     .WithInitialState(State)
                     .Build()
@@ -97,13 +97,13 @@ namespace Appccelerate.StateMachine.Specs.Async
                 => receivedParameter.Should().NotBeNull());
 
             "it should pass parameter to the synchronous entry action".x(()
-                => receivedParameter.Should().Be(parameter));
+                => receivedParameter.Should().Be(Parameter));
 
             "it should execute the asynchronous entry action".x(()
                 => asyncReceivedParameter.Should().NotBeNull());
 
             "it should pass parameter to the asynchronous entry action".x(()
-                => asyncReceivedParameter.Should().Be(parameter));
+                => asyncReceivedParameter.Should().Be(Parameter));
         }
 
         [Scenario]
@@ -116,7 +116,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a state machine with several entry actions on a state".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
                         .ExecuteOnEntry(() => entryAction1Executed = true)
@@ -153,6 +153,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         [Scenario]
         public void ExceptionHandling(
             AsyncPassiveStateMachine<int, int> machine,
+            ExceptionExtension<int, int> exceptionExtension,
             bool entryAction1Executed,
             bool entryAction2Executed,
             bool entryAction3Executed,
@@ -161,11 +162,11 @@ namespace Appccelerate.StateMachine.Specs.Async
             var exception2 = new Exception();
             var exception3 = new Exception();
             var exception4 = new Exception();
-            var receivedException = new List<Exception>();
+            var receivedExceptions = new List<Exception>();
 
             "establish a state machine with several entry actions on a state and some of them throw an exception".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
                         .ExecuteOnEntry(() => entryAction1Executed = true)
@@ -190,7 +191,10 @@ namespace Appccelerate.StateMachine.Specs.Async
                     .Build()
                     .CreatePassiveStateMachine();
 
-                machine.TransitionExceptionThrown += (s, e) => receivedException.Add(e.Exception);
+                exceptionExtension = new ExceptionExtension<int, int>();
+                machine.AddExtension(exceptionExtension);
+
+                machine.TransitionExceptionThrown += (s, e) => receivedExceptions.Add(e.Exception);
             });
 
             "when entering the state".x(async () =>
@@ -205,9 +209,19 @@ namespace Appccelerate.StateMachine.Specs.Async
                     entryAction4Executed
                 }.Should().Equal(true, true, true, true));
 
-            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(()
-                => receivedException
-                    .Should().BeEquivalentTo(exception2, exception3, exception4));
+            "it should notify extensions about the entry action exception and the extension should be able to change the exception".x(() =>
+                exceptionExtension.EntryActionExceptions
+                    .Should().BeEquivalentTo(
+                        new WrappedException(exception2),
+                        new WrappedException(exception3),
+                        new WrappedException(exception4)));
+
+            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
+                receivedExceptions
+                    .Should().BeEquivalentTo(
+                        new WrappedException(exception2),
+                        new WrappedException(exception3),
+                        new WrappedException(exception4)));
         }
 
         [Scenario]
@@ -217,23 +231,23 @@ namespace Appccelerate.StateMachine.Specs.Async
             int asyncPassedArgument)
         {
             const int Event = 3;
-            const int anotherState = 3;
-            const int argument = 17;
+            const int AnotherState = 3;
+            const int Argument = 17;
 
             "establish a state machine with an entry action taking an event argument".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
 
                 stateMachineDefinitionBuilder
                     .In(State)
-                        .On(Event).Goto(anotherState);
+                        .On(Event).Goto(AnotherState);
 
                 stateMachineDefinitionBuilder
-                    .In(anotherState)
+                    .In(AnotherState)
                         .ExecuteOnEntry((int a) => passedArgument = a)
                         .ExecuteOnEntry(async (int a) =>
                         {
-                            asyncPassedArgument = argument;
+                            asyncPassedArgument = Argument;
                             await Task.Yield();
                         });
 
@@ -246,14 +260,14 @@ namespace Appccelerate.StateMachine.Specs.Async
             "when entering the state".x(async () =>
             {
                 await machine.Start();
-                await machine.Fire(Event, argument);
+                await machine.Fire(Event, Argument);
             });
 
-            "it should pass event argument to synchronousentry action".x(()
-                => passedArgument.Should().Be(argument));
+            "it should pass event argument to synchronous entry action".x(()
+                => passedArgument.Should().Be(Argument));
 
             "it should pass event argument to asynchronous entry action".x(()
-                => asyncPassedArgument.Should().Be(argument));
+                => asyncPassedArgument.Should().Be(Argument));
         }
     }
 }

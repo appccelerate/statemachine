@@ -56,14 +56,16 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        public async Task<bool> Execute(object argument)
+        public async Task<bool> Execute(object? argument)
         {
-            if (argument != null && !(argument is T))
+            var castArgument = argument switch
             {
-                throw new ArgumentException(GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.Describe()));
-            }
+                T value => value,
+                _ => throw new ArgumentException(
+                    GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.Describe()))
+            };
 
-            return await this.guard((T)argument).ConfigureAwait(false);
+            return await this.guard(castArgument).ConfigureAwait(false);
         }
 
         /// <summary>

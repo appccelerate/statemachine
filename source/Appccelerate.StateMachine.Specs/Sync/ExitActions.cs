@@ -37,7 +37,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with exit action on a state".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
                         .ExecuteOnExit(() => exitActionExecuted = true)
@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a state machine with exit action with parameter on a state".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
                         .ExecuteOnExitParametrized(p => parameter = p, Parameter)
@@ -99,7 +99,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with several exit actions on a state".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
                         .ExecuteOnExit(() => exitAction1Executed = true)
@@ -130,6 +130,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         [Scenario]
         public void ExceptionHandling(
             PassiveStateMachine<int, int> machine,
+            ExceptionExtension<int, int> exceptionExtension,
             bool exitAction1Executed,
             bool exitAction2Executed,
             bool exitAction3Executed)
@@ -140,7 +141,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a state machine with several exit actions on a state and some of them throw an exception".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
                         .ExecuteOnExit(() => exitAction1Executed = true)
@@ -159,6 +160,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .WithInitialState(State)
                     .Build()
                     .CreatePassiveStateMachine();
+
+                exceptionExtension = new ExceptionExtension<int, int>();
+                machine.AddExtension(exceptionExtension);
 
                 machine.TransitionExceptionThrown += (s, e) => receivedExceptions.Add(e.Exception);
             });
@@ -181,14 +185,17 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .Should().BeTrue("action 3 should be executed");
             });
 
+            "it should notify extensions about the entry action exception and the extension should be able to change the exception".x(() =>
+                exceptionExtension.ExitActionExceptions
+                    .Should().BeEquivalentTo(
+                        new WrappedException(exception2),
+                        new WrappedException(exception3)));
+
             "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
                 receivedExceptions
-                    .Should()
-                    .HaveCount(2)
-                    .And
-                    .Contain(exception2)
-                    .And
-                    .Contain(exception3));
+                    .Should().BeEquivalentTo(
+                        new WrappedException(exception2),
+                        new WrappedException(exception3)));
         }
 
         [Scenario]
@@ -200,7 +207,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a state machine with an exit action taking an event argument".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(State)
                         .ExecuteOnExit((int argument) => passedArgument = argument)

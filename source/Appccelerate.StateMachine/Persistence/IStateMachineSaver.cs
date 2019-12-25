@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.Persistence
         /// Saves the current state of the state machine.
         /// </summary>
         /// <param name="currentStateId">Id of the current state.</param>
-        void SaveCurrentState(IInitializable<TState> currentStateId);
+        void SaveCurrentState(Option<TState> currentStateId);
 
         /// <summary>
         /// Saves the last active states of all super states.

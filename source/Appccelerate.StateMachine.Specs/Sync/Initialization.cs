@@ -18,6 +18,11 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net.NetworkInformation;
+    using Appccelerate.StateMachine.Machine.Building;
+    using FakeItEasy;
     using FluentAssertions;
     using Machine;
     using Xbehave;
@@ -30,11 +35,12 @@ namespace Appccelerate.StateMachine.Specs.Sync
         public void Start(
             PassiveStateMachine<int, int> machine,
             bool entryActionExecuted,
-            CurrentStateExtension currentStateExtension)
+            CurrentStateExtension currentStateExtension,
+            IExtension<int, int> extension)
         {
             "establish a state machine".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(TestState)
                         .ExecuteOnEntry(() => entryActionExecuted = true);
@@ -43,6 +49,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .Build()
                     .CreatePassiveStateMachine();
 
+                extension = A.Fake<IExtension<int, int>>();
+                machine.AddExtension(extension);
+
                 currentStateExtension = new CurrentStateExtension();
                 machine.AddExtension(currentStateExtension);
             });
@@ -50,11 +59,51 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "when starting the state machine".x(() =>
                 machine.Start());
 
-            "should set current state of state machine to state to which it is initialized".x(() =>
+            "it should set current state of state machine to state to which it is initialized".x(() =>
                 currentStateExtension.CurrentState.Should().Be(TestState));
 
-            "should execute entry action of state to which state machine is initialized".x(() =>
+            "it should execute entry action of state to which state machine is initialized".x(() =>
                 entryActionExecuted.Should().BeTrue());
+
+            "it should notify extensions that it is entering the initial state".x(() =>
+                A.CallTo(() => extension.EnteringInitialState(
+                        A<IStateMachineInformation<int, int>>._,
+                        TestState))
+                    .MustHaveHappened());
+
+            "it should notify extensions that it has entered the initial state".x(() =>
+                A.CallTo(() => extension.EnteredInitialState(
+                        An.StateMachineInformation<int, int>(machine),
+                        TestState,
+                        An.TransitionContext<int, int>()))
+                    .MustHaveHappened());
+
+            "it should notify extensions that the state machine is started".x(() =>
+                A.CallTo(() => extension.StartedStateMachine(
+                        A<IStateMachineInformation<int, int>>._))
+                    .MustHaveHappened());
+        }
+
+        [Scenario]
+        public void MissingInitialize(
+            StateMachineDefinitionBuilder<int, int> stateMachineDefinitionBuilder,
+            Action build)
+        {
+            "establish a state machine definition without initialize".x(() =>
+            {
+                stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(TestState);
+            });
+
+            "when building the state machine from the definition".x(() =>
+                build = () => stateMachineDefinitionBuilder
+                    .Build());
+
+            "it should throw an InvalidOperationException".x(() =>
+                build.Should()
+                    .Throw<InvalidOperationException>()
+                    .WithMessage("Initial state is not configured."));
         }
     }
 }

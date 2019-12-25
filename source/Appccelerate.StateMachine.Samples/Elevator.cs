@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.Samples
 
         public Elevator()
         {
-            var builder = new StateMachineDefinitionBuilder<States, Events>();
+            var builder = StateMachineBuilder.ForMachine<States, Events>();
 
             builder.DefineHierarchyOn(States.Healthy)
                 .WithHistoryType(HistoryType.Deep)

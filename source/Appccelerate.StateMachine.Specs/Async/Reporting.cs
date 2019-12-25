@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             IStateMachineReport<string, int> report)
         {
             "establish a state machine".x(()
-                => machine = new StateMachineDefinitionBuilder<string, int>()
+                => machine = StateMachineBuilder.ForAsyncMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine());

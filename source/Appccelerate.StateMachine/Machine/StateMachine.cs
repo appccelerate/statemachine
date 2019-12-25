@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using Appccelerate.StateMachine.Machine.Transitions;
     using Events;
     using Infrastructure;
     using States;
@@ -75,9 +76,9 @@ namespace Appccelerate.StateMachine.Machine
             var oldState = stateContainer
                 .CurrentStateId
                 .Map(x => stateDefinitions[x])
-                .ExtractOr(null);
+                .ExtractOrNull();;
 
-            stateContainer.CurrentStateId = Initializable<TState>.Initialized(newState.Id);
+            stateContainer.CurrentStateId = Option<TState>.Some(newState.Id);
 
             stateContainer.ForEach(extension =>
                 extension.SwitchedState(oldState, newState));
@@ -140,13 +141,13 @@ namespace Appccelerate.StateMachine.Machine
             var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
             var result = this.stateLogic.Fire(currentState, context, stateContainer, stateDefinitions);
 
-            if (!result.Fired)
+            if (!(result is FiredTransitionResult<TState> firedTransitionResult))
             {
                 this.OnTransitionDeclined(context);
                 return;
             }
 
-            var newState = stateDefinitions[result.NewState];
+            var newState = stateDefinitions[firedTransitionResult.NewState];
             SwitchStateTo(newState, stateContainer, stateDefinitions);
 
             stateContainer.ForEach(extension => extension.FiredEvent(context));
@@ -238,7 +239,7 @@ namespace Appccelerate.StateMachine.Machine
 
         private static void CheckThatStateMachineHasEnteredInitialState(StateContainer<TState, TEvent> stateContainer)
         {
-            if (!stateContainer.CurrentStateId.IsInitialized)
+            if (!stateContainer.CurrentStateId.IsSome)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineHasNotYetEnteredInitialState);
             }

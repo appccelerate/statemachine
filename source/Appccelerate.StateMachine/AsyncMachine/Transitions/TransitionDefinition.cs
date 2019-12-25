@@ -30,13 +30,29 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         where TState : IComparable
         where TEvent : IComparable
     {
-        public IStateDefinition<TState, TEvent> Source { get; set; }
+        public TransitionDefinition(
+            IStateDefinition<TState, TEvent> source,
+            TEvent @event,
+            IStateDefinition<TState, TEvent>? target,
+            IGuardHolder? guard,
+            IEnumerable<IActionHolder> actions)
+        {
+            this.Source = source;
+            this.Event = @event;
+            this.Target = target;
+            this.Guard = guard;
+            this.Actions = actions;
+        }
 
-        public IStateDefinition<TState, TEvent> Target { get; set; }
+        public IStateDefinition<TState, TEvent>? Source { get; set; }
 
-        public IGuardHolder Guard { get; set; }
+        public TEvent Event { get; }
 
-        public ICollection<IActionHolder> ActionsModifiable { get; } = new List<IActionHolder>();
+        public IStateDefinition<TState, TEvent>? Target { get; }
+
+        public IGuardHolder? Guard { get; }
+
+        public IEnumerable<IActionHolder> Actions { get; }
 
         public bool IsInternalTransition => this.Target == null;
 
@@ -44,7 +60,5 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         {
             return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);
         }
-
-        public IEnumerable<IActionHolder> Actions => this.ActionsModifiable;
     }
 }

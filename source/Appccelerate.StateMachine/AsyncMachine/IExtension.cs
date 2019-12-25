@@ -21,7 +21,6 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Infrastructure;
     using States;
     using Transitions;
 
@@ -55,7 +54,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument);
+        Task EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object? eventArgument);
 
         /// <summary>
         /// Called after an events was queued with priority.
@@ -64,7 +63,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument);
+        Task EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object? eventArgument);
 
         /// <summary>
         /// Called after the state machine switched states.
@@ -75,7 +74,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task SwitchedState(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            IStateDefinition<TState, TEvent> oldStateDefinition,
+            IStateDefinition<TState, TEvent>? oldStateDefinition,
             IStateDefinition<TState, TEvent> newStateDefinition);
 
         /// <summary>
@@ -105,7 +104,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         Task FiringEvent(
             IStateMachineInformation<TState, TEvent> stateMachine,
             ref TEvent eventId,
-            ref object eventArgument);
+            ref object? eventArgument);
 
         /// <summary>
         /// Called when an event was fired on the state machine.
@@ -272,7 +271,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         Task Loaded(
             IStateMachineInformation<TState, TEvent> stateMachineInformation,
-            IInitializable<TState> loadedCurrentState,
+            Option<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates,
             IReadOnlyCollection<EventInformation<TEvent>> events,
             IReadOnlyCollection<EventInformation<TEvent>> priorityEvents);

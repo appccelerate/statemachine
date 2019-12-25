@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(A)
                         .On(Event)

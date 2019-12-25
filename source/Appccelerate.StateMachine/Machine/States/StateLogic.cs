@@ -54,7 +54,7 @@ namespace Appccelerate.StateMachine.Machine.States
         {
             Guard.AgainstNullArgument("context", context);
 
-            var result = TransitionResult<TState>.NotFired;
+            ITransitionResult<TState> result = new NotFiredTransitionResult<TState>();
 
             if (stateDefinition.Transitions.TryGetValue(context.EventId.Value, out var transitionsForEvent))
             {
@@ -153,13 +153,13 @@ namespace Appccelerate.StateMachine.Machine.States
         {
             this.Entry(stateDefinition, context);
 
-            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
-            if (!lastActiveStateId.HasValue)
+            var lastActiveStateOption = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+            if (!lastActiveStateOption.TryGetValue(out var lastActiveStateId))
             {
                 return stateDefinition.Id;
             }
 
-            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
+            var lastActiveState = stateDefinitions[lastActiveStateId];
             return this.EnterDeep(lastActiveState, context, lastActiveStateModifier, stateDefinitions);
         }
 
@@ -267,13 +267,13 @@ namespace Appccelerate.StateMachine.Machine.States
             ILastActiveStateModifier<TState> lastActiveStateModifier,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
-            if (!lastActiveStateId.HasValue)
+            var lastActiveStateOption = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+            if (!lastActiveStateOption.TryGetValue(out var lastActiveStateId))
             {
                 return stateDefinition.Id;
             }
 
-            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
+            var lastActiveState = stateDefinitions[lastActiveStateId];
             return this.EnterDeep(lastActiveState, context, lastActiveStateModifier, stateDefinitions);
         }
 
@@ -283,13 +283,13 @@ namespace Appccelerate.StateMachine.Machine.States
             ILastActiveStateModifier<TState> lastActiveStateModifier,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
-            if (!lastActiveStateId.HasValue)
+            var lastActiveStateOption = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+            if (!lastActiveStateOption.TryGetValue(out var lastActiveStateId))
             {
                 return stateDefinition.Id;
             }
 
-            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
+            var lastActiveState = stateDefinitions[lastActiveStateId];
             return this.EnterShallow(lastActiveState, context);
         }
 

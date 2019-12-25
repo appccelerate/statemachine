@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
         public StateMachineBuilder()
         {
-            this.stateContainer = new StateContainer<TState, TEvent>();
+            this.stateContainer = new StateContainer<TState, TEvent>("name");
         }
 
         public StateMachineBuilder<TState, TEvent> WithStateContainer(StateContainer<TState, TEvent> stateContainerToUse)

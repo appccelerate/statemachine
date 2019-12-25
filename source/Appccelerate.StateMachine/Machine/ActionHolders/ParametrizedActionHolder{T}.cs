@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
             this.parameter = parameter;
         }
 
-        public void Execute(object argument)
+        public void Execute(object? argument)
         {
             this.action(this.parameter);
         }

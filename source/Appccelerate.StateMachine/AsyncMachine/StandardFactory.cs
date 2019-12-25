@@ -107,7 +107,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return new ArgumentGuardHolder<T>(guard);
         }
 
-        public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(IStateDefinition<TState, TEvent> state, Missable<TEvent> eventId, object eventArgument, INotifier<TState, TEvent> notifier)
+        public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(
+            IStateDefinition<TState, TEvent>? state,
+            Missable<TEvent> eventId,
+            object? eventArgument,
+            INotifier<TState, TEvent> notifier)
         {
             return new TransitionContext<TState, TEvent>(state, eventId, eventArgument, notifier);
         }

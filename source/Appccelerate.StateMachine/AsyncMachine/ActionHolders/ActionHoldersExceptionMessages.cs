@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
         /// <param name="argument">The argument.</param>
         /// <param name="action">The action.</param>
         /// <returns>error message.</returns>
-        public static string CannotCastArgumentToActionArgument(object argument, string action)
+        public static string CannotCastArgumentToActionArgument(object? argument, string action)
         {
             return string.Format(
                 CultureInfo.InvariantCulture,

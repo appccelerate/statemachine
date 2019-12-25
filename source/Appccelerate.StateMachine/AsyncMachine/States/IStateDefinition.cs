@@ -31,15 +31,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
         IReadOnlyDictionary<TEvent, IEnumerable<ITransitionDefinition<TState, TEvent>>> Transitions { get; }
 
-        IEnumerable<TransitionInfo<TState, TEvent>> TransitionInfos { get; }
-
         int Level { get; }
 
-        IStateDefinition<TState, TEvent> InitialState { get; }
+        IStateDefinition<TState, TEvent>? InitialState { get; }
 
         HistoryType HistoryType { get; }
 
-        IStateDefinition<TState, TEvent> SuperState { get; }
+        IStateDefinition<TState, TEvent>? SuperState { get; }
 
         IEnumerable<IStateDefinition<TState, TEvent>> SubStates { get; }
 

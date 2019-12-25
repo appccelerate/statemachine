@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a hierarchical state machine".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<string, int>();
                 stateMachineDefinitionBuilder
                     .DefineHierarchyOn(ParentOfSourceState)
                         .WithHistoryType(HistoryType.None)
@@ -146,7 +146,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a hierarchical state machine".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .DefineHierarchyOn(CommonAncestorState)
                         .WithHistoryType(HistoryType.None)

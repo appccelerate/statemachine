@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<string, int>();
                 stateMachineDefinitionBuilder.In("initial");
                 machine = stateMachineDefinitionBuilder
                     .WithInitialState("initial")
@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with an extension".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<string, int>();
                 stateMachineDefinitionBuilder.In("initial");
                 machine = stateMachineDefinitionBuilder
                     .WithInitialState("initial")

@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Machine.Events
         /// Gets the id of the source state of the transition.
         /// </summary>
         /// <value>The id of the source state of the transition.</value>
-        public TState StateId => this.Context.StateDefinition.Id;
+        public Option<TState> StateId => this.Context.StateDefinition != null ? Option<TState>.Some(this.Context.StateDefinition.Id) : Option<TState>.None;
 
         /// <summary>
         /// Gets the event id.
@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Machine.Events
         /// Gets the event argument.
         /// </summary>
         /// <value>The event argument.</value>
-        public object EventArgument => this.Context.EventArgument;
+        public object? EventArgument => this.Context.EventArgument;
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
@@ -66,7 +66,11 @@ namespace Appccelerate.StateMachine.Machine.Events
         /// </returns>
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} on event {1}.", this.StateId, this.EventId);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Transition from state {0} on event {1}.",
+                this.Context.StateDefinition != null ? this.Context.StateDefinition.Id.ToString() : "-",
+                this.EventId);
         }
     }
 }

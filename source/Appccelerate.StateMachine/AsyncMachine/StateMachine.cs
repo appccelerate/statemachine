@@ -21,8 +21,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System;
     using System.Threading.Tasks;
     using Events;
-    using Infrastructure;
     using States;
+    using Transitions;
 
     /// <summary>
     /// Base implementation of a state machine.
@@ -42,7 +42,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// </summary>
         /// <param name="factory">The factory used to create internal instances.</param>
         /// <param name="stateLogic">The state logic used to handle state changes.</param>
-        public StateMachine(IFactory<TState, TEvent> factory, IStateLogic<TState, TEvent> stateLogic)
+        public StateMachine(
+            IFactory<TState, TEvent> factory,
+            IStateLogic<TState, TEvent> stateLogic)
         {
             this.factory = factory;
             this.stateLogic = stateLogic;
@@ -51,22 +53,22 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <summary>
         /// Occurs when no transition could be executed.
         /// </summary>
-        public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionDeclined;
+        public event EventHandler<TransitionEventArgs<TState, TEvent>>? TransitionDeclined;
 
         /// <summary>
         /// Occurs when an exception was thrown inside a transition of the state machine.
         /// </summary>
-        public event EventHandler<TransitionExceptionEventArgs<TState, TEvent>> TransitionExceptionThrown;
+        public event EventHandler<TransitionExceptionEventArgs<TState, TEvent>>? TransitionExceptionThrown;
 
         /// <summary>
         /// Occurs when a transition begins.
         /// </summary>
-        public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionBegin;
+        public event EventHandler<TransitionEventArgs<TState, TEvent>>? TransitionBegin;
 
         /// <summary>
         /// Occurs when a transition completed.
         /// </summary>
-        public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>> TransitionCompleted;
+        public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>>? TransitionCompleted;
 
         private static async Task SwitchStateTo(
             IStateDefinition<TState, TEvent> newState,
@@ -76,9 +78,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var oldState = stateContainer
                 .CurrentStateId
                 .Map(x => stateDefinitions[x])
-                .ExtractOr(null);
+                .ExtractOrNull();
 
-            stateContainer.CurrentStateId = Initializable<TState>.Initialized(newState.Id);
+            stateContainer.CurrentStateId = Option<TState>.Some(newState.Id);
 
             await stateContainer
                 .ForEach(extension =>
@@ -115,11 +117,12 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
         /// <param name="stateContainer">Contains all mutable state of of the state machine.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
         /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task Fire(
             TEvent eventId,
-            object eventArgument,
+            object? eventArgument,
             StateContainer<TState, TEvent> stateContainer,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
@@ -136,13 +139,13 @@ namespace Appccelerate.StateMachine.AsyncMachine
             var result = await this.stateLogic.Fire(currentState, context, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 
-            if (!result.Fired)
+            if (!(result is FiredTransitionResult<TState> firedTransitionResult))
             {
                 this.OnTransitionDeclined(context);
                 return;
             }
 
-            var newState = stateDefinitions[result.NewState];
+            var newState = stateDefinitions[firedTransitionResult.NewState];
             await SwitchStateTo(newState, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 
@@ -169,7 +172,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         // ReSharper disable once UnusedParameter.Local
-        private static void RethrowExceptionIfNoHandlerRegistered<T>(Exception exception, EventHandler<T> exceptionHandler)
+        private static void RethrowExceptionIfNoHandlerRegistered<T>(
+            Exception exception,
+            EventHandler<T>? exceptionHandler)
             where T : EventArgs
         {
             if (exceptionHandler == null)
@@ -187,6 +192,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
             this.RaiseEvent(this.TransitionDeclined, new TransitionEventArgs<TState, TEvent>(transitionContext), transitionContext, true);
         }
 
+        /// <summary>
+        /// Fires the <see cref="TransitionCompleted"/> event.
+        /// </summary>
+        /// <param name="transitionContext">The transition event context.</param>
+        /// <param name="stateMachineInformation">The state machine information.</param>
         private void OnTransitionCompleted(ITransitionContext<TState, TEvent> transitionContext, TState currentStateId)
         {
             this.RaiseEvent(
@@ -213,7 +223,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 .ConfigureAwait(false);
         }
 
-        private void RaiseEvent<T>(EventHandler<T> eventHandler, T arguments, ITransitionContext<TState, TEvent> context, bool raiseEventOnException)
+        private void RaiseEvent<T>(
+            EventHandler<T>? eventHandler,
+            T arguments,
+            ITransitionContext<TState, TEvent> context,
+            bool raiseEventOnException)
             where T : EventArgs
         {
             try
@@ -238,7 +252,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         private static void CheckThatStateMachineHasEnteredInitialState(StateContainer<TState, TEvent> stateContainer)
         {
-            if (!stateContainer.CurrentStateId.IsInitialized)
+            if (!stateContainer.CurrentStateId.IsSome)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineHasNotYetEnteredInitialState);
             }

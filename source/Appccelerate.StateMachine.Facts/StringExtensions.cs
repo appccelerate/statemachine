@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.Facts
     {
         public static string IgnoringNewlines(this string s) =>
             s
-                .Replace("\n", string.Empty)
+                .Replace("\n", " ")
                 .Replace("\r", string.Empty);
     }
 }

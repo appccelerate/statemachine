@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Syntax
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using Appccelerate.StateMachine.Machine.Building;
     using StateMachine.Machine;
     using Xunit;
 

@@ -48,7 +48,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
             this.parameter = parameter;
         }
 
-        public async Task Execute(object argument)
+        public async Task Execute(object? argument)
         {
             await this.action(this.parameter).ConfigureAwait(false);
         }

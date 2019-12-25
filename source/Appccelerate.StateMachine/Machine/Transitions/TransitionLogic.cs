@@ -28,9 +28,10 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     {
         private readonly IExtensionHost<TState, TEvent> extensionHost;
 
-        private IStateLogic<TState, TEvent> stateLogic;
+        private IStateLogic<TState, TEvent> stateLogic = default!; // it will always be set by the state machine builder
 
-        public TransitionLogic(IExtensionHost<TState, TEvent> extensionHost)
+        public TransitionLogic(
+            IExtensionHost<TState, TEvent> extensionHost)
         {
             this.extensionHost = extensionHost;
         }
@@ -50,36 +51,50 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
             if (!this.ShouldFire(transitionDefinition, context))
             {
-                this.extensionHost.ForEach(extension =>
-                    extension.SkippedTransition(transitionDefinition, context));
+                this.extensionHost.ForEach(extension => extension.SkippedTransition(
+                    transitionDefinition,
+                    context));
 
-                return TransitionResult<TState>.NotFired;
+                return new NotFiredTransitionResult<TState>();
             }
 
             context.OnTransitionBegin();
 
-            this.extensionHost.ForEach(extension =>
-                extension.ExecutingTransition(transitionDefinition, context));
+            this.extensionHost.ForEach(extension => extension.ExecutingTransition(
+                transitionDefinition,
+                context));
 
-            var newState = context.StateDefinition.Id;
+            TState newState;
 
             if (!transitionDefinition.IsInternalTransition)
             {
                 this.UnwindSubStates(transitionDefinition, context, lastActiveStateModifier);
 
-                this.Fire(transitionDefinition, transitionDefinition.Source, transitionDefinition.Target, context, lastActiveStateModifier);
+                this.Fire(
+                        transitionDefinition,
+                        transitionDefinition.Source,
+                        transitionDefinition.Target!,
+                        context,
+                        lastActiveStateModifier);
 
-                newState = this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier, stateDefinitions);
+                newState = this.stateLogic
+                    .EnterByHistory(
+                        transitionDefinition.Target!,
+                        context,
+                        lastActiveStateModifier,
+                        stateDefinitions);
             }
             else
             {
+                newState = context.StateDefinition!.Id;
                 this.PerformActions(transitionDefinition, context);
             }
 
-            this.extensionHost.ForEach(extension =>
-                extension.ExecutedTransition(transitionDefinition, context));
+            this.extensionHost.ForEach(extension => extension.ExecutedTransition(
+                transitionDefinition,
+                context));
 
-            return new TransitionResult<TState>(true, newState);
+            return new FiredTransitionResult<TState>(newState);
         }
 
         private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
@@ -160,20 +175,20 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 if (source.Level > target.Level)
                 {
                     this.stateLogic.Exit(source, context, lastActiveStateModifier);
-                    this.Fire(transitionDefinition, source.SuperState, target, context, lastActiveStateModifier);
+                    this.Fire(transitionDefinition, source.SuperState!, target, context, lastActiveStateModifier);
                 }
                 else if (source.Level < target.Level)
                 {
                     // Handles 2.
                     // Handles 5c.
-                    this.Fire(transitionDefinition, source, target.SuperState, context, lastActiveStateModifier);
+                    this.Fire(transitionDefinition, source, target.SuperState!, context, lastActiveStateModifier);
                     this.stateLogic.Entry(target, context);
                 }
                 else
                 {
                     // Handles 5a.
                     this.stateLogic.Exit(source, context, lastActiveStateModifier);
-                    this.Fire(transitionDefinition, source.SuperState, target.SuperState, context, lastActiveStateModifier);
+                    this.Fire(transitionDefinition, source.SuperState!, target.SuperState!, context, lastActiveStateModifier);
                     this.stateLogic.Entry(target, context);
                 }
             }
@@ -228,7 +243,7 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             var o = context.StateDefinition;
-            while (o != transitionDefinition.Source)
+            while (o != null && o != transitionDefinition.Source)
             {
                 this.stateLogic.Exit(o, context, lastActiveStateModifier);
                 o = o.SuperState;

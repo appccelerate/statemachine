@@ -296,7 +296,7 @@ namespace Appccelerate.StateMachine
 
         private void CheckThatNotAlreadyInitialized()
         {
-            if (this.stateContainer.CurrentStateId.IsInitialized)
+            if (this.stateContainer.CurrentStateId.IsSome)
             {
                 throw new InvalidOperationException(ExceptionMessages.StateMachineIsAlreadyInitialized);
             }
@@ -339,7 +339,7 @@ namespace Appccelerate.StateMachine
 
         private void InitializeStateMachineIfInitializationIsPending()
         {
-            if (this.stateContainer.CurrentStateId.IsInitialized)
+            if (this.stateContainer.CurrentStateId.IsSome)
             {
                 return;
             }

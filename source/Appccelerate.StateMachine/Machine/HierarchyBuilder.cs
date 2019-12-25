@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.Machine.Building;
     using States;
     using Syntax;
 
@@ -30,14 +31,14 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        private readonly StateDefinition<TState, TEvent> superState;
+        private readonly BuildableStateDefinition<TState, TEvent> superState;
 
-        private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions;
+        private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions;
         private readonly IDictionary<TState, TState> initiallyLastActiveStates;
 
         public HierarchyBuilder(
             TState superStateId,
-            IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions,
+            ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitions,
             IDictionary<TState, TState> initiallyLastActiveStates)
         {
             Guard.AgainstNullArgument("states", stateDefinitions);
@@ -49,7 +50,7 @@ namespace Appccelerate.StateMachine.Machine
 
         public IInitialSubStateSyntax<TState> WithHistoryType(HistoryType historyType)
         {
-            this.superState.HistoryTypeModifiable = historyType;
+            this.superState.HistoryType = historyType;
 
             return this;
         }
@@ -58,7 +59,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             this.WithSubState(stateId);
 
-            this.superState.InitialStateModifiable = this.stateDefinitions[stateId];
+            this.superState.InitialState = this.stateDefinitions[stateId];
             this.initiallyLastActiveStates.Add(this.superState.Id, stateId);
 
             return this;
@@ -70,13 +71,13 @@ namespace Appccelerate.StateMachine.Machine
 
             this.CheckThatStateHasNotAlreadyASuperState(subState);
 
-            subState.SuperStateModifiable = this.superState;
-            this.superState.SubStatesModifiable.Add(subState);
+            subState.SuperState = this.superState;
+            this.superState.SubStates.Add(subState);
 
             return this;
         }
 
-        private void CheckThatStateHasNotAlreadyASuperState(StateDefinition<TState, TEvent> subState)
+        private void CheckThatStateHasNotAlreadyASuperState(BuildableStateDefinition<TState, TEvent> subState)
         {
             Guard.AgainstNullArgument("subState", subState);
 

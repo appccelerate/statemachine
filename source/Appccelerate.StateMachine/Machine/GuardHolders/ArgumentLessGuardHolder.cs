@@ -43,7 +43,7 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        public bool Execute(object argument)
+        public bool Execute(object? argument)
         {
             return this.guard();
         }

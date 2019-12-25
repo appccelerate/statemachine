@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             StateMachineNameReporter reporter)
         {
             "establish an instantiated passive state machine".x(() =>
-                machine = new StateMachineDefinitionBuilder<string, int>()
+                machine = StateMachineBuilder.ForMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine());
@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             const string Name = "custom name";
 
             "establish an instantiated passive state machine with custom name".x(() =>
-                machine = new StateMachineDefinitionBuilder<string, int>()
+                machine = StateMachineBuilder.ForMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine(Name));
@@ -85,7 +85,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a passive state machine with transitions".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<string, int>();
                 stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
                 stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
@@ -119,7 +119,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish a passive state machine with transitions".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<string, int>();
                 stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
                 stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);

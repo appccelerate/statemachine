@@ -40,7 +40,7 @@ namespace Appccelerate.StateMachine.Machine.Reports
         /// Gets the resulting report.
         /// </summary>
         /// <value>The result.</value>
-        public string Result { get; private set; }
+        public string? Result { get; private set; }
 
         /// <summary>
         /// Generates a report of the state machine.
@@ -82,7 +82,7 @@ namespace Appccelerate.StateMachine.Machine.Reports
 
             indentation += "    ";
 
-            foreach (var transition in state.TransitionInfos)
+            foreach (var transition in state.Transitions.SelectMany(x => x.Value))
             {
                 ReportTransition(report, indentation, transition);
             }
@@ -130,13 +130,13 @@ namespace Appccelerate.StateMachine.Machine.Reports
         /// <param name="report">The report.</param>
         /// <param name="indentation">The indentation.</param>
         /// <param name="transition">The transition.</param>
-        private static void ReportTransition(StringBuilder report, string indentation, TransitionInfo<TState, TEvent> transition)
+        private static void ReportTransition(StringBuilder report, string indentation, ITransitionDefinition<TState, TEvent> transition)
         {
             report.AppendFormat(
                 CultureInfo.InvariantCulture,
                 "{0}{1} -> {2} actions: {3} guard: {4}{5}",
                 indentation,
-                transition.EventId,
+                transition.Event,
                 transition.Target != null ? transition.Target.ToString() : "internal",
                 string.Join(", ", transition.Actions.Select(action => action.Describe())),
                 transition.Guard != null ? transition.Guard.Describe() : string.Empty,

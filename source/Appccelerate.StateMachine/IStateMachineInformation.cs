@@ -27,7 +27,7 @@ namespace Appccelerate.StateMachine
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     // ReSharper disable once UnusedTypeParameter because of symmetry with all other interface declarations (all have states and events)
-    public interface IStateMachineInformation<out TState, TEvent>
+    public interface IStateMachineInformation<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
@@ -41,6 +41,6 @@ namespace Appccelerate.StateMachine
         /// Gets the id of the current state.
         /// </summary>
         /// <value>The id of the current state.</value>
-        IInitializable<TState> CurrentStateId { get; }
+        Option<TState> CurrentStateId { get; }
     }
 }

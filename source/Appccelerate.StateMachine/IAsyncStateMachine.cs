@@ -29,7 +29,7 @@ namespace Appccelerate.StateMachine
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
-    public interface IAsyncStateMachine<TState, TEvent>
+    public interface IAsyncStateMachineDeprecated<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {

@@ -30,7 +30,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             StateMachineNameReporter reporter)
         {
             "establish an instantiated passive state machine".x(()
-                => machine = new StateMachineDefinitionBuilder<string, int>()
+                => machine = StateMachineBuilder.ForAsyncMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine());
@@ -43,7 +43,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "it should use the type of the state machine as name for state machine".x(()
                 => reporter.StateMachineName
-                    .Should().Be("Appccelerate.StateMachine.AsyncPassiveStateMachine<System.String,System.Int32>"));
+                    .Should().Be("Appccelerate.StateMachine.AsyncMachine.AsyncPassiveStateMachine<System.String,System.Int32>"));
         }
 
         [Scenario]
@@ -54,7 +54,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             const string name = "custom name";
 
             "establish an instantiated passive state machine with custom name".x(()
-                => machine = new StateMachineDefinitionBuilder<string, int>()
+                => machine = StateMachineBuilder.ForAsyncMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreatePassiveStateMachine(name));
@@ -81,7 +81,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a passive state machine with transitions".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
                 stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
                 stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);
@@ -113,7 +113,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a passive state machine with transitions".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
                 stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
                 stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => arrived = true);

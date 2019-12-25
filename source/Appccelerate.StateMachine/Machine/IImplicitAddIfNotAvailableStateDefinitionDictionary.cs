@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
+    using Appccelerate.StateMachine.Machine.Building;
     using States;
 
     public interface IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>
@@ -32,7 +33,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <value>State with the specified id.</value>
         /// <param name="stateId">The State id.</param>
         /// <returns>The State with the specified id.</returns>
-        StateDefinition<TState, TEvent> this[TState stateId]
+        BuildableStateDefinition<TState, TEvent> this[TState stateId]
         {
             get;
         }

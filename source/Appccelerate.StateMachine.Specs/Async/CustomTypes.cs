@@ -34,7 +34,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a state machine with custom types for states and events".x(async () =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<MyState, MyEvent>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<MyState, MyEvent>();
                 stateMachineDefinitionBuilder
                     .In(new MyState("A"))
                         .On(new MyEvent(1)).Goto(new MyState("B"));

@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a state machine".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(A)
                         .On(Event).Goto(B);

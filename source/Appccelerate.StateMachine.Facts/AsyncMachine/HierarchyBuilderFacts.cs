@@ -20,26 +20,22 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System;
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.AsyncMachine.Building;
     using FakeItEasy;
     using FluentAssertions;
-    using StateMachine.AsyncMachine;
-    using StateMachine.AsyncMachine.States;
     using Xunit;
 
     public class HierarchyBuilderFacts
     {
         private const string SuperState = "SuperState";
         private readonly HierarchyBuilder<string, int> testee;
-        private readonly IImplicitAddIfNotAvailableStateDefinitionDictionary<string, int> states;
-        private readonly StateDefinition<string, int> superState;
-        private readonly IDictionary<string, string> initiallyLastActiveStates;
+        private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<string, int> states;
+        private readonly Dictionary<string, BuildableStateDefinition<string, int>> initiallyLastActiveStates;
 
         public HierarchyBuilderFacts()
         {
-            this.superState = new StateDefinition<string, int>(SuperState);
-            this.states = A.Fake<IImplicitAddIfNotAvailableStateDefinitionDictionary<string, int>>();
-            A.CallTo(() => this.states[SuperState]).Returns(this.superState);
-            this.initiallyLastActiveStates = A.Fake<IDictionary<string, string>>();
+            this.states = new ImplicitAddIfNotAvailableStateDefinitionDictionary<string, int>();
+            this.initiallyLastActiveStates = new Dictionary<string, BuildableStateDefinition<string, int>>();
 
             this.testee = new HierarchyBuilder<string, int>(SuperState, this.states, this.initiallyLastActiveStates);
         }
@@ -52,7 +48,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
         {
             this.testee.WithHistoryType(historyType);
 
-            this.superState.HistoryType
+            this.states[SuperState].HistoryType
                 .Should().Be(historyType);
         }
 
@@ -60,69 +56,51 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
         public void SetsInitialSubStateOfSuperState()
         {
             const string SubState = "SubState";
-            var subState = new StateDefinition<string, int>(SubState)
-            {
-                SuperStateModifiable = null
-            };
-            A.CallTo(() => this.states[SubState]).Returns(subState);
 
             this.testee.WithInitialSubState(SubState);
 
-            this.superState.InitialState
-                .Should().BeSameAs(subState);
+            this.states[SuperState].InitialState
+                .Should().BeSameAs(this.states[SubState]);
         }
 
         [Fact]
         public void SettingTheInitialSubStateAlsoAddsItToTheInitiallyLastActiveStates()
         {
             const string SubState = "SubState";
-            var subState = new StateDefinition<string, int>(SubState)
-            {
-                SuperStateModifiable = null
-            };
-            A.CallTo(() => this.states[SubState]).Returns(subState);
 
             this.testee.WithInitialSubState(SubState);
 
-            A.CallTo(() => this.initiallyLastActiveStates.Add(SuperState, SubState)).MustHaveHappenedOnceExactly();
+            this.initiallyLastActiveStates[SuperState]
+                .Should().Be(this.states[SubState]);
         }
 
         [Fact]
         public void AddsSubStatesToSuperState()
         {
             const string AnotherSubState = "AnotherSubState";
-            var anotherSubState = new StateDefinition<string, int>(AnotherSubState)
-            {
-                SuperStateModifiable = null
-            };
-            A.CallTo(() => this.states[AnotherSubState]).Returns(anotherSubState);
 
             this.testee
                 .WithSubState(AnotherSubState);
 
-            this.superState
+            this.states[SuperState]
                 .SubStates
                 .Should()
                 .HaveCount(1)
                 .And
-                .Contain(anotherSubState);
+                .Contain(this.states[AnotherSubState]);
         }
 
         [Fact]
         public void ThrowsExceptionIfSubStateAlreadyHasASuperState()
         {
             const string SubState = "SubState";
-            var subState = new StateDefinition<string, int>(SubState)
-            {
-                SuperStateModifiable = new StateDefinition<string, int>("SomeOtherSuperState")
-            };
-            A.CallTo(() => this.states[SubState]).Returns(subState);
+            this.states[SubState].SuperState = this.states[SuperState];
 
             this.testee.Invoking(t => t.WithInitialSubState(SubState))
                 .Should().Throw<InvalidOperationException>()
-                .WithMessage(ExceptionMessages.CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet(
+                .WithMessage(BuildingExceptionMessages.CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet(
                     SuperState,
-                    subState));
+                    this.states[SubState]));
         }
     }
 }

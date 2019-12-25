@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using Appccelerate.StateMachine.Machine.Building;
     using FakeItEasy;
     using FluentAssertions;
     using Persistence;
@@ -158,12 +159,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
             WaitForAllTransitions(allTransitionsCompleted);
 
             transitionBeginMessages.Should().HaveCount(1);
-            transitionBeginMessages.Single().StateId.Should().Be(States.A);
+            transitionBeginMessages.Single().StateId.ExtractOrThrow().Should().Be(States.A);
             transitionBeginMessages.Single().EventId.Should().Be(Events.B);
             transitionBeginMessages.Single().EventArgument.Should().Be(eventArgument);
 
             transitionCompletedMessages.Should().HaveCount(1);
-            transitionCompletedMessages.Single().StateId.Should().Be(States.A);
+            transitionCompletedMessages.Single().StateId.ExtractOrThrow().Should().Be(States.A);
             transitionCompletedMessages.Single().EventId.Should().Be(Events.B);
             transitionCompletedMessages[0].EventArgument.Should().Be(eventArgument);
             transitionCompletedMessages.Single().NewStateId.Should().Be(States.B1);
@@ -315,7 +316,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
             var extension = A.Fake<IExtension<States, Events>>();
 
             A.CallTo(() => loader.LoadCurrentState())
-                .Returns(Initializable<States>.Initialized(States.C));
+                .Returns(Option<States>.Some(States.C));
 
             var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
             stateMachineDefinitionBuilder
@@ -334,10 +335,10 @@ namespace Appccelerate.StateMachine.Facts.Machine
             A.CallTo(() =>
                     extension.Loaded(
                         A<IStateMachineInformation<States, Events>>.Ignored,
-                        A<Initializable<States>>
+                        A<Option<States>>
                             .That
                             .Matches(currentState =>
-                                currentState.IsInitialized
+                                currentState.IsSome
                                 && currentState.ExtractOrThrow() == States.C),
                         A<IReadOnlyDictionary<States, States>>.Ignored,
                         A<IReadOnlyCollection<EventInformation<Events>>>.Ignored))
@@ -376,7 +377,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
                     { States.D, States.D2 }
                 });
             A.CallTo(() => loader.LoadCurrentState())
-                .Returns(Initializable<States>.UnInitialized());
+                .Returns(Option<States>.None);
 
             testee.Load(loader);
             testee.Start();
@@ -416,13 +417,13 @@ namespace Appccelerate.StateMachine.Facts.Machine
             A.CallTo(() => loader.LoadEvents())
                 .Returns(new List<EventInformation<Events>> { eventInformation });
             A.CallTo(() => loader.LoadCurrentState())
-                .Returns(Initializable<States>.UnInitialized());
+                .Returns(Option<States>.None);
 
             testee.Load(loader);
 
             A.CallTo(() => extension.Loaded(
                     A<IStateMachineInformation<States, Events>>.Ignored,
-                    A<Initializable<States>>.Ignored,
+                    A<Option<States>>.Ignored,
                     A<IReadOnlyDictionary<States, States>>.Ignored,
                     A<IReadOnlyCollection<EventInformation<Events>>>
                         .That

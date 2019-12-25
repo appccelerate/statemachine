@@ -56,7 +56,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        public async Task<bool> Execute(object argument)
+        public async Task<bool> Execute(object? argument)
         {
             return await this.guard().ConfigureAwait(false);
         }

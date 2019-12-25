@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.Persistence
         /// </summary>
         /// <param name="currentStateId">Id of the current state.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task SaveCurrentState(IInitializable<TState> currentStateId);
+        Task SaveCurrentState(Option<TState> currentStateId);
 
         /// <summary>
         /// Saves the last active states of all super states.

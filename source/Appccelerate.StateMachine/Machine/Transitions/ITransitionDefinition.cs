@@ -30,9 +30,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     {
         IStateDefinition<TState, TEvent> Source { get; }
 
-        IStateDefinition<TState, TEvent> Target { get; }
+        TEvent Event { get; }
 
-        IGuardHolder Guard { get; }
+        IStateDefinition<TState, TEvent>? Target { get; }
+
+        IGuardHolder? Guard { get; }
 
         IEnumerable<IActionHolder> Actions { get; }
 

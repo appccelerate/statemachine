@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Samples
 
         public SimpleStateMachine()
         {
-            var builder = new StateMachineDefinitionBuilder<States, Events>();
+            var builder = StateMachineBuilder.ForMachine<States, Events>();
 
             builder
                 .In(States.Off)

@@ -70,17 +70,17 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
 
         private void ReportTransitionsOfState(IStateDefinition<TState, TEvent> state)
         {
-            foreach (var transition in state.TransitionInfos)
+            foreach (var transition in state.Transitions.SelectMany(x => x.Value))
             {
                 this.ReportTransition(transition);
             }
         }
 
-        private void ReportTransition(TransitionInfo<TState, TEvent> transition)
+        private void ReportTransition(ITransitionDefinition<TState, TEvent> transition)
         {
             string source = transition.Source.ToString();
             string target = transition.Target != null ? transition.Target.Id.ToString() : "internal transition";
-            string eventId = transition.EventId.ToString();
+            string eventId = transition.Event.ToString();
 
             string guard = transition.Guard != null ? transition.Guard.Describe() : string.Empty;
             string actions = string.Join(", ", transition.Actions.Select(action => action.Describe()));

@@ -29,9 +29,10 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
     {
         private readonly IExtensionHost<TState, TEvent> extensionHost;
 
-        private IStateLogic<TState, TEvent> stateLogic;
+        private IStateLogic<TState, TEvent> stateLogic = default!; // it will always be set by the state machine builder
 
-        public TransitionLogic(IExtensionHost<TState, TEvent> extensionHost)
+        public TransitionLogic(
+            IExtensionHost<TState, TEvent> extensionHost)
         {
             this.extensionHost = extensionHost;
         }
@@ -58,7 +59,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                         context))
                     .ConfigureAwait(false);
 
-                return TransitionResult<TState>.NotFired;
+                return new NotFiredTransitionResult<TState>();
             }
 
             context.OnTransitionBegin();
@@ -69,13 +70,18 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                     context))
                 .ConfigureAwait(false);
 
-            var newState = context.StateDefinition.Id;
+            TState newState;
 
             if (!transitionDefinition.IsInternalTransition)
             {
                 await this.UnwindSubStates(transitionDefinition, context, lastActiveStateModifier).ConfigureAwait(false);
 
-                await this.Fire(transitionDefinition, transitionDefinition.Source, transitionDefinition.Target, context, lastActiveStateModifier)
+                await this.Fire(
+                        transitionDefinition,
+                        transitionDefinition.Source,
+                        transitionDefinition.Target!,
+                        context,
+                        lastActiveStateModifier)
                     .ConfigureAwait(false);
 
                 newState = await this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier, stateDefinitions)
@@ -83,6 +89,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             }
             else
             {
+                newState = context.StateDefinition!.Id;
                 await this.PerformActions(transitionDefinition, context).ConfigureAwait(false);
             }
 
@@ -92,7 +99,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                     context))
                 .ConfigureAwait(false);
 
-            return new TransitionResult<TState>(true, newState);
+            return new FiredTransitionResult<TState>(newState);
         }
 
         private static void HandleException(Exception exception, ITransitionContext<TState, TEvent> context)
@@ -174,20 +181,20 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                 if (source.Level > target.Level)
                 {
                     await this.stateLogic.Exit(source, context, lastActiveStateModifier).ConfigureAwait(false);
-                    await this.Fire(transitionDefinition, source.SuperState, target, context, lastActiveStateModifier).ConfigureAwait(false);
+                    await this.Fire(transitionDefinition, source.SuperState!, target, context, lastActiveStateModifier).ConfigureAwait(false);
                 }
                 else if (source.Level < target.Level)
                 {
                     // Handles 2.
                     // Handles 5c.
-                    await this.Fire(transitionDefinition, source, target.SuperState, context, lastActiveStateModifier).ConfigureAwait(false);
+                    await this.Fire(transitionDefinition, source, target.SuperState!, context, lastActiveStateModifier).ConfigureAwait(false);
                     await this.stateLogic.Entry(target, context).ConfigureAwait(false);
                 }
                 else
                 {
                     // Handles 5a.
                     await this.stateLogic.Exit(source, context, lastActiveStateModifier).ConfigureAwait(false);
-                    await this.Fire(transitionDefinition, source.SuperState, target.SuperState, context, lastActiveStateModifier).ConfigureAwait(false);
+                    await this.Fire(transitionDefinition, source.SuperState!, target.SuperState!, context, lastActiveStateModifier).ConfigureAwait(false);
                     await this.stateLogic.Entry(target, context).ConfigureAwait(false);
                 }
             }
@@ -249,7 +256,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             ILastActiveStateModifier<TState> lastActiveStateModifier)
         {
             var o = context.StateDefinition;
-            while (o != transitionDefinition.Source)
+            while (o != null && o != transitionDefinition.Source)
             {
                 await this.stateLogic.Exit(o, context, lastActiveStateModifier).ConfigureAwait(false);
                 o = o.SuperState;

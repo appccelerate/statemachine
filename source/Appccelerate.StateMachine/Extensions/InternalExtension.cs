@@ -171,7 +171,7 @@ namespace Appccelerate.StateMachine.Extensions
         }
 
         public void Loaded(
-            IInitializable<TState> loadedCurrentState,
+            Option<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates,
             IReadOnlyCollection<EventInformation<TEvent>> events)
         {

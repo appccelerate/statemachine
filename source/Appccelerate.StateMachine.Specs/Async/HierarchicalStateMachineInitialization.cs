@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a hierarchical state machine with leaf state as initial state".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .DefineHierarchyOn(SuperState)
                     .WithHistoryType(HistoryType.None)
@@ -81,7 +81,7 @@ namespace Appccelerate.StateMachine.Specs.Async
         {
             "establish a hierarchical state machine with super state as initial state".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .DefineHierarchyOn(SuperState)
                     .WithHistoryType(HistoryType.None)

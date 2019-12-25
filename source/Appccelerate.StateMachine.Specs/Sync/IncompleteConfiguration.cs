@@ -33,7 +33,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a StateDefinition without any state configurations".x(() =>
             {
-                machine = new StateMachineDefinitionBuilder<int, int>()
+                machine = StateMachineBuilder.ForMachine<int, int>()
                     .WithInitialState(state)
                     .Build()
                     .CreatePassiveStateMachine();
@@ -52,7 +52,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         [Scenario]
         public void BuildingAStateMachineWithoutInitialStateThenInvalidOperationException()
         {
-            var testee = new StateMachineDefinitionBuilder<int, int>();
+            var testee = StateMachineBuilder.ForMachine<int, int>();
 
             Action action = () => testee.Build();
 

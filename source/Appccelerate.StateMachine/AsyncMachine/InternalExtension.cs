@@ -171,7 +171,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         public Task Loaded(
-            IInitializable<TState> loadedCurrentState,
+            Option<TState> loadedCurrentState,
             IReadOnlyDictionary<TState, TState> loadedHistoryStates,
             IReadOnlyCollection<EventInformation<TEvent>> events,
             IReadOnlyCollection<EventInformation<TEvent>> priorityEvents)

@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             StateMachineNameReporter reporter)
         {
             "establish an instantiated active state machine".x(()
-                => machine = new StateMachineDefinitionBuilder<string, int>()
+                => machine = StateMachineBuilder.ForAsyncMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreateActiveStateMachine());
@@ -55,7 +55,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             const string name = "custom name";
 
             "establish an instantiated active state machine with custom name".x(()
-                => machine = new StateMachineDefinitionBuilder<string, int>()
+                => machine = StateMachineBuilder.ForAsyncMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreateActiveStateMachine(name));
@@ -83,7 +83,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             {
                 signal = new AutoResetEvent(false);
 
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
                 stateMachineDefinitionBuilder.In("A").On(firstEvent).Goto("B");
                 stateMachineDefinitionBuilder.In("B").On(secondEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
@@ -119,7 +119,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             {
                 signal = new AutoResetEvent(false);
 
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
                 stateMachineDefinitionBuilder.In("A").On(secondEvent).Goto("B");
                 stateMachineDefinitionBuilder.In("B").On(firstEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
@@ -153,7 +153,7 @@ namespace Appccelerate.StateMachine.Specs.Async
             {
                 signal = new AutoResetEvent(false);
 
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
                 stateMachineDefinitionBuilder
                     .In("A")
                         .On(firstEvent)

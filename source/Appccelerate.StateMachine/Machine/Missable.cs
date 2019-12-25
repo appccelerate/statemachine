@@ -55,5 +55,15 @@ namespace Appccelerate.StateMachine.Machine
                 this.IsMissing = false;
             }
         }
+
+        public T GetValueOrThrow(Func<Exception> f)
+        {
+            if (this.IsMissing)
+            {
+                throw f();
+            }
+
+            return this.value;
+        }
     }
 }

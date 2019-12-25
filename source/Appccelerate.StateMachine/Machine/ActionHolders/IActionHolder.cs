@@ -27,7 +27,7 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
         /// Executes the transition action.
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
-        void Execute(object argument);
+        void Execute(object? argument);
 
         /// <summary>
         /// Describes the action.

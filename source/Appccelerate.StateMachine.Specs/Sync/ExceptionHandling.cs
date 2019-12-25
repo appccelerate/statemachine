@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
+    using Appccelerate.StateMachine.Machine.Building;
     using FluentAssertions;
     using Machine;
     using Machine.Events;
@@ -205,7 +206,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 this.receivedTransitionExceptionEventArgs.Should().NotBeNull());
 
             "should pass source state of failing transition to event arguments of transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.StateId.Should().Be(Values.Source));
+                this.receivedTransitionExceptionEventArgs.StateId.ExtractOrThrow().Should().Be(Values.Source));
 
             "should pass event id causing transition to event arguments of transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.EventId.Should().Be(Values.Event));

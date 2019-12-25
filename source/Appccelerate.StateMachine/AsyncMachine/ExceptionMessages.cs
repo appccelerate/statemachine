@@ -69,7 +69,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return string.Format(CultureInfo.InvariantCulture, "State {0} cannot be its own super-state.", state);
         }
 
-        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(TState newSuperStateId, IStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
+        public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(
+            TState newSuperStateId, IStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
             where TState : IComparable
             where TEvent : IComparable
         {
@@ -80,7 +81,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 "Cannot set state {0} as a super state because the state {1} has already a super state {2}.",
                 newSuperStateId,
                 stateAlreadyHavingASuperState.Id,
-                stateAlreadyHavingASuperState.SuperState.Id);
+                stateAlreadyHavingASuperState.SuperState!.Id);
         }
 
         /// <summary>

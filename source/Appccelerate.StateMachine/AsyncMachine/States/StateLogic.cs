@@ -55,7 +55,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             Guard.AgainstNullArgument("context", context);
 
-            var result = TransitionResult<TState>.NotFired;
+            ITransitionResult<TState> result = new NotFiredTransitionResult<TState>();
 
             if (stateDefinition.Transitions.TryGetValue(context.EventId.Value, out var transitionsForEvent))
             {
@@ -89,7 +89,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             await this.extensionHost.ForEach(
                 extension =>
-                    extension.EnteringState(stateDefinition, context));
+                    extension.EnteringState(
+                        stateDefinition, context));
 
             await this.ExecuteEntryActions(stateDefinition, context).ConfigureAwait(false);
         }
@@ -159,13 +160,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
         {
             await this.Entry(stateDefinition, context).ConfigureAwait(false);
 
-            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
-            if (!lastActiveStateId.HasValue)
+            var lastActiveStateIdOption = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+
+            if (!lastActiveStateIdOption.TryGetValue(out var lastActiveStateId))
             {
                 return stateDefinition.Id;
             }
 
-            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
+            var lastActiveState = stateDefinitions[lastActiveStateId];
             return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier, stateDefinitions)
                 .ConfigureAwait(false);
         }
@@ -212,7 +214,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.extensionHost
                 .ForEach(
                     extension =>
-                    extension.HandlingEntryActionException(stateDefinition, context, ref exception))
+                    extension.HandlingEntryActionException(
+                        stateDefinition, context, ref exception))
                 .ConfigureAwait(false);
 
             HandleException(exception, context);
@@ -220,7 +223,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.extensionHost
                 .ForEach(
                     extension =>
-                    extension.HandledEntryActionException(stateDefinition, context, exception))
+                    extension.HandledEntryActionException(
+                        stateDefinition, context, exception))
                 .ConfigureAwait(false);
         }
 
@@ -261,7 +265,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.extensionHost
                 .ForEach(
                     extension =>
-                    extension.HandlingExitActionException(stateDefinition, context, ref exception))
+                    extension.HandlingExitActionException(
+                        stateDefinition, context, ref exception))
                 .ConfigureAwait(false);
 
             HandleException(exception, context);
@@ -269,7 +274,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             await this.extensionHost
                 .ForEach(
                     extension =>
-                    extension.HandledExitActionException(stateDefinition, context, exception))
+                    extension.HandledExitActionException(
+                        stateDefinition, context, exception))
                 .ConfigureAwait(false);
         }
 
@@ -290,13 +296,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             ILastActiveStateModifier<TState> lastActiveStateModifier,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
-            if (!lastActiveStateId.HasValue)
+            var lastActiveStateIdOption = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+            if (!lastActiveStateIdOption.TryGetValue(out var lastActiveStateId))
             {
                 return stateDefinition.Id;
             }
 
-            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
+            var lastActiveState = stateDefinitions[lastActiveStateId];
             return await this.EnterDeep(lastActiveState, context, lastActiveStateModifier, stateDefinitions)
                 .ConfigureAwait(false);
         }
@@ -307,13 +313,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
             ILastActiveStateModifier<TState> lastActiveStateModifier,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
-            var lastActiveStateId = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
-            if (!lastActiveStateId.HasValue)
+            var lastActiveStateIdOption = lastActiveStateModifier.GetLastActiveStateFor(stateDefinition.Id);
+            if (!lastActiveStateIdOption.TryGetValue(out var lastActiveStateId))
             {
                 return stateDefinition.Id;
             }
 
-            var lastActiveState = stateDefinitions[lastActiveStateId.Value];
+            var lastActiveState = stateDefinitions[lastActiveStateId];
             return await this.EnterShallow(lastActiveState, context)
                 .ConfigureAwait(false);
         }

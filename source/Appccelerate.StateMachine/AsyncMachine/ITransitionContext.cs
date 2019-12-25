@@ -30,11 +30,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
         where TState : IComparable
         where TEvent : IComparable
     {
-        IStateDefinition<TState, TEvent> StateDefinition { get; }
+        IStateDefinition<TState, TEvent>? StateDefinition { get; }
 
         Missable<TEvent> EventId { get; }
 
-        object EventArgument { get; }
+        object? EventArgument { get; }
 
         void AddRecord(TState stateId, RecordType recordType);
 

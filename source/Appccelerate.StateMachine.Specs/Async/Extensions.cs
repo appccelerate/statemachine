@@ -35,7 +35,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a state machine using the extension".x(async () =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
                 stateMachineDefinitionBuilder
                     .In("0")
                         .On(1)
@@ -71,7 +71,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "establish a hierarchical state machine using the extension".x(async () =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, string>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, string>();
                 stateMachineDefinitionBuilder
                     .DefineHierarchyOn("A")
                         .WithHistoryType(HistoryType.None)

@@ -18,6 +18,7 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
+    using System;
     using FluentAssertions;
     using Machine;
     using Xbehave;
@@ -37,7 +38,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with guarded transitions".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(SourceState)
                         .On(Event)
@@ -70,7 +71,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
         {
             "establish a state machine with otherwise guard and no matching other guard".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(SourceState)
                         .On(Event)
@@ -102,7 +103,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "establish state machine with no matching guard".x(() =>
             {
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<int, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
                 stateMachineDefinitionBuilder
                     .In(SourceState)
                         .On(Event)
@@ -122,6 +123,87 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "it should notify about declined transition".x(() =>
                 declined.Should().BeTrue("TransitionDeclined event should be fired"));
+        }
+
+        [Scenario]
+        public void PassingArguments(
+            PassiveStateMachine<int, int> machine,
+            string receivedArgument)
+        {
+            const string Argument = "argument";
+
+            "establish a state machine with guarded transitions using an argument".x(() =>
+            {
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                    .On(Event)
+                    .If((string argument) =>
+                    {
+                        receivedArgument = argument;
+                        return false;
+                    }).Goto(DestinationState)
+                    .Otherwise().Goto(ErrorState);
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                machine.Start();
+            });
+
+            "when an event is fired".x(() =>
+                machine.Fire(Event, Argument));
+
+            "it should pass the argument to the guards".x(() =>
+                receivedArgument.Should().Be(Argument));
+        }
+
+        [Scenario]
+        public void ThrowingGuard(
+            PassiveStateMachine<int, int> machine,
+            CurrentStateExtension currentStateExtension,
+            ExceptionExtension<int, int> exceptionExtension,
+            Exception receivedException)
+        {
+            const string Argument = "argument";
+            var exception = new Exception("oops");
+
+            "establish a state machine with a transition guard that throws an exception".x(() =>
+            {
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
+                stateMachineDefinitionBuilder
+                    .In(SourceState)
+                    .On(Event)
+                    .If(() => throw exception).Goto(5)
+                    .Otherwise().Goto(DestinationState);
+                machine = stateMachineDefinitionBuilder
+                    .WithInitialState(SourceState)
+                    .Build()
+                    .CreatePassiveStateMachine();
+
+                currentStateExtension = new CurrentStateExtension();
+                machine.AddExtension(currentStateExtension);
+
+                exceptionExtension = new ExceptionExtension<int, int>();
+                machine.AddExtension(exceptionExtension);
+
+                machine.TransitionExceptionThrown += ( sender,  args) => receivedException = args.Exception;
+
+                machine.Start();
+            });
+
+            "when the transition with the failing guard is executed".x(() =>
+                machine.Fire(Event, Argument));
+
+            "it should treat the guard as a non-matching guard and proceed with other guards".x(() =>
+                currentStateExtension.CurrentState.Should().Be(DestinationState));
+
+            "it should notify extensions about the guard exception and the extension should be able to change the exception".x(() =>
+                exceptionExtension.GuardExceptions.Should().BeEquivalentTo(new WrappedException(exception)));
+
+            "it should fire TransitionExceptionThrown event".x(() =>
+                receivedException.Should().BeEquivalentTo(new WrappedException(exception)));
         }
     }
 }

@@ -32,11 +32,5 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
         /// </summary>
         /// <value><c>true</c> if fired; otherwise, <c>false</c>.</value>
         bool Fired { get; }
-
-        /// <summary>
-        /// Gets the new state.
-        /// </summary>
-        /// <value>The new state.</value>
-        TState NewState { get; }
     }
 }

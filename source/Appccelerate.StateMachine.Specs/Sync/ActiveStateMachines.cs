@@ -31,7 +31,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             StateMachineNameReporter reporter)
         {
             "establish an instantiated active state machine".x(() =>
-                machine = new StateMachineDefinitionBuilder<string, int>()
+                machine = StateMachineBuilder.ForMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreateActiveStateMachine());
@@ -57,7 +57,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             const string Name = "custom name";
 
             "establish an instantiated active state machine with custom name".x(() =>
-                machine = new StateMachineDefinitionBuilder<string, int>()
+                machine = StateMachineBuilder.ForMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
                     .CreateActiveStateMachine(Name));
@@ -87,7 +87,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             {
                 signal = new AutoResetEvent(false);
 
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<string, int>();
                 stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
                 stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
@@ -100,7 +100,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             "when firing an event onto the state machine".x(() =>
             {
                 machine.Fire(FirstEvent);
-                machine.Fire(SecondEvent);
+                machine.Fire(SecondEvent, null);
                 machine.Start();
             });
 
@@ -123,7 +123,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
             {
                 signal = new AutoResetEvent(false);
 
-                var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<string, int>();
+                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<string, int>();
                 stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
                 stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());

@@ -22,7 +22,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
     public class Missable<T>
     {
-        private T value;
+        private T value = default!;
 
         public Missable()
         {
@@ -54,6 +54,16 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
                 this.IsMissing = false;
             }
+        }
+
+        public T GetValueOrThrow(Func<Exception> f)
+        {
+            if (this.IsMissing)
+            {
+                throw f();
+            }
+
+            return this.value;
         }
     }
 }

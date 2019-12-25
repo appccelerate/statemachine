@@ -19,6 +19,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
 {
     using System;
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.AsyncMachine.Building;
     using FluentAssertions;
     using StateMachine.AsyncMachine;
     using StateMachine.AsyncMachine.Reports;
@@ -37,7 +38,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
         [MemberData(nameof(StateMachineInstantiationProvider))]
         public void Report(string dummyName, Func<string, StateMachineDefinition<States, Events>, IAsyncStateMachine<States, Events>> createStateMachine)
         {
-            var stateMachineDefinitionBuilder = new StateMachineDefinitionBuilder<States, Events>();
+            var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<States, Events>();
             stateMachineDefinitionBuilder
                 .DefineHierarchyOn(States.B)
                     .WithHistoryType(HistoryType.None)

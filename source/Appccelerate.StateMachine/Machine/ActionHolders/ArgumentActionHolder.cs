@@ -31,21 +31,16 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
             this.action = action;
         }
 
-        public void Execute(object argument)
+        public void Execute(object? argument)
         {
-            T castArgument = default(T);
-
-            if (argument != Missing.Value && argument != null && !(argument is T))
+            if (argument is T a)
+            {
+                this.action(a);
+            }
+            else
             {
                 throw new ArgumentException(ActionHoldersExceptionMessages.CannotCastArgumentToActionArgument(argument, this.Describe()));
             }
-
-            if (argument != Missing.Value)
-            {
-                castArgument = (T)argument;
-            }
-
-            this.action(castArgument);
         }
 
         public string Describe()

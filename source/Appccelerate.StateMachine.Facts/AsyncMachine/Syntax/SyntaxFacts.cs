@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Syntax
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine.Building;
     using StateMachine.AsyncMachine;
     using Xunit;
 

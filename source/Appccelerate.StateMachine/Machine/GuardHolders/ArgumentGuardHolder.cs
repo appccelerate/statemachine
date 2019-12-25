@@ -43,14 +43,14 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        public bool Execute(object argument)
+        public bool Execute(object? argument)
         {
-            if (argument != null && !(argument is T))
+            if (argument is T a)
             {
-                throw new ArgumentException(GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.Describe()));
+                return this.guard(a);
             }
 
-            return this.guard((T)argument);
+            throw new ArgumentException(GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.Describe()));
         }
 
         /// <summary>
