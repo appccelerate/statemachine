@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
         /// Gets the event id.
         /// </summary>
         /// <value>The event id.</value>
-        public TEvent EventId => this.Context.EventId.Value;
+        public Option<TEvent> EventId => this.Context.EventId;
 
         /// <summary>
         /// Gets the event argument.

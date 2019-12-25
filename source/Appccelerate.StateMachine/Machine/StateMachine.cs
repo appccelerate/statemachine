@@ -97,7 +97,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             stateContainer.ForEach(extension => extension.EnteringInitialState(initialState));
 
-            var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
+            var context = this.factory.CreateTransitionContext(null, Option<TEvent>.None, Missing.Value, this);
             this.EnterInitialState(context, stateContainer, stateDefinitions, initialState);
 
             stateContainer.ForEach(extension => extension.EnteredInitialState(initialState, context));
@@ -138,7 +138,7 @@ namespace Appccelerate.StateMachine.Machine
                 .CurrentStateId
                 .Map(x => stateDefinitions[x])
                 .ExtractOrThrow();
-            var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
+            var context = this.factory.CreateTransitionContext(currentState, Option<TEvent>.Some(eventId), eventArgument, this);
             var result = this.stateLogic.Fire(currentState, context, stateContainer, stateDefinitions);
 
             if (!(result is FiredTransitionResult<TState> firedTransitionResult))

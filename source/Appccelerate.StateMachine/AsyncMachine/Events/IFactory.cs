@@ -58,7 +58,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
 
         ITransitionContext<TState, TEvent> CreateTransitionContext(
             IStateDefinition<TState, TEvent>? stateDefinition,
-            Missable<TEvent> eventId,
+            Option<TEvent> eventId,
             object? eventArgument,
             INotifier<TState, TEvent> notifier);
 

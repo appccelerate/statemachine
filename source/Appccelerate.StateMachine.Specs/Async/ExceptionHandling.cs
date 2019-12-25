@@ -211,7 +211,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                 this.receivedTransitionExceptionEventArgs.StateId.ExtractOrThrow().Should().Be(Values.Source));
 
             "should pass event id causing transition to event arguments of transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.EventId.Should().Be(Values.Event));
+                this.receivedTransitionExceptionEventArgs.EventId.ExtractOrThrow().Should().Be(Values.Event));
 
             "should pass thrown exception to event arguments of transition exception event".x(() =>
                 this.receivedTransitionExceptionEventArgs.Exception.Should().BeSameAs(Values.Exception));

@@ -62,24 +62,4 @@ namespace Appccelerate.StateMachine
             return false;
         }
     }
-
-    public static class OptionExtensionMethods
-    {
-        public static T ExtractOrNull<T>(
-            this Option<T> option)
-            where T : class
-        {
-            return option.TryGetValue(out var value)
-                ? value
-                : null;
-        }
-
-        public static T ExtractOrThrow<T>(
-            this Option<T> option)
-        {
-            return option.TryGetValue(out var value)
-                ? value
-                : throw new InvalidOperationException("Option has no value.");
-        }
-    }
 }

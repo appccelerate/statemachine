@@ -48,7 +48,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
 
         private int edgeId;
 
-        private Missable<TState> initialState = new Missable<TState>();
+        private Option<TState> initialState = Option<TState>.None;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YEdStateMachineReportGenerator&lt;TState, TEvent&gt;"/> class.
@@ -71,7 +71,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
 
             this.edgeId = 0;
 
-            this.initialState = new Missable<TState>(initialStateId);
+            this.initialState = Option<TState>.Some(initialStateId);
             Guard.AgainstNullArgument("states", statesList);
 
             XElement graph = CreateGraph();
@@ -243,8 +243,9 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
 
         private bool DetermineWhetherThisIsAnInitialState(IStateDefinition<TState, TEvent> state)
         {
-            return state.Id.ToString() == this.initialState.Value.ToString()
-                   || (state.SuperState != null && state.SuperState.InitialState == state);
+            return
+                (this.initialState.TryGetValue(out var s) && state.Id.ToString() == s.ToString())
+                || (state.SuperState != null && state.SuperState.InitialState == state);
         }
     }
 }

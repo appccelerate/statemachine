@@ -109,7 +109,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(
             IStateDefinition<TState, TEvent>? state,
-            Missable<TEvent> eventId,
+            Option<TEvent> eventId,
             object? eventArgument,
             INotifier<TState, TEvent> notifier)
         {

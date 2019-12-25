@@ -160,12 +160,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             transitionBeginMessages.Should().HaveCount(1);
             transitionBeginMessages.Single().StateId.ExtractOrThrow().Should().Be(States.A);
-            transitionBeginMessages.Single().EventId.Should().Be(Events.B);
+            transitionBeginMessages.Single().EventId.ExtractOrThrow().Should().Be(Events.B);
             transitionBeginMessages.Single().EventArgument.Should().Be(eventArgument);
 
             transitionCompletedMessages.Should().HaveCount(1);
             transitionCompletedMessages.Single().StateId.ExtractOrThrow().Should().Be(States.A);
-            transitionCompletedMessages.Single().EventId.Should().Be(Events.B);
+            transitionCompletedMessages.Single().EventId.ExtractOrThrow().Should().Be(Events.B);
             transitionCompletedMessages[0].EventArgument.Should().Be(eventArgument);
             transitionCompletedMessages.Single().NewStateId.Should().Be(States.B1);
 

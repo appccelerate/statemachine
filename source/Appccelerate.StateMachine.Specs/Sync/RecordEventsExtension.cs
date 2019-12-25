@@ -36,7 +36,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
         public override void FiredEvent(IStateMachineInformation<int, int> stateMachine, ITransitionContext<int, int> context)
         {
-            this.RecordedFiredEvents.Add(context.EventId.Value);
+            this.RecordedFiredEvents.Add(context.EventId.ExtractOrThrow());
         }
 
         public override void EventQueued(IStateMachineInformation<int, int> stateMachine, int eventId, object eventArgument)

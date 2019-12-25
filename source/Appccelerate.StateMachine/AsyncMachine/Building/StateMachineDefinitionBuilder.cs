@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
         private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary = new ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>();
         private readonly Dictionary<TState, BuildableStateDefinition<TState, TEvent>> initiallyLastActiveStates = new Dictionary<TState, BuildableStateDefinition<TState, TEvent>>();
-        private Missable<TState> initialState = new Missable<TState>();
+        private Option<TState> initialState = Option<TState>.None;
 
         public IEntryActionSyntax<TState, TEvent> In(
             TState state)
@@ -55,13 +55,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         public StateMachineDefinitionBuilder<TState, TEvent> WithInitialState(
             TState initialStateToUse)
         {
-            this.initialState = new Missable<TState>(initialStateToUse);
+            this.initialState = Option<TState>.Some(initialStateToUse);
             return this;
         }
 
         public StateMachineDefinition<TState, TEvent> Build()
         {
-            var safeInitialState = this.initialState.GetValueOrThrow(() =>
+            var safeInitialState = this.initialState.ExtractOrThrow(() =>
                 throw new InvalidOperationException(ExceptionMessages.InitialStateNotConfigured));
 
             var states = this.stateDefinitionDictionary.GetBuildableStateDefinitions();

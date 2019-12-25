@@ -57,7 +57,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 => A.CallTo(() => extension.EnteringState(
                         A<IStateMachineInformation<string, int>>.That.Matches(x => x.Name == Name && x.CurrentStateId.ExtractOrThrow() == "1"),
                         A<IStateDefinition<string, int>>.That.Matches(x => x.Id == "1"),
-                        A<ITransitionContext<string, int>>.That.Matches(x => x.EventId.Value == 1)))
+                        A<ITransitionContext<string, int>>.That.Matches(x => x.EventId.ExtractOrThrow() == 1)))
                     .MustHaveHappened());
         }
 
@@ -97,14 +97,14 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 => A.CallTo(() => extension.EnteringState(
                         A<IStateMachineInformation<string, string>>.That.Matches(x => x.Name == Name && x.CurrentStateId.ExtractOrThrow() == "A0"),
                         A<IStateDefinition<string, string>>.That.Matches(x => x.Id == "A"),
-                        A<ITransitionContext<string, string>>.That.Matches(x => x.EventId.Value == "A0")))
+                        A<ITransitionContext<string, string>>.That.Matches(x => x.EventId.ExtractOrThrow() == "A0")))
                     .MustHaveHappened());
 
             "it should call EnteringState on registered extensions for entered leaf target state".x(()
                 => A.CallTo(() => extension.EnteringState(
                         A<IStateMachineInformation<string, string>>.That.Matches(x => x.Name == Name && x.CurrentStateId.ExtractOrThrow() == "A0"),
                         A<IStateDefinition<string, string>>.That.Matches(x => x.Id == "A0"),
-                        A<ITransitionContext<string, string>>.That.Matches(x => x.EventId.Value == "A0")))
+                        A<ITransitionContext<string, string>>.That.Matches(x => x.EventId.ExtractOrThrow() == "A0")))
                     .MustHaveHappened());
         }
     }

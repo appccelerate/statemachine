@@ -38,7 +38,7 @@ namespace Appccelerate.StateMachine.Machine.Contexts
 
         public TransitionContext(
             IStateDefinition<TState, TEvent>? stateDefinition,
-            Missable<TEvent> eventId,
+            Option<TEvent> eventId,
             object? eventArgument,
             INotifier<TState, TEvent> notifier)
         {
@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine.Machine.Contexts
 
         public IStateDefinition<TState, TEvent>? StateDefinition { get; }
 
-        public Missable<TEvent> EventId { get; }
+        public Option<TEvent> EventId { get; }
 
         public object? EventArgument { get; }
 

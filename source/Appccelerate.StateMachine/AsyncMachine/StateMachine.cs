@@ -103,7 +103,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             await stateContainer.ForEach(extension => extension.EnteringInitialState(initialState))
                 .ConfigureAwait(false);
 
-            var context = this.factory.CreateTransitionContext(null, new Missable<TEvent>(), Missing.Value, this);
+            var context = this.factory.CreateTransitionContext(null, Option<TEvent>.None, Missing.Value, this);
             await this.EnterInitialState(context, stateContainer, stateDefinitions, initialState)
                 .ConfigureAwait(false);
 
@@ -135,7 +135,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
                 .CurrentStateId
                 .Map(x => stateDefinitions[x])
                 .ExtractOrThrow();
-            var context = this.factory.CreateTransitionContext(currentState, new Missable<TEvent>(eventId), eventArgument, this);
+            var context = this.factory.CreateTransitionContext(currentState, Option<TEvent>.Some(eventId), eventArgument, this);
             var result = await this.stateLogic.Fire(currentState, context, stateContainer, stateDefinitions)
                 .ConfigureAwait(false);
 

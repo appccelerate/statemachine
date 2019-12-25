@@ -56,7 +56,9 @@ namespace Appccelerate.StateMachine.Machine.States
 
             ITransitionResult<TState> result = new NotFiredTransitionResult<TState>();
 
-            if (stateDefinition.Transitions.TryGetValue(context.EventId.Value, out var transitionsForEvent))
+            var @event = context.EventId.ExtractOrThrow(() => new Exception("internal failure, transition should have an event"));
+
+            if (stateDefinition.Transitions.TryGetValue(@event, out var transitionsForEvent))
             {
                 foreach (var transitionDefinition in transitionsForEvent)
                 {

@@ -32,7 +32,7 @@ namespace Appccelerate.StateMachine.Machine
     {
         IStateDefinition<TState, TEvent> StateDefinition { get; }
 
-        Missable<TEvent> EventId { get; }
+        Option<TEvent> EventId { get; }
 
         object EventArgument { get; }
 
