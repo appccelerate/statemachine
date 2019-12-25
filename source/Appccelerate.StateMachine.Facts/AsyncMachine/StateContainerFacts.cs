@@ -22,7 +22,6 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
     using FakeItEasy;
     using FluentAssertions;
     using StateMachine.AsyncMachine;
-    using StateMachine.Infrastructure;
     using Xunit;
 
     public class StateContainerFacts

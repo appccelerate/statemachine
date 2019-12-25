@@ -19,7 +19,6 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    using Infrastructure;
 
     public interface ILastActiveStateModifier<TState>
         where TState : IComparable

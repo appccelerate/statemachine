@@ -27,7 +27,6 @@ namespace Appccelerate.StateMachine.Specs.Async
     using AsyncMachine;
     using FakeItEasy;
     using FluentAssertions;
-    using Infrastructure;
     using Persistence;
     using Specs;
     using Xbehave;

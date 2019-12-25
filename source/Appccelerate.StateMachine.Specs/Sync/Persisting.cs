@@ -24,7 +24,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
     using Appccelerate.StateMachine.Machine.Building;
     using FakeItEasy;
     using FluentAssertions;
-    using Infrastructure;
     using Machine;
     using Persistence;
     using Specs;

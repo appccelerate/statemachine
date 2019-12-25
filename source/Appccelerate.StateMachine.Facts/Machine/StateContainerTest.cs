@@ -20,7 +20,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
 {
     using FakeItEasy;
     using FluentAssertions;
-    using StateMachine.Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 

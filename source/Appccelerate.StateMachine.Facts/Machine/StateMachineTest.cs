@@ -23,7 +23,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System.Linq;
     using System.Text;
     using FluentAssertions;
-    using StateMachine.Infrastructure;
     using StateMachine.Machine;
     using Xunit;
 

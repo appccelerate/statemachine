@@ -21,7 +21,6 @@ namespace Appccelerate.StateMachine.Machine
     using System;
     using Appccelerate.StateMachine.Machine.Transitions;
     using Events;
-    using Infrastructure;
     using States;
 
     /// <summary>

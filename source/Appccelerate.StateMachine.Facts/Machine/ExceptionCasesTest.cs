@@ -22,7 +22,6 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Machine.Building;
     using FluentAssertions;
-    using StateMachine.Infrastructure;
     using Xunit;
 
     // TODO: check for missing specs

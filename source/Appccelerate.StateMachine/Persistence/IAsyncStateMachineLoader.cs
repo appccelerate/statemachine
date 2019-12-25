@@ -21,7 +21,6 @@ namespace Appccelerate.StateMachine.Persistence
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Infrastructure;
 
     public interface IAsyncStateMachineLoader<TState, TEvent>
         where TState : IComparable

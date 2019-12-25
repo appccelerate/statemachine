@@ -20,7 +20,6 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
-    using Infrastructure;
     using States;
     using Transitions;
 

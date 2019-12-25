@@ -21,7 +21,6 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Infrastructure;
     using States;
     using Transitions;
 

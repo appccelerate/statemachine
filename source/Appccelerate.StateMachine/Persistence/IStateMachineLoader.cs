@@ -20,7 +20,6 @@ namespace Appccelerate.StateMachine.Persistence
 {
     using System;
     using System.Collections.Generic;
-    using Infrastructure;
 
     public interface IStateMachineLoader<TState, TEvent>
         where TState : IComparable
