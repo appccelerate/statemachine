@@ -51,22 +51,22 @@ namespace Appccelerate.StateMachine.Machine
         /// <summary>
         /// Occurs when no transition could be executed.
         /// </summary>
-        public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionDeclined;
+        public event EventHandler<TransitionEventArgs<TState, TEvent>>? TransitionDeclined;
 
         /// <summary>
         /// Occurs when an exception was thrown inside a transition of the state machine.
         /// </summary>
-        public event EventHandler<TransitionExceptionEventArgs<TState, TEvent>> TransitionExceptionThrown;
+        public event EventHandler<TransitionExceptionEventArgs<TState, TEvent>>? TransitionExceptionThrown;
 
         /// <summary>
         /// Occurs when a transition begins.
         /// </summary>
-        public event EventHandler<TransitionEventArgs<TState, TEvent>> TransitionBegin;
+        public event EventHandler<TransitionEventArgs<TState, TEvent>>? TransitionBegin;
 
         /// <summary>
         /// Occurs when a transition completed.
         /// </summary>
-        public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>> TransitionCompleted;
+        public event EventHandler<TransitionCompletedEventArgs<TState, TEvent>>? TransitionCompleted;
 
         private static void SwitchStateTo(
             IStateDefinition<TState, TEvent> newState,
@@ -76,7 +76,7 @@ namespace Appccelerate.StateMachine.Machine
             var oldState = stateContainer
                 .CurrentStateId
                 .Map(x => stateDefinitions[x])
-                .ExtractOrNull();;
+                .ExtractOrNull();
 
             stateContainer.CurrentStateId = Option<TState>.Some(newState.Id);
 
@@ -126,7 +126,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
         public void Fire(
             TEvent eventId,
-            object eventArgument,
+            object? eventArgument,
             StateContainer<TState, TEvent> stateContainer,
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
@@ -172,7 +172,7 @@ namespace Appccelerate.StateMachine.Machine
         }
 
         // ReSharper disable once UnusedParameter.Local
-        private static void RethrowExceptionIfNoHandlerRegistered<T>(Exception exception, EventHandler<T> exceptionHandler)
+        private static void RethrowExceptionIfNoHandlerRegistered<T>(Exception exception, EventHandler<T>? exceptionHandler)
             where T : EventArgs
         {
             if (exceptionHandler == null)
@@ -214,7 +214,7 @@ namespace Appccelerate.StateMachine.Machine
             SwitchStateTo(newStateDefinition, stateContainer, stateDefinitions);
         }
 
-        private void RaiseEvent<T>(EventHandler<T> eventHandler, T arguments, ITransitionContext<TState, TEvent> context, bool raiseEventOnException)
+        private void RaiseEvent<T>(EventHandler<T>? eventHandler, T arguments, ITransitionContext<TState, TEvent> context, bool raiseEventOnException)
             where T : EventArgs
         {
             try

@@ -84,7 +84,12 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
                         lastActiveStateModifier)
                     .ConfigureAwait(false);
 
-                newState = await this.stateLogic.EnterByHistory(transitionDefinition.Target, context, lastActiveStateModifier, stateDefinitions)
+                newState = await this.stateLogic
+                    .EnterByHistory(
+                        transitionDefinition.Target!,
+                        context,
+                        lastActiveStateModifier,
+                        stateDefinitions)
                     .ConfigureAwait(false);
             }
             else

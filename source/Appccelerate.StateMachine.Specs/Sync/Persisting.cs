@@ -208,7 +208,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 var transitionRecords = new List<TransitionRecord>();
                 machine.TransitionCompleted += (sender, args) =>
                     transitionRecords.Add(
-                        new TransitionRecord(args.EventId.ExtractOrThrow(), args.StateId.ExtractOrNull(), args.NewStateId));
+                        new TransitionRecord(args.EventId.ExtractOrThrow(), args.StateId.ExtractOr(null), args.NewStateId));
 
                 machine.Start();
                 transitionRecords

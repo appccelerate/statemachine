@@ -30,11 +30,11 @@ namespace Appccelerate.StateMachine.Machine
         where TState : IComparable
         where TEvent : IComparable
     {
-        IStateDefinition<TState, TEvent> StateDefinition { get; }
+        IStateDefinition<TState, TEvent>? StateDefinition { get; }
 
         Option<TEvent> EventId { get; }
 
-        object EventArgument { get; }
+        object? EventArgument { get; }
 
         INotifier<TState, TEvent> Notifier { get; }
 

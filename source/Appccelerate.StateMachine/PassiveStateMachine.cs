@@ -124,7 +124,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public void Fire(TEvent eventId, object eventArgument)
+        public void Fire(TEvent eventId, object? eventArgument)
         {
             this.stateContainer.Events.AddLast(new EventInformation<TEvent>(eventId, eventArgument));
 
@@ -147,7 +147,7 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="eventId">The event.</param>
         /// <param name="eventArgument">The event argument.</param>
-        public void FirePriority(TEvent eventId, object eventArgument)
+        public void FirePriority(TEvent eventId, object? eventArgument)
         {
             this.stateContainer.Events.AddFirst(new EventInformation<TEvent>(eventId, eventArgument));
 

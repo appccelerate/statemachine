@@ -58,7 +58,7 @@ namespace Appccelerate.StateMachine
                 return true;
             }
 
-            value = default;
+            value = default!;
             return false;
         }
     }

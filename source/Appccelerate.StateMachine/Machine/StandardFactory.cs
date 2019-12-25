@@ -72,7 +72,7 @@ namespace Appccelerate.StateMachine.Machine
         }
 
         public virtual ITransitionContext<TState, TEvent> CreateTransitionContext(
-            IStateDefinition<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent>? stateDefinition,
             Option<TEvent> eventId,
             object? eventArgument,
             INotifier<TState, TEvent> notifier)

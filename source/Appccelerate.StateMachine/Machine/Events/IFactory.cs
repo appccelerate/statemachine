@@ -42,7 +42,7 @@ namespace Appccelerate.StateMachine.Machine.Events
         IGuardHolder CreateGuardHolder<T>(Func<T, bool> guard);
 
         ITransitionContext<TState, TEvent> CreateTransitionContext(
-            IStateDefinition<TState, TEvent> stateDefinition,
+            IStateDefinition<TState, TEvent>? stateDefinition,
             Option<TEvent> eventId,
             object? eventArgument,
             INotifier<TState, TEvent> notifier);

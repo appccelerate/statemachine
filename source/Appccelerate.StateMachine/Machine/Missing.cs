@@ -20,9 +20,9 @@ namespace Appccelerate.StateMachine.Machine
 {
     public sealed class Missing
     {
-        public static readonly Missing Value;
+        public static readonly Missing Value = new Missing();
 
-        internal Missing()
+        private Missing()
         {
         }
     }

@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
-        void EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument);
+        void EventQueued(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object? eventArgument);
 
         /// <summary>
         /// Called after an events was queued with priority.
@@ -59,7 +59,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="stateMachine">The state machine.</param>
         /// <param name="eventId">The event id.</param>
         /// <param name="eventArgument">The event argument.</param>
-        void EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object eventArgument);
+        void EventQueuedWithPriority(IStateMachineInformation<TState, TEvent> stateMachine, TEvent eventId, object? eventArgument);
 
         /// <summary>
         /// Called after the state machine switched states.
@@ -69,7 +69,7 @@ namespace Appccelerate.StateMachine.Machine
         /// <param name="newState">The new state.</param>
         void SwitchedState(
             IStateMachineInformation<TState, TEvent> stateMachine,
-            IStateDefinition<TState, TEvent> oldState,
+            IStateDefinition<TState, TEvent>? oldState,
             IStateDefinition<TState, TEvent> newState);
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Appccelerate.StateMachine.Machine
         void FiringEvent(
             IStateMachineInformation<TState, TEvent> stateMachine,
             ref TEvent eventId,
-            ref object eventArgument);
+            ref object? eventArgument);
 
         /// <summary>
         /// Called when an event was fired on the state machine.

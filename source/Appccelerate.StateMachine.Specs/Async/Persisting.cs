@@ -302,7 +302,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                 var transitionRecords = new List<TransitionRecord>();
                 machine.TransitionCompleted += (sender, args) =>
                     transitionRecords.Add(
-                        new TransitionRecord(args.EventId.ExtractOrThrow(), args.StateId.ExtractOrNull(), args.NewStateId));
+                        new TransitionRecord(args.EventId.ExtractOrThrow(), args.StateId.ExtractOr(null), args.NewStateId));
 
                 await machine.Start();
                 transitionRecords
@@ -446,7 +446,7 @@ namespace Appccelerate.StateMachine.Specs.Async
                 var transitionRecords = new List<TransitionRecord>();
                 machine.TransitionCompleted += (sender, args) =>
                     transitionRecords.Add(
-                        new TransitionRecord(args.EventId.ExtractOrThrow(), args.StateId.ExtractOrNull(), args.NewStateId));
+                        new TransitionRecord(args.EventId.ExtractOrThrow(), args.StateId.ExtractOr(null), args.NewStateId));
 
                 var signal = SetUpWaitForAllTransitions(machine, 3);
                 await machine.Start();

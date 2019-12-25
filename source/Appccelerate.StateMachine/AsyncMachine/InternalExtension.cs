@@ -50,17 +50,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return this.apiExtension.StoppedStateMachine(this.stateMachineInformation);
         }
 
-        public Task EventQueued(TEvent eventId, object eventArgument)
+        public Task EventQueued(TEvent eventId, object? eventArgument)
         {
             return this.apiExtension.EventQueued(this.stateMachineInformation, eventId, eventArgument);
         }
 
-        public Task EventQueuedWithPriority(TEvent eventId, object eventArgument)
+        public Task EventQueuedWithPriority(TEvent eventId, object? eventArgument)
         {
             return this.apiExtension.EventQueuedWithPriority(this.stateMachineInformation, eventId, eventArgument);
         }
 
-        public Task SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState)
+        public Task SwitchedState(IStateDefinition<TState, TEvent>? oldState, IStateDefinition<TState, TEvent> newState)
         {
             return this.apiExtension.SwitchedState(this.stateMachineInformation, oldState, newState);
         }
@@ -75,7 +75,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return this.apiExtension.EnteredInitialState(this.stateMachineInformation, state, context);
         }
 
-        public Task FiringEvent(ref TEvent eventId, ref object eventArgument)
+        public Task FiringEvent(ref TEvent eventId, ref object? eventArgument)
         {
             return this.apiExtension.FiringEvent(this.stateMachineInformation, ref eventId, ref eventArgument);
         }

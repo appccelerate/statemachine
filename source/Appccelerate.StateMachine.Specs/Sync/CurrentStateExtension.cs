@@ -18,6 +18,7 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
+    using JetBrains.Annotations;
     using Machine.States;
     using StateMachine.Extensions;
 
@@ -25,7 +26,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
     {
         public int CurrentState { get; private set; }
 
-        public override void SwitchedState(IStateMachineInformation<int, int> stateMachine, IStateDefinition<int, int> oldState, IStateDefinition<int, int> newState)
+        public override void SwitchedState(IStateMachineInformation<int, int> stateMachine, [CanBeNull] IStateDefinition<int, int> oldState, IStateDefinition<int, int> newState)
         {
             this.CurrentState = newState.Id;
         }

@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
             this.Actions = actions;
         }
 
-        public IStateDefinition<TState, TEvent>? Source { get; set; }
+        public IStateDefinition<TState, TEvent> Source { get; set; }
 
         public TEvent Event { get; }
 

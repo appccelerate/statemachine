@@ -37,15 +37,15 @@ namespace Appccelerate.StateMachine.Extensions
         {
         }
 
-        public virtual void EventQueued(TEvent eventId, object eventArgument)
+        public virtual void EventQueued(TEvent eventId, object? eventArgument)
         {
         }
 
-        public virtual void EventQueuedWithPriority(TEvent eventId, object eventArgument)
+        public virtual void EventQueuedWithPriority(TEvent eventId, object? eventArgument)
         {
         }
 
-        public virtual void SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState)
+        public virtual void SwitchedState(IStateDefinition<TState, TEvent>? oldState, IStateDefinition<TState, TEvent> newState)
         {
         }
 
@@ -57,7 +57,7 @@ namespace Appccelerate.StateMachine.Extensions
         {
         }
 
-        public virtual void FiringEvent(ref TEvent eventId, ref object eventArgument)
+        public virtual void FiringEvent(ref TEvent eventId, ref object? eventArgument)
         {
         }
 

@@ -62,7 +62,7 @@ namespace Appccelerate.StateMachine.Machine
         {
             var stack = new Stack<IStateDefinition<TState, TEvent>>();
 
-            var state = this.initialState;
+            IStateDefinition<TState, TEvent>? state = this.initialState;
             while (state != null)
             {
                 stack.Push(state);

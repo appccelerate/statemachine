@@ -33,11 +33,11 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         Task StoppedStateMachine();
 
-        Task EventQueued(TEvent eventId, object eventArgument);
+        Task EventQueued(TEvent eventId, object? eventArgument);
 
-        Task EventQueuedWithPriority(TEvent eventId, object eventArgument);
+        Task EventQueuedWithPriority(TEvent eventId, object? eventArgument);
 
-        Task SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState);
+        Task SwitchedState(IStateDefinition<TState, TEvent>? oldState, IStateDefinition<TState, TEvent> newState);
 
         Task EnteringInitialState(TState state);
 
@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         Task FiringEvent(
             ref TEvent eventId,
-            ref object eventArgument);
+            ref object? eventArgument);
 
         Task FiredEvent(ITransitionContext<TState, TEvent> context);
 

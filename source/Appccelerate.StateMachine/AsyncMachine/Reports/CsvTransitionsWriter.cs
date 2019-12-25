@@ -78,7 +78,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
 
         private void ReportTransition(ITransitionDefinition<TState, TEvent> transition)
         {
-            string source = transition.Source.ToString();
+            string source = transition.Source!.ToString();
             string target = transition.Target != null ? transition.Target.Id.ToString() : "internal transition";
             string eventId = transition.Event.ToString();
 

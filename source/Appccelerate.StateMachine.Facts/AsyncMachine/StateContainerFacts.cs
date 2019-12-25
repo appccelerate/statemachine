@@ -62,7 +62,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
 
             stateContainer
                 .GetLastActiveStateFor("A")
-                .ExtractOrNull()
+                .ExtractOr(null)
                 .Should()
                 .Be("Z");
         }

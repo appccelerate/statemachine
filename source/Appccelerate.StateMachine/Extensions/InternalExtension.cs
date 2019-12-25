@@ -50,17 +50,17 @@ namespace Appccelerate.StateMachine.Extensions
             this.apiExtension.StoppedStateMachine(this.stateMachineInformation);
         }
 
-        public void EventQueued(TEvent eventId, object eventArgument)
+        public void EventQueued(TEvent eventId, object? eventArgument)
         {
             this.apiExtension.EventQueued(this.stateMachineInformation, eventId, eventArgument);
         }
 
-        public void EventQueuedWithPriority(TEvent eventId, object eventArgument)
+        public void EventQueuedWithPriority(TEvent eventId, object? eventArgument)
         {
             this.apiExtension.EventQueuedWithPriority(this.stateMachineInformation, eventId, eventArgument);
         }
 
-        public void SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState)
+        public void SwitchedState(IStateDefinition<TState, TEvent>? oldState, IStateDefinition<TState, TEvent> newState)
         {
             this.apiExtension.SwitchedState(this.stateMachineInformation, oldState, newState);
         }
@@ -75,7 +75,7 @@ namespace Appccelerate.StateMachine.Extensions
             this.apiExtension.EnteredInitialState(this.stateMachineInformation, state, context);
         }
 
-        public void FiringEvent(ref TEvent eventId, ref object eventArgument)
+        public void FiringEvent(ref TEvent eventId, ref object? eventArgument)
         {
             this.apiExtension.FiringEvent(this.stateMachineInformation, ref eventId, ref eventArgument);
         }

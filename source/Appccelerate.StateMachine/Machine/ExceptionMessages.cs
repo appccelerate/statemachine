@@ -68,7 +68,7 @@ namespace Appccelerate.StateMachine.Machine
                 "Cannot set state {0} as a super state because the state {1} has already a super state {2}.",
                 newSuperStateId,
                 stateAlreadyHavingASuperState.Id,
-                stateAlreadyHavingASuperState.SuperState.Id);
+                stateAlreadyHavingASuperState.SuperState!.Id);
         }
 
         public static string CannotFindStateDefinition<TState>(TState state)

@@ -61,7 +61,7 @@ namespace Appccelerate.StateMachine.Facts.Machine
 
             stateContainer
                 .GetLastActiveStateFor("A")
-                .ExtractOrNull()
+                .ExtractOr(null)
                 .Should()
                 .BeEquivalentTo("Z");
         }

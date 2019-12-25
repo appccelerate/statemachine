@@ -32,11 +32,11 @@ namespace Appccelerate.StateMachine.Machine
 
         void StoppedStateMachine();
 
-        void EventQueued(TEvent eventId, object eventArgument);
+        void EventQueued(TEvent eventId, object? eventArgument);
 
-        void EventQueuedWithPriority(TEvent eventId, object eventArgument);
+        void EventQueuedWithPriority(TEvent eventId, object? eventArgument);
 
-        void SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState);
+        void SwitchedState(IStateDefinition<TState, TEvent>? oldState, IStateDefinition<TState, TEvent> newState);
 
         void EnteringInitialState(TState state);
 
@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Machine
 
         void FiringEvent(
             ref TEvent eventId,
-            ref object eventArgument);
+            ref object? eventArgument);
 
         void FiredEvent(ITransitionContext<TState, TEvent> context);
 

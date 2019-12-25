@@ -170,13 +170,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
             {
                 arrow = "plain";
                 lineStyle = "dashed";
-                targetId = transition.Source.Id.ToString();
+                targetId = transition.Source!.Id.ToString();
             }
 
             var edge = new XElement(
                 N + "edge",
                 new XAttribute("id", transition.Event + (this.edgeId++).ToString(CultureInfo.InvariantCulture)),
-                new XAttribute("source", transition.Source.Id),
+                new XAttribute("source", transition.Source!.Id),
                 new XAttribute("target", targetId));
 
             edge.Add(new XElement(

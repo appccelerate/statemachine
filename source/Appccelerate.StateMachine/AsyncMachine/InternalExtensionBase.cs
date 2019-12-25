@@ -38,17 +38,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return TaskEx.Completed;
         }
 
-        public virtual Task EventQueued(TEvent eventId, object eventArgument)
+        public virtual Task EventQueued(TEvent eventId, object? eventArgument)
         {
             return TaskEx.Completed;
         }
 
-        public virtual Task EventQueuedWithPriority(TEvent eventId, object eventArgument)
+        public virtual Task EventQueuedWithPriority(TEvent eventId, object? eventArgument)
         {
             return TaskEx.Completed;
         }
 
-        public virtual Task SwitchedState(IStateDefinition<TState, TEvent> oldState, IStateDefinition<TState, TEvent> newState)
+        public virtual Task SwitchedState(IStateDefinition<TState, TEvent>? oldState, IStateDefinition<TState, TEvent> newState)
         {
             return TaskEx.Completed;
         }
@@ -63,7 +63,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
             return TaskEx.Completed;
         }
 
-        public virtual Task FiringEvent(ref TEvent eventId, ref object eventArgument)
+        public virtual Task FiringEvent(ref TEvent eventId, ref object? eventArgument)
         {
             return TaskEx.Completed;
         }
