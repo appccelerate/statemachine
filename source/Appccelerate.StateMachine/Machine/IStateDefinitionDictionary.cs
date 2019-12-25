@@ -23,8 +23,8 @@ namespace Appccelerate.StateMachine.Machine
     using States;
 
     public interface IStateDefinitionDictionary<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         IStateDefinition<TState, TEvent> this[TState key] { get; }
 

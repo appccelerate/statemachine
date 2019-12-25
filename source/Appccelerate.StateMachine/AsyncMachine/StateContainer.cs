@@ -27,8 +27,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
         IExtensionHost<TState, TEvent>,
         IStateMachineInformation<TState, TEvent>,
         ILastActiveStateModifier<TState>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly Dictionary<TState, TState> lastActiveStates = new Dictionary<TState, TState>();
 

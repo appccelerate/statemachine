@@ -25,8 +25,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
     using States;
 
     public interface IFactory<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         IActionHolder CreateActionHolder(Func<Task> action);
 

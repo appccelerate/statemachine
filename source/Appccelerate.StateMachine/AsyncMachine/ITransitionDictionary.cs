@@ -23,8 +23,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using Transitions;
 
     public interface ITransitionDictionary<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Adds the specified event id.

@@ -26,8 +26,8 @@ namespace Appccelerate.StateMachine.Specs.Async
     using Appccelerate.StateMachine.AsyncMachine.Transitions;
 
     public class ExceptionExtension<TState, TEvent> : AsyncExtensionBase<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         public List<Exception> GuardExceptions { get; } = new List<Exception>();
 

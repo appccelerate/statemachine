@@ -364,8 +364,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
         }
 
         public class StateMachineSaver<TState, TEvent> : IStateMachineSaver<TState, TEvent>
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             public Option<TState> CurrentStateId { get; private set; }
 
@@ -390,8 +390,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
         }
 
         public class StateMachineLoader<TState, TEvent> : IStateMachineLoader<TState, TEvent>
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             private Option<TState> currentState = Option<TState>.None;
             private IReadOnlyDictionary<TState, TState> historyStates = new Dictionary<TState, TState>();

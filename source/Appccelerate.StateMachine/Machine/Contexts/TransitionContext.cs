@@ -31,8 +31,8 @@ namespace Appccelerate.StateMachine.Machine.Contexts
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     [DebuggerDisplay("State = {StateDefinition} Event = {EventId} EventArguments = {EventArgument}")]
     public class TransitionContext<TState, TEvent> : ITransitionContext<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly List<Record> records = new List<Record>();
 

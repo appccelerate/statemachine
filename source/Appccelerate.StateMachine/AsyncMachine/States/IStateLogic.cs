@@ -23,8 +23,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
     using Transitions;
 
     public interface IStateLogic<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Fires the specified event id on this state.

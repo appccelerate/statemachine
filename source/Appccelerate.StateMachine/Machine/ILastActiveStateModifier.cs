@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Machine
     using System;
 
     public interface ILastActiveStateModifier<TState>
-        where TState : IComparable
+        where TState : notnull
     {
         Option<TState> GetLastActiveStateFor(TState state);
 

@@ -35,8 +35,8 @@ namespace Appccelerate.StateMachine.Machine
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class ActiveStateMachine<TState, TEvent> :
         IStateMachine<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly StateMachine<TState, TEvent> stateMachine;
         private readonly StateContainer<TState, TEvent> stateContainer;

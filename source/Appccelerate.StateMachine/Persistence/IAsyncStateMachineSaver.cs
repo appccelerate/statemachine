@@ -23,8 +23,8 @@ namespace Appccelerate.StateMachine.Persistence
     using System.Threading.Tasks;
 
     public interface IAsyncStateMachineSaver<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Saves the current state of the state machine.

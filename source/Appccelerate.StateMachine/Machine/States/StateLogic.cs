@@ -24,8 +24,8 @@ namespace Appccelerate.StateMachine.Machine.States
 
     public class StateLogic<TState, TEvent>
         : IStateLogic<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly IExtensionHost<TState, TEvent> extensionHost;
         private readonly ITransitionLogic<TState, TEvent> transitionLogic;

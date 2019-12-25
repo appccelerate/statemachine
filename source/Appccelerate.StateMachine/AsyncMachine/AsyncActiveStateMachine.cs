@@ -25,8 +25,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using Persistence;
 
     public class AsyncActiveStateMachine<TState, TEvent> : IAsyncStateMachine<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly StateMachine<TState, TEvent> stateMachine;
         private readonly StateContainer<TState, TEvent> stateContainer;

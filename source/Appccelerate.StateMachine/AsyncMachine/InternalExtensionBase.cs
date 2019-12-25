@@ -25,8 +25,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using Transitions;
 
     public class InternalExtensionBase<TState, TEvent> : IExtensionInternal<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         public virtual Task StartedStateMachine()
         {

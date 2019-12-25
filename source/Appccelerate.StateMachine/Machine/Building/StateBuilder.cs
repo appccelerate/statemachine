@@ -36,8 +36,8 @@ namespace Appccelerate.StateMachine.Machine.Building
         IGotoSyntax<TState, TEvent>,
         IIfSyntax<TState, TEvent>,
         IOnSyntax<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly BuildableStateDefinition<TState, TEvent> stateDefinition;
         private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary;

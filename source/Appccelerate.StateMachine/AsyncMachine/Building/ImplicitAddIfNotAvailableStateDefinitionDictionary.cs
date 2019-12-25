@@ -22,8 +22,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
     using System.Collections.Generic;
 
     public class ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly Dictionary<TState, BuildableStateDefinition<TState, TEvent>> dictionary =
             new Dictionary<TState, BuildableStateDefinition<TState, TEvent>>();

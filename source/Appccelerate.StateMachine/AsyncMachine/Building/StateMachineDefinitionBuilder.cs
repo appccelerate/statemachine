@@ -26,8 +26,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
     using Appccelerate.StateMachine.AsyncSyntax;
 
     public class StateMachineDefinitionBuilder<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly StandardFactory<TState, TEvent> factory = new StandardFactory<TState, TEvent>();
         private readonly ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> stateDefinitionDictionary = new ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>();

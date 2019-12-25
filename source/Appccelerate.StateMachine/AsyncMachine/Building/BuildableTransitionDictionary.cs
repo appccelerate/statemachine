@@ -29,8 +29,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class BuildableTransitionDictionary<TState, TEvent>
         : IEnumerable<BuildableTransitionDefinition<TState, TEvent>>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly List<BuildableTransitionDefinition<TState, TEvent>> transitions;
         private readonly BuildableStateDefinition<TState, TEvent> state;

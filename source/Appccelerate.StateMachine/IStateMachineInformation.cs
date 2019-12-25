@@ -27,8 +27,8 @@ namespace Appccelerate.StateMachine
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     // ReSharper disable once UnusedTypeParameter because of symmetry with all other interface declarations (all have states and events)
     public interface IStateMachineInformation<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Gets the name of this instance.

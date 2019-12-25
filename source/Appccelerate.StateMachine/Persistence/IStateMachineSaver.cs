@@ -22,8 +22,8 @@ namespace Appccelerate.StateMachine.Persistence
     using System.Collections.Generic;
 
     public interface IStateMachineSaver<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Saves the current state of the state machine.

@@ -24,8 +24,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
     using Appccelerate.StateMachine.AsyncMachine.Transitions;
 
     public class BuildableTransitionDefinition<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         public BuildableTransitionDefinition(TEvent @event)
         {

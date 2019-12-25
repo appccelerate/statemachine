@@ -24,8 +24,8 @@ namespace Appccelerate.StateMachine.Machine.Events
     using States;
 
     public interface IFactory<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         IActionHolder CreateActionHolder(Action action);
 

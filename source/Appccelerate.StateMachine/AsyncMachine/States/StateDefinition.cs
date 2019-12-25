@@ -31,8 +31,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
     /// <typeparam name="TState">The type of the state id.</typeparam>
     /// <typeparam name="TEvent">The type of the event id.</typeparam>
     public class StateDefinition<TState, TEvent> : IStateDefinition<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StateDefinition{TState,TEvent}"/> class.

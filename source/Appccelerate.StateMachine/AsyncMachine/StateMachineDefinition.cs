@@ -24,8 +24,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using Transitions;
 
     public class StateMachineDefinition<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly IStateDefinitionDictionary<TState, TEvent> stateDefinitions;
         private readonly IReadOnlyDictionary<TState, TState> initiallyLastActiveStates;

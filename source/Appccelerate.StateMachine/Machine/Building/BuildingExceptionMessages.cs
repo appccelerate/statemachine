@@ -65,8 +65,8 @@ namespace Appccelerate.StateMachine.Machine.Building
         public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(
             TState newSuperStateId,
             BuildableStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             Guard.AgainstNullArgument("stateAlreadyHavingASuperState", stateAlreadyHavingASuperState);
 
@@ -79,7 +79,7 @@ namespace Appccelerate.StateMachine.Machine.Building
         }
 
         public static string CannotFindStateDefinition<TState>(TState state)
-            where TState : IComparable
+            where TState : notnull
         {
             return string.Format(
                 CultureInfo.InvariantCulture,

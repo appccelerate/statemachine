@@ -22,8 +22,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using States;
 
     public interface IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Gets the <see cref="StateDefinition{TState,TEvent}"/> with the specified state id.

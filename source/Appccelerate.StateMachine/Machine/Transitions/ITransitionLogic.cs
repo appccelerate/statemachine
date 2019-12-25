@@ -21,8 +21,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using System;
 
     public interface ITransitionLogic<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Fires the transition.

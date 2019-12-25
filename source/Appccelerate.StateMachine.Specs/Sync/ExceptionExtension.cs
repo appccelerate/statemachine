@@ -26,8 +26,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
     using Appccelerate.StateMachine.Machine.Transitions;
 
     public class ExceptionExtension<TState, TEvent> : ExtensionBase<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         public List<Exception> GuardExceptions { get; } = new List<Exception>();
 

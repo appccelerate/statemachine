@@ -27,8 +27,8 @@ namespace Appccelerate.StateMachine.Machine.Events
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class TransitionExceptionEventArgs<TState, TEvent>
         : TransitionEventArgs<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// The exception.

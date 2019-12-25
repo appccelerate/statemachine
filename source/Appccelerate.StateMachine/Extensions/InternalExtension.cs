@@ -25,8 +25,8 @@ namespace Appccelerate.StateMachine.Extensions
     using Machine.Transitions;
 
     public class InternalExtension<TState, TEvent> : IExtensionInternal<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly IExtension<TState, TEvent> apiExtension;
         private readonly IStateMachineInformation<TState, TEvent> stateMachineInformation;

@@ -23,8 +23,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
     public static class An
     {
         public static IStateMachineInformation<TState, TEvent> StateMachineInformation<TState, TEvent>(IStateMachine<int, int> machine)
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             return A<IStateMachineInformation<TState, TEvent>>
                 .That
@@ -33,8 +33,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
         }
 
         public static ITransitionContext<TState, TEvent> TransitionContext<TState, TEvent>()
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             return A<ITransitionContext<TState, TEvent>>._;
         }

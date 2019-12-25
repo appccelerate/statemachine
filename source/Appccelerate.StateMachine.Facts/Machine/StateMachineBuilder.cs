@@ -24,8 +24,8 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using StateMachine.Machine.Transitions;
 
     public class StateMachineBuilder<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private StateContainer<TState, TEvent> stateContainer;
 

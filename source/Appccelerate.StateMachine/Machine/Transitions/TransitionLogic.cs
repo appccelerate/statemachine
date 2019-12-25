@@ -23,8 +23,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
     public class TransitionLogic<TState, TEvent>
         : ITransitionLogic<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly IExtensionHost<TState, TEvent> extensionHost;
 

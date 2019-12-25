@@ -71,8 +71,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         public static string CannotSetStateAsASuperStateBecauseASuperStateIsAlreadySet<TState, TEvent>(
             TState newSuperStateId, IStateDefinition<TState, TEvent> stateAlreadyHavingASuperState)
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             Guard.AgainstNullArgument("stateAlreadyHavingASuperState", stateAlreadyHavingASuperState);
 
@@ -93,8 +93,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
         /// <param name="state">The state.</param>
         /// <returns>error message.</returns>
         public static string TransitionDoesAlreadyExist<TState, TEvent>(ITransitionDefinition<TState, TEvent> transition, IStateDefinition<TState, TEvent> state)
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             Guard.AgainstNullArgument("transition", transition);
 
@@ -107,7 +107,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
         }
 
         public static string CannotFindStateDefinition<TState>(TState state)
-            where TState : IComparable
+            where TState : notnull
         {
             return string.Format(
                 CultureInfo.InvariantCulture,

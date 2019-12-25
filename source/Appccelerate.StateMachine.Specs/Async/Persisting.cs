@@ -488,8 +488,8 @@ namespace Appccelerate.StateMachine.Specs.Async
         }
 
         private static AutoResetEvent SetUpWaitForAllTransitions<TState, TEvent>(IAsyncStateMachine<TState, TEvent> testee, int numberOfTransitionCompletedMessages)
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             var numberOfTransitionCompletedMessagesReceived = 0;
             var allTransitionsCompleted = new AutoResetEvent(false);
@@ -544,8 +544,8 @@ namespace Appccelerate.StateMachine.Specs.Async
         }
 
         public class StateMachineSaver<TState, TEvent> : IAsyncStateMachineSaver<TState, TEvent>
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             public Option<TState> CurrentStateId { get; private set; }
 
@@ -583,8 +583,8 @@ namespace Appccelerate.StateMachine.Specs.Async
         }
 
         public class StateMachineLoader<TState, TEvent> : IAsyncStateMachineLoader<TState, TEvent>
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             private Option<TState> currentState = Option<TState>.None;
             private IReadOnlyDictionary<TState, TState> historyStates = new Dictionary<TState, TState>();

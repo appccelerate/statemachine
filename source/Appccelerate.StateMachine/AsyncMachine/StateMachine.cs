@@ -31,8 +31,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class StateMachine<TState, TEvent> :
         INotifier<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly IFactory<TState, TEvent> factory;
         private readonly IStateLogic<TState, TEvent> stateLogic;

@@ -25,8 +25,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using States;
 
     public interface ITransitionDefinition<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         IStateDefinition<TState, TEvent> Source { get; }
 

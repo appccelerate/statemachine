@@ -26,7 +26,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
     /// <typeparam name="TState">ype of the states.</typeparam>
     public class FiredTransitionResult<TState>
         : ITransitionResult<TState>
-        where TState : IComparable
+        where TState : notnull
     {
         public FiredTransitionResult(
             TState newState)

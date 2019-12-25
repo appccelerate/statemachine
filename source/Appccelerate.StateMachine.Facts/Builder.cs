@@ -25,8 +25,8 @@ namespace Appccelerate.StateMachine.Facts
     using StateMachine.Machine.States;
 
     public static class Builder<TState, TEvent>
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
     {
         public static GuardBuilder CreateGuardHolder()
         {

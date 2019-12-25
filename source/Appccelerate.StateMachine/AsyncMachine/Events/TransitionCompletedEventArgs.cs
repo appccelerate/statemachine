@@ -27,8 +27,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Events
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class TransitionCompletedEventArgs<TState, TEvent>
         : TransitionEventArgs<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TransitionCompletedEventArgs{TState,TEvent}"/> class.

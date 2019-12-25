@@ -30,8 +30,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
     /// <typeparam name="TState">Type fo the states.</typeparam>
     /// <typeparam name="TEvent">Type of the events.</typeparam>
     public class TransitionInfo<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         public TransitionInfo(TEvent eventId, IStateDefinition<TState, TEvent> source, IStateDefinition<TState, TEvent> target, IGuardHolder guard, IEnumerable<IActionHolder> actions)
         {

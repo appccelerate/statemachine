@@ -23,7 +23,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
     /// </summary>
     /// <typeparam name="TState">ype of the states.</typeparam>
     public class NotFiredTransitionResult<TState> : ITransitionResult<TState>
-        where TState : IComparable
+        where TState : notnull
     {
         /// <summary>
         /// Gets a value indicating whether this <see cref="ITransitionResult{TState}"/> is fired.

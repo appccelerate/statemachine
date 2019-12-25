@@ -25,7 +25,7 @@ namespace Appccelerate.StateMachine
     /// </summary>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class EventInformation<TEvent>
-        where TEvent : IComparable
+        where TEvent : notnull
     {
         public EventInformation(TEvent eventId, object? eventArgument)
         {

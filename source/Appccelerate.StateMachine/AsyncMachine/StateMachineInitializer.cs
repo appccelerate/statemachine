@@ -30,8 +30,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class StateMachineInitializer<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         private readonly IStateDefinition<TState, TEvent> initialState;
 

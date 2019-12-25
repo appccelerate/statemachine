@@ -34,8 +34,8 @@ namespace Appccelerate.StateMachine.Machine
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class PassiveStateMachine<TState, TEvent> :
         IStateMachine<TState, TEvent>
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         /// <summary>
         /// The internal state machine.

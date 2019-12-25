@@ -34,8 +34,8 @@ namespace Appccelerate.StateMachine.AsyncMachine
     //// ReSharper disable ClassWithVirtualMembersNeverInherited.Global
     public class StandardFactory<TState, TEvent> : IFactory<TState, TEvent>
         //// ReSharper restore ClassWithVirtualMembersNeverInherited.Global
-        where TState : IComparable
-        where TEvent : IComparable
+        where TState : notnull
+        where TEvent : notnull
     {
         public virtual IActionHolder CreateActionHolder(Action action)
         {

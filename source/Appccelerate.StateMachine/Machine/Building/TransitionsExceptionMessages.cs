@@ -37,8 +37,8 @@ namespace Appccelerate.StateMachine.Machine.Building
         public static string TransitionDoesAlreadyExist<TState, TEvent>(
             BuildableTransitionDefinition<TState, TEvent> transition,
             BuildableStateDefinition<TState, TEvent> state)
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             Guard.AgainstNullArgument("transition", transition);
 

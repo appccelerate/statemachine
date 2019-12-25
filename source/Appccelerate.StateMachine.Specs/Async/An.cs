@@ -24,8 +24,8 @@ namespace Appccelerate.StateMachine.Specs.Async
     {
         public static IStateMachineInformation<TState, TEvent> StateMachineInformation<TState, TEvent>(
             IAsyncStateMachine<int, int> machine)
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             return A<IStateMachineInformation<TState, TEvent>>
                 .That
@@ -34,8 +34,8 @@ namespace Appccelerate.StateMachine.Specs.Async
         }
 
         public static ITransitionContext<TState, TEvent> TransitionContext<TState, TEvent>()
-            where TState : IComparable
-            where TEvent : IComparable
+            where TState : notnull
+            where TEvent : notnull
         {
             return A<ITransitionContext<TState, TEvent>>._;
         }
