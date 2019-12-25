@@ -24,7 +24,7 @@ namespace Appccelerate.StateMachine.Machine
     using Appccelerate.StateMachine.Machine.Building;
     using States;
 
-    public class ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent> : IImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>
+    public class ImplicitAddIfNotAvailableStateDefinitionDictionary<TState, TEvent>
         where TState : IComparable
         where TEvent : IComparable
     {
