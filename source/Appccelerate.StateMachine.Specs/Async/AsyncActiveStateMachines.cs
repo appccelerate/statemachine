@@ -44,7 +44,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "it should use the type of the state machine as name for state machine".x(()
                 => reporter.StateMachineName
-                    .Should().Be("Appccelerate.StateMachine.AsyncActiveStateMachine<System.String,System.Int32>"));
+                    .Should().Be("Appccelerate.StateMachine.AsyncMachine.AsyncActiveStateMachine<System.String,System.Int32>"));
         }
 
         [Scenario]

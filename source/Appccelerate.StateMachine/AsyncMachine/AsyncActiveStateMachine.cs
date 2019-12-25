@@ -14,14 +14,13 @@
 //   limitations under the License.
 // </copyright>
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using AsyncMachine;
     using AsyncMachine.Events;
     using Persistence;
 

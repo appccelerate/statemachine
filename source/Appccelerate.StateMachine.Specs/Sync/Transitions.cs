@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
+    using Appccelerate.StateMachine.Machine;
     using Appccelerate.StateMachine.Machine.Events;
     using FluentAssertions;
     using Xbehave;

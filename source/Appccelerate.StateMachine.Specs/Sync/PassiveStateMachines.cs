@@ -45,7 +45,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
             "it should use the type of the state machine as name for state machine".x(() =>
                 reporter.StateMachineName
-                    .Should().Be("Appccelerate.StateMachine.PassiveStateMachine<System.String,System.Int32>"));
+                    .Should().Be("Appccelerate.StateMachine.Machine.PassiveStateMachine<System.String,System.Int32>"));
         }
 
         [Scenario]

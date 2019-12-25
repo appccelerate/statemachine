@@ -16,11 +16,9 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Appccelerate.StateMachine
+namespace Appccelerate.StateMachine.Machine
 {
     using System;
-
-    using Machine;
     using Machine.Events;
     using Persistence;
 
