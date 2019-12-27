@@ -19,12 +19,13 @@ I'm working on moving the documention from www.appccelerate.com (where it is not
 ## StateMachine
 
 Appccelerate contains four different state machines:
-- Passive State Machine
-- Active State Machine
-- Async Passive State Machine
-- Async Active State Machine
+- [Passive State Machine](documentation/passiveStateMachine.md)
+- [Active State Machine](documentation/activeStateMachine.md)
+- [Async Passive State Machine](documentation/asyncPassiveStateMachine.md)
+- [Async Active State Machine](documentation/asyncActiveStateMachine.md)
 
-Both async and not-async variants implement an interface called `IStateMachine`. For better testability and flexibility, I suggest that you reference your state machine only by the interface and use dependency injection to get either of the implementations. You can use then a passive state machine as a replacement for an active one in your tests to simplify the tests because everything is run on the same thread.
+
+Both async and both not-async variants implement an interface called `IAsyncStateMachine` or `IStateMachine`. For better testability and flexibility, I suggest that you reference your state machine only by the interface and use dependency injection to get either of the implementations. You can use then a passive state machine as a replacement for an active one in your tests to simplify the tests because everything is run on the same thread.
 
 ### States and Events
 A state machine is defined using States and Events. States and events have to be `IComparables` (`enum`, `int`, `string`, ...). If you have a well known set of states and events then I suggest you use enums which make the code much more readable. If you plan to build some flexibility into your state machine (e.g. add states, transitions in base classes) then you better use an "open" type like `string` or `integer`.
@@ -117,6 +118,16 @@ public class SimpleStateMachine
 
 ## More Documentation
 
+### Introduction
 - [Tutorial](documentation/tutorial.md)
 - [Example](documentation/example.md)
+
+### The 4 different state machines
+- [Passive State Machine](documentation/passiveStateMachine.md)
+- [Active State Machine](documentation/activeStateMachine.md)
+- [Async Passive State Machine](documentation/asyncPassiveStateMachine.md)
+- [Async Active State Machine](documentation/asyncActiveStateMachine.md)
+
+### Migrating from an older version
 - [Migrating to V5.x](documentation/migratingToV5.md)
+- [Migrating to V6.x](documentation/migratingToV6.md)
