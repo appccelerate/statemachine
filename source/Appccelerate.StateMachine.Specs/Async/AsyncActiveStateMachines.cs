@@ -52,13 +52,13 @@ namespace Appccelerate.StateMachine.Specs.Async
             AsyncActiveStateMachine<string, int> machine,
             StateMachineNameReporter reporter)
         {
-            const string name = "custom name";
+            const string Name = "custom name";
 
             "establish an instantiated active state machine with custom name".x(()
                 => machine = StateMachineBuilder.ForAsyncMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
-                    .CreateActiveStateMachine(name));
+                    .CreateActiveStateMachine(Name));
 
             "establish a state machine reporter".x(()
                 => reporter = new StateMachineNameReporter());
@@ -68,7 +68,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "it should use custom name for state machine".x(()
                 => reporter.StateMachineName
-                    .Should().Be(name));
+                    .Should().Be(Name));
         }
 
         [Scenario]
@@ -76,16 +76,16 @@ namespace Appccelerate.StateMachine.Specs.Async
             IAsyncStateMachine<string, int> machine,
             AutoResetEvent signal)
         {
-            const int firstEvent = 0;
-            const int secondEvent = 1;
+            const int FirstEvent = 0;
+            const int SecondEvent = 1;
 
             "establish an active state machine with transitions".x(() =>
             {
                 signal = new AutoResetEvent(false);
 
                 var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
-                stateMachineDefinitionBuilder.In("A").On(firstEvent).Goto("B");
-                stateMachineDefinitionBuilder.In("B").On(secondEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("A").On(FirstEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(SecondEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
                 machine = stateMachineDefinitionBuilder
                     .WithInitialState("A")
@@ -95,8 +95,8 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when firing an event onto the state machine".x(async () =>
             {
-                await machine.Fire(firstEvent);
-                await machine.Fire(secondEvent);
+                await machine.Fire(FirstEvent);
+                await machine.Fire(SecondEvent);
                 await machine.Start();
             });
 
@@ -112,16 +112,16 @@ namespace Appccelerate.StateMachine.Specs.Async
             IAsyncStateMachine<string, int> machine,
             AutoResetEvent signal)
         {
-            const int firstEvent = 0;
-            const int secondEvent = 1;
+            const int FirstEvent = 0;
+            const int SecondEvent = 1;
 
             "establish an active state machine with transitions".x(() =>
             {
                 signal = new AutoResetEvent(false);
 
                 var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
-                stateMachineDefinitionBuilder.In("A").On(secondEvent).Goto("B");
-                stateMachineDefinitionBuilder.In("B").On(firstEvent).Goto("C");
+                stateMachineDefinitionBuilder.In("A").On(SecondEvent).Goto("B");
+                stateMachineDefinitionBuilder.In("B").On(FirstEvent).Goto("C");
                 stateMachineDefinitionBuilder.In("C").ExecuteOnEntry(() => signal.Set());
                 machine = stateMachineDefinitionBuilder
                     .WithInitialState("A")
@@ -131,13 +131,14 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when firing a priority event onto the state machine".x(async () =>
             {
-                await machine.Fire(firstEvent);
-                await machine.FirePriority(secondEvent);
+                await machine.Fire(FirstEvent);
+                await machine.FirePriority(SecondEvent);
                 await machine.Start();
             });
 
             "it should queue event at the front".x(() =>
-                signal.WaitOne(1000).Should().BeTrue("state machine should arrive at destination state"));
+                signal.WaitOne(1000)
+                .Should().BeTrue("state machine should arrive at destination state"));
         }
 
         [Scenario]
@@ -145,9 +146,9 @@ namespace Appccelerate.StateMachine.Specs.Async
             IAsyncStateMachine<string, int> machine,
             AutoResetEvent signal)
         {
-            const int firstEvent = 0;
-            const int secondEvent = 1;
-            const int priorityEvent = 2;
+            const int FirstEvent = 0;
+            const int SecondEvent = 1;
+            const int PriorityEvent = 2;
 
             "establish an active state machine with transitions".x(() =>
             {
@@ -156,16 +157,16 @@ namespace Appccelerate.StateMachine.Specs.Async
                 var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
                 stateMachineDefinitionBuilder
                     .In("A")
-                        .On(firstEvent)
+                        .On(FirstEvent)
                         .Goto("B")
-                        .Execute(() => machine.FirePriority(priorityEvent));
+                        .Execute(() => machine.FirePriority(PriorityEvent));
                 stateMachineDefinitionBuilder
                     .In("B")
-                        .On(priorityEvent)
+                        .On(PriorityEvent)
                         .Goto("C");
                 stateMachineDefinitionBuilder
                     .In("C")
-                    .On(secondEvent)
+                    .On(SecondEvent)
                     .Goto("D");
                 stateMachineDefinitionBuilder
                     .In("D")
@@ -178,13 +179,14 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "when firing a priority event onto the state machine".x(async () =>
             {
-                await machine.Fire(firstEvent);
-                await machine.Fire(secondEvent);
+                await machine.Fire(FirstEvent);
+                await machine.Fire(SecondEvent);
                 await machine.Start();
             });
 
             "it should queue event at the front".x(()
-                => signal.WaitOne(1000).Should().BeTrue("state machine should arrive at destination state"));
+                => signal.WaitOne(1000)
+                .Should().BeTrue("state machine should arrive at destination state"));
         }
     }
 }

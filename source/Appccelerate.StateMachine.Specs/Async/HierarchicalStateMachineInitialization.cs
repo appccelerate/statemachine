@@ -104,15 +104,15 @@ namespace Appccelerate.StateMachine.Specs.Async
             "when starting the state machine".x(async () =>
                 await machine.Start());
 
-            "it should_set_current_state_of_state_machine_to_initial_leaf_state_of_the_state_to_which_it_is_initialized".x(() =>
+            "it should set current state of state machine to initial leaf state of the state to which it is initialized".x(() =>
                 testExtension.CurrentState
                     .Should().Be(LeafState));
 
-            "it should_execute_entry_action_of_super_state_to_which_state_machine_is_initialized".x(() =>
+            "it should execute entry action of super state to which state machine is initialized".x(() =>
                 entryActionOfSuperStateExecuted
                     .Should().BeTrue());
 
-            "it should_execute_entry_actions_of_initial_sub_states_until_a_leaf_state_is_reached".x(() =>
+            "it should execute entry actions of initial sub states until a leaf state is reached".x(() =>
                 entryActionOfLeafStateExecuted
                     .Should().BeTrue());
         }

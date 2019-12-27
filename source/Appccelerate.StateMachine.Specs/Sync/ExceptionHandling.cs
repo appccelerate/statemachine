@@ -27,6 +27,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
     public class ExceptionHandling
     {
+        private readonly CurrentStateExtension currentStateExtension = new CurrentStateExtension();
         private TransitionExceptionEventArgs<int, int> receivedTransitionExceptionEventArgs;
 
         [Scenario]
@@ -44,6 +45,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .WithInitialState(Values.Source)
                     .Build()
                     .CreatePassiveStateMachine();
+
+                machine.AddExtension(new ExceptionExtension<int, int>());
+                machine.AddExtension(this.currentStateExtension);
 
                 machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
             });
@@ -75,6 +79,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .Build()
                     .CreatePassiveStateMachine();
 
+                machine.AddExtension(new ExceptionExtension<int, int>());
+                machine.AddExtension(this.currentStateExtension);
+
                 machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
             });
 
@@ -103,6 +110,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .Build()
                     .CreatePassiveStateMachine();
 
+                machine.AddExtension(new ExceptionExtension<int, int>());
+                machine.AddExtension(this.currentStateExtension);
+
                 machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
             });
 
@@ -125,11 +135,16 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .In(Values.Source)
                         .On(Values.Event)
                         .If(() => throw Values.Exception)
-                        .Goto(Values.Destination);
+                            .Goto(Values.Destination)
+                        .Otherwise()
+                            .Goto(Values.Destination);
                 machine = stateMachineDefinitionBuilder
                     .WithInitialState(Values.Source)
                     .Build()
                     .CreatePassiveStateMachine();
+
+                machine.AddExtension(new ExceptionExtension<int, int>());
+                machine.AddExtension(this.currentStateExtension);
 
                 machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
             });
@@ -159,6 +174,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
                     .Build()
                     .CreatePassiveStateMachine();
 
+                machine.AddExtension(new ExceptionExtension<int, int>());
+                machine.AddExtension(this.currentStateExtension);
+
                 machine.TransitionExceptionThrown += (s, e) => this.receivedTransitionExceptionEventArgs = e;
             });
 
@@ -166,16 +184,18 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 machine.Start());
 
             "should catch exception and fire transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.Exception.Should().NotBeNull());
+                this.receivedTransitionExceptionEventArgs.Exception
+                    .Should().NotBeNull());
 
             "should pass thrown exception to event arguments of transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.Exception.Should().BeSameAs(Values.Exception));
+                this.receivedTransitionExceptionEventArgs.Exception
+                    .Should().BeEquivalentTo(Values.WrappedException));
         }
 
         [Scenario]
         public void NoExceptionHandlerRegistered(
             PassiveStateMachine<int, int> machine,
-            Exception catchedException)
+            Exception caughtException)
         {
             "establish an exception throwing state machine without a registered exception handler".x(() =>
             {
@@ -193,29 +213,38 @@ namespace Appccelerate.StateMachine.Specs.Sync
             });
 
             "when an exception occurs".x(() =>
-                catchedException = Catch.Exception(() => machine.Fire(Values.Event)));
+                caughtException = Catch.Exception(() => machine.Fire(Values.Event)));
 
             "should (re-)throw exception".x(() =>
-                catchedException.InnerException
+                caughtException.InnerException
                     .Should().BeSameAs(Values.Exception));
         }
 
         private void ItShouldHandleTransitionException()
         {
             "should catch exception and fire transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.Should().NotBeNull());
+                this.receivedTransitionExceptionEventArgs
+                    .Should().NotBeNull());
 
             "should pass source state of failing transition to event arguments of transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.StateId.ExtractOrThrow().Should().Be(Values.Source));
+                this.receivedTransitionExceptionEventArgs.StateId.ExtractOrThrow()
+                    .Should().Be(Values.Source));
 
             "should pass event id causing transition to event arguments of transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.EventId.ExtractOrThrow().Should().Be(Values.Event));
+                this.receivedTransitionExceptionEventArgs.EventId.ExtractOrThrow()
+                    .Should().Be(Values.Event));
 
             "should pass thrown exception to event arguments of transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.Exception.Should().BeSameAs(Values.Exception));
+                this.receivedTransitionExceptionEventArgs.Exception
+                    .Should().BeEquivalentTo(Values.WrappedException));
 
             "should pass event parameter to event argument of transition exception event".x(() =>
-                this.receivedTransitionExceptionEventArgs.EventArgument.Should().Be(Values.Parameter));
+                this.receivedTransitionExceptionEventArgs.EventArgument
+                    .Should().Be(Values.Parameter));
+
+            "should still go to the destination state".x(() =>
+                this.currentStateExtension.CurrentState
+                    .Should().Be(Values.Destination));
         }
 
         public static class Values
@@ -227,6 +256,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
             public const string Parameter = "oh oh";
 
             public static readonly Exception Exception = new Exception();
+
+            public static readonly WrappedException WrappedException = new WrappedException(Exception);
         }
     }
 }

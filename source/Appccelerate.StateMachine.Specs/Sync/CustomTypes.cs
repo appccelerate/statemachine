@@ -23,8 +23,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
     using Machine;
     using Xbehave;
 
-    //// see http://www.appccelerate.com/statemachinecustomtypes.html for an explanation why states and events have to be IComparable
-    //// and not IEquatable.
     public class CustomTypes
     {
         [Scenario]
@@ -56,7 +54,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 arrivedInStateB.Should().BeTrue("state B should be current state"));
         }
 
-        public class MyState : IComparable
+        public class MyState
         {
             public MyState(string name)
             {
@@ -90,18 +88,13 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 return this.Name != null ? this.Name.GetHashCode() : 0;
             }
 
-            public int CompareTo(object obj)
-            {
-                throw new InvalidOperationException("state machine should not use CompareTo");
-            }
-
             private bool Equals(MyState other)
             {
                 return string.Equals(this.Name, other.Name);
             }
         }
 
-        public class MyEvent : IComparable
+        public class MyEvent
         {
             public MyEvent(int identifier)
             {
@@ -133,11 +126,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
             public override int GetHashCode()
             {
                 return this.Identifier;
-            }
-
-            public int CompareTo(object obj)
-            {
-                throw new InvalidOperationException("state machine should not use CompareTo");
             }
 
             private bool Equals(MyEvent other)

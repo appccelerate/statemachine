@@ -51,13 +51,13 @@ namespace Appccelerate.StateMachine.Specs.Async
             AsyncPassiveStateMachine<string, int> machine,
             StateMachineNameReporter reporter)
         {
-            const string name = "custom name";
+            const string Name = "custom name";
 
             "establish an instantiated passive state machine with custom name".x(()
                 => machine = StateMachineBuilder.ForAsyncMachine<string, int>()
                     .WithInitialState("initial")
                     .Build()
-                    .CreatePassiveStateMachine(name));
+                    .CreatePassiveStateMachine(Name));
 
             "establish a state machine reporter".x(()
                 => reporter = new StateMachineNameReporter());
@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 
             "it should use custom name for the state machine".x(()
                 => reporter.StateMachineName
-                    .Should().Be(name));
+                    .Should().Be(Name));
         }
 
         [Scenario]

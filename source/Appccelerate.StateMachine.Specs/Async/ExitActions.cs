@@ -18,8 +18,6 @@
 
 namespace Appccelerate.StateMachine.Specs.Async
 {
-    using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using AsyncMachine;
     using FluentAssertions;
@@ -161,85 +159,6 @@ namespace Appccelerate.StateMachine.Specs.Async
                     asyncExitAction1Executed,
                     asyncExitAction2Executed
                 }.Should().Equal(true, true, true, true));
-        }
-
-        [Scenario]
-        public void ExceptionHandling(
-            AsyncPassiveStateMachine<int, int> machine,
-            ExceptionExtension<int, int> exceptionExtension,
-            bool exitAction1Executed,
-            bool exitAction2Executed,
-            bool exitAction3Executed,
-            bool exitAction4Executed)
-        {
-            var exception2 = new Exception();
-            var exception3 = new Exception();
-            var exception4 = new Exception();
-            var receivedExceptions = new List<Exception>();
-
-            "establish a state machine with several exit actions on a state and some of them throw an exception".x(() =>
-            {
-                var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
-                stateMachineDefinitionBuilder
-                    .In(State)
-                        .ExecuteOnExit(() => exitAction1Executed = true)
-                        .ExecuteOnExit(() =>
-                            {
-                                exitAction2Executed = true;
-                                throw exception2;
-                            })
-                        .ExecuteOnExit(() =>
-                            {
-                                exitAction3Executed = true;
-                                throw exception3;
-                            })
-                        .ExecuteOnExit(async () =>
-                        {
-                            exitAction4Executed = true;
-                            await Task.Yield();
-                            throw exception4;
-                        })
-                        .On(Event).Goto(AnotherState);
-
-                machine = stateMachineDefinitionBuilder
-                    .WithInitialState(State)
-                    .Build()
-                    .CreatePassiveStateMachine();
-
-                exceptionExtension = new ExceptionExtension<int, int>();
-                machine.AddExtension(exceptionExtension);
-
-                machine.TransitionExceptionThrown += (s, e) => receivedExceptions.Add(e.Exception);
-            });
-
-            "when entering the state".x(async () =>
-            {
-                await machine.Start();
-                await machine.Fire(Event);
-            });
-
-            "it should execute all entry actions on entry".x(()
-            => new[]
-            {
-                exitAction1Executed,
-                exitAction2Executed,
-                exitAction3Executed,
-                exitAction4Executed
-            }.Should().Equal(true, true, true, true));
-
-            "it should notify extensions about the entry action exception and the extension should be able to change the exception".x(() =>
-                exceptionExtension.ExitActionExceptions
-                    .Should().BeEquivalentTo(
-                        new WrappedException(exception2),
-                        new WrappedException(exception3),
-                        new WrappedException(exception4)));
-
-            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
-                receivedExceptions
-                    .Should().BeEquivalentTo(
-                        new WrappedException(exception2),
-                        new WrappedException(exception3),
-                        new WrappedException(exception4)));
         }
 
         [Scenario]

@@ -31,14 +31,14 @@ namespace Appccelerate.StateMachine.Specs.Async
         public void NoCommonAncestor(
             AsyncPassiveStateMachine<string, int> machine)
         {
-            const string sourceState = "SourceState";
-            const string parentOfSourceState = "ParentOfSourceState";
-            const string siblingOfSourceState = "SiblingOfSourceState";
-            const string destinationState = "DestinationState";
-            const string parentOfDestinationState = "ParentOfDestinationState";
-            const string siblingOfDestinationState = "SiblingOfDestinationState";
-            const string grandParentOfSourceState = "GrandParentOfSourceState";
-            const string grandParentOfDestinationState = "GrandParentOfDestinationState";
+            const string SourceState = "SourceState";
+            const string ParentOfSourceState = "ParentOfSourceState";
+            const string SiblingOfSourceState = "SiblingOfSourceState";
+            const string DestinationState = "DestinationState";
+            const string ParentOfDestinationState = "ParentOfDestinationState";
+            const string SiblingOfDestinationState = "SiblingOfDestinationState";
+            const string GrandParentOfSourceState = "GrandParentOfSourceState";
+            const string GrandParentOfDestinationState = "GrandParentOfDestinationState";
             const int Event = 0;
 
             var log = string.Empty;
@@ -48,54 +48,54 @@ namespace Appccelerate.StateMachine.Specs.Async
                 var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<string, int>();
 
                 stateMachineDefinitionBuilder
-                    .DefineHierarchyOn(parentOfSourceState)
+                    .DefineHierarchyOn(ParentOfSourceState)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(sourceState)
-                        .WithSubState(siblingOfSourceState);
+                        .WithInitialSubState(SourceState)
+                        .WithSubState(SiblingOfSourceState);
 
                 stateMachineDefinitionBuilder
-                    .DefineHierarchyOn(parentOfDestinationState)
+                    .DefineHierarchyOn(ParentOfDestinationState)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(destinationState)
-                        .WithSubState(siblingOfDestinationState);
+                        .WithInitialSubState(DestinationState)
+                        .WithSubState(SiblingOfDestinationState);
 
                 stateMachineDefinitionBuilder
-                    .DefineHierarchyOn(grandParentOfSourceState)
+                    .DefineHierarchyOn(GrandParentOfSourceState)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(parentOfSourceState);
+                        .WithInitialSubState(ParentOfSourceState);
 
                 stateMachineDefinitionBuilder
-                    .DefineHierarchyOn(grandParentOfDestinationState)
+                    .DefineHierarchyOn(GrandParentOfDestinationState)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(parentOfDestinationState);
+                        .WithInitialSubState(ParentOfDestinationState);
 
                 stateMachineDefinitionBuilder
-                    .In(sourceState)
-                        .ExecuteOnExit(() => log += "exit" + sourceState)
-                        .On(Event).Goto(destinationState);
+                    .In(SourceState)
+                        .ExecuteOnExit(() => log += "exit" + SourceState)
+                        .On(Event).Goto(DestinationState);
 
                 stateMachineDefinitionBuilder
-                    .In(parentOfSourceState)
-                        .ExecuteOnExit(() => log += "exit" + parentOfSourceState);
+                    .In(ParentOfSourceState)
+                        .ExecuteOnExit(() => log += "exit" + ParentOfSourceState);
 
                 stateMachineDefinitionBuilder
-                    .In(destinationState)
-                        .ExecuteOnEntry(() => log += "enter" + destinationState);
+                    .In(DestinationState)
+                        .ExecuteOnEntry(() => log += "enter" + DestinationState);
 
                 stateMachineDefinitionBuilder
-                    .In(parentOfDestinationState)
-                        .ExecuteOnEntry(() => log += "enter" + parentOfDestinationState);
+                    .In(ParentOfDestinationState)
+                        .ExecuteOnEntry(() => log += "enter" + ParentOfDestinationState);
 
                 stateMachineDefinitionBuilder
-                    .In(grandParentOfSourceState)
-                        .ExecuteOnExit(() => log += "exit" + grandParentOfSourceState);
+                    .In(GrandParentOfSourceState)
+                        .ExecuteOnExit(() => log += "exit" + GrandParentOfSourceState);
 
                 stateMachineDefinitionBuilder
-                    .In(grandParentOfDestinationState)
-                        .ExecuteOnEntry(() => log += "enter" + grandParentOfDestinationState);
+                    .In(GrandParentOfDestinationState)
+                        .ExecuteOnEntry(() => log += "enter" + GrandParentOfDestinationState);
 
                 machine = stateMachineDefinitionBuilder
-                    .WithInitialState(sourceState)
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 
@@ -106,31 +106,31 @@ namespace Appccelerate.StateMachine.Specs.Async
                 => machine.Fire(Event));
 
             "it should execute exit action of source state".x(() =>
-                log.Should().Contain("exit" + sourceState));
+                log.Should().Contain("exit" + SourceState));
 
             "it should execute exit action of parents of source state (recursively)".x(()
                 => log
-                    .Should().Contain("exit" + parentOfSourceState)
-                    .And.Contain("exit" + grandParentOfSourceState));
+                    .Should().Contain("exit" + ParentOfSourceState)
+                    .And.Contain("exit" + GrandParentOfSourceState));
 
             "it should execute entry action of parents of destination state (recursively)".x(()
                 => log
-                    .Should().Contain("enter" + parentOfDestinationState)
-                    .And.Contain("enter" + grandParentOfDestinationState));
+                    .Should().Contain("enter" + ParentOfDestinationState)
+                    .And.Contain("enter" + GrandParentOfDestinationState));
 
             "it should execute entry action of destination state".x(()
-                => log.Should().Contain("enter" + destinationState));
+                => log.Should().Contain("enter" + DestinationState));
 
             "it should execute actions from source upwards and then downwards to destination state".x(() =>
             {
                 string[] states =
                     {
-                        sourceState,
-                        parentOfSourceState,
-                        grandParentOfSourceState,
-                        grandParentOfDestinationState,
-                        parentOfDestinationState,
-                        destinationState
+                        SourceState,
+                        ParentOfSourceState,
+                        GrandParentOfSourceState,
+                        GrandParentOfDestinationState,
+                        ParentOfDestinationState,
+                        DestinationState
                     };
 
                 var statesInOrderOfAppearanceInLog = states
@@ -144,13 +144,13 @@ namespace Appccelerate.StateMachine.Specs.Async
         public void CommonAncestor(
             AsyncPassiveStateMachine<int, int> machine)
         {
-            const int commonAncestorState = 0;
-            const int sourceState = 1;
-            const int parentOfSourceState = 2;
-            const int siblingOfSourceState = 3;
-            const int destinationState = 4;
-            const int parentOfDestinationState = 5;
-            const int siblingOfDestinationState = 6;
+            const int CommonAncestorState = 0;
+            const int SourceState = 1;
+            const int ParentOfSourceState = 2;
+            const int SiblingOfSourceState = 3;
+            const int DestinationState = 4;
+            const int ParentOfDestinationState = 5;
+            const int SiblingOfDestinationState = 6;
             const int Event = 0;
 
             var commonAncestorStateLeft = false;
@@ -160,33 +160,33 @@ namespace Appccelerate.StateMachine.Specs.Async
                 var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<int, int>();
 
                 stateMachineDefinitionBuilder
-                    .DefineHierarchyOn(commonAncestorState)
+                    .DefineHierarchyOn(CommonAncestorState)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(parentOfSourceState)
-                        .WithSubState(parentOfDestinationState);
+                        .WithInitialSubState(ParentOfSourceState)
+                        .WithSubState(ParentOfDestinationState);
 
                 stateMachineDefinitionBuilder
-                    .DefineHierarchyOn(parentOfSourceState)
+                    .DefineHierarchyOn(ParentOfSourceState)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(sourceState)
-                        .WithSubState(siblingOfSourceState);
+                        .WithInitialSubState(SourceState)
+                        .WithSubState(SiblingOfSourceState);
 
                 stateMachineDefinitionBuilder
-                    .DefineHierarchyOn(parentOfDestinationState)
+                    .DefineHierarchyOn(ParentOfDestinationState)
                         .WithHistoryType(HistoryType.None)
-                        .WithInitialSubState(destinationState)
-                        .WithSubState(siblingOfDestinationState);
+                        .WithInitialSubState(DestinationState)
+                        .WithSubState(SiblingOfDestinationState);
 
                 stateMachineDefinitionBuilder
-                    .In(sourceState)
-                        .On(Event).Goto(destinationState);
+                    .In(SourceState)
+                        .On(Event).Goto(DestinationState);
 
                 stateMachineDefinitionBuilder
-                    .In(commonAncestorState)
+                    .In(CommonAncestorState)
                         .ExecuteOnExit(() => commonAncestorStateLeft = true);
 
                 machine = stateMachineDefinitionBuilder
-                    .WithInitialState(sourceState)
+                    .WithInitialState(SourceState)
                     .Build()
                     .CreatePassiveStateMachine();
 

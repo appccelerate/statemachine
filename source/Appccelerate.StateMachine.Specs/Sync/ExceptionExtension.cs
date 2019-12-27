@@ -35,6 +35,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
 
         public List<Exception> ExitActionExceptions { get; } = new List<Exception>();
 
+        public List<Exception> TransitionActionExceptions { get; } = new List<Exception>();
+
         public override void HandlingGuardException(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> transitionContext, ref Exception exception)
         {
             exception = new WrappedException(exception);
@@ -63,6 +65,16 @@ namespace Appccelerate.StateMachine.Specs.Sync
         public override void HandledExitActionException(IStateMachineInformation<TState, TEvent> stateMachine, IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, Exception exception)
         {
             this.ExitActionExceptions.Add(exception);
+        }
+
+        public override void HandlingTransitionException(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> context, ref Exception exception)
+        {
+            exception = new WrappedException(exception);
+        }
+
+        public override void HandledTransitionException(IStateMachineInformation<TState, TEvent> stateMachine, ITransitionDefinition<TState, TEvent> transitionDefinition, ITransitionContext<TState, TEvent> transitionContext, Exception exception)
+        {
+            this.TransitionActionExceptions.Add(exception);
         }
     }
 }

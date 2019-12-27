@@ -18,8 +18,6 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
-    using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using Machine;
     using Xbehave;
@@ -125,77 +123,6 @@ namespace Appccelerate.StateMachine.Specs.Sync
                 exitAction2Executed
                     .Should().BeTrue("second action should be executed");
             });
-        }
-
-        [Scenario]
-        public void ExceptionHandling(
-            PassiveStateMachine<int, int> machine,
-            ExceptionExtension<int, int> exceptionExtension,
-            bool exitAction1Executed,
-            bool exitAction2Executed,
-            bool exitAction3Executed)
-        {
-            var exception2 = new Exception();
-            var exception3 = new Exception();
-            var receivedExceptions = new List<Exception>();
-
-            "establish a state machine with several exit actions on a state and some of them throw an exception".x(() =>
-            {
-                var stateMachineDefinitionBuilder = StateMachineBuilder.ForMachine<int, int>();
-                stateMachineDefinitionBuilder
-                    .In(State)
-                        .ExecuteOnExit(() => exitAction1Executed = true)
-                        .ExecuteOnExit(() =>
-                        {
-                            exitAction2Executed = true;
-                            throw exception2;
-                        })
-                        .ExecuteOnExit(() =>
-                        {
-                            exitAction3Executed = true;
-                            throw exception3;
-                        })
-                        .On(Event).Goto(AnotherState);
-                machine = stateMachineDefinitionBuilder
-                    .WithInitialState(State)
-                    .Build()
-                    .CreatePassiveStateMachine();
-
-                exceptionExtension = new ExceptionExtension<int, int>();
-                machine.AddExtension(exceptionExtension);
-
-                machine.TransitionExceptionThrown += (s, e) => receivedExceptions.Add(e.Exception);
-            });
-
-            "when entering the state".x(() =>
-            {
-                machine.Start();
-                machine.Fire(Event);
-            });
-
-            "it should execute all entry actions on entry".x(() =>
-            {
-                exitAction1Executed
-                    .Should().BeTrue("action 1 should be executed");
-
-                exitAction2Executed
-                    .Should().BeTrue("action 2 should be executed");
-
-                exitAction3Executed
-                    .Should().BeTrue("action 3 should be executed");
-            });
-
-            "it should notify extensions about the entry action exception and the extension should be able to change the exception".x(() =>
-                exceptionExtension.ExitActionExceptions
-                    .Should().BeEquivalentTo(
-                        new WrappedException(exception2),
-                        new WrappedException(exception3)));
-
-            "it should handle all exceptions of all throwing entry actions by firing the TransitionExceptionThrown event".x(() =>
-                receivedExceptions
-                    .Should().BeEquivalentTo(
-                        new WrappedException(exception2),
-                        new WrappedException(exception3)));
         }
 
         [Scenario]
