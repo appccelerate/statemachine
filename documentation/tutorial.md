@@ -2,10 +2,10 @@
 The examples use the enums `States` and `Events` that define the available states and events.
 
 ## Define the State Machine
-We use the `StateMachineDefinitionBuilder` to define our state machine. Use the one from the `AsyncMachine` namespace for state machines with support for async/await or the one from the `Machine` namespace for state machines without async/await.
+We use the `StateMachineBuilder` to define our state machine. You can find it in the namespace `Appccelerate.StateMachine`. Either use `ForAsyncMachine<TState, TEvent>` or `ForMachine<TState, TEvent>()`  for state machines with support for async/await or without.
 
 ```c#
-var builder = new StateMachineDefinitionBuilder<int, int>();
+var builder = StateMachineBuilder.ForMachine<int, int>(); // we use a state machine without async support in the tutorial
 ```
 
 ### Define Transitions

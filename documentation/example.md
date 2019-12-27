@@ -32,7 +32,7 @@ using Appccelerate.StateMachine.Machine;
 
         public Elevator()
         {
-            var builder = new StateMachineDefinitionBuilder<States, Events>();
+            var builder = new StateMachineBuilder.ForMachine<States, Events>();
 
             builder.DefineHierarchyOn(States.Healthy)
                 .WithHistoryType(HistoryType.Deep)
