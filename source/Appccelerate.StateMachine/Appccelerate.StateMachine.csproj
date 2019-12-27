@@ -32,6 +32,10 @@
       state machine report for description of state machine (csv, yEd)
     </description>
     <PackageReleaseNotes>
+      6.0.0:
+      - support for nullable reference types. 
+        Because a lot of internals had to change, the code was cleaned-up as a whole and namespace changes were introduced as a side-effect.
+        There is a new entry point for defining a state machine called StateMachineBuilder in namespace Appccelerate.StateMachine. See also migration docu on github https://github.com/appccelerate/statemachine/blob/master/documentation/migratingToV6.md 
       5.1.0:
       - completely redesigned the state machine definition API.
         You can now define a state machine definition and then spawn state machine instances from the definition.
