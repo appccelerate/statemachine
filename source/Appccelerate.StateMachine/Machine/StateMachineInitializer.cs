@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.Machine
 {
-    using System;
     using System.Collections.Generic;
     using States;
 
@@ -49,9 +48,15 @@ namespace Appccelerate.StateMachine.Machine
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
             var stack = this.TraverseUpTheStateHierarchy();
-            this.TraverseDownTheStateHierarchyAndEnterStates(stateLogic, stack);
+            this.TraverseDownTheStateHierarchyAndEnterStates(
+                stateLogic,
+                stack);
 
-            return stateLogic.EnterByHistory(this.initialState, this.context, lastActiveStateModifier, stateDefinitions);
+            return stateLogic.EnterByHistory(
+                this.initialState,
+                this.context,
+                lastActiveStateModifier,
+                stateDefinitions);
         }
 
         /// <summary>
@@ -79,7 +84,9 @@ namespace Appccelerate.StateMachine.Machine
             while (stack.Count > 0)
             {
                 var state = stack.Pop();
-                stateLogic.Entry(state, this.context);
+                stateLogic.Entry(
+                    state,
+                    this.context);
             }
         }
     }

@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Machine.Transitions
 {
     using System;
+    using Appccelerate.StateMachine.Machine.Extensions;
     using States;
 
     public class TransitionLogic<TState, TEvent>
@@ -87,7 +88,9 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             else
             {
                 newState = context.StateDefinition!.Id;
-                this.PerformActions(transitionDefinition, context);
+                this.PerformActions(
+                    transitionDefinition,
+                    context);
             }
 
             this.extensionHost.ForEach(extension => extension.ExecutedTransition(
@@ -149,22 +152,45 @@ namespace Appccelerate.StateMachine.Machine.Transitions
             {
                 // Handles 1.
                 // Handles 3. after traversing from the source to the target.
-                this.stateLogic.Exit(source, context, lastActiveStateModifier);
-                this.PerformActions(transitionDefinition, context);
-                this.stateLogic.Entry(transitionDefinition.Target, context);
+                this.stateLogic
+                    .Exit(
+                        source,
+                        context,
+                        lastActiveStateModifier);
+
+                this.PerformActions(
+                    transitionDefinition,
+                    context);
+
+                this.stateLogic
+                    .Entry(
+                        transitionDefinition.Target,
+                        context);
             }
             else if (source == target)
             {
                 // Handles 2. after traversing from the target to the source.
-                this.PerformActions(transitionDefinition, context);
+                this.PerformActions(
+                    transitionDefinition,
+                    context);
             }
             else if (source.SuperState == target.SuperState)
             {
                 //// Handles 4.
                 //// Handles 5a. after traversing the hierarchy until a common ancestor if found.
-                this.stateLogic.Exit(source, context, lastActiveStateModifier);
-                this.PerformActions(transitionDefinition, context);
-                this.stateLogic.Entry(target, context);
+                this.stateLogic.Exit(
+                    source,
+                    context,
+                    lastActiveStateModifier);
+
+                this.PerformActions(
+                    transitionDefinition,
+                    context);
+
+                this.stateLogic
+                    .Entry(
+                        target,
+                        context);
             }
             else
             {
@@ -174,22 +200,55 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                 // Handles 5b.
                 if (source.Level > target.Level)
                 {
-                    this.stateLogic.Exit(source, context, lastActiveStateModifier);
-                    this.Fire(transitionDefinition, source.SuperState!, target, context, lastActiveStateModifier);
+                    this.stateLogic
+                        .Exit(
+                            source,
+                            context,
+                            lastActiveStateModifier);
+
+                    this.Fire(
+                        transitionDefinition,
+                        source.SuperState!,
+                        target,
+                        context,
+                        lastActiveStateModifier);
                 }
                 else if (source.Level < target.Level)
                 {
                     // Handles 2.
                     // Handles 5c.
-                    this.Fire(transitionDefinition, source, target.SuperState!, context, lastActiveStateModifier);
-                    this.stateLogic.Entry(target, context);
+                    this.Fire(
+                        transitionDefinition,
+                        source,
+                        target.SuperState!,
+                        context,
+                        lastActiveStateModifier);
+
+                    this.stateLogic
+                        .Entry(
+                            target,
+                            context);
                 }
                 else
                 {
                     // Handles 5a.
-                    this.stateLogic.Exit(source, context, lastActiveStateModifier);
-                    this.Fire(transitionDefinition, source.SuperState!, target.SuperState!, context, lastActiveStateModifier);
-                    this.stateLogic.Entry(target, context);
+                    this.stateLogic
+                        .Exit(
+                            source,
+                            context,
+                            lastActiveStateModifier);
+
+                    this.Fire(
+                        transitionDefinition,
+                        source.SuperState!,
+                        target.SuperState!,
+                        context,
+                        lastActiveStateModifier);
+
+                    this.stateLogic
+                        .Entry(
+                            target,
+                            context);
                 }
             }
         }
@@ -200,7 +259,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
         {
             try
             {
-                return transitionDefinition.Guard == null || transitionDefinition.Guard.Execute(context.EventArgument);
+                return transitionDefinition.Guard == null
+                       || transitionDefinition.Guard.Execute(context.EventArgument);
             }
             catch (Exception exception)
             {
@@ -229,7 +289,9 @@ namespace Appccelerate.StateMachine.Machine.Transitions
                     this.extensionHost.ForEach(extension =>
                         extension.HandlingTransitionException(transitionDefinition, context, ref exception));
 
-                    HandleException(exception, context);
+                    HandleException(
+                        exception,
+                        context);
 
                     this.extensionHost.ForEach(extension =>
                         extension.HandledTransitionException(transitionDefinition, context, exception));

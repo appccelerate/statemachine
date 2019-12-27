@@ -22,13 +22,15 @@ namespace Appccelerate.StateMachine
 
     public class Option<T>
     {
-        public static Option<T> Some(T value) => new Option<T>(new[] { value });
+        public static Option<T> Some(T value)
+            => new Option<T>(new[] { value });
 
-        public static Option<T> None => new Option<T>(new T[0]);
+        public static Option<T> None
+            => new Option<T>(new T[0]);
 
         private readonly IEnumerable<T> values;
 
-        public Option(
+        private Option(
             IEnumerable<T> values)
         {
             this.values = values;
@@ -42,7 +44,7 @@ namespace Appccelerate.StateMachine
 
         private T Value
             => !this.IsSome
-                ? throw new InvalidOperationException("Maybe does not have a value")
+                ? throw new InvalidOperationException("Option does not have a value")
                 : this.values.Single();
 
         public Option<T2> Map<T2>(Func<T, T2> f)

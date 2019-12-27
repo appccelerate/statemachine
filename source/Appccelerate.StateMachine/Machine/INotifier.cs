@@ -21,7 +21,7 @@ namespace Appccelerate.StateMachine.Machine
     using System;
 
     /// <summary>
-    /// Provides functionalities to notify events.
+    /// Provides functionality to notify events.
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <typeparam name="TEvent">The type of the event.</typeparam>

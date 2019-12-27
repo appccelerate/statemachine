@@ -16,25 +16,24 @@
 
 namespace Appccelerate.StateMachine.Machine.Building
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using Appccelerate.StateMachine.Machine.ActionHolders;
     using Appccelerate.StateMachine.Machine.GuardHolders;
-    using Appccelerate.StateMachine.Machine.Transitions;
 
     public class BuildableTransitionDefinition<TState, TEvent>
         where TState : notnull
         where TEvent : notnull
     {
-        public BuildableTransitionDefinition(TEvent @event)
+        public BuildableTransitionDefinition(
+            TEvent @event)
         {
             this.Event = @event;
         }
 
         public BuildableStateDefinition<TState, TEvent>? Source { get; set; }
 
-        public TEvent Event { get; set; }
+        public TEvent Event { get; }
 
         public BuildableStateDefinition<TState, TEvent>? Target { get; set; }
 
@@ -42,25 +41,15 @@ namespace Appccelerate.StateMachine.Machine.Building
 
         public ICollection<IActionHolder> ActionsModifiable { get; } = new List<IActionHolder>();
 
-        public bool IsInternalTransition => this.Target == null;
+        public IEnumerable<IActionHolder> Actions => this.ActionsModifiable;
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Transition from state {0} to state {1}.",
+                this.Source,
+                this.Target);
         }
-
-        public IEnumerable<IActionHolder> Actions => this.ActionsModifiable;
-
-        // private ITransitionDefinition<TState, TEvent>? transitionDefinition;
-
-        // public ITransitionDefinition<TState, TEvent> AsTransitionDefinition()
-        // {
-        //     return this.transitionDefinition ??= new TransitionDefinition<TState, TEvent>(
-        //         this.Source.AsStateDefinition(),
-        //         this.Event,
-        //         this.Target?.AsStateDefinition(),
-        //         this.Guard,
-        //         this.Actions);
-        // }
     }
 }

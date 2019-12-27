@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 {
     using System;
     using System.Threading.Tasks;
-    using Appccelerate.StateMachine.AsyncMachine.Events;
+    using Appccelerate.StateMachine.AsyncMachine.Transitions;
     using AsyncMachine;
     using FluentAssertions;
     using Xbehave;

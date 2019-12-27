@@ -37,7 +37,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Building
             action
                 .Should()
                 .Throw<ArgumentException>()
-                .WithMessage(StatesExceptionMessages.StateCannotBeItsOwnSuperState(testee.ToString()));
+                .WithMessage(BuildingExceptionMessages.StateCannotBeItsOwnSuperState(testee.ToString()));
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Building
             action
                 .Should()
                 .Throw<ArgumentException>()
-                .WithMessage(StatesExceptionMessages.StateCannotBeTheInitialSubStateToItself(testee.ToString()));
+                .WithMessage(BuildingExceptionMessages.StateCannotBeTheInitialSubStateToItself(testee.ToString()));
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace Appccelerate.StateMachine.Facts.Machine.Building
             action
                 .Should()
                 .Throw<ArgumentException>()
-                .WithMessage(StatesExceptionMessages.StateCannotBeTheInitialStateOfSuperStateBecauseItIsNotADirectSubState(initialState.ToString(), testee.ToString()));
+                .WithMessage(BuildingExceptionMessages.StateCannotBeTheInitialStateOfSuperStateBecauseItIsNotADirectSubState(initialState.ToString(), testee.ToString()));
         }
 
         [Fact]

@@ -18,13 +18,14 @@
 
 namespace Appccelerate.StateMachine.Machine
 {
-    using System;
-
     public interface ILastActiveStateModifier<TState>
         where TState : notnull
     {
-        Option<TState> GetLastActiveStateFor(TState state);
+        Option<TState> GetLastActiveStateFor(
+            TState state);
 
-        void SetLastActiveStateFor(TState state, TState newLastActiveState);
+        void SetLastActiveStateFor(
+            TState state,
+            TState newLastActiveState);
     }
 }

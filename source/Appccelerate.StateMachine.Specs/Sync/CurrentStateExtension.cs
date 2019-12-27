@@ -18,9 +18,9 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
+    using Appccelerate.StateMachine.Machine.Extensions;
     using JetBrains.Annotations;
     using Machine.States;
-    using StateMachine.Extensions;
 
     public class CurrentStateExtension : ExtensionBase<int, int>
     {

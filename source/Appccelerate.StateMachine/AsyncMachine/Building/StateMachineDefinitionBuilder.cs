@@ -21,9 +21,9 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Appccelerate.StateMachine.AsyncMachine.Building.Syntax;
     using Appccelerate.StateMachine.AsyncMachine.States;
     using Appccelerate.StateMachine.AsyncMachine.Transitions;
-    using Appccelerate.StateMachine.AsyncSyntax;
 
     public class StateMachineDefinitionBuilder<TState, TEvent>
         where TState : notnull
@@ -62,7 +62,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         public StateMachineDefinition<TState, TEvent> Build()
         {
             var safeInitialState = this.initialState.ExtractOrThrow(() =>
-                throw new InvalidOperationException(ExceptionMessages.InitialStateNotConfigured));
+                throw new InvalidOperationException(BuildingExceptionMessages.InitialStateNotConfigured));
 
             var states = this.stateDefinitionDictionary.GetBuildableStateDefinitions();
 

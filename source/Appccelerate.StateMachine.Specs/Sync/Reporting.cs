@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.Machine.Reports;
     using FakeItEasy;
     using Machine;
     using Machine.States;

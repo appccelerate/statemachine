@@ -37,7 +37,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
 
         private readonly ITransitionContext<TState, TEvent> context;
 
-        public StateMachineInitializer(IStateDefinition<TState, TEvent> initialState, ITransitionContext<TState, TEvent> context)
+        public StateMachineInitializer(
+            IStateDefinition<TState, TEvent> initialState,
+            ITransitionContext<TState, TEvent> context)
         {
             this.initialState = initialState;
             this.context = context;
@@ -49,10 +51,17 @@ namespace Appccelerate.StateMachine.AsyncMachine
             IStateDefinitionDictionary<TState, TEvent> stateDefinitions)
         {
             var stack = this.TraverseUpTheStateHierarchy();
-            await this.TraverseDownTheStateHierarchyAndEnterStates(stateLogic, stack)
+            await this.TraverseDownTheStateHierarchyAndEnterStates(
+                    stateLogic,
+                    stack)
                 .ConfigureAwait(false);
 
-            return await stateLogic.EnterByHistory(this.initialState, this.context, lastActiveStateModifier, stateDefinitions)
+            return await stateLogic
+                .EnterByHistory(
+                    this.initialState,
+                    this.context,
+                    lastActiveStateModifier,
+                    stateDefinitions)
                 .ConfigureAwait(false);
         }
 
@@ -81,7 +90,10 @@ namespace Appccelerate.StateMachine.AsyncMachine
             while (stack.Count > 0)
             {
                 var state = stack.Pop();
-                await stateLogic.Entry(state, this.context)
+                await stateLogic
+                    .Entry(
+                        state,
+                        this.context)
                     .ConfigureAwait(false);
             }
         }

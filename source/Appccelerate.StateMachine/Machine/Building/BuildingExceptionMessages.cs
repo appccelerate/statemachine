@@ -22,42 +22,12 @@ namespace Appccelerate.StateMachine.Machine.Building
     using System.Globalization;
     using States;
 
-    // TODO: check for unused code
-    /// <summary>
-    /// Holds all exception messages.
-    /// </summary>
     public static class BuildingExceptionMessages
     {
         public const string InitialStateNotConfigured = "Initial state is not configured.";
 
-        /// <summary>
-        /// Value is not initialized.
-        /// </summary>
-        public const string ValueNotInitialized = "Value is not initialized";
-
-        /// <summary>
-        /// Value is already initialized.
-        /// </summary>
-        public const string ValueAlreadyInitialized = "Value is already initialized";
-
-        /// <summary>
-        /// State machine is already initialized.
-        /// </summary>
-        public const string StateMachineIsAlreadyInitialized = "state machine is already initialized";
-
-        /// <summary>
-        /// State machine has not yet entered initial state.
-        /// </summary>
-        public const string StateMachineHasNotYetEnteredInitialState = "Initial state is not yet entered.";
-
-        /// <summary>
-        /// There must not be more than one transition for a single event of a state with no guard.
-        /// </summary>
         public const string OnlyOneTransitionMayHaveNoGuard = "There must not be more than one transition for a single event of a state with no guard.";
 
-        /// <summary>
-        /// Transition without guard has to be last declared one.
-        /// </summary>
         public const string TransitionWithoutGuardHasToBeLast = "The transition without guard has to be the last defined transition because state machine checks transitions in order of declaration.";
 
         public const string CannotSetALastActiveStateThatIsNotASubState = "The state that is set as the last active state of a super state has to be a sub state";
@@ -78,13 +48,41 @@ namespace Appccelerate.StateMachine.Machine.Building
                 stateAlreadyHavingASuperState.SuperState!.Id);
         }
 
-        public static string CannotFindStateDefinition<TState>(TState state)
-            where TState : notnull
+        public static string StateCannotBeItsOwnSuperState(string state)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "State {0} cannot be its own super-state.", state);
+        }
+
+        public static string StateCannotBeTheInitialSubStateToItself(string state)
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture, "State {0} cannot be the initial sub-state to itself.", state);
+        }
+
+        public static string StateCannotBeTheInitialStateOfSuperStateBecauseItIsNotADirectSubState(
+            string state, string superState)
         {
             return string.Format(
                 CultureInfo.InvariantCulture,
-                "Cannot find StateDefinition for state {0}. Are you sure you have configured this state via myStateDefinitionBuilder.In(..) or myStateDefinitionBuilder.DefineHierarchyOn(..)?",
-                state);
+                "State {0} cannot be the initial state of super state {1} because it is not a direct sub-state.",
+                state,
+                superState);
+        }
+
+        public static string TransitionDoesAlreadyExist<TState, TEvent>(
+            BuildableTransitionDefinition<TState, TEvent> transition,
+            BuildableStateDefinition<TState, TEvent> state)
+            where TState : notnull
+            where TEvent : notnull
+        {
+            Guard.AgainstNullArgument("transition", transition);
+
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Transition {0} cannot be added to the state {1} because it has already been added to the state {2}.",
+                transition,
+                state,
+                transition.Source);
         }
     }
 }

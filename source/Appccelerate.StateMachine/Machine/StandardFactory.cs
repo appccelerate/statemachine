@@ -20,8 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using ActionHolders;
-    using Contexts;
-    using Events;
+    using Appccelerate.StateMachine.Machine.Transitions;
     using GuardHolders;
     using States;
 

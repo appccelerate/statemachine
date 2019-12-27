@@ -28,7 +28,8 @@ namespace Appccelerate.StateMachine.Machine
     {
         private readonly IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions;
 
-        public StateDefinitionDictionary(IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions)
+        public StateDefinitionDictionary(
+            IReadOnlyDictionary<TState, IStateDefinition<TState, TEvent>> stateDefinitions)
         {
             this.stateDefinitions = stateDefinitions;
         }

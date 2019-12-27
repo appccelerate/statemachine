@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.Machine.States
 {
-    using System;
     using System.Collections.Generic;
     using ActionHolders;
     using Transitions;

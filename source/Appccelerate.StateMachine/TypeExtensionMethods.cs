@@ -27,7 +27,8 @@ namespace Appccelerate.StateMachine
         /// </summary>
         /// <param name="type">The type whose full name is formatted.</param>
         /// <returns>A correctly formatted full name.</returns>
-        public static string FullNameToString(this Type type)
+        public static string FullNameToString(
+            this Type type)
         {
             Guard.AgainstNullArgument(nameof(type), type);
 
@@ -36,9 +37,22 @@ namespace Appccelerate.StateMachine
                 return type.FullName;
             }
 
-            var partName = type.FullName?.Substring(0, type.FullName.IndexOf('`'));
-            var genericArgumentNames = type.GetTypeInfo().GenericTypeArguments.Select(arg => arg.FullNameToString());
-            return string.Concat(partName, "<", string.Join(",", genericArgumentNames), ">");
+            var partName = type.FullName?.Substring(
+                0,
+                type.FullName.IndexOf('`'));
+
+            var genericArgumentNames = type
+                .GetTypeInfo()
+                .GenericTypeArguments
+                .Select(arg => arg.FullNameToString());
+
+            return string.Concat(
+                partName,
+                "<",
+                string.Join(
+                    ",",
+                    genericArgumentNames),
+                ">");
         }
     }
 }

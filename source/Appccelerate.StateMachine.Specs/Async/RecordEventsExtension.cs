@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
     using AsyncMachine;
 
     public class RecordEventsExtension : AsyncExtensionBase<int, int>

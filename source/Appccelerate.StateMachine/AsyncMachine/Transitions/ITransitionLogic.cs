@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
-    using System;
     using System.Threading.Tasks;
 
     public interface ITransitionLogic<TState, TEvent>

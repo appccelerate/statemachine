@@ -24,7 +24,8 @@ namespace Appccelerate.StateMachine
 
     public static class MethodNameExtractor
     {
-        public static string ExtractMethodNameOrAnonymous(MethodInfo methodInfo)
+        public static string ExtractMethodNameOrAnonymous(
+            MethodInfo methodInfo)
         {
             return
                 IsLambda(methodInfo)
@@ -32,7 +33,8 @@ namespace Appccelerate.StateMachine
                     : methodInfo.Name;
         }
 
-        private static bool IsLambda(MethodInfo methodInfo)
+        private static bool IsLambda(
+            MethodInfo methodInfo)
         {
             return methodInfo
                 .DeclaringType

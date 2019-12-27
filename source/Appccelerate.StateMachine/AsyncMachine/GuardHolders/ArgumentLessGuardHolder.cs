@@ -35,7 +35,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// Initializes a new instance of the <see cref="ArgumentLessGuardHolder"/> class.
         /// </summary>
         /// <param name="guard">The guard.</param>
-        public ArgumentLessGuardHolder(Func<bool> guard)
+        public ArgumentLessGuardHolder(
+            Func<bool> guard)
         {
             this.originalGuardMethodInfo = guard.GetMethodInfo();
             this.guard = () => Task.FromResult(guard());
@@ -45,7 +46,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// Initializes a new instance of the <see cref="ArgumentLessGuardHolder"/> class.
         /// </summary>
         /// <param name="guard">The guard.</param>
-        public ArgumentLessGuardHolder(Func<Task<bool>> guard)
+        public ArgumentLessGuardHolder(
+            Func<Task<bool>> guard)
         {
             this.originalGuardMethodInfo = guard.GetMethodInfo();
             this.guard = guard;
@@ -58,7 +60,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <returns>Result of the guard execution.</returns>
         public async Task<bool> Execute(object? argument)
         {
-            return await this.guard().ConfigureAwait(false);
+            return await this.guard()
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -67,7 +70,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <returns>Description of the guard.</returns>
         public string Describe()
         {
-            return ExtractMethodNameOrAnonymous(this.originalGuardMethodInfo);
+            return ExtractMethodNameOrAnonymous(
+                this.originalGuardMethodInfo);
         }
     }
 }

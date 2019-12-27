@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.Machine
 {
-    using System;
     using System.Collections.Generic;
     using States;
 

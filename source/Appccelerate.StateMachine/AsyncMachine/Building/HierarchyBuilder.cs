@@ -20,7 +20,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.AsyncSyntax;
+    using Appccelerate.StateMachine.AsyncMachine.Building.Syntax;
 
     public class HierarchyBuilder<TState, TEvent> :
         IHierarchySyntax<TState>,

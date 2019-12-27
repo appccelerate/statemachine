@@ -19,8 +19,10 @@
 namespace Appccelerate.StateMachine.Machine
 {
     using System;
-    using Machine.Events;
-    using Persistence;
+    using Appccelerate.StateMachine.Machine.Extensions;
+    using Appccelerate.StateMachine.Machine.Persistence;
+    using Appccelerate.StateMachine.Machine.Reports;
+    using Appccelerate.StateMachine.Machine.Transitions;
 
     /// <summary>
     /// A state machine.

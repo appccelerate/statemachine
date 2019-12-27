@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.Specs.Sync
     using System.Collections.Generic;
     using System.Net.NetworkInformation;
     using Appccelerate.StateMachine.Machine.Building;
+    using Appccelerate.StateMachine.Machine.Extensions;
     using FakeItEasy;
     using FluentAssertions;
     using Machine;

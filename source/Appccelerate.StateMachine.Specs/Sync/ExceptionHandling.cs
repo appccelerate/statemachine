@@ -20,9 +20,9 @@ namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using Appccelerate.StateMachine.Machine.Building;
+    using Appccelerate.StateMachine.Machine.Transitions;
     using FluentAssertions;
     using Machine;
-    using Machine.Events;
     using Xbehave;
 
     public class ExceptionHandling

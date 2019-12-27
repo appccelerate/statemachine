@@ -23,11 +23,12 @@ namespace Appccelerate.StateMachine.Facts.Machine
     using System.Linq;
     using System.Threading;
     using Appccelerate.StateMachine.Machine.Building;
+    using Appccelerate.StateMachine.Machine.Extensions;
+    using Appccelerate.StateMachine.Machine.Persistence;
+    using Appccelerate.StateMachine.Machine.Transitions;
     using FakeItEasy;
     using FluentAssertions;
-    using Persistence;
     using StateMachine.Machine;
-    using StateMachine.Machine.Events;
     using Xunit;
 
     /// <summary>

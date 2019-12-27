@@ -22,7 +22,9 @@ namespace Appccelerate.StateMachine.Machine
 
     public class StateMachineException : Exception
     {
-        public StateMachineException(string message, Exception innerException)
+        public StateMachineException(
+            string message,
+            Exception innerException)
             : base(message, innerException)
         {
         }

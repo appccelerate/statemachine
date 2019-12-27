@@ -19,7 +19,6 @@
 namespace Appccelerate.StateMachine.Facts
 {
     using System;
-    using Extensions;
     using FakeItEasy;
     using Machine;
     using StateMachine.Machine;

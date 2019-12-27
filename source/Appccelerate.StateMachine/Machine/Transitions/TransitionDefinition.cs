@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.Machine.Transitions
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
 
@@ -26,7 +25,8 @@ namespace Appccelerate.StateMachine.Machine.Transitions
     using GuardHolders;
     using States;
 
-    public class TransitionDefinition<TState, TEvent> : ITransitionDefinition<TState, TEvent>
+    public class TransitionDefinition<TState, TEvent>
+        : ITransitionDefinition<TState, TEvent>
         where TState : notnull
         where TEvent : notnull
     {
@@ -58,7 +58,11 @@ namespace Appccelerate.StateMachine.Machine.Transitions
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Transition from state {0} to state {1}.",
+                this.Source,
+                this.Target);
         }
     }
 }

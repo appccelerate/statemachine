@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
 
@@ -58,7 +57,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Transition from state {0} to state {1}.",
+                this.Source,
+                this.Target);
         }
     }
 }

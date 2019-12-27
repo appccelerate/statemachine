@@ -51,7 +51,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.State
             action
                 .Should()
                 .Throw<ArgumentException>()
-                .WithMessage(StatesExceptionMessages.StateCannotBeTheInitialSubStateToItself(testee.ToString()));
+                .WithMessage(BuildingExceptionMessages.StateCannotBeTheInitialSubStateToItself(testee.ToString()));
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.State
             action
                 .Should()
                 .Throw<ArgumentException>()
-                .WithMessage(StatesExceptionMessages.StateCannotBeTheInitialStateOfSuperStateBecauseItIsNotADirectSubState(initialState.ToString(), testee.ToString()));
+                .WithMessage(BuildingExceptionMessages.StateCannotBeTheInitialStateOfSuperStateBecauseItIsNotADirectSubState(initialState.ToString(), testee.ToString()));
         }
 
         [Fact]

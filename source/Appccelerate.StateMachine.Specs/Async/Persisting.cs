@@ -24,10 +24,11 @@ namespace Appccelerate.StateMachine.Specs.Async
     using System.Threading;
     using System.Threading.Tasks;
     using Appccelerate.StateMachine.AsyncMachine.Building;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
+    using Appccelerate.StateMachine.AsyncMachine.Persistence;
     using AsyncMachine;
     using FakeItEasy;
     using FluentAssertions;
-    using Persistence;
     using Specs;
     using Xbehave;
     using ExceptionMessages = Machine.ExceptionMessages;

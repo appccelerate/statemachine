@@ -28,13 +28,15 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
         private readonly MethodInfo originalActionMethodInfo;
         private readonly Func<T, Task> action;
 
-        public ArgumentActionHolder(Func<T, Task> action)
+        public ArgumentActionHolder(
+            Func<T, Task> action)
         {
             this.originalActionMethodInfo = action.GetMethodInfo();
             this.action = action;
         }
 
-        public ArgumentActionHolder(Action<T> action)
+        public ArgumentActionHolder(
+            Action<T> action)
         {
             this.originalActionMethodInfo = action.GetMethodInfo();
             this.action = argument =>
@@ -44,7 +46,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
             };
         }
 
-        public async Task Execute(object? argument)
+        public async Task Execute(
+            object? argument)
         {
             var castArgument = argument switch
             {
@@ -55,7 +58,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
                         this.Describe()))
             };
 
-            await this.action(castArgument).ConfigureAwait(false);
+            await this.action(castArgument)
+                .ConfigureAwait(false);
         }
 
         public string Describe()

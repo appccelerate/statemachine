@@ -35,7 +35,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// Initializes a new instance of the <see cref="ArgumentGuardHolder{T}"/> class.
         /// </summary>
         /// <param name="guard">The guard.</param>
-        public ArgumentGuardHolder(Func<T, bool> guard)
+        public ArgumentGuardHolder(
+            Func<T, bool> guard)
         {
             this.originalGuardMethodInfo = guard.GetMethodInfo();
             this.guard = argument => guard(argument) ? TaskEx.True : TaskEx.False;
@@ -45,7 +46,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// Initializes a new instance of the <see cref="ArgumentGuardHolder{T}"/> class.
         /// </summary>
         /// <param name="guard">The guard.</param>
-        public ArgumentGuardHolder(Func<T, Task<bool>> guard)
+        public ArgumentGuardHolder(
+            Func<T, Task<bool>> guard)
         {
             this.originalGuardMethodInfo = guard.GetMethodInfo();
             this.guard = guard;
@@ -56,16 +58,20 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        public async Task<bool> Execute(object? argument)
+        public async Task<bool> Execute(
+            object? argument)
         {
             var castArgument = argument switch
             {
                 T value => value,
                 _ => throw new ArgumentException(
-                    GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.Describe()))
+                    GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(
+                        argument,
+                        this.Describe()))
             };
 
-            return await this.guard(castArgument).ConfigureAwait(false);
+            return await this.guard(castArgument)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -74,7 +80,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <returns>Description of the guard.</returns>
         public string Describe()
         {
-            return ExtractMethodNameOrAnonymous(this.originalGuardMethodInfo);
+            return ExtractMethodNameOrAnonymous(
+                this.originalGuardMethodInfo);
         }
     }
 }

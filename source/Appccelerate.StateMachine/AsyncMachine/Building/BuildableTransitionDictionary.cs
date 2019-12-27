@@ -22,11 +22,6 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
     using System.Collections;
     using System.Collections.Generic;
 
-    /// <summary>
-    /// Manages the transitions of a state.
-    /// </summary>
-    /// <typeparam name="TState">The type of the state.</typeparam>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class BuildableTransitionDictionary<TState, TEvent>
         : IEnumerable<BuildableTransitionDefinition<TState, TEvent>>
         where TState : notnull
@@ -35,21 +30,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         private readonly List<BuildableTransitionDefinition<TState, TEvent>> transitions;
         private readonly BuildableStateDefinition<TState, TEvent> state;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TransitionDictionary&lt;TState, TEvent&gt;"/> class.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        public BuildableTransitionDictionary(BuildableStateDefinition<TState, TEvent> state)
+        public BuildableTransitionDictionary(
+            BuildableStateDefinition<TState, TEvent> state)
         {
             this.state = state;
             this.transitions = new List<BuildableTransitionDefinition<TState, TEvent>>();
         }
 
-        /// <summary>
-        /// Adds the specified event id.
-        /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="transitionDefinition">The transition.</param>
         public void Add(
             BuildableTransitionDefinition<TState, TEvent> transitionDefinition)
         {
@@ -62,15 +49,15 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
             this.transitions.Add(transitionDefinition);
         }
 
-        /// <summary>
-        /// Throws an exception if the specified transition is already defined on this state.
-        /// </summary>
-        /// <param name="transitionDefinition">The transition.</param>
-        private void CheckTransitionDoesNotYetExist(BuildableTransitionDefinition<TState, TEvent> transitionDefinition)
+        private void CheckTransitionDoesNotYetExist(
+            BuildableTransitionDefinition<TState, TEvent> transitionDefinition)
         {
             if (transitionDefinition.Source != null)
             {
-                throw new InvalidOperationException(BuildingExceptionMessages.TransitionDoesAlreadyExist(transitionDefinition, this.state));
+                throw new InvalidOperationException(
+                    BuildingExceptionMessages.TransitionDoesAlreadyExist(
+                        transitionDefinition,
+                        this.state));
             }
         }
 

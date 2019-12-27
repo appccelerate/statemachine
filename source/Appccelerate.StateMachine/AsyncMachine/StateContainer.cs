@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
 
     public class StateContainer<TState, TEvent> :
         IExtensionHost<TState, TEvent>,

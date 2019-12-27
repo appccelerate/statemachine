@@ -20,8 +20,10 @@ namespace Appccelerate.StateMachine.AsyncMachine
 {
     using System;
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
+    using Appccelerate.StateMachine.AsyncMachine.Reports;
+    using Appccelerate.StateMachine.AsyncMachine.Transitions;
     using AsyncMachine;
-    using AsyncMachine.Events;
     using Persistence;
 
     /// <summary>

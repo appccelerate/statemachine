@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
     using AsyncMachine;
     using AsyncMachine.States;
 

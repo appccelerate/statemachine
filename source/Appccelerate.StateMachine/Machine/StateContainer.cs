@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine
 {
     using System;
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.Machine.Extensions;
 
     public class StateContainer<TState, TEvent> :
         IExtensionHost<TState, TEvent>,

@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.Specs.Async
     using System;
     using Appccelerate.StateMachine.AsyncMachine;
     using Appccelerate.StateMachine.AsyncMachine.Building;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
     using FakeItEasy;
     using FluentAssertions;
     using Xbehave;

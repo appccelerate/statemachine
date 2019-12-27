@@ -16,8 +16,6 @@
 
 namespace Appccelerate.StateMachine.Machine.Transitions
 {
-    using System;
-
     /// <summary>
     /// Represents a not fired transition - there was no transition found for an event in the current state or a super state.
     /// </summary>

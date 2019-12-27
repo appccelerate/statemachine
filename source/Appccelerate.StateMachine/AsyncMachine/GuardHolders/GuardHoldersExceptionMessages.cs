@@ -31,7 +31,9 @@ namespace Appccelerate.StateMachine.AsyncMachine.GuardHolders
         /// <param name="argument">The argument.</param>
         /// <param name="guard">The guard.</param>
         /// <returns>error message.</returns>
-        public static string CannotCastArgumentToGuardArgument(object? argument, string guard)
+        public static string CannotCastArgumentToGuardArgument(
+            object? argument,
+            string guard)
         {
             return string.Format(
                 CultureInfo.InvariantCulture,

@@ -18,8 +18,6 @@
 
 namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
-    using System;
-
     /// <summary>
     /// Represents a fired transition.
     /// </summary>

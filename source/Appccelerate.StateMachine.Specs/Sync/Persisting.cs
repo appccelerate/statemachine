@@ -22,12 +22,12 @@ namespace Appccelerate.StateMachine.Specs.Sync
     using System.Collections.Generic;
     using System.Linq;
     using Appccelerate.StateMachine.Machine.Building;
+    using Appccelerate.StateMachine.Machine.Extensions;
+    using Appccelerate.StateMachine.Machine.Persistence;
     using FakeItEasy;
     using FluentAssertions;
     using Machine;
-    using Persistence;
     using Specs;
-    using StateMachine.Extensions;
     using Xbehave;
 
     public class Persisting

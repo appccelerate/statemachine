@@ -18,6 +18,7 @@
 
 namespace Appccelerate.StateMachine.Facts.Machine
 {
+    using Appccelerate.StateMachine.Machine.Extensions;
     using FakeItEasy;
     using FluentAssertions;
     using StateMachine.Machine;

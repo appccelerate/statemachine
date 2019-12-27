@@ -18,23 +18,23 @@
 
 namespace Appccelerate.StateMachine
 {
-    using System;
-
     /// <summary>
-    /// Container holding an event and its argument.
+    /// Container holding an event and its argument (what was passed to Fire).
     /// </summary>
     /// <typeparam name="TEvent">The type of the event.</typeparam>
     public class EventInformation<TEvent>
         where TEvent : notnull
     {
-        public EventInformation(TEvent eventId, object? eventArgument)
+        public EventInformation(
+            TEvent eventId,
+            object? eventArgument)
         {
             this.EventId = eventId;
             this.EventArgument = eventArgument;
         }
 
-        public TEvent EventId { get; private set; }
+        public TEvent EventId { get;  }
 
-        public object? EventArgument { get; private set; }
+        public object? EventArgument { get;  }
     }
 }

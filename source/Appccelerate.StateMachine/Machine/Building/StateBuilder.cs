@@ -20,8 +20,7 @@ namespace Appccelerate.StateMachine.Machine.Building
 {
     using System;
     using System.Linq;
-    using Appccelerate.StateMachine.Machine.Events;
-    using Appccelerate.StateMachine.Syntax;
+    using Appccelerate.StateMachine.Machine.Building.Syntax;
 
     /// <summary>
     /// Provides operations to build a state machine.
@@ -349,7 +348,7 @@ namespace Appccelerate.StateMachine.Machine.Building
 
             if (withMoreThenOneTransitionWithoutGuard.Any())
             {
-                throw new InvalidOperationException(ExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
+                throw new InvalidOperationException(BuildingExceptionMessages.OnlyOneTransitionMayHaveNoGuard);
             }
 
             if ((from grouping in transitionsByEvent
@@ -357,7 +356,7 @@ namespace Appccelerate.StateMachine.Machine.Building
                  where transition != null && grouping.LastOrDefault() != transition
                  select grouping).Any())
             {
-                throw new InvalidOperationException(ExceptionMessages.TransitionWithoutGuardHasToBeLast);
+                throw new InvalidOperationException(BuildingExceptionMessages.TransitionWithoutGuardHasToBeLast);
             }
         }
     }

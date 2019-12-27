@@ -26,12 +26,14 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
     {
         private readonly Action<T> action;
 
-        public ArgumentActionHolder(Action<T> action)
+        public ArgumentActionHolder(
+            Action<T> action)
         {
             this.action = action;
         }
 
-        public void Execute(object? argument)
+        public void Execute(
+            object? argument)
         {
             if (argument is T a)
             {

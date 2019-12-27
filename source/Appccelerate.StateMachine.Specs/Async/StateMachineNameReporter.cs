@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Specs.Async
 {
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.AsyncMachine.Reports;
     using AsyncMachine;
     using AsyncMachine.States;
 

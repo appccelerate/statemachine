@@ -20,6 +20,7 @@ namespace Appccelerate.StateMachine.Machine.States
 {
     using System;
     using ActionHolders;
+    using Appccelerate.StateMachine.Machine.Extensions;
     using Transitions;
 
     public class StateLogic<TState, TEvent>
@@ -56,13 +57,19 @@ namespace Appccelerate.StateMachine.Machine.States
 
             ITransitionResult<TState> result = new NotFiredTransitionResult<TState>();
 
-            var @event = context.EventId.ExtractOrThrow(() => new Exception("internal failure, transition should have an event"));
+            var @event = context.EventId
+                .ExtractOrThrow(() => new Exception("internal failure, transition should have an event"));
 
             if (stateDefinition.Transitions.TryGetValue(@event, out var transitionsForEvent))
             {
                 foreach (var transitionDefinition in transitionsForEvent)
                 {
-                    result = this.transitionLogic.Fire(transitionDefinition, context, lastActiveStateModifier, stateDefinitions);
+                    result = this.transitionLogic.Fire(
+                        transitionDefinition,
+                        context,
+                        lastActiveStateModifier,
+                        stateDefinitions);
+
                     if (result.Fired)
                     {
                         return result;
@@ -72,7 +79,11 @@ namespace Appccelerate.StateMachine.Machine.States
 
             if (stateDefinition.SuperState != null)
             {
-                result = this.Fire(stateDefinition.SuperState, context, lastActiveStateModifier, stateDefinitions);
+                result = this.Fire(
+                    stateDefinition.SuperState,
+                    context,
+                    lastActiveStateModifier,
+                    stateDefinitions);
             }
 
             return result;

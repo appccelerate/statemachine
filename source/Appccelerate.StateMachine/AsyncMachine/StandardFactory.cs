@@ -21,8 +21,7 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System;
     using System.Threading.Tasks;
     using ActionHolders;
-    using Contexts;
-    using Events;
+    using Appccelerate.StateMachine.AsyncMachine.Transitions;
     using GuardHolders;
     using States;
 

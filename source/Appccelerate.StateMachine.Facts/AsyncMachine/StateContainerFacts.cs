@@ -19,6 +19,7 @@
 namespace Appccelerate.StateMachine.Facts.AsyncMachine
 {
     using System.Threading.Tasks;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
     using FakeItEasy;
     using FluentAssertions;
     using StateMachine.AsyncMachine;

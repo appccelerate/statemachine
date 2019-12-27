@@ -18,21 +18,10 @@
 
 namespace Appccelerate.StateMachine.Machine.Transitions
 {
-    using System;
-
     public interface ITransitionLogic<TState, TEvent>
         where TState : notnull
         where TEvent : notnull
     {
-        /// <summary>
-        /// Fires the transition.
-        /// </summary>
-        /// <param name="transitionDefinition">The definition of the transition which should happen.</param>
-        /// <param name="context">The event context.</param>
-        /// <returns>The result of the transition.</returns>
-        /// <param name="lastActiveStateModifier">The last active state modifier.</param>
-        /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
-        /// <returns>The result of the transition.</returns>
         ITransitionResult<TState> Fire(
             ITransitionDefinition<TState, TEvent> transitionDefinition,
             ITransitionContext<TState, TEvent> context,

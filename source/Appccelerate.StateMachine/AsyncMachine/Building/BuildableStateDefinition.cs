@@ -50,7 +50,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         /// Initializes a new instance of the <see cref="BuildableStateDefinition{TState,TEvent}"/> class.
         /// </summary>
         /// <param name="id">The unique id of this state.</param>
-        public BuildableStateDefinition(TState id)
+        public BuildableStateDefinition(
+            TState id)
         {
             this.Id = id;
             this.level = 1;
@@ -156,7 +157,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         /// </summary>
         private void SetInitialLevel()
         {
-            this.Level = this.superState != null ? this.superState.Level + 1 : 1;
+            this.Level = this.superState?.Level + 1 ?? 1;
         }
 
         /// <summary>
@@ -180,7 +181,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         {
             if (this == newSuperState)
             {
-                throw new ArgumentException(StatesExceptionMessages.StateCannotBeItsOwnSuperState(this.ToString()));
+                throw new ArgumentException(BuildingExceptionMessages.StateCannotBeItsOwnSuperState(this.ToString()));
             }
         }
 
@@ -194,7 +195,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         {
             if (this == newInitialState)
             {
-                throw new ArgumentException(StatesExceptionMessages.StateCannotBeTheInitialSubStateToItself(this.ToString()));
+                throw new ArgumentException(BuildingExceptionMessages.StateCannotBeTheInitialSubStateToItself(this.ToString()));
             }
         }
 
@@ -207,25 +208,8 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
         {
             if (value != null && value.SuperState != this)
             {
-                throw new ArgumentException(StatesExceptionMessages.StateCannotBeTheInitialStateOfSuperStateBecauseItIsNotADirectSubState(value.ToString(), this.ToString()));
+                throw new ArgumentException(BuildingExceptionMessages.StateCannotBeTheInitialStateOfSuperStateBecauseItIsNotADirectSubState(value.ToString(), this.ToString()));
             }
         }
-
-        // private IStateDefinition<TState, TEvent>? stateDefinition;
-        //
-        // public IStateDefinition<TState, TEvent> AsStateDefinition()
-        // {
-        //     return this.stateDefinition ??= new StateDefinition<TState, TEvent>(
-        //         this.Id,
-        //         this.Level,
-        //         this.Transitions.AsTransitionDefinitions(),
-        //         this.InitialState?.AsStateDefinition(),
-        //         this.HistoryType,
-        //         this.SuperState?.AsStateDefinition(),
-        //         this.SubStates
-        //             .Select(x => x.AsStateDefinition()),
-        //         this.EntryActions,
-        //         this.ExitActions);
-        // }
     }
 }

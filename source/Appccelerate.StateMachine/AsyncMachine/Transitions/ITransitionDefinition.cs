@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.AsyncMachine.Transitions
 {
-    using System;
     using System.Collections.Generic;
     using ActionHolders;
     using GuardHolders;

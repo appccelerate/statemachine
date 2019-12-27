@@ -16,8 +16,6 @@
 
 namespace Appccelerate.StateMachine
 {
-    using System;
-
     public static class StateMachineBuilder
     {
         public static AsyncMachine.Building.StateMachineDefinitionBuilder<TState, TEvent> ForAsyncMachine<TState, TEvent>()

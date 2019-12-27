@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.Machine.States
 {
-    using System;
     using System.Collections.Generic;
     using ActionHolders;
     using Transitions;
@@ -29,14 +28,11 @@ namespace Appccelerate.StateMachine.Machine.States
     /// </summary>
     /// <typeparam name="TState">The type of the state id.</typeparam>
     /// <typeparam name="TEvent">The type of the event id.</typeparam>
-    public class StateDefinition<TState, TEvent> : IStateDefinition<TState, TEvent>
+    public class StateDefinition<TState, TEvent>
+        : IStateDefinition<TState, TEvent>
         where TState : notnull
         where TEvent : notnull
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StateDefinition{TState,TEvent}"/> class.
-        /// </summary>
-        /// <param name="id">The unique id of this state.</param>
         public StateDefinition(
             TState id,
             int level,

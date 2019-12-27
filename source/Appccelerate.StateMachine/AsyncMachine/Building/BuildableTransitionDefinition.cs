@@ -16,25 +16,24 @@
 
 namespace Appccelerate.StateMachine.AsyncMachine.Building
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using Appccelerate.StateMachine.AsyncMachine.ActionHolders;
     using Appccelerate.StateMachine.AsyncMachine.GuardHolders;
-    using Appccelerate.StateMachine.AsyncMachine.Transitions;
 
     public class BuildableTransitionDefinition<TState, TEvent>
         where TState : notnull
         where TEvent : notnull
     {
-        public BuildableTransitionDefinition(TEvent @event)
+        public BuildableTransitionDefinition(
+            TEvent @event)
         {
             this.Event = @event;
         }
 
         public BuildableStateDefinition<TState, TEvent>? Source { get; set; }
 
-        public TEvent Event { get; set; }
+        public TEvent Event { get; }
 
         public BuildableStateDefinition<TState, TEvent>? Target { get; set; }
 
@@ -42,11 +41,13 @@ namespace Appccelerate.StateMachine.AsyncMachine.Building
 
         public ICollection<IActionHolder> Actions { get; } = new List<IActionHolder>();
 
-        public bool IsInternalTransition => this.Target == null;
-
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Transition from state {0} to state {1}.", this.Source, this.Target);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Transition from state {0} to state {1}.",
+                this.Source,
+                this.Target);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Appccelerate.StateMachine.Specs.Async
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Appccelerate.StateMachine.AsyncMachine;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
     using Appccelerate.StateMachine.AsyncMachine.States;
     using Appccelerate.StateMachine.AsyncMachine.Transitions;
 

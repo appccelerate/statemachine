@@ -28,7 +28,8 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        bool Execute(object? argument);
+        bool Execute(
+            object? argument);
 
         /// <summary>
         /// Describes the guard.

@@ -20,8 +20,8 @@ namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System;
     using System.Collections.Generic;
-    using Appccelerate.StateMachine.Extensions;
     using Appccelerate.StateMachine.Machine;
+    using Appccelerate.StateMachine.Machine.Extensions;
     using Appccelerate.StateMachine.Machine.States;
     using Appccelerate.StateMachine.Machine.Transitions;
 

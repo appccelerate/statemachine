@@ -19,8 +19,8 @@
 namespace Appccelerate.StateMachine.Specs.Sync
 {
     using System.Collections.Generic;
+    using Appccelerate.StateMachine.Machine.Extensions;
     using Machine;
-    using StateMachine.Extensions;
 
     public class RecordEventsExtension : ExtensionBase<int, int>
     {

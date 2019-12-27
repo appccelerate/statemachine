@@ -18,6 +18,7 @@
 
 namespace Appccelerate.StateMachine.Specs.Sync
 {
+    using Appccelerate.StateMachine.Machine.Extensions;
     using FakeItEasy;
     using Machine;
     using Xbehave;

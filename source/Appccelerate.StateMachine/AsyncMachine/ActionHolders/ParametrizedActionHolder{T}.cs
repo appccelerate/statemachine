@@ -29,14 +29,18 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
         private readonly Func<T, Task> action;
         private readonly T parameter;
 
-        public ParametrizedActionHolder(Func<T, Task> action, T parameter)
+        public ParametrizedActionHolder(
+            Func<T, Task> action,
+            T parameter)
         {
             this.originalActionMethodInfo = action.GetMethodInfo();
             this.action = action;
             this.parameter = parameter;
         }
 
-        public ParametrizedActionHolder(Action<T> action, T parameter)
+        public ParametrizedActionHolder(
+            Action<T> action,
+            T parameter)
         {
             this.originalActionMethodInfo = action.GetMethodInfo();
             this.action = argument =>
@@ -48,9 +52,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.ActionHolders
             this.parameter = parameter;
         }
 
-        public async Task Execute(object? argument)
+        public async Task Execute(
+            object? argument)
         {
-            await this.action(this.parameter).ConfigureAwait(false);
+            await this.action(this.parameter)
+                .ConfigureAwait(false);
         }
 
         public string Describe()

@@ -16,6 +16,7 @@
 
 namespace Appccelerate.StateMachine.Specs.Async
 {
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
     using AsyncMachine;
     using AsyncMachine.States;
     using FakeItEasy;

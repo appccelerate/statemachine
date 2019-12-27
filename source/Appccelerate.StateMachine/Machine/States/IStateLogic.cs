@@ -18,8 +18,6 @@
 
 namespace Appccelerate.StateMachine.Machine.States
 {
-    using System;
-
     public interface IStateLogic<TState, TEvent>
         where TState : notnull
         where TEvent : notnull
@@ -32,12 +30,25 @@ namespace Appccelerate.StateMachine.Machine.States
         /// <param name="lastActiveStateModifier">The last active state modifier.</param>
         /// <param name="stateDefinitions">The definitions for all states of this state Machine.</param>
         /// <returns>The result of the transition.</returns>
-        ITransitionResult<TState> Fire(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ILastActiveStateModifier<TState> lastActiveStateModifier, IStateDefinitionDictionary<TState, TEvent> stateDefinitions);
+        ITransitionResult<TState> Fire(
+            IStateDefinition<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions);
 
-        void Entry(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context);
+        void Entry(
+            IStateDefinition<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context);
 
-        void Exit(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ILastActiveStateModifier<TState> lastActiveStateModifier);
+        void Exit(
+            IStateDefinition<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState> lastActiveStateModifier);
 
-        TState EnterByHistory(IStateDefinition<TState, TEvent> stateDefinition, ITransitionContext<TState, TEvent> context, ILastActiveStateModifier<TState> lastActiveStateModifier, IStateDefinitionDictionary<TState, TEvent> stateDefinitions);
+        TState EnterByHistory(
+            IStateDefinition<TState, TEvent> stateDefinition,
+            ITransitionContext<TState, TEvent> context,
+            ILastActiveStateModifier<TState> lastActiveStateModifier,
+            IStateDefinitionDictionary<TState, TEvent> stateDefinitions);
     }
 }

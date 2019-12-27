@@ -28,13 +28,15 @@ namespace Appccelerate.StateMachine.Machine.ActionHolders
 
         private readonly T parameter;
 
-        public ParametrizedActionHolder(Action<T> action, T parameter)
+        public ParametrizedActionHolder(
+            Action<T> action, T parameter)
         {
             this.action = action;
             this.parameter = parameter;
         }
 
-        public void Execute(object? argument)
+        public void Execute(
+            object? argument)
         {
             this.action(this.parameter);
         }

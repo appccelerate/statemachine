@@ -21,7 +21,9 @@ namespace Appccelerate.StateMachine.AsyncMachine
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using AsyncMachine.Events;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
+    using Appccelerate.StateMachine.AsyncMachine.Reports;
+    using Appccelerate.StateMachine.AsyncMachine.Transitions;
     using Persistence;
 
     public class AsyncActiveStateMachine<TState, TEvent> : IAsyncStateMachine<TState, TEvent>

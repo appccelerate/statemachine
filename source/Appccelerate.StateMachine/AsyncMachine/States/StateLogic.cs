@@ -21,6 +21,7 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
     using System;
     using System.Threading.Tasks;
     using ActionHolders;
+    using Appccelerate.StateMachine.AsyncMachine.Extensions;
     using Transitions;
 
     public class StateLogic<TState, TEvent>
@@ -57,14 +58,21 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             ITransitionResult<TState> result = new NotFiredTransitionResult<TState>();
 
-            var @event = context.EventId.ExtractOrThrow(() => new Exception("internal failure, transition should have an event"));
+            var @event = context.EventId
+                .ExtractOrThrow(() => new Exception("internal failure, transition should have an event"));
 
             if (stateDefinition.Transitions.TryGetValue(@event, out var transitionsForEvent))
             {
                 foreach (var transitionDefinition in transitionsForEvent)
                 {
-                    result = await this.transitionLogic.Fire(transitionDefinition, context, lastActiveStateModifier, stateDefinitions)
+                    result = await this.transitionLogic
+                        .Fire(
+                            transitionDefinition,
+                            context,
+                            lastActiveStateModifier,
+                            stateDefinitions)
                         .ConfigureAwait(false);
+
                     if (result.Fired)
                     {
                         return result;
@@ -74,7 +82,11 @@ namespace Appccelerate.StateMachine.AsyncMachine.States
 
             if (stateDefinition.SuperState != null)
             {
-                result = await this.Fire(stateDefinition.SuperState, context, lastActiveStateModifier, stateDefinitions)
+                result = await this.Fire(
+                        stateDefinition.SuperState,
+                        context,
+                        lastActiveStateModifier,
+                        stateDefinitions)
                     .ConfigureAwait(false);
             }
 

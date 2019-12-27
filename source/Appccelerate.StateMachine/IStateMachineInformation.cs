@@ -18,8 +18,6 @@
 
 namespace Appccelerate.StateMachine
 {
-    using System;
-
     /// <summary>
     /// Provides information about a state machine.
     /// </summary>

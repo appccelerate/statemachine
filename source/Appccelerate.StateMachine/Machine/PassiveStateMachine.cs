@@ -21,10 +21,11 @@ namespace Appccelerate.StateMachine.Machine
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Extensions;
+    using Appccelerate.StateMachine.Machine.Extensions;
+    using Appccelerate.StateMachine.Machine.Persistence;
+    using Appccelerate.StateMachine.Machine.Reports;
+    using Appccelerate.StateMachine.Machine.Transitions;
     using Machine;
-    using Machine.Events;
-    using Persistence;
 
     /// <summary>
     /// A passive state machine.

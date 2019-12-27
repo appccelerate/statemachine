@@ -33,7 +33,8 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
         /// Initializes a new instance of the <see cref="ArgumentGuardHolder{T}"/> class.
         /// </summary>
         /// <param name="guard">The guard.</param>
-        public ArgumentGuardHolder(Func<T, bool> guard)
+        public ArgumentGuardHolder(
+            Func<T, bool> guard)
         {
             this.guard = guard;
         }
@@ -43,14 +44,18 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
         /// </summary>
         /// <param name="argument">The state machine event argument.</param>
         /// <returns>Result of the guard execution.</returns>
-        public bool Execute(object? argument)
+        public bool Execute(
+            object? argument)
         {
             if (argument is T a)
             {
                 return this.guard(a);
             }
 
-            throw new ArgumentException(GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(argument, this.Describe()));
+            throw new ArgumentException(
+                GuardHoldersExceptionMessages.CannotCastArgumentToGuardArgument(
+                    argument,
+                    this.Describe()));
         }
 
         /// <summary>
@@ -59,7 +64,8 @@ namespace Appccelerate.StateMachine.Machine.GuardHolders
         /// <returns>Description of the guard.</returns>
         public string Describe()
         {
-            return ExtractMethodNameOrAnonymous(this.guard.GetMethodInfo());
+            return ExtractMethodNameOrAnonymous(
+                this.guard.GetMethodInfo());
         }
     }
 }
