@@ -18,7 +18,6 @@
 
 namespace Appccelerate.StateMachine.AsyncMachine.Reports
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -34,13 +33,14 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
         where TState : notnull
         where TEvent : notnull
     {
-        private readonly StreamWriter writer;
+        private readonly TextWriter writer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvTransitionsWriter&lt;TState, TEvent&gt;"/> class.
         /// </summary>
         /// <param name="writer">The writer.</param>
-        public CsvTransitionsWriter(StreamWriter writer)
+        public CsvTransitionsWriter(
+            TextWriter writer)
         {
             this.writer = writer;
         }

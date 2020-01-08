@@ -18,11 +18,9 @@
 
 namespace Appccelerate.StateMachine.AsyncMachine.Reports
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using AsyncMachine;
     using States;
 
     /// <summary>
@@ -34,19 +32,21 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
         where TState : notnull
         where TEvent : notnull
     {
-        private readonly Stream statesStream;
+        private readonly TextWriter statesWriter;
 
-        private readonly Stream transitionsStream;
+        private readonly TextWriter transitionsWriter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvStateMachineReportGenerator{TState, TEvent}"/> class.
         /// </summary>
-        /// <param name="statesStream">The stream where the states are written to.</param>
-        /// <param name="transitionsStream">The stream where the transitions are written to.</param>
-        public CsvStateMachineReportGenerator(Stream statesStream, Stream transitionsStream)
+        /// <param name="statesWriter">The stream where the states are written to.</param>
+        /// <param name="transitionsWriter">The stream where the transitions are written to.</param>
+        public CsvStateMachineReportGenerator(
+            TextWriter statesWriter,
+            TextWriter transitionsWriter)
         {
-            this.statesStream = statesStream;
-            this.transitionsStream = transitionsStream;
+            this.statesWriter = statesWriter;
+            this.transitionsWriter = transitionsWriter;
         }
 
         /// <summary>
@@ -65,24 +65,18 @@ namespace Appccelerate.StateMachine.AsyncMachine.Reports
 
         private void ReportStates(IEnumerable<IStateDefinition<TState, TEvent>> states)
         {
-            var writer = new StreamWriter(this.statesStream);
+            var writer = new CsvStatesWriter<TState, TEvent>(
+                this.statesWriter);
 
-            var statesWriter = new CsvStatesWriter<TState, TEvent>(writer);
-
-            statesWriter.Write(states);
-
-            writer.Flush();
+            writer.Write(states);
         }
 
         private void ReportTransitions(IEnumerable<IStateDefinition<TState, TEvent>> states)
         {
-            var writer = new StreamWriter(this.transitionsStream);
+            var writer = new CsvTransitionsWriter<TState, TEvent>(
+                this.transitionsWriter);
 
-            var transitionsWriter = new CsvTransitionsWriter<TState, TEvent>(writer);
-
-            transitionsWriter.Write(states);
-
-            writer.Flush();
+            writer.Write(states);
         }
     }
 }

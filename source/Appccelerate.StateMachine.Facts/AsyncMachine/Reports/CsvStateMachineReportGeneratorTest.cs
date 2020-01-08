@@ -97,10 +97,10 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
         [MemberData(nameof(StateMachineInstantiationProvider))]
         public void Report(string dummyName, Func<string, StateMachineDefinition<States, Events>, IAsyncStateMachine<States, Events>> createStateMachine)
         {
-            var stateStream = new MemoryStream();
-            var transitionsStream = new MemoryStream();
+            var statesWriter = new StringWriter();
+            var transitionsWriter = new StringWriter();
 
-            var testee = new CsvStateMachineReportGenerator<States, Events>(stateStream, transitionsStream);
+            var testee = new CsvStateMachineReportGenerator<States, Events>(statesWriter, transitionsWriter);
 
             var stateMachineDefinitionBuilder = StateMachineBuilder.ForAsyncMachine<States, Events>();
             stateMachineDefinitionBuilder
@@ -154,38 +154,24 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine.Reports
 
             elevator.Report(testee);
 
-            string statesReport;
-            string transitionsReport;
-            stateStream.Position = 0;
-            using (var reader = new StreamReader(stateStream))
-            {
-                statesReport = reader.ReadToEnd();
-            }
-
-            transitionsStream.Position = 0;
-            using (var reader = new StreamReader(transitionsStream))
-            {
-                transitionsReport = reader.ReadToEnd();
-            }
-
             const string ExpectedTransitionsReport = "Source;Event;Guard;Target;Actions OnFloor;CloseDoor;;DoorClosed; OnFloor;OpenDoor;;DoorOpen; OnFloor;GoUp;CheckOverload;MovingUp; OnFloor;GoUp;;internal transition;AnnounceOverload, Beep OnFloor;GoDown;CheckOverload;MovingDown; OnFloor;GoDown;;internal transition;AnnounceOverload Moving;Stop;;OnFloor; Healthy;ErrorOccurred;;Error; Error;Reset;;Healthy; Error;ErrorOccurred;;internal transition; ";
             const string ExpectedStatesReport = "Source;Entry;Exit;Children DoorClosed;;; DoorOpen;;; OnFloor;AnnounceFloor;Beep, Beep;DoorClosed, DoorOpen MovingUp;;; MovingDown;;; Moving;;;MovingUp, MovingDown Healthy;;;OnFloor, Moving Error;;; ";
 
-            statesReport
+            statesWriter
+                .ToString()
                 .IgnoringNewlines()
                 .Should()
                 .Be(
                     ExpectedStatesReport
                         .IgnoringNewlines());
 
-            transitionsReport
+            transitionsWriter
+                .ToString()
                 .IgnoringNewlines()
                 .Should()
                 .Be(
                     ExpectedTransitionsReport
                         .IgnoringNewlines());
-
-            stateStream.Dispose();
         }
 
         private static void Beep()

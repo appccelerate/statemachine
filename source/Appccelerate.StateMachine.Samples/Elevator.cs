@@ -1,12 +1,17 @@
 namespace Appccelerate.StateMachine.Samples
 {
+    using System;
+    using System.IO;
     using Appccelerate.StateMachine.Machine;
+    using Appccelerate.StateMachine.Machine.Reports;
+    using Xunit;
+    using Xunit.Abstractions;
 
     public class Elevator
     {
         private readonly PassiveStateMachine<States, Events> elevator;
 
-        private enum States
+        internal enum States
         {
             Healthy,
             OnFloor,
@@ -18,7 +23,7 @@ namespace Appccelerate.StateMachine.Samples
             Error
         }
 
-        private enum Events
+        internal enum Events
         {
             GoUp,
             GoDown,
@@ -128,6 +133,75 @@ namespace Appccelerate.StateMachine.Samples
         private bool CheckOverload()
         {
             return false;
+        }
+
+        internal void Report(
+            IStateMachineReport<States, Events> reporter)
+        {
+            this.elevator
+                .Report(
+                    reporter);
+        }
+    }
+
+    public class Reports
+    {
+        private readonly ITestOutputHelper testOutputHelper;
+
+        public Reports(
+            ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
+        [Fact]
+        public void Yed()
+        {
+            var elevator = new Elevator();
+
+            var writer = new StringWriter();
+            var reporter = new YEdStateMachineReportGenerator<Elevator.States, Elevator.Events>(
+                writer);
+
+            elevator.Report(
+                reporter);
+
+            testOutputHelper
+                .WriteLine(writer.ToString());
+        }
+
+        [Fact]
+        public void Csv()
+        {
+            var elevator = new Elevator();
+
+            var statesWriter = new StringWriter();
+            var transitionsWriter = new StringWriter();
+            var reporter = new CsvStateMachineReportGenerator<Elevator.States, Elevator.Events>(
+                statesWriter,
+                transitionsWriter);
+
+            elevator.Report(
+                reporter);
+
+            testOutputHelper
+                .WriteLine(statesWriter.ToString());
+            testOutputHelper
+                .WriteLine(transitionsWriter.ToString());
+        }
+
+        [Fact]
+        public void StateMachineReport()
+        {
+            var elevator = new Elevator();
+
+            var reporter = new StateMachineReportGenerator<Elevator.States, Elevator.Events>();
+
+            elevator.Report(
+                reporter);
+
+            testOutputHelper
+                .WriteLine(reporter.Result);
         }
     }
 }
