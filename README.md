@@ -1,4 +1,6 @@
-I'm working on moving the documention from www.appccelerate.com (where it is not up-to-date :-( ) to here because it is less time consuming to update the documentation.
+_[![Appccelerate.StateMachine NuGet version](https://img.shields.io/nuget/v/Appccelerate.StateMachine.svg?style=flat&label=version) ![version](https://img.shields.io/nuget/dt/Appccelerate.StateMachine.svg?style=flat&label=downloads)](https://www.nuget.org/packages/Appccelerate.StateMachine)_
+![issues](https://img.shields.io/github/issues/appccelerate/statemachine.svg?style=flat)
+![issues](https://img.shields.io/azure-devops/build/appccelerate/statemachine/3/master.svg?style=flat)
 
 ## Features
 
@@ -128,6 +130,20 @@ public class SimpleStateMachine
 - [Async Passive State Machine](documentation/asyncPassiveStateMachine.md)
 - [Async Active State Machine](documentation/asyncActiveStateMachine.md)
 
+### Description of the different features
+- [Actions](documentation/actions.md)
+- [Hierarchical transitions](documentation/hierarchicalTransitions.md)
+- [Exception Handling](documentation/exceptionhandling.md)
+- [Extensions (including logging)](documentation/extensions.md)
+- [Events](documentation/events.md)
+- [Reports](documentation/reports.md)
+- [Persistence](documentation/persistence.md)
+- [Testability](documentation/testability.md)
+- [Custom Types for States and Events](documentation/customTypes.md)
+
 ### Migrating from an older version
 - [Migrating to V5.x](documentation/migratingToV5.md)
 - [Migrating to V6.x](documentation/migratingToV6.md)
+
+### Specifications
+- [Specifications created from tests](documentation/specs.md)
