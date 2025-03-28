@@ -28,17 +28,23 @@ namespace Appccelerate.StateMachine.Facts.AsyncMachine
             where TState : IComparable
             where TEvent : IComparable
     {
+#pragma warning disable CA1000
         public static GuardBuilder CreateGuardHolder()
+#pragma warning restore CA1000
         {
             return new GuardBuilder();
         }
 
+#pragma warning disable CA1000
         public static StateBuilder CreateStateDefinition()
+#pragma warning restore CA1000
         {
             return new StateBuilder();
         }
 
+#pragma warning disable CA1000
         public static TransitionContextBuilder CreateTransitionContext()
+#pragma warning restore CA1000
         {
             return new TransitionContextBuilder();
         }

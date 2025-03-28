@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>6.0.0</Version>
   </PropertyGroup>
-
+  
   <PropertyGroup>
     <Title>Appccelerate.StateMachine</Title>
     <Copyright>Copyright ©  2008-2019</Copyright>
@@ -13,11 +14,13 @@
   </PropertyGroup>
   
   <!-- nuget package -->
+  <ItemGroup>
+      <None Include="..\nuget.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
   <PropertyGroup>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/appccelerate/statemachine</RepositoryUrl>
-    <PackageIconUrl>https://github.com/appccelerate/appccelerate/raw/master/docs/nuget.png</PackageIconUrl>
     <description>
       Hierarchical state machine with fluent definition syntax
       Features:
@@ -86,17 +89,6 @@
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>$(NoWarn),SA0001</NoWarn>
-  </PropertyGroup>
-
-  <!-- versioning -->
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PackageReference Include="MinVer" Version="1.1.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <PropertyGroup>
-    <MinVerAutoIncrement>Minor</MinVerAutoIncrement>
   </PropertyGroup>
 
   <!-- license -->
