@@ -30,6 +30,8 @@
       state machine report for description of state machine (csv, yEd)
     </description>
     <PackageReleaseNotes>
+      6.0.0:
+      - switched target to netstandard2.0 due to security vulnerabilities
       5.1.0:
       - completely redesigned the state machine definition API.
         You can now define a state machine definition and then spawn state machine instances from the definition.
